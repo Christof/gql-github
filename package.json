@@ -4,7 +4,8 @@
   "description": "Tool to talk to github via GraphQL",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tsc-watch": "./node_modules/typescript/bin/tsc -w"
   },
   "author": "Christof Sirk",
   "license": "MIT",
