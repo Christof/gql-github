@@ -22,3 +22,5 @@ Adding a tag name (for example `v1.2.3` as parameter search for a release with t
 ```bash
 TOKEN={github personal access token} node src/main.js v1.2.3
 ```
+
+Generating a personal access token for github is described in [Creating a personal access token for the command line](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/).
