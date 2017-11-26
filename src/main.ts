@@ -15,23 +15,25 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
-const lastReleaseQuery = gql(`
-query {
-  repository(owner:"skillslab", name:"skills.lab") {
-    releases(last: 1) {
-      edges {
-        node {
-          name,
-          tag {
-            name
-          },
-          description
+function lastReleasesQuery(count: number = 1) {
+  return gql(`
+    query {
+      repository(owner:"skillslab", name:"skills.lab") {
+        releases(last: ${count}) {
+          edges {
+            node {
+              name,
+              tag {
+                name
+              },
+              description
+            }
+          }
         }
       }
     }
-  }
-}
 `);
+}
 
 const httpLink = createHttpLink({
   uri: "https://api.github.com/graphql",
@@ -43,7 +45,7 @@ const client = new ApolloClient({
   cache: new InMemoryCache()
 });
 
-client.query({ query: lastReleaseQuery }).then((data: any) => {
+client.query({ query: lastReleasesQuery() }).then((data: any) => {
   const lastRelease = data.data.repository.releases.edges[0].node;
   console.log("#" + lastRelease.tag.name + "\n");
   console.log(lastRelease.description);
