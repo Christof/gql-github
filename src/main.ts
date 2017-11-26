@@ -35,6 +35,11 @@ function lastReleasesQuery(count: number = 1) {
 `);
 }
 
+const args = process.argv.slice(2);
+
+const releaseName = args[0];
+const query = releaseName ? lastReleasesQuery(10) : lastReleasesQuery(1);
+
 const httpLink = createHttpLink({
   uri: "https://api.github.com/graphql",
   fetch: fetch as any
@@ -45,8 +50,12 @@ const client = new ApolloClient({
   cache: new InMemoryCache()
 });
 
-client.query({ query: lastReleasesQuery() }).then((data: any) => {
+function logRelease(release: { tag: { name: string }; description: string }) {
+  console.log("#" + release.tag.name + "\n");
+  console.log(release.description);
+}
+
+client.query({ query }).then((data: any) => {
   const lastRelease = data.data.repository.releases.edges[0].node;
-  console.log("#" + lastRelease.tag.name + "\n");
-  console.log(lastRelease.description);
+  logRelease(lastRelease);
 });
