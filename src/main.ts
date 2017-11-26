@@ -20,14 +20,12 @@ function lastReleasesQuery(count: number = 1) {
     query {
       repository(owner:"skillslab", name:"skills.lab") {
         releases(last: ${count}) {
-          edges {
-            node {
-              name,
-              tag {
-                name
-              },
-              description
-            }
+          nodes {
+            name,
+            tag {
+              name
+            },
+            description
           }
         }
       }
@@ -56,6 +54,15 @@ function logRelease(release: { tag: { name: string }; description: string }) {
 }
 
 client.query({ query }).then((data: any) => {
-  const lastRelease = data.data.repository.releases.edges[0].node;
-  logRelease(lastRelease);
+  const releases = data.data.repository.releases.nodes;
+  if (releaseName) {
+    const release = releases.find(
+      (release: { tag: { name: String } }) => release.tag.name === releaseName
+    );
+
+    logRelease(release);
+  } else {
+    const lastRelease = releases[0];
+    logRelease(lastRelease);
+  }
 });
