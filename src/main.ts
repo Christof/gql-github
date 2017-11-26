@@ -44,5 +44,7 @@ const client = new ApolloClient({
 });
 
 client.query({ query: lastReleaseQuery }).then((data: any) => {
-  console.log(data.data);
+  const lastRelease = data.data.repository.releases.edges[0].node;
+  console.log("#" + lastRelease.tag.name + "\n");
+  console.log(lastRelease.description);
 });
