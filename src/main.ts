@@ -1,3 +1,4 @@
+import * as program from "commander";
 import fetch from "node-fetch";
 import gql from "graphql-tag";
 import { ApolloClient } from "apollo-client";
@@ -37,12 +38,17 @@ function lastReleasesQuery(
 `);
 }
 
-const args = process.argv.slice(2);
+program
+  .version("0.0.1")
+  .option("--owner <repository owner>", "Owner of the repository")
+  .option("--repo <repository name>", "Name of the repository")
+  .option("--release [release version]", "Specific release version")
+  .parse(process.argv);
 
-const repositoryOwner = "skillslab";
-const repositoryName = "skills.lab";
+const repositoryOwner = program.owner;
+const repositoryName = program.repo;
 
-const releaseName = args[0];
+const releaseName = program.release;
 const query = releaseName
   ? lastReleasesQuery(repositoryOwner, repositoryName, 10)
   : lastReleasesQuery(repositoryOwner, repositoryName, 1);
