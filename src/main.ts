@@ -15,10 +15,14 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
-function lastReleasesQuery(count: number = 1) {
+function lastReleasesQuery(
+  repositoryOwner: string,
+  repositoryName: string,
+  count: number = 1
+) {
   return gql(`
     query {
-      repository(owner:"skillslab", name:"skills.lab") {
+      repository(owner:"${repositoryOwner}", name:"${repositoryName}") {
         releases(last: ${count}) {
           nodes {
             name,
@@ -35,8 +39,13 @@ function lastReleasesQuery(count: number = 1) {
 
 const args = process.argv.slice(2);
 
+const repositoryOwner = "skillslab";
+const repositoryName = "skills.lab";
+
 const releaseName = args[0];
-const query = releaseName ? lastReleasesQuery(10) : lastReleasesQuery(1);
+const query = releaseName
+  ? lastReleasesQuery(repositoryOwner, repositoryName, 10)
+  : lastReleasesQuery(repositoryOwner, repositoryName, 1);
 
 const httpLink = createHttpLink({
   uri: "https://api.github.com/graphql",
