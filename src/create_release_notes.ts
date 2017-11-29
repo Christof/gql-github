@@ -30,7 +30,13 @@ async function getMergeCommitsBetweenTags(
 
   if (stderr) throw new Error(stderr);
 
-  console.log(stdout);
+  const lines = stdout.split("\n");
+  const i = lines.reduce((accumulator, line) => {
+    if (/\S/.test(line) && line.indexOf("--") !== 0) accumulator.push(line);
+
+    return accumulator;
+  }, []);
+  console.log(i.join("\n"));
 }
 
 getMergeCommitsBetweenTags(start, end, repositoryName);
