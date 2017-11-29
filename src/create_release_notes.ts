@@ -1,4 +1,5 @@
 import * as program from "commander";
+import * as readline from "readline";
 import { promisify } from "util";
 import { exec } from "child_process";
 const sh = promisify(exec);
@@ -41,7 +42,7 @@ async function getMergeCommitsBetweenTags(
   );
 
   const pullRequestNumberRegex = new RegExp(/#\d*/);
-  const i = importantLines.reduce(
+  const pullRequests = importantLines.reduce(
     (accumulator, line, index, array) => {
       if (index % 2 === 0) return accumulator;
 
@@ -52,9 +53,58 @@ async function getMergeCommitsBetweenTags(
       accumulator.push(result);
       return accumulator;
     },
-    [] as String[]
+    [] as string[]
   );
-  console.log(i.join("\n"));
+
+  return pullRequests;
 }
 
-getMergeCommitsBetweenTags(start, end, repositoryName);
+async function assignPRsToCategory(pullRequests: string[]) {
+  const basicChanges = [];
+  const trainingChanges = [];
+  const breakingChanges = [];
+
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
+  console.log("Assign PRs to category:");
+  console.log("  b -> breaking change");
+  console.log("  t -> training change");
+  console.log("default is basic change");
+  pullRequests.forEach(async pullRequest => {
+    await new Promise(resolve => {
+      rl.question(`'${pullRequest} [b, t]?`, answer => {
+        if (answer === "b") {
+          breakingChanges.push(pullRequest);
+        } else if (answer === "t") {
+          trainingChanges.push(pullRequest);
+        } else {
+          basicChanges.push(pullRequest);
+        }
+
+        resolve();
+      });
+    });
+  });
+
+  console.log("---------- RELEASE NOTES ----------");
+  if (breakingChanges.length) {
+    console.log(
+      "**Breaking changes:**\n\n" + breakingChanges.join("\n") + "\n"
+    );
+  }
+  if (basicChanges.length) {
+    console.log("**Basic changes:**\n\n" + basicChanges.join("\n") + "\n");
+  }
+  if (trainingChanges.length) {
+    console.log(
+      "**Training changes:**\n\n" + trainingChanges.join("\n") + "\n"
+    );
+  }
+}
+
+getMergeCommitsBetweenTags(start, end, repositoryName).then(pullRequests =>
+  assignPRsToCategory(pullRequests)
+);
