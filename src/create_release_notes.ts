@@ -31,11 +31,29 @@ async function getMergeCommitsBetweenTags(
   if (stderr) throw new Error(stderr);
 
   const lines = stdout.split("\n");
-  const i = lines.reduce((accumulator, line) => {
-    if (/\S/.test(line) && line.indexOf("--") !== 0) accumulator.push(line);
+  const importantLines = lines.reduce(
+    (accumulator, line) => {
+      if (/\S/.test(line) && line.indexOf("--") !== 0) accumulator.push(line);
 
-    return accumulator;
-  }, []);
+      return accumulator;
+    },
+    [] as string[]
+  );
+
+  const pullRequestNumberRegex = new RegExp(/#\d*/);
+  const i = importantLines.reduce(
+    (accumulator, line, index, array) => {
+      if (index % 2 === 0) return accumulator;
+
+      const pullRequestNumberMatch = array[index - 1].match(
+        pullRequestNumberRegex
+      );
+      const result = `- ${line.trim()} (${pullRequestNumberMatch})`;
+      accumulator.push(result);
+      return accumulator;
+    },
+    [] as String[]
+  );
   console.log(i.join("\n"));
 }
 
