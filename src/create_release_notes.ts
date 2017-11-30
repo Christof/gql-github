@@ -69,8 +69,6 @@ async function assignPRsToCategory(pullRequests: string[]) {
     output: process.stdout
   });
 
-  console.log(pullRequests.join("\n"));
-
   console.log("Assign PRs to category:");
   console.log("  b -> breaking change");
   console.log("  t -> training change");
@@ -93,10 +91,9 @@ async function assignPRsToCategory(pullRequests: string[]) {
     };
   });
 
-  for (const question of questions)
-    await question();
+  for (const question of questions) await question();
 
-  console.log("---------- RELEASE NOTES ----------");
+  console.log("\n\n---------- RELEASE NOTES ----------\n");
   if (breakingChanges.length) {
     console.log(
       "**Breaking changes:**\n\n" + breakingChanges.join("\n") + "\n"
