@@ -18,7 +18,38 @@ const repositoryName = program.repo;
 const start = program.start;
 const end = program.end;
 
+class Category {
+  public pullRequests = [] as string[];
+
+  constructor(public header: string, public shortcut?: string) {}
+
+  match(input: string) {
+    return this.shortcut === undefined ? true : this.shortcut === input;
+  }
+
+  addIfMatching(input: string, pullRequest: string) {
+    if (this.match(input)) {
+      this.pullRequests.push(pullRequest);
+      return true;
+    }
+
+    return false;
+  }
+
+  print() {
+    if (this.pullRequests.length === 0) return;
+
+    const heading = this.header.charAt(0).toUpperCase() + this.header.slice(1);
+    console.log(`**${heading}:**\n\n${this.pullRequests.join("\n")}\n`);
+  }
+}
+
 class ReleaseNoteCreator {
+  private categories = [
+    new Category("breaking changes", "b"),
+    new Category("training changes", "t"),
+    new Category("basic changes")
+  ];
   async getMergeCommitsBetweenTags(start: string, end: string, repo: string) {
     const { stdout, stderr } = await sh(
       `cd ~/Documents/${repo} && \
@@ -56,10 +87,6 @@ class ReleaseNoteCreator {
     return pullRequests;
   }
   async assignPRsToCategory(pullRequests: string[]) {
-    const basicChanges = [] as string[];
-    const trainingChanges = [] as string[];
-    const breakingChanges = [] as string[];
-
     const rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout
@@ -73,13 +100,9 @@ class ReleaseNoteCreator {
       return () => {
         return new Promise(resolve => {
           rl.question(`'${pullRequest} [b, t]?`, answer => {
-            if (answer === "b") {
-              breakingChanges.push(pullRequest);
-            } else if (answer === "t") {
-              trainingChanges.push(pullRequest);
-            } else {
-              basicChanges.push(pullRequest);
-            }
+            this.categories.some(catgory =>
+              catgory.addIfMatching(answer, pullRequest)
+            );
 
             resolve();
           });
@@ -90,19 +113,7 @@ class ReleaseNoteCreator {
     for (const question of questions) await question();
 
     console.log("\n\n---------- RELEASE NOTES ----------\n");
-    if (breakingChanges.length) {
-      console.log(
-        "**Breaking changes:**\n\n" + breakingChanges.join("\n") + "\n"
-      );
-    }
-    if (basicChanges.length) {
-      console.log("**Basic changes:**\n\n" + basicChanges.join("\n") + "\n");
-    }
-    if (trainingChanges.length) {
-      console.log(
-        "**Training changes:**\n\n" + trainingChanges.join("\n") + "\n"
-      );
-    }
+    this.categories.forEach(category => category.print());
   }
 
   async create(start: string, end: string, repo: string) {
