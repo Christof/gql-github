@@ -18,6 +18,8 @@ const repositoryName = program.repo;
 const start = program.start;
 const end = program.end;
 
+type QuestionCallback = () => Promise<{}>;
+
 class Category {
   public pullRequests = [] as string[];
 
@@ -92,15 +94,13 @@ class ReleaseNoteCreator {
 
     return pullRequests;
   }
-  async assignPRsToCategory(pullRequests: string[]) {
+
+  private createQuestions(pullRequests: string[]): QuestionCallback[] {
     const rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout
     });
-
-    console.log("Assign PRs to category:");
-    this.categories.forEach(category => category.printLegendLine());
-    const questions = pullRequests.map(pullRequest => {
+    return pullRequests.map(pullRequest => {
       return () => {
         return new Promise(resolve => {
           rl.question(`Category for '${pullRequest}'?`, answer => {
@@ -113,6 +113,10 @@ class ReleaseNoteCreator {
         });
       };
     });
+  }
+  async assignPRsToCategory(questions: QuestionCallback[]) {
+    console.log("Assign PRs to category:");
+    this.categories.forEach(category => category.printLegendLine());
 
     for (const question of questions) await question();
 
@@ -126,7 +130,8 @@ class ReleaseNoteCreator {
       end,
       repo
     );
-    await this.assignPRsToCategory(pullRequests);
+    const questions = this.createQuestions(pullRequests);
+    await this.assignPRsToCategory(questions);
   }
 }
 
