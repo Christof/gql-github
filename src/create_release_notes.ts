@@ -77,7 +77,7 @@ async function assignPRsToCategory(pullRequests: string[]) {
   console.log("default is basic change");
   const questions = pullRequests.map(pullRequest => {
     return () => {
-      new Promise(resolve => {
+      return new Promise(resolve => {
         rl.question(`'${pullRequest} [b, t]?`, answer => {
           if (answer === "b") {
             breakingChanges.push(pullRequest);
