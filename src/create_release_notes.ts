@@ -103,7 +103,7 @@ class ReleaseNoteCreator {
     const questions = pullRequests.map(pullRequest => {
       return () => {
         return new Promise(resolve => {
-          rl.question(`'${pullRequest} [b, t]?`, answer => {
+          rl.question(`Category for '${pullRequest}'?`, answer => {
             this.categories.some(catgory =>
               catgory.addIfMatching(answer, pullRequest)
             );
