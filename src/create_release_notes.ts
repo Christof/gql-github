@@ -36,6 +36,12 @@ class Category {
     return false;
   }
 
+  printLegendLine() {
+    const key =
+      this.shortcut === undefined ? "default is " : `${this.shortcut} -> `;
+    console.log(key + this.header);
+  }
+
   print() {
     if (this.pullRequests.length === 0) return;
 
@@ -93,9 +99,7 @@ class ReleaseNoteCreator {
     });
 
     console.log("Assign PRs to category:");
-    console.log("  b -> breaking change");
-    console.log("  t -> training change");
-    console.log("default is basic change");
+    this.categories.forEach(category => category.printLegendLine());
     const questions = pullRequests.map(pullRequest => {
       return () => {
         return new Promise(resolve => {
