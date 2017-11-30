@@ -60,34 +60,41 @@ async function getMergeCommitsBetweenTags(
 }
 
 async function assignPRsToCategory(pullRequests: string[]) {
-  const basicChanges = [];
-  const trainingChanges = [];
-  const breakingChanges = [];
+  const basicChanges = [] as string[];
+  const trainingChanges = [] as string[];
+  const breakingChanges = [] as string[];
 
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
   });
 
+  console.log(pullRequests.join("\n"));
+
   console.log("Assign PRs to category:");
   console.log("  b -> breaking change");
   console.log("  t -> training change");
   console.log("default is basic change");
-  pullRequests.forEach(async pullRequest => {
-    await new Promise(resolve => {
-      rl.question(`'${pullRequest} [b, t]?`, answer => {
-        if (answer === "b") {
-          breakingChanges.push(pullRequest);
-        } else if (answer === "t") {
-          trainingChanges.push(pullRequest);
-        } else {
-          basicChanges.push(pullRequest);
-        }
+  const questions = pullRequests.map(pullRequest => {
+    return () => {
+      new Promise(resolve => {
+        rl.question(`'${pullRequest} [b, t]?`, answer => {
+          if (answer === "b") {
+            breakingChanges.push(pullRequest);
+          } else if (answer === "t") {
+            trainingChanges.push(pullRequest);
+          } else {
+            basicChanges.push(pullRequest);
+          }
 
-        resolve();
+          resolve();
+        });
       });
-    });
+    };
   });
+
+  for (const question of questions)
+    await question();
 
   console.log("---------- RELEASE NOTES ----------");
   if (breakingChanges.length) {
