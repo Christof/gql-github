@@ -58,6 +58,10 @@ class ReleaseNoteCreator {
     new Category("training changes", "t"),
     new Category("basic changes")
   ];
+  private rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
   async getMergeCommitsBetweenTags(start: string, end: string, repo: string) {
     const { stdout, stderr } = await sh(
       `cd ~/Documents/${repo} && \
@@ -95,23 +99,21 @@ class ReleaseNoteCreator {
     return pullRequests;
   }
 
-  private createQuestions(pullRequests: string[]): QuestionCallback[] {
-    const rl = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout
-    });
-    return pullRequests.map(pullRequest => {
-      return () => {
-        return new Promise(resolve => {
-          rl.question(`Category for '${pullRequest}'?`, answer => {
-            this.categories.some(catgory =>
-              catgory.addIfMatching(answer, pullRequest)
-            );
+  private createQuestion(pullRequest: string) {
+    return new Promise(resolve => {
+      this.rl.question(`Category for '${pullRequest}'?`, answer => {
+        this.categories.some(catgory =>
+          catgory.addIfMatching(answer, pullRequest)
+        );
 
-            resolve();
-          });
-        });
-      };
+        resolve();
+      });
+    });
+  }
+
+  private createQuestions(pullRequests: string[]): QuestionCallback[] {
+    return pullRequests.map(pullRequest => {
+      return () => this.createQuestion(pullRequest);
     });
   }
   async assignPRsToCategory(questions: QuestionCallback[]) {
