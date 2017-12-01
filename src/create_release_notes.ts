@@ -74,13 +74,15 @@ class ReleaseNoteCreator {
 
     return stdout.split("\n");
   }
-  async getMergeCommitsBetweenTags(lines: string[]) {
-    const importantLines = lines.reduce(
-      (accumulator, line) => {
-        if (/\S/.test(line) && line.indexOf("--") !== 0) accumulator.push(line);
 
-        return accumulator;
-      },
+  noneWhitespaceLinesReduce(accumulator: string[], line: string) {
+    if (/\S/.test(line) && line.indexOf("--") !== 0) accumulator.push(line);
+
+    return accumulator;
+  }
+  async filterPullRequestCommits(lines: string[]) {
+    const importantLines = lines.reduce(
+      this.noneWhitespaceLinesReduce,
       [] as string[]
     );
 
@@ -131,7 +133,7 @@ class ReleaseNoteCreator {
 
   async create(start: string, end: string, repo: string) {
     const commits = await this.getCommitsBetweenTags(start, end, repo);
-    const pullRequests = await this.getMergeCommitsBetweenTags(commits);
+    const pullRequests = await this.filterPullRequestCommits(commits);
     const questions = this.createQuestions(pullRequests);
     await this.assignPRsToCategory(questions);
   }
