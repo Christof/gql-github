@@ -80,24 +80,32 @@ class ReleaseNoteCreator {
 
     return accumulator;
   }
+
+  pullRequestCommitsReduce(
+    accumulator: string[],
+    line: string,
+    index: number,
+    array: string[]
+  ) {
+    const pullRequestNumberRegex = new RegExp(/#\d*/);
+    if (index % 2 === 0) return accumulator;
+
+    const pullRequestNumberMatch = array[index - 1].match(
+      pullRequestNumberRegex
+    );
+    const result = `- ${line.trim()} (${pullRequestNumberMatch})`;
+    accumulator.push(result);
+    return accumulator;
+  }
+
   async filterPullRequestCommits(lines: string[]) {
     const importantLines = lines.reduce(
       this.noneWhitespaceLinesReduce,
       [] as string[]
     );
 
-    const pullRequestNumberRegex = new RegExp(/#\d*/);
     const pullRequests = importantLines.reduce(
-      (accumulator, line, index, array) => {
-        if (index % 2 === 0) return accumulator;
-
-        const pullRequestNumberMatch = array[index - 1].match(
-          pullRequestNumberRegex
-        );
-        const result = `- ${line.trim()} (${pullRequestNumberMatch})`;
-        accumulator.push(result);
-        return accumulator;
-      },
+      this.pullRequestCommitsReduce,
       [] as string[]
     );
 
