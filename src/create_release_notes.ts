@@ -44,11 +44,11 @@ class Category {
     console.log(key + this.header);
   }
 
-  print() {
-    if (this.pullRequests.length === 0) return;
+  toString() {
+    if (this.pullRequests.length === 0) return "";
 
     const heading = this.header.charAt(0).toUpperCase() + this.header.slice(1);
-    console.log(`**${heading}:**\n\n${this.pullRequests.join("\n")}\n`);
+    return `**${heading}:**\n\n${this.pullRequests.join("\n")}\n`;
   }
 }
 
@@ -137,7 +137,9 @@ class ReleaseNoteCreator {
     for (const question of questions) await question();
 
     console.log("\n\n---------- RELEASE NOTES ----------\n");
-    this.categories.forEach(category => category.print());
+    console.log(
+      this.categories.map(category => category.toString()).join("\n")
+    );
   }
 
   async create(start: string, end: string, repo: string) {
