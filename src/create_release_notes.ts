@@ -112,13 +112,14 @@ class ReleaseNoteCreator {
     return pullRequests;
   }
 
+  private assignToCategoryForAnswer(answer: string, pullRequest: string) {
+    this.categories.some(catgory => catgory.addIfMatching(answer, pullRequest));
+  }
+
   private createQuestion(pullRequest: string) {
     return new Promise(resolve => {
       this.rl.question(`Category for '${pullRequest}'?`, answer => {
-        this.categories.some(catgory =>
-          catgory.addIfMatching(answer, pullRequest)
-        );
-
+        this.assignToCategoryForAnswer(answer, pullRequest);
         resolve();
       });
     });
