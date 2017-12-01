@@ -62,7 +62,8 @@ class ReleaseNoteCreator {
     input: process.stdin,
     output: process.stdout
   });
-  async getMergeCommitsBetweenTags(start: string, end: string, repo: string) {
+
+  async getCommitsBetweenTags(start: string, end: string, repo: string) {
     const { stdout, stderr } = await sh(
       `cd ~/Documents/${repo} && \
     git log ${start}..${end} | \
@@ -71,7 +72,9 @@ class ReleaseNoteCreator {
 
     if (stderr) throw new Error(stderr);
 
-    const lines = stdout.split("\n");
+    return stdout.split("\n");
+  }
+  async getMergeCommitsBetweenTags(lines: string[]) {
     const importantLines = lines.reduce(
       (accumulator, line) => {
         if (/\S/.test(line) && line.indexOf("--") !== 0) accumulator.push(line);
@@ -127,11 +130,8 @@ class ReleaseNoteCreator {
   }
 
   async create(start: string, end: string, repo: string) {
-    const pullRequests = await this.getMergeCommitsBetweenTags(
-      start,
-      end,
-      repo
-    );
+    const commits = await this.getCommitsBetweenTags(start, end, repo);
+    const pullRequests = await this.getMergeCommitsBetweenTags(commits);
     const questions = this.createQuestions(pullRequests);
     await this.assignPRsToCategory(questions);
   }
