@@ -16,6 +16,7 @@
     "typescript": "^2.6.1"
   },
   "dependencies": {
+    "@types/request-promise-native": "^1.0.10",
     "apollo-client-preset": "^1.0.3",
     "apollo-link": "^1.0.3",
     "apollo-link-context": "^1.0.1",
@@ -24,6 +25,7 @@
     "graphql": "^0.11.7",
     "graphql-tag": "^2.5.0",
     "node-fetch": "^1.7.3",
-    "request": "^2.83.0"
+    "request": "^2.83.0",
+    "request-promise-native": "^1.0.5"
   }
 }
