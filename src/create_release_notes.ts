@@ -186,7 +186,7 @@ class ReleaseNoteCreator {
     const questions = this.createQuestions(pullRequests);
     const releaseDescription = await this.assignPRsToCategory(questions);
     const release = this.createRelease(end, releaseDescription);
-    this.postRelease(owner, repo, release, token);
+    await this.postRelease(owner, repo, release, token);
   }
 }
 
