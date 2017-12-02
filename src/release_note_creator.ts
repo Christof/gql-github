@@ -6,20 +6,12 @@ import * as request from "request-promise-native";
 const sh = promisify(exec);
 
 type QuestionCallback = () => Promise<{}>;
-export class ReleaseNoteCreator {
-  private categories = [
-    new Category("breaking changes", "b"),
-    new Category("training changes", "t"),
-    new Category("basic changes")
-  ];
-  private rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-  });
 
-  async getCommitsBetweenTags(start: string, end: string, repo: string) {
+class CommitsFromRepository {
+  constructor(private repo: string) {}
+  async getCommitsBetweenTags(start: string, end: string) {
     const { stdout, stderr } = await sh(
-      `cd ~/Documents/${repo} && \
+      `cd ~/Documents/${this.repo} && \
     git log ${start}..${end} | \
     grep "Merge pull" --after-context=2`
     );
@@ -29,13 +21,13 @@ export class ReleaseNoteCreator {
     return stdout.split("\n");
   }
 
-  noneWhitespaceLinesReduce(accumulator: string[], line: string) {
+  private noneWhitespaceLinesReduce(accumulator: string[], line: string) {
     if (/\S/.test(line) && line.indexOf("--") !== 0) accumulator.push(line);
 
     return accumulator;
   }
 
-  pullRequestCommitsReduce(
+  private pullRequestCommitsReduce(
     accumulator: string[],
     line: string,
     index: number,
@@ -65,6 +57,22 @@ export class ReleaseNoteCreator {
 
     return pullRequests;
   }
+
+  async getPullRequestCommitsBetween(start: string, end: string) {
+    const commits = await this.getCommitsBetweenTags(start, end);
+    return await this.filterPullRequestCommits(commits);
+  }
+}
+export class ReleaseNoteCreator {
+  private categories = [
+    new Category("breaking changes", "b"),
+    new Category("training changes", "t"),
+    new Category("basic changes")
+  ];
+  private rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
 
   private assignToCategoryForAnswer(answer: string, pullRequest: string) {
     this.categories.some(catgory => catgory.addIfMatching(answer, pullRequest));
@@ -134,8 +142,8 @@ export class ReleaseNoteCreator {
     repo: string,
     token: string
   ) {
-    const commits = await this.getCommitsBetweenTags(start, end, repo);
-    const pullRequests = await this.filterPullRequestCommits(commits);
+    const commits = new CommitsFromRepository(repo);
+    const pullRequests = await commits.getCommitsBetweenTags(start, end);
     const questions = this.createQuestions(pullRequests);
     const releaseDescription = await this.assignPRsToCategory(questions);
     const release = this.createRelease(end, releaseDescription);
