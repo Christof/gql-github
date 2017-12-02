@@ -2,6 +2,7 @@ import * as program from "commander";
 import * as readline from "readline";
 import { promisify } from "util";
 import { exec } from "child_process";
+import * as request from "request-promise-native";
 const sh = promisify(exec);
 
 program
@@ -137,18 +138,57 @@ class ReleaseNoteCreator {
     for (const question of questions) await question();
 
     console.log("\n\n---------- RELEASE NOTES ----------\n");
-    console.log(
-      this.categories.map(category => category.toString()).join("\n")
-    );
+    const releaseDescription = this.categories
+      .map(category => category.toString())
+      .join("\n");
+    console.log(releaseDescription);
+
+    return releaseDescription;
   }
 
-  async create(start: string, end: string, repo: string) {
+  private createRelease(tag: string, description: string) {
+    return {
+      tag_name: tag,
+      target_commitish: "master",
+      name: tag,
+      body: description,
+      draft: false,
+      prerelease: false
+    };
+  }
+
+  async postRelease(owner: string, repo: string, release: any, token: string) {
+    const options = {
+      method: "POST",
+      uri: `https://api.github.com/repos/${owner}/${repo}/releases`,
+      body: {
+        ...release
+      },
+      auth: { bearer: token },
+      json: true
+    };
+
+    const response = await request(options);
+
+    console.log(response);
+  }
+
+  async create(
+    start: string,
+    end: string,
+    owner: string,
+    repo: string,
+    token: string
+  ) {
     const commits = await this.getCommitsBetweenTags(start, end, repo);
     const pullRequests = await this.filterPullRequestCommits(commits);
     const questions = this.createQuestions(pullRequests);
-    await this.assignPRsToCategory(questions);
+    const releaseDescription = await this.assignPRsToCategory(questions);
+    const release = this.createRelease(end, releaseDescription);
+    this.postRelease(owner, repo, release, token);
   }
 }
 
+const token = process.env.TOKEN;
 const releaseNoteCreator = new ReleaseNoteCreator();
-releaseNoteCreator.create(start, end, repositoryName);
+releaseNoteCreator.create(start, end, repositoryOwner, repositoryName, token);
