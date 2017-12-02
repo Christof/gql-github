@@ -171,7 +171,7 @@ class ReleaseNoteCreator {
 
     const response = await request(options);
 
-    console.log(response);
+    console.log("Release created: ", response.url);
   }
 
   async create(
