@@ -158,13 +158,14 @@ class ReleaseNoteCreator {
   }
 
   async postRelease(owner: string, repo: string, release: any, token: string) {
-    const options = {
+    const options: request.Options = {
       method: "POST",
       uri: `https://api.github.com/repos/${owner}/${repo}/releases`,
       body: {
         ...release
       },
       auth: { bearer: token },
+      headers: { "User-Agent": owner },
       json: true
     };
 
