@@ -192,4 +192,10 @@ class ReleaseNoteCreator {
 
 const token = process.env.TOKEN;
 const releaseNoteCreator = new ReleaseNoteCreator();
-releaseNoteCreator.create(start, end, repositoryOwner, repositoryName, token);
+releaseNoteCreator
+  .create(start, end, repositoryOwner, repositoryName, token)
+  .then(() => process.exit(0))
+  .catch(error => {
+    console.error(error);
+    process.exit(1);
+  });
