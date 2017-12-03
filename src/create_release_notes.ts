@@ -16,6 +16,17 @@ program
   )
   .parse(process.argv);
 
+if (
+  program.start === undefined ||
+  program.end === undefined ||
+  program.repo === undefined ||
+  program.owner === undefined
+) {
+  console.error("Input arguments missing! See help output:");
+  program.outputHelp();
+  process.exit(1);
+}
+
 const token = process.env.TOKEN;
 const releaseNoteCreator = new ReleaseNoteCreator();
 releaseNoteCreator
