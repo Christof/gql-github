@@ -98,7 +98,7 @@ export class ReleaseNoteCreator {
     token: string
   ) {
     const commits = new CommitsFromRepository(repo);
-    const pullRequests = await commits.getCommitsBetweenTags(start, end);
+    const pullRequests = await commits.getPullRequestCommitsBetween(start, end);
     const questions = this.createQuestions(pullRequests);
     const releaseDescription = await this.assignPRsToCategory(questions);
     const shouldBePosted = await this.askIfReleaseShouldBePosted(
