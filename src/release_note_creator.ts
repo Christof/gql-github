@@ -49,6 +49,19 @@ export class ReleaseNoteCreator {
     return releaseDescription;
   }
 
+  private askIfReleaseShouldBePosted(
+    release: string,
+    tag: string
+  ): Promise<boolean> {
+    return new Promise(resolve => {
+      this.rl.question(
+        `Should the following release for ${tag} be posted?
+        ${release}\n\n[y, n]`,
+        answer => resolve(answer.toLowerCase() === "y")
+      );
+    });
+  }
+
   private createRelease(tag: string, description: string) {
     return {
       tag_name: tag,
@@ -88,6 +101,13 @@ export class ReleaseNoteCreator {
     const pullRequests = await commits.getCommitsBetweenTags(start, end);
     const questions = this.createQuestions(pullRequests);
     const releaseDescription = await this.assignPRsToCategory(questions);
+    const shouldBePosted = await this.askIfReleaseShouldBePosted(
+      releaseDescription,
+      end
+    );
+
+    if (!shouldBePosted) return;
+
     const release = this.createRelease(end, releaseDescription);
     await this.postRelease(owner, repo, release, token);
   }
