@@ -12,10 +12,21 @@ yarn
 yarn run tsc-watch
 ```
 
-# Release Notes
+# Create Release Notes
 
-Currently the tool can get the last release and output it's tag name and
-description.
+The script `src/create_release_notes.js` creates a release note from merge
+commits of pull requests between two tags.
+
+```bash
+TOKEN={github personal access token} node src/create_release_notes.js --owner={repository owner} --repo={repositroy name} --start={start tag} --end={end tag}
+```
+
+The pull requests are categorized by the user and release notes can be uploaded
+to github.
+
+# Retrieve Release Notes
+
+The tool can get the last release and output it's tag name and description.
 
 ```bash
 TOKEN={github personal access token} node src/main.js --owner={repository owner} --repo={repositroy name}

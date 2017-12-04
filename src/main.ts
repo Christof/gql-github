@@ -43,14 +43,20 @@ program
   .option("--owner <repository owner>", "Owner of the repository")
   .option("--repo <repository name>", "Name of the repository")
   .option("--release [release version]", "Specific release version")
+  .option(
+    "--release-search-depth [search depth]",
+    "Specifies how far back the release is searched for",
+    10
+  )
   .parse(process.argv);
 
 const repositoryOwner = program.owner;
 const repositoryName = program.repo;
 
 const releaseName = program.release;
+const searchDepth = program.releaseSearchDepth;
 const query = releaseName
-  ? lastReleasesQuery(repositoryOwner, repositoryName, 10)
+  ? lastReleasesQuery(repositoryOwner, repositoryName, searchDepth)
   : lastReleasesQuery(repositoryOwner, repositoryName, 1);
 
 const httpLink = createHttpLink({
