@@ -118,7 +118,9 @@ function printAuthorStats(desc: string, stats: NameToCommits) {
   const entries = Object.entries(stats);
   const sorted = entries.sort((a, b) => a[1] - b[1]);
 
-  sorted.forEach(([author, commits]) => console.log(author, "\t", commits));
+  sorted.forEach(([author, commits]) =>
+    console.log(author, "\t", commits.toString().padStart(5, " "))
+  );
 }
 
 async function main() {
