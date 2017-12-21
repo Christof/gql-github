@@ -18,6 +18,11 @@ if (program.repo === undefined || program.owner === undefined) {
 }
 
 async function getStatsFor(owner: string, repo: string) {
+  const filename = `stats_${repo}.json`;
+  if (fs.existsSync(filename)) {
+    const readFile = promisify(fs.readFile);
+    return JSON.parse(await readFile(filename, "utf8"));
+  }
   const options: request.Options = {
     method: "GET",
     uri: `https://api.github.com/repos/${owner}/${repo}/stats/contributors`,
@@ -29,7 +34,9 @@ async function getStatsFor(owner: string, repo: string) {
   const response = await request(options);
   console.log(response);
   const writeFile = promisify(fs.writeFile);
-  await writeFile(`stats_${repo}.json`, JSON.stringify(response));
+  await writeFile(filename, JSON.stringify(response));
+
+  return response;
 }
 
 getStatsFor(program.owner, program.repo).catch(error => {
