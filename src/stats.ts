@@ -128,20 +128,24 @@ function printAuthorStats(desc: string, stats: AuthorToCommits) {
   );
 }
 
+async function getStatsForYear(repos: any, year: number) {
+  return await Promise.all(
+    repos.map(async (repo: any) => {
+      const data = await getStatsFor(program.owner, repo);
+      const stats = getCommitsPerAuthorInDateRange(
+        data,
+        new Date(year, 0),
+        new Date(year + 1, 0)
+      );
+      return { repo, stats };
+    })
+  );
+}
+
 async function main() {
   try {
     const ownRepos = await getOrgOwnRepos(program.owner);
-    const repoStats2017 = await Promise.all(
-      ownRepos.map(async (repo: any) => {
-        const data = await getStatsFor(program.owner, repo);
-        const commitStats2017 = getCommitsPerAuthorSince(
-          data,
-          new Date(2017, 0)
-        );
-        return { repo, stats: commitStats2017 };
-      })
-    );
-
+    const repoStats2017 = await getStatsForYear(ownRepos, 2017);
     const overallStats2017 = sumUpForAuthor(repoStats2017 as any);
     printAuthorStats("2017", overallStats2017);
 
