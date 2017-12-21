@@ -1,5 +1,7 @@
 import * as program from "commander";
 import * as request from "request-promise-native";
+import * as fs from "fs";
+import { promisify } from "util";
 
 const token = process.env.TOKEN;
 program
@@ -26,6 +28,8 @@ async function getStatsFor(owner: string, repo: string) {
 
   const response = await request(options);
   console.log(response);
+  const writeFile = promisify(fs.writeFile);
+  await writeFile(`stats_${repo}.json`, JSON.stringify(response));
 }
 
 getStatsFor(program.owner, program.repo).catch(error => {
