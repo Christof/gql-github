@@ -88,16 +88,16 @@ function getCommitsPerAuthorSince(data: any[], startTime: Date) {
   }, {});
 }
 
-interface NameToCommits {
+interface AuthorToCommits {
   [author: string]: number;
 }
 
 function sumUpForAuthor(
   repoStats: {
     repo: string;
-    stats: NameToCommits;
+    stats: AuthorToCommits;
   }[]
-): NameToCommits {
+): AuthorToCommits {
   return repoStats.reduce(
     (acc, repo) => {
       for (let [key, value] of Object.entries(repo.stats)) {
@@ -109,11 +109,11 @@ function sumUpForAuthor(
       }
       return acc;
     },
-    {} as NameToCommits
+    {} as AuthorToCommits
   );
 }
 
-function printAuthorStats(desc: string, stats: NameToCommits) {
+function printAuthorStats(desc: string, stats: AuthorToCommits) {
   console.log("\n\n" + desc + "\n");
   const entries = Object.entries(stats);
   const sorted = entries.sort((a, b) => a[1] - b[1]);
