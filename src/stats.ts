@@ -113,6 +113,14 @@ function sumUpForAuthor(
   );
 }
 
+function printAuthorStats(desc: string, stats: NameToCommits) {
+  console.log("\n\n" + desc + "\n");
+  const entries = Object.entries(stats);
+  const sorted = entries.sort((a, b) => a[1] - b[1]);
+
+  sorted.forEach(([author, commits]) => console.log(author, "\t", commits));
+}
+
 async function main() {
   try {
     const ownRepos = await getOrgOwnRepos(program.owner);
@@ -128,8 +136,7 @@ async function main() {
     );
 
     const overallStats2017 = sumUpForAuthor(repoStats2017 as any);
-    console.log("2017:\n");
-    console.log(overallStats2017);
+    printAuthorStats("2017", overallStats2017);
 
     const repoStats = await Promise.all(
       ownRepos.map(async (repo: any) => {
@@ -140,8 +147,7 @@ async function main() {
     );
 
     const overallStats = sumUpForAuthor(repoStats as any);
-    console.log("overall:\n");
-    console.log(overallStats);
+    printAuthorStats("Overall", overallStats);
   } catch (error) {
     console.error(error);
     process.exit(1);
