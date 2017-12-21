@@ -119,11 +119,6 @@ async function main() {
     const repoStats2017 = await Promise.all(
       ownRepos.map(async (repo: any) => {
         const data = await getStatsFor(program.owner, repo);
-        if (data === undefined || data.reduce === undefined) {
-          console.log("no data for", repo);
-          return { repo, stats: {} };
-        }
-
         const commitStats2017 = getCommitsPerAuthorSince(
           data,
           new Date(2017, 0)
