@@ -2,6 +2,8 @@ import * as program from "commander";
 import * as request from "request-promise-native";
 import * as fs from "fs";
 import { promisify } from "util";
+const writeFile = promisify(fs.writeFile);
+const readFile = promisify(fs.readFile);
 
 const token = process.env.TOKEN;
 program
@@ -15,6 +17,32 @@ if (program.repo === undefined || program.owner === undefined) {
   console.error("Input arguments missing! See help output:");
   program.outputHelp();
   process.exit(1);
+}
+
+async function getOrgRepos(organisation: string) {
+  const options: request.Options = {
+    method: "GET",
+    uri: `https://api.github.com/orgs/${organisation}/repos`,
+    auth: { bearer: token },
+    headers: { "User-Agent": organisation },
+    json: true
+  };
+
+  return await request(options);
+}
+
+async function getOrgOwnRepos(organisation: string) {
+  const filename = `org_repos_${organisation}.json`;
+  if (fs.existsSync(filename)) {
+    return JSON.parse(await readFile(filename, "utf8"));
+  }
+  const repos = await getOrgRepos(program.owner);
+  const ownRepos = repos
+    .filter((repo: any) => !repo.fork)
+    .map((repo: any) => repo.name);
+
+  await writeFile(filename, JSON.stringify(ownRepos));
+  return ownRepos;
 }
 
 async function getStatsFor(owner: string, repo: string) {
@@ -33,7 +61,6 @@ async function getStatsFor(owner: string, repo: string) {
 
   const response = await request(options);
   console.log(response);
-  const writeFile = promisify(fs.writeFile);
   await writeFile(filename, JSON.stringify(response));
 
   return response;
@@ -63,6 +90,9 @@ function getCommitsPerAuthorSince(data: any[], startTime: Date) {
 
 async function main() {
   try {
+    const ownRepos = await getOrgOwnRepos(program.owner);
+    console.log(ownRepos);
+
     const data = await getStatsFor(program.owner, program.repo);
     const commitStats = getCommitsPerAuthor(data);
     console.log(commitStats);
