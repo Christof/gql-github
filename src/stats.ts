@@ -88,6 +88,31 @@ function getCommitsPerAuthorSince(data: any[], startTime: Date) {
   }, {});
 }
 
+interface NameToCommits {
+  [author: string]: number;
+}
+
+function sumUpForAuthor(
+  repoStats: {
+    repo: string;
+    stats: NameToCommits;
+  }[]
+): NameToCommits {
+  return repoStats.reduce(
+    (acc, repo) => {
+      for (let [key, value] of Object.entries(repo.stats)) {
+        if (acc[key] === undefined) {
+          acc[key] = value;
+        } else {
+          acc[key] += value;
+        }
+      }
+      return acc;
+    },
+    {} as NameToCommits
+  );
+}
+
 async function main() {
   try {
     const ownRepos = await getOrgOwnRepos(program.owner);
@@ -107,7 +132,8 @@ async function main() {
       })
     );
 
-    console.log(repoStats2017);
+    const overallStats = sumUpForAuthor(repoStats2017 as any);
+    console.log(overallStats);
   } catch (error) {
     console.error(error);
     process.exit(1);
