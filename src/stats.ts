@@ -39,7 +39,22 @@ async function getStatsFor(owner: string, repo: string) {
   return response;
 }
 
-getStatsFor(program.owner, program.repo).catch(error => {
-  console.error(error);
-  process.exit(1);
-});
+function getCommitsPerAuthor(data: any[]) {
+  return data.reduce((acc, userEntry) => {
+    acc[userEntry.author.login] = userEntry.total;
+    return acc;
+  }, {});
+}
+
+async function main() {
+  try {
+    const data = await getStatsFor(program.owner, program.repo);
+    const commitStats = getCommitsPerAuthor(data);
+    console.log(commitStats);
+  } catch (error) {
+    console.error(error);
+    process.exit(1);
+  }
+}
+
+main();
