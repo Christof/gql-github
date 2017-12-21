@@ -91,13 +91,23 @@ function getCommitsPerAuthorSince(data: any[], startTime: Date) {
 async function main() {
   try {
     const ownRepos = await getOrgOwnRepos(program.owner);
-    console.log(ownRepos);
+    const repoStats2017 = await Promise.all(
+      ownRepos.map(async (repo: any) => {
+        const data = await getStatsFor(program.owner, repo);
+        if (data === undefined || data.reduce === undefined) {
+          console.log("no data for", repo);
+          return { repo, stats: {} };
+        }
 
-    const data = await getStatsFor(program.owner, program.repo);
-    const commitStats = getCommitsPerAuthor(data);
-    console.log(commitStats);
-    const commitStats2017 = getCommitsPerAuthorSince(data, new Date(2017, 0));
-    console.log("2017:\n", commitStats2017);
+        const commitStats2017 = getCommitsPerAuthorSince(
+          data,
+          new Date(2017, 0)
+        );
+        return { repo, stats: commitStats2017 };
+      })
+    );
+
+    console.log(repoStats2017);
   } catch (error) {
     console.error(error);
     process.exit(1);
