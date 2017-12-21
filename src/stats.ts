@@ -46,11 +46,28 @@ function getCommitsPerAuthor(data: any[]) {
   }, {});
 }
 
+function getCommitsPerAuthorSince(data: any[], startTime: Date) {
+  const unixTime = Math.round(startTime.getTime() / 1000);
+  return data.reduce((acc, userEntry) => {
+    const weeksInRange = userEntry.weeks.filter(
+      (week: any) => week.w > unixTime
+    );
+    const commits = weeksInRange.reduce(
+      (sum: number, week: any) => sum + week.c,
+      0
+    );
+    acc[userEntry.author.login] = commits;
+    return acc;
+  }, {});
+}
+
 async function main() {
   try {
     const data = await getStatsFor(program.owner, program.repo);
     const commitStats = getCommitsPerAuthor(data);
     console.log(commitStats);
+    const commitStats2017 = getCommitsPerAuthorSince(data, new Date(2017, 0));
+    console.log("2017:\n", commitStats2017);
   } catch (error) {
     console.error(error);
     process.exit(1);
