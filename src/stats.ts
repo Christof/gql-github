@@ -127,7 +127,20 @@ async function main() {
       })
     );
 
-    const overallStats = sumUpForAuthor(repoStats2017 as any);
+    const overallStats2017 = sumUpForAuthor(repoStats2017 as any);
+    console.log("2017:\n");
+    console.log(overallStats2017);
+
+    const repoStats = await Promise.all(
+      ownRepos.map(async (repo: any) => {
+        const data = await getStatsFor(program.owner, repo);
+        const commitStats = getCommitsPerAuthor(data);
+        return { repo, stats: commitStats };
+      })
+    );
+
+    const overallStats = sumUpForAuthor(repoStats as any);
+    console.log("overall:\n");
     console.log(overallStats);
   } catch (error) {
     console.error(error);
