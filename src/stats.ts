@@ -145,9 +145,15 @@ async function getStatsForYear(repos: any, year: number) {
 async function main() {
   try {
     const ownRepos = await getOrgOwnRepos(program.owner);
-    const repoStats2017 = await getStatsForYear(ownRepos, 2017);
-    const overallStats2017 = sumUpForAuthor(repoStats2017 as any);
-    printAuthorStats("2017", overallStats2017);
+
+    const years = [2013, 2014, 2015, 2016, 2017];
+    await Promise.all(
+      years.map(async year => {
+        const repoStatsForYear = await getStatsForYear(ownRepos, year);
+        const overallStatsForYear = sumUpForAuthor(repoStatsForYear as any);
+        printAuthorStats(year.toString(), overallStatsForYear);
+      })
+    );
 
     const repoStats = await Promise.all(
       ownRepos.map(async (repo: any) => {
