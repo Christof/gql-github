@@ -2,6 +2,7 @@ import * as program from "commander";
 import * as request from "request-promise-native";
 import * as fs from "fs";
 import { promisify } from "util";
+import { getNamesOfOwnRepositories } from "./stats_helper";
 const writeFile = promisify(fs.writeFile);
 const readFile = promisify(fs.readFile);
 
@@ -37,9 +38,7 @@ async function getOrgOwnRepos(organisation: string) {
     return JSON.parse(await readFile(filename, "utf8"));
   }
   const repos = await getOrgRepos(program.owner);
-  const ownRepos = repos
-    .filter((repo: any) => !repo.fork)
-    .map((repo: any) => repo.name);
+  const ownRepos = getNamesOfOwnRepositories(repos);
 
   await writeFile(filename, JSON.stringify(ownRepos));
   return ownRepos;
