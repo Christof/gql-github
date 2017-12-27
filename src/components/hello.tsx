@@ -67,17 +67,22 @@ export class Hello extends React.Component<HelloProps, State> {
   }
   render() {
     return (
-      <form onSubmit={this.handleSubmit}>
-        <label>
-          Name:
-          <input
-            type="text"
-            value={this.state.token}
-            onChange={this.handleChange}
-          />
-        </label>
-        <input type="submit" value="Submit" />
-      </form>
+      <div>
+        <form onSubmit={this.handleSubmit}>
+          <label>
+            Name:
+            <input
+              type="text"
+              value={this.state.token}
+              onChange={this.handleChange}
+            />
+          </label>
+          <input type="submit" value="Submit" />
+        </form>
+
+        <h2>Own repositories</h2>
+        <ul>{this.state.items.map(item => <li>{item}</li>)}</ul>
+      </div>
     );
   }
 }
