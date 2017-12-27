@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "tsc-watch": "./node_modules/typescript/bin/tsc -w"
+    "tsc-watch": "./node_modules/typescript/bin/tsc -w",
+    "webpack": "./node_modules/webpack/bin/webpack.js"
   },
   "author": "Christof Sirk",
   "license": "MIT",
