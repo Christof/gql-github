@@ -99,7 +99,7 @@ export class Hello extends React.Component<HelloProps, State> {
         </form>
 
         <h2>Own repositories</h2>
-        <ul>{this.state.items.map(item => <li>{item}</li>)}</ul>
+        <ul>{this.state.items.map(item => <li key={item}>{item}</li>)}</ul>
       </div>
     );
   }
