@@ -10,6 +10,7 @@ export interface HelloProps {
 interface State {
   error: any;
   token: string;
+  organization: string;
   items: any[];
 }
 
@@ -19,22 +20,25 @@ export class Hello extends React.Component<HelloProps, State> {
     this.state = {
       error: null,
       token: "",
+      organization: "skillslab",
       items: []
     };
 
-    this.handleChange = this.handleChange.bind(this);
+    this.changeToken = this.changeToken.bind(this);
+    this.changeOrganization = this.changeOrganization.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   async loadRepos() {
     try {
-      const organisation = "skillslab";
-      const uri = `https://api.github.com/orgs/${organisation}/repos`;
+      const uri = `https://api.github.com/orgs/${
+        this.state.organization
+      }/repos`;
       const params: RequestInit = {
         method: "GET",
         mode: "cors",
         headers: [
-          ["User-Agent", organisation],
+          ["User-Agent", this.state.organization],
           ["Authorization", `token ${this.state.token}`]
         ]
       };
@@ -60,9 +64,15 @@ export class Hello extends React.Component<HelloProps, State> {
     this.loadRepos();
   }
 
-  handleChange(event: ChangeEvent<HTMLInputElement>) {
+  changeToken(event: ChangeEvent<HTMLInputElement>) {
     this.setState({
       token: event.target.value
+    });
+  }
+
+  changeOrganization(event: ChangeEvent<HTMLInputElement>) {
+    this.setState({
+      organization: event.target.value
     });
   }
   render() {
@@ -70,11 +80,19 @@ export class Hello extends React.Component<HelloProps, State> {
       <div>
         <form onSubmit={this.handleSubmit}>
           <label>
-            Name:
+            TOKEN:
             <input
               type="text"
               value={this.state.token}
-              onChange={this.handleChange}
+              onChange={this.changeToken}
+            />
+          </label>
+          <label>
+            Organization:
+            <input
+              type="text"
+              value={this.state.organization}
+              onChange={this.changeOrganization}
             />
           </label>
           <input type="submit" value="Submit" />
