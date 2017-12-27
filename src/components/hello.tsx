@@ -19,11 +19,15 @@ export class Hello extends React.Component<HelloProps, {}> {
   async componentDidMount() {
     try {
       const organisation = "skillslab";
+      const token = "TOKEN";
       const uri = `https://api.github.com/orgs/${organisation}/repos`;
       const params: RequestInit = {
         method: "GET",
         mode: "cors",
-        headers: [["User-Agent", organisation]]
+        headers: [
+          ["User-Agent", organisation],
+          ["Authorization", `token ${token}`]
+        ]
       };
       // auth: { bearer: token },
       // json: true
