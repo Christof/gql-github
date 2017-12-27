@@ -1,5 +1,6 @@
 import * as React from "react";
 import { FormEvent, ChangeEvent } from "react";
+import { getNamesOfOwnRepositories } from "../stats_helper";
 
 export interface HelloProps {
   compiler: string;
@@ -41,9 +42,10 @@ export class Hello extends React.Component<HelloProps, State> {
       // json: true
       const res = await fetch(uri, params);
       const result = await res.json();
-      console.log(result);
+      const own = getNamesOfOwnRepositories(result);
+      console.log(own);
       this.setState({
-        items: result
+        items: own
       });
     } catch (error) {
       console.log(error);
