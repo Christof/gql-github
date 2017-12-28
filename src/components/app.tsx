@@ -16,8 +16,9 @@ export class App extends React.Component<{}, {}> {
     return (
       <BrowserRouter>
         <div>
+          <a href={githubLoginUrl}>Login with GitHub</a>
           <Link to="/hello">Hello</Link>
-          <Link to={githubLoginUrl}>Login with GitHub</Link>
+          <Route path="/auth/callback?code=:code" component={Hello} />
           <Route path="/hello" component={Hello} />
         </div>
       </BrowserRouter>
