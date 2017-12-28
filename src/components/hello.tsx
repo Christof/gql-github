@@ -30,7 +30,6 @@ export class Hello extends React.Component<HelloProps, State> {
   }
 
   getRequestGithub(path: string) {
-    const uri = `https://api.github.com/${path}`;
     const params: RequestInit = {
       method: "GET",
       mode: "cors",
@@ -40,7 +39,7 @@ export class Hello extends React.Component<HelloProps, State> {
       ]
     };
 
-    return fetch(uri, params);
+    return fetch(`https://api.github.com/${path}`, params);
   }
 
   async loadRepos() {
