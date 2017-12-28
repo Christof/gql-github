@@ -29,22 +29,26 @@ export class Hello extends React.Component<HelloProps, State> {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  getRequestGithub(path: string) {
+    const uri = `https://api.github.com/${path}`;
+    const params: RequestInit = {
+      method: "GET",
+      mode: "cors",
+      headers: [
+        ["User-Agent", this.state.organization],
+        ["Authorization", `token ${this.state.token}`]
+      ]
+    };
+    // auth: { bearer: token },
+    // json: true
+    return fetch(uri, params);
+  }
+
   async loadRepos() {
     try {
-      const uri = `https://api.github.com/orgs/${
-        this.state.organization
-      }/repos`;
-      const params: RequestInit = {
-        method: "GET",
-        mode: "cors",
-        headers: [
-          ["User-Agent", this.state.organization],
-          ["Authorization", `token ${this.state.token}`]
-        ]
-      };
-      // auth: { bearer: token },
-      // json: true
-      const res = await fetch(uri, params);
+      const res = await this.getRequestGithub(
+        `orgs/${this.state.organization}/repos`
+      );
       const result = await res.json();
       const own = getNamesOfOwnRepositories(result);
       console.log(own);
