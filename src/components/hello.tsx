@@ -39,8 +39,7 @@ export class Hello extends React.Component<HelloProps, State> {
         ["Authorization", `token ${this.state.token}`]
       ]
     };
-    // auth: { bearer: token },
-    // json: true
+
     return fetch(uri, params);
   }
 
