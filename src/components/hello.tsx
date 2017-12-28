@@ -17,6 +17,7 @@ interface State {
 export class Hello extends React.Component<HelloProps, State> {
   constructor(props: HelloProps) {
     super(props);
+    console.log("props", props);
     this.state = {
       error: null,
       token: "",

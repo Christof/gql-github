@@ -10,7 +10,7 @@ export class App extends React.Component<{}, {}> {
       "https://github.com/login/oauth/authorize?" +
       qs.stringify({
         client_id: "1e031c3e419938e53c8e",
-        redirect_uri: window.location.origin + "/auth/callback",
+        redirect_uri: window.location.origin + "/auth-callback",
         scope: "repo,user"
       });
     return (
@@ -18,7 +18,8 @@ export class App extends React.Component<{}, {}> {
         <div>
           <a href={githubLoginUrl}>Login with GitHub</a>
           <Link to="/hello">Hello</Link>
-          <Route path="/auth/callback?code=:code" component={Hello} />
+          <Route path="/auth-callback?code=:code" component={Hello} />
+          <Route path="/auth-callback" component={Hello} />
           <Route path="/hello" component={Hello} />
         </div>
       </BrowserRouter>
