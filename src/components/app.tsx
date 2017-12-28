@@ -3,6 +3,7 @@ import { BrowserRouter, Link, Route } from "react-router-dom";
 import * as qs from "qs";
 
 import { Hello } from "./hello";
+import { GithubCallback } from "./github_callback";
 
 export class App extends React.Component<{}, {}> {
   render() {
@@ -18,8 +19,7 @@ export class App extends React.Component<{}, {}> {
         <div>
           <a href={githubLoginUrl}>Login with GitHub</a>
           <Link to="/hello">Hello</Link>
-          <Route path="/auth-callback?code=:code" component={Hello} />
-          <Route path="/auth-callback" component={Hello} />
+          <Route path="/auth-callback" component={GithubCallback} />
           <Route path="/hello" component={Hello} />
         </div>
       </BrowserRouter>
