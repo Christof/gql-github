@@ -22,7 +22,8 @@
     "source-map-loader": "^0.2.3",
     "tslint": "^5.8.0",
     "typescript": "^2.6.1",
-    "webpack": "^3.10.0"
+    "webpack": "^3.10.0",
+    "webpack-dev-server": "^2.9.7"
   },
   "dependencies": {
     "apollo-client-preset": "^1.0.3",
