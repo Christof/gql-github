@@ -46,9 +46,14 @@ export class Hello extends React.Component<HelloProps, State> {
 
   async loadRepos() {
     try {
-      const res = await this.getRequestGithub(
+      let res = await this.getRequestGithub(
         `orgs/${this.state.organization}/repos`
       );
+      if (res.status === 404) {
+        res = await this.getRequestGithub(
+          `users/${this.state.organization}/repos`
+        );
+      }
       const result = await res.json();
       const own = getNamesOfOwnRepositories(result);
       console.log(own);
@@ -92,7 +97,7 @@ export class Hello extends React.Component<HelloProps, State> {
             />
           </label>
           <label>
-            Organization:
+            Organization or User:
             <input
               type="text"
               value={this.state.organization}
