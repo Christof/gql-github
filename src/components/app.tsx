@@ -9,8 +9,8 @@ export class App extends React.Component<{}, {}> {
       <BrowserRouter>
         <div>
           <Link to="/hello">Hello</Link>
+          <Route path="/hello" component={Hello} />
         </div>
-        <Route path="/hello" component={Hello} />
       </BrowserRouter>
     );
   }
