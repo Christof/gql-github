@@ -29,6 +29,12 @@ module.exports = {
     ]
   },
 
+  externals: {
+    react: "React",
+    "react-dom": "ReactDOM",
+    "react-router-dom": "ReactRouterDOM"
+  },
+
   devServer: {
     port: 3000,
     historyApiFallback: true
