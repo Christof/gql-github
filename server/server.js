@@ -1,11 +1,24 @@
 const express = require("express");
 const request = require("request-promise-native");
 const qs = require("qs");
+const program = require("commander");
+program
+  .version("0.0.1")
+  .option("--client-id <client id>", "Client id of Github OAuth app")
+  .option(
+    "--client-secret <client secret>",
+    "Client secret of Github OAuth app"
+  )
+  .option("--port <server port>", "Server port")
+  .option("--host <server host>", "Server host")
+  .option("--origin <allowed origin>", "CORS allow origin pattern")
+  .description(`TBD`)
+  .parse(process.argv);
 
 const app = express();
 
 app.all("*", function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header("Access-Control-Allow-Origin", program.origin);
   res.header("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type");
   next();
@@ -23,8 +36,8 @@ app.get("/authenticate", function(req, res) {
   const githubAuthUrl =
     "https://github.com/login/oauth/access_token?" +
     qs.stringify({
-      client_id: "1e031c3e419938e53c8e",
-      client_secret: "",
+      client_id: program.clientId,
+      client_secret: program.clientSecret,
       code: req.query.code,
       state: req.query.state
     });
@@ -41,8 +54,8 @@ app.get("/authenticate", function(req, res) {
     });
 });
 
-const port = 7000;
-const host = "localhost";
+const port = program.port;
+const host = program.host;
 app.listen(port, host, () => {
   console.log(`Server running on: http://${host}:${port}`);
 });
