@@ -1,26 +1,11 @@
 import * as React from "react";
 import * as qs from "qs";
 
-export class GithubCallback extends React.Component<
-  {},
-  { code: string; state: string }
-> {
-  constructor(props: { location: { search: string } }) {
-    super(props);
-    const queryPrams = qs.parse(props.location.search.substr(1));
-    this.state = {
-      code: queryPrams.code,
-      state: window.localStorage.githubState
-    };
-    const githubState = queryPrams.state;
-    if (githubState !== window.localStorage.githubState) {
-      throw new Error("Retrieved state not same sent one. Possible CSRF!");
-    }
-    this.state = window.localStorage.githubState;
-    delete window.localStorage.githubState;
-  }
-
-  async retrieveAccessToken() {
+interface Props {
+  location: { search: string };
+}
+export class GithubCallback extends React.Component<Props, {}> {
+  async retrieveAccessToken(code: string, state: string) {
     const params: RequestInit = {
       method: "GET"
     };
@@ -28,8 +13,8 @@ export class GithubCallback extends React.Component<
     const githubAuthUrl =
       "http://localhost:7000/authenticate?" +
       qs.stringify({
-        code: this.state.code,
-        state: this.state.state
+        code,
+        state
       });
     const response = await fetch(githubAuthUrl, params);
     const retrievedParams = await response.json();
@@ -37,7 +22,16 @@ export class GithubCallback extends React.Component<
   }
 
   componentDidMount() {
-    this.retrieveAccessToken();
+    const queryPrams = qs.parse(this.props.location.search.substr(1));
+
+    const githubState = queryPrams.state;
+    if (githubState !== window.localStorage.githubState) {
+      throw new Error("Retrieved state not same sent one. Possible CSRF!");
+    }
+    const state = window.localStorage.githubState;
+    delete window.localStorage.githubState;
+
+    this.retrieveAccessToken(queryPrams.code, state);
   }
 
   render() {
