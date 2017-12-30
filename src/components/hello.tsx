@@ -2,11 +2,6 @@ import * as React from "react";
 import { FormEvent, ChangeEvent } from "react";
 import { getNamesOfOwnRepositories } from "../stats_helper";
 
-export interface HelloProps {
-  compiler: string;
-  framework: string;
-}
-
 interface State {
   error: any;
   token: string;
@@ -14,10 +9,9 @@ interface State {
   items: any[];
 }
 
-export class Hello extends React.Component<HelloProps, State> {
-  constructor(props: HelloProps) {
+export class Hello extends React.Component<{}, State> {
+  constructor(props: {}) {
     super(props);
-    console.log("props", props);
     this.state = {
       error: null,
       token: JSON.parse(window.localStorage.github).access_token,
