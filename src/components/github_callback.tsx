@@ -1,10 +1,9 @@
 import * as React from "react";
 import * as qs from "qs";
+import { RouteComponentProps } from "react-router";
 
-interface Props {
-  location: { search: string };
-  history: any;
-}
+interface Props extends RouteComponentProps<{}> {}
+
 export class GithubCallback extends React.Component<Props, {}> {
   async retrieveAccessToken(code: string, state: string) {
     const params: RequestInit = {
