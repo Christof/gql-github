@@ -4,26 +4,34 @@ const qs = require("qs");
 
 const app = express();
 
-app.get("/authenticate/:code", function(req, res) {
+app.get("/authenticate", function(req, res) {
+  console.log("request token for code", req.query.code);
   const params = {
     mode: "no-cors",
     headers: [["Content-Type", "test/plain"], ["Accept", "application/json"]]
   };
+
+  // const redirect_uri = "localhost:3000/auth-callback";
 
   const githubAuthUrl =
     "https://github.com/login/oauth/access_token?" +
     qs.stringify({
       client_id: "1e031c3e419938e53c8e",
       client_secret: "",
-      redirect_uri: window.location.origin + "/auth-callback",
-      code: this.code,
-      state: this.state
+      code: req.query.code,
+      state: req.query.state
     });
-  request.post(githubAuthUrl, options).then(response => {
-    const retrievedParams = response.json();
-    console.log(retrievedParams);
-    res.json({ token: retrievedParams.token });
-  });
+
+  request
+    .post(githubAuthUrl, { json: true })
+    .then(responseBody => {
+      console.log(responseBody);
+      res.json(responseBody);
+    })
+    .catch(error => {
+      console.error("Error during request for token:", error);
+      res.statusCode = 500;
+    });
 });
 
 const port = 7000;
