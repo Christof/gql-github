@@ -20,10 +20,11 @@ export class Hello extends React.Component<HelloProps, State> {
     console.log("props", props);
     this.state = {
       error: null,
-      token: window.localStorage.github.token,
+      token: JSON.parse(window.localStorage.github).access_token,
       organization: "skillslab",
       items: []
     };
+    console.log("state", this.state);
 
     this.changeToken = this.changeToken.bind(this);
     this.changeOrganization = this.changeOrganization.bind(this);
@@ -31,6 +32,7 @@ export class Hello extends React.Component<HelloProps, State> {
   }
 
   getRequestGithub(path: string) {
+    console.log("Get", path, this.state.token);
     const params: RequestInit = {
       method: "GET",
       mode: "cors",
