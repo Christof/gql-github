@@ -4,6 +4,13 @@ const qs = require("qs");
 
 const app = express();
 
+app.all("*", function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header("Access-Control-Allow-Methods", "GET, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type");
+  next();
+});
+
 app.get("/authenticate", function(req, res) {
   console.log("request token for code", req.query.code);
   const params = {
