@@ -19,21 +19,12 @@ export class GithubCallback extends React.Component<{}, {}> {
 
   async retrieveAccessToken() {
     const params: RequestInit = {
-      method: "POST",
-      mode: "no-cors",
-      headers: [
-        ["User-Agent", "Christof"],
-        ["Content-Type", "test/plain"],
-        ["Accept", "application/json"]
-      ]
+      method: "GET"
     };
 
     const githubAuthUrl =
-      "https://github.com/login/oauth/access_token?" +
+      "http://localhost:7000/authenticate?" +
       qs.stringify({
-        client_id: "1e031c3e419938e53c8e",
-        client_secret: "f5a212853274d994ceecad711cb3e09b59fb658c",
-        redirect_uri: window.location.origin + "/auth-callback",
         code: this.code,
         state: this.state
       });
