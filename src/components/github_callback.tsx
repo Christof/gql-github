@@ -3,6 +3,7 @@ import * as qs from "qs";
 
 interface Props {
   location: { search: string };
+  history: any;
 }
 export class GithubCallback extends React.Component<Props, {}> {
   async retrieveAccessToken(code: string, state: string) {
@@ -19,6 +20,8 @@ export class GithubCallback extends React.Component<Props, {}> {
     const response = await fetch(githubAuthUrl, params);
     const retrievedParams = await response.json();
     console.log(retrievedParams);
+    window.localStorage.github = retrievedParams;
+    this.props.history.push("/hello");
   }
 
   componentDidMount() {

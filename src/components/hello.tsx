@@ -20,7 +20,7 @@ export class Hello extends React.Component<HelloProps, State> {
     console.log("props", props);
     this.state = {
       error: null,
-      token: "",
+      token: window.localStorage.github.token,
       organization: "skillslab",
       items: []
     };
