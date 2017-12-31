@@ -9,7 +9,7 @@ interface State {
   items: any[];
 }
 
-export class Hello extends React.Component<{}, State> {
+export class Stats extends React.Component<{}, State> {
   constructor(props: {}) {
     super(props);
     this.state = {

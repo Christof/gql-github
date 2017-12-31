@@ -2,7 +2,7 @@ import * as React from "react";
 import { BrowserRouter, Link, Route } from "react-router-dom";
 import * as qs from "qs";
 
-import { Hello } from "./hello";
+import { Stats } from "./stats";
 import { GithubCallback } from "./github_callback";
 import * as uuid from "node-uuid";
 
@@ -25,10 +25,12 @@ export class App extends React.Component<{}, {}> {
     return (
       <BrowserRouter>
         <div>
-          <a href={githubLoginUrl}>Login with GitHub</a>
-          <Link to="/hello">Hello</Link>
+          <div>
+            <a href={githubLoginUrl}>Login with GitHub</a>
+          </div>
+          <Link to="/stats">Stats</Link>
           <Route path="/auth-callback" component={GithubCallback} />
-          <Route path="/hello" component={Hello} />
+          <Route path="/stats" component={Stats} />
         </div>
       </BrowserRouter>
     );
