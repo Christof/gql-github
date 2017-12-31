@@ -63,9 +63,22 @@ export class Stats extends React.Component<{}, State> {
     }
   }
 
-  handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async getStatsFor(owner: string, repo: string) {
+    const response = await this.getRequestGithub(
+      `repos/${owner}/${repo}/stats/contributors`
+    );
+
+    return response.json();
+  }
+
+  async handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    this.loadRepos();
+    await this.loadRepos();
+    const stats = await this.getStatsFor(
+      this.state.organization,
+      this.state.items[0]
+    );
+    console.log(stats);
   }
 
   changeToken(event: ChangeEvent<HTMLInputElement>) {
