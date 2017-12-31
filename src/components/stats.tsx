@@ -28,9 +28,9 @@ export class Stats extends React.Component<{}, State> {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  setupGraph() {
+  setupGraph(title: string, data: any) {
     const layout = {
-      title: "Commits",
+      title,
       xaxis: {
         autorange: true,
         // range: ['2015-02-17', '2017-02-16'],
@@ -61,12 +61,9 @@ export class Stats extends React.Component<{}, State> {
       }
     };
 
-    Plotly.newPlot("graph", this.state.data, layout as any);
+    Plotly.newPlot(title, data, layout as any);
   }
 
-  componentDidMount() {
-    this.setupGraph();
-  }
   getRequestGithub(path: string) {
     console.log("Get", path, this.state.token);
     const params: RequestInit = {
@@ -118,16 +115,16 @@ export class Stats extends React.Component<{}, State> {
       y: statsForAuthor.weeks.map((week: any) => week.c)
     };
   }
+
   async handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     await this.loadRepos();
-    const stats = await this.getStatsFor(this.state.owner, this.state.repos[0]);
-    console.log(stats);
 
-    this.setState({
-      data: stats.map((author: any) => this.traceForAuthor(author))
+    this.state.repos.map(async repo => {
+      const stats = await this.getStatsFor(this.state.owner, repo);
+      const data = stats.map((author: any) => this.traceForAuthor(author));
+      this.setupGraph(repo, data);
     });
-    this.setupGraph();
   }
 
   changeToken(event: ChangeEvent<HTMLInputElement>) {
@@ -140,6 +137,15 @@ export class Stats extends React.Component<{}, State> {
     this.setState({
       owner: event.target.value
     });
+  }
+
+  renderRepoGraph(repo: string) {
+    return (
+      <div key={repo}>
+        <h1>{repo}</h1>
+        <div id={repo} />
+      </div>
+    );
   }
   render() {
     return (
@@ -165,9 +171,7 @@ export class Stats extends React.Component<{}, State> {
         </form>
 
         <h2>Own repositories</h2>
-        <ul>{this.state.repos.map(item => <li key={item}>{item}</li>)}</ul>
-
-        <div id="graph" />
+        <div>{this.state.repos.map(item => this.renderRepoGraph(item))}</div>
       </div>
     );
   }
