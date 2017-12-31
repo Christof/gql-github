@@ -1,12 +1,14 @@
 import * as React from "react";
 import { FormEvent, ChangeEvent } from "react";
 import { getNamesOfOwnRepositories } from "../stats_helper";
+import * as Plotly from "plotly.js";
 
 interface State {
   error: any;
   token: string;
   owner: string;
   repos: any[];
+  data: any[];
 }
 
 export class Stats extends React.Component<{}, State> {
@@ -16,7 +18,8 @@ export class Stats extends React.Component<{}, State> {
       error: null,
       token: JSON.parse(window.localStorage.github).access_token,
       owner: "skillslab",
-      repos: []
+      repos: [],
+      data: []
     };
     console.log("state", this.state);
 
@@ -25,6 +28,45 @@ export class Stats extends React.Component<{}, State> {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  setupGraph() {
+    const layout = {
+      title: "Commits",
+      xaxis: {
+        autorange: true,
+        // range: ['2015-02-17', '2017-02-16'],
+        rangeselector: {
+          buttons: [
+            {
+              count: 1,
+              label: "1m",
+              step: "month",
+              stepmode: "backward"
+            },
+            {
+              count: 6,
+              label: "6m",
+              step: "month",
+              stepmode: "backward"
+            },
+            { step: "all" }
+          ]
+        },
+        rangeslider: { range: [new Date(2013), new Date(2017)] as any },
+        type: "date"
+      },
+      yaxis: {
+        autorange: true,
+        // range: [86.8700008333, 138.870004167],
+        type: "linear"
+      }
+    };
+
+    Plotly.newPlot("graph", this.state.data, layout as any);
+  }
+
+  componentDidMount() {
+    this.setupGraph();
+  }
   getRequestGithub(path: string) {
     console.log("Get", path, this.state.token);
     const params: RequestInit = {
@@ -72,6 +114,19 @@ export class Stats extends React.Component<{}, State> {
     await this.loadRepos();
     const stats = await this.getStatsFor(this.state.owner, this.state.repos[0]);
     console.log(stats);
+
+    const statsForAuthor = stats[5];
+    const trace1 = {
+      type: "scatter",
+      mode: "lines",
+      name: statsForAuthor.author.login,
+      x: statsForAuthor.weeks.map((week: any) => new Date(week.w * 1000)),
+      y: statsForAuthor.weeks.map((week: any) => week.c),
+      line: { color: "#17BECF" }
+    };
+
+    this.setState({ data: [trace1] });
+    this.setupGraph();
   }
 
   changeToken(event: ChangeEvent<HTMLInputElement>) {
@@ -110,6 +165,8 @@ export class Stats extends React.Component<{}, State> {
 
         <h2>Own repositories</h2>
         <ul>{this.state.repos.map(item => <li key={item}>{item}</li>)}</ul>
+
+        <div id="graph" />
       </div>
     );
   }
