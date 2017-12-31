@@ -5,8 +5,8 @@ import { getNamesOfOwnRepositories } from "../stats_helper";
 interface State {
   error: any;
   token: string;
-  organization: string;
-  items: any[];
+  owner: string;
+  repos: any[];
 }
 
 export class Stats extends React.Component<{}, State> {
@@ -15,13 +15,13 @@ export class Stats extends React.Component<{}, State> {
     this.state = {
       error: null,
       token: JSON.parse(window.localStorage.github).access_token,
-      organization: "skillslab",
-      items: []
+      owner: "skillslab",
+      repos: []
     };
     console.log("state", this.state);
 
     this.changeToken = this.changeToken.bind(this);
-    this.changeOrganization = this.changeOrganization.bind(this);
+    this.changeOwner = this.changeOwner.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -31,7 +31,7 @@ export class Stats extends React.Component<{}, State> {
       method: "GET",
       mode: "cors",
       headers: [
-        ["User-Agent", this.state.organization],
+        ["User-Agent", this.state.owner],
         ["Authorization", `token ${this.state.token}`]
       ]
     };
@@ -41,19 +41,15 @@ export class Stats extends React.Component<{}, State> {
 
   async loadRepos() {
     try {
-      let res = await this.getRequestGithub(
-        `orgs/${this.state.organization}/repos`
-      );
+      let res = await this.getRequestGithub(`orgs/${this.state.owner}/repos`);
       if (res.status === 404) {
-        res = await this.getRequestGithub(
-          `users/${this.state.organization}/repos`
-        );
+        res = await this.getRequestGithub(`users/${this.state.owner}/repos`);
       }
       const result = await res.json();
       const own = getNamesOfOwnRepositories(result);
       console.log(own);
       this.setState({
-        items: own
+        repos: own
       });
     } catch (error) {
       console.log(error);
@@ -74,10 +70,7 @@ export class Stats extends React.Component<{}, State> {
   async handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     await this.loadRepos();
-    const stats = await this.getStatsFor(
-      this.state.organization,
-      this.state.items[0]
-    );
+    const stats = await this.getStatsFor(this.state.owner, this.state.repos[0]);
     console.log(stats);
   }
 
@@ -87,9 +80,9 @@ export class Stats extends React.Component<{}, State> {
     });
   }
 
-  changeOrganization(event: ChangeEvent<HTMLInputElement>) {
+  changeOwner(event: ChangeEvent<HTMLInputElement>) {
     this.setState({
-      organization: event.target.value
+      owner: event.target.value
     });
   }
   render() {
@@ -105,18 +98,18 @@ export class Stats extends React.Component<{}, State> {
             />
           </label>
           <label>
-            Organization or User:
+            Owner
             <input
               type="text"
-              value={this.state.organization}
-              onChange={this.changeOrganization}
+              value={this.state.owner}
+              onChange={this.changeOwner}
             />
           </label>
           <input type="submit" value="Submit" />
         </form>
 
         <h2>Own repositories</h2>
-        <ul>{this.state.items.map(item => <li key={item}>{item}</li>)}</ul>
+        <ul>{this.state.repos.map(item => <li key={item}>{item}</li>)}</ul>
       </div>
     );
   }
