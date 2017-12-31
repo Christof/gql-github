@@ -109,23 +109,24 @@ export class Stats extends React.Component<{}, State> {
     return response.json();
   }
 
+  private traceForAuthor(statsForAuthor: any) {
+    return {
+      type: "scatter",
+      mode: "lines",
+      name: statsForAuthor.author.login,
+      x: statsForAuthor.weeks.map((week: any) => new Date(week.w * 1000)),
+      y: statsForAuthor.weeks.map((week: any) => week.c)
+    };
+  }
   async handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     await this.loadRepos();
     const stats = await this.getStatsFor(this.state.owner, this.state.repos[0]);
     console.log(stats);
 
-    const statsForAuthor = stats[5];
-    const trace1 = {
-      type: "scatter",
-      mode: "lines",
-      name: statsForAuthor.author.login,
-      x: statsForAuthor.weeks.map((week: any) => new Date(week.w * 1000)),
-      y: statsForAuthor.weeks.map((week: any) => week.c),
-      line: { color: "#17BECF" }
-    };
-
-    this.setState({ data: [trace1] });
+    this.setState({
+      data: stats.map((author: any) => this.traceForAuthor(author))
+    });
     this.setupGraph();
   }
 
