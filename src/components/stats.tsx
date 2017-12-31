@@ -51,7 +51,7 @@ export class Stats extends React.Component<{}, State> {
             { step: "all" }
           ]
         },
-        rangeslider: { range: [new Date(2013), new Date(2017)] as any },
+        rangeslider: { range: ["2013-1-1", "2018-1-1"] as any },
         type: "date"
       },
       yaxis: {
