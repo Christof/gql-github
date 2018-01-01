@@ -1,0 +1,11 @@
+name: gql-github
+root: ~/Documents/gql-github
+
+windows:
+  - editor: 
+  - root:
+      layout: main-vertical
+      panes:
+        - root: git fetch
+        - webpack: yarn run start
+  - server: cd server && echo "Run node server.js with valid paramters"
