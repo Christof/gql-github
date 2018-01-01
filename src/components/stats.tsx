@@ -81,12 +81,14 @@ export class Stats extends React.Component<{}, State> {
     const authors = Object.keys(statsPerYear[0]);
 
     const traces = authors.map((author: string) => {
+      const yValues = statsPerYear.map(year => year[author]);
       return {
         x: years,
-        y: statsPerYear.map(year => year[author]),
+        y: yValues,
         type: "bar",
-        textposition: "auto",
-        hoverinfo: author,
+        textposition: "outside",
+        text: yValues,
+        hoverinfo: "name",
         name: author
       };
     });
