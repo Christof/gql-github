@@ -2,7 +2,10 @@ import * as program from "commander";
 import * as request from "request-promise-native";
 import * as fs from "fs";
 import { promisify } from "util";
-import { getNamesOfOwnRepositories } from "./stats_helper";
+import {
+  getNamesOfOwnRepositories,
+  getCommitsPerAuthorInDateRange
+} from "./stats_helper";
 const writeFile = promisify(fs.writeFile);
 const readFile = promisify(fs.readFile);
 
@@ -68,26 +71,6 @@ async function getStatsFor(owner: string, repo: string) {
 function getCommitsPerAuthor(data: any[]) {
   return data.reduce((acc, userEntry) => {
     acc[userEntry.author.login] = userEntry.total;
-    return acc;
-  }, {});
-}
-
-function getCommitsPerAuthorInDateRange(
-  data: any[],
-  startTime: Date,
-  endTime = new Date()
-) {
-  const unixStartTime = Math.round(startTime.getTime() / 1000);
-  const unixEndTime = Math.round(endTime.getTime() / 1000);
-  return data.reduce((acc, userEntry) => {
-    const weeksInRange = userEntry.weeks.filter(
-      (week: any) => week.w > unixStartTime && week.w <= unixEndTime
-    );
-    const commits = weeksInRange.reduce(
-      (sum: number, week: any) => sum + week.c,
-      0
-    );
-    acc[userEntry.author.login] = commits;
     return acc;
   }, {});
 }
