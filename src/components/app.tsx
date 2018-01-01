@@ -25,12 +25,25 @@ export class App extends React.Component<{}, {}> {
     return (
       <BrowserRouter>
         <div>
-          <div>
-            <a href={githubLoginUrl}>Login with GitHub</a>
+          <div className="pt3">
+            <h3 className="mh2 mb2 mt0 dib">Stats App</h3>
+            <a
+              className="f6 link dim ba ph3 pv2 mh2 mb2 dib bg-light-blue"
+              href={githubLoginUrl}
+            >
+              Login with GitHub
+            </a>
+            <Link
+              className="f6 link dim ba ph3 pv2 mh2 mb2 dib dark-blue bg-light-blue"
+              to="/stats"
+            >
+              Stats
+            </Link>
           </div>
-          <Link to="/stats">Stats</Link>
-          <Route path="/auth-callback" component={GithubCallback} />
-          <Route path="/stats" component={Stats} />
+          <div className="ph2 pv3">
+            <Route path="/auth-callback" component={GithubCallback} />
+            <Route path="/stats" component={Stats} />
+          </div>
         </div>
       </BrowserRouter>
     );
