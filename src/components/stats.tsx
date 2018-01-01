@@ -1,6 +1,9 @@
 import * as React from "react";
 import { FormEvent, ChangeEvent } from "react";
-import { getNamesOfOwnRepositories } from "../stats_helper";
+import {
+  getNamesOfOwnRepositories,
+  getCommitsPerAuthorInDateRange
+} from "../stats_helper";
 import * as Plotly from "plotly.js";
 
 interface State {
@@ -61,7 +64,38 @@ export class Stats extends React.Component<{}, State> {
       }
     };
 
-    Plotly.newPlot(title, data, layout as any);
+    Plotly.newPlot(title + "-all", data, layout as any);
+  }
+
+  setupYearGraph(title: string, data: any) {
+    const years = [2013, 2014, 2015, 2016, 2017];
+
+    const statsPerYear = years.map(year =>
+      getCommitsPerAuthorInDateRange(
+        data,
+        new Date(year, 0),
+        new Date(year + 1, 0)
+      )
+    );
+
+    const authors = Object.keys(statsPerYear[0]);
+
+    const traces = authors.map((author: string) => {
+      return {
+        x: years,
+        y: statsPerYear.map(year => year[author]),
+        type: "bar",
+        textposition: "auto",
+        hoverinfo: author,
+        name: author
+      };
+    });
+
+    var layout = {
+      title: `Yearly commits in ${title}`
+    };
+
+    Plotly.newPlot(title + "-perYear", traces as any, layout);
   }
 
   getRequestGithub(path: string) {
@@ -124,6 +158,7 @@ export class Stats extends React.Component<{}, State> {
       const stats = await this.getStatsFor(this.state.owner, repo);
       const data = stats.map((author: any) => this.traceForAuthor(author));
       this.setupGraph(repo, data);
+      this.setupYearGraph(repo, stats);
     });
   }
 
@@ -143,7 +178,8 @@ export class Stats extends React.Component<{}, State> {
     return (
       <div key={repo}>
         <h1>{repo}</h1>
-        <div id={repo} />
+        <div id={repo + "-all"} />
+        <div id={repo + "-perYear"} />
       </div>
     );
   }
