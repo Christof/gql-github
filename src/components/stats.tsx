@@ -91,7 +91,7 @@ export class Stats extends React.Component<{}, State> {
       };
     });
 
-    var layout = {
+    const layout = {
       title: `Yearly commits in ${title}`
     };
 
