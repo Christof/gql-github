@@ -26,7 +26,6 @@ export class Stats extends React.Component<{}, State> {
     };
     console.log("state", this.state);
 
-    this.changeToken = this.changeToken.bind(this);
     this.changeOwner = this.changeOwner.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -164,12 +163,6 @@ export class Stats extends React.Component<{}, State> {
     });
   }
 
-  changeToken(event: ChangeEvent<HTMLInputElement>) {
-    this.setState({
-      token: event.target.value
-    });
-  }
-
   changeOwner(event: ChangeEvent<HTMLInputElement>) {
     this.setState({
       owner: event.target.value
@@ -189,14 +182,6 @@ export class Stats extends React.Component<{}, State> {
     return (
       <div>
         <form onSubmit={this.handleSubmit}>
-          <label>
-            TOKEN:
-            <input
-              type="text"
-              value={this.state.token}
-              onChange={this.changeToken}
-            />
-          </label>
           <label>
             Owner
             <input
