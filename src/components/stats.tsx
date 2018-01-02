@@ -24,7 +24,6 @@ export class Stats extends React.Component<{}, State> {
       repos: [],
       data: []
     };
-    console.log("state", this.state);
 
     this.changeOwner = this.changeOwner.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -104,7 +103,6 @@ export class Stats extends React.Component<{}, State> {
   }
 
   getRequestGithub(path: string) {
-    console.log("Get", path, this.state.token);
     const params: RequestInit = {
       method: "GET",
       mode: "cors",
@@ -125,12 +123,11 @@ export class Stats extends React.Component<{}, State> {
       }
       const result = await res.json();
       const own = getNamesOfOwnRepositories(result);
-      console.log(own);
       this.setState({
         repos: own
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
       this.setState({
         error
       });
