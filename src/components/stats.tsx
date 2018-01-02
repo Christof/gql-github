@@ -76,7 +76,7 @@ export class Stats extends React.Component<{}, State> {
     return Array.from(new Array(endYear - startYear), (_, i) => i + startYear);
   }
 
-  setupYearGraph(title: string, data: any) {
+  setupYearGraph(title: string, data: GithubData) {
     const years = this.getYearsArray();
     const statsPerYear = years.map(year =>
       getCommitsPerAuthorInDateRange(
@@ -90,7 +90,7 @@ export class Stats extends React.Component<{}, State> {
 
     const traces = authors.map((author: string) => {
       const yValues = statsPerYear.map(year => year[author]);
-      const authorSum = yValues.reduce((sum, value) => sum + value, 0);
+      const authorSum = data.find(d => d.author.login === author).total;
       return {
         x: years,
         y: yValues,
@@ -102,8 +102,12 @@ export class Stats extends React.Component<{}, State> {
       };
     });
 
+    const overallCommitCount = data.reduce(
+      (sum, authorData) => sum + authorData.total,
+      0
+    );
     const layout: Partial<Plotly.Layout> = {
-      title: `Yearly commits in ${title}`,
+      title: `Yearly commits in ${title} ${overallCommitCount}`,
       xaxis: {
         title: "time"
       },
