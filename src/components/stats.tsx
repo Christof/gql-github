@@ -80,6 +80,7 @@ export class Stats extends React.Component<{}, State> {
 
     const traces = authors.map((author: string) => {
       const yValues = statsPerYear.map(year => year[author]);
+      const authorSum = yValues.reduce((sum, value) => sum + value, 0);
       return {
         x: years,
         y: yValues,
@@ -87,7 +88,7 @@ export class Stats extends React.Component<{}, State> {
         textposition: "outside",
         text: yValues,
         hoverinfo: "name",
-        name: author
+        name: `${author} ${authorSum}`
       };
     });
 
