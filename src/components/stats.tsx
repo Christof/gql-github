@@ -65,14 +65,14 @@ export class Stats extends React.Component<{}, State> {
     Plotly.newPlot(title + "-all", data, layout as any);
   }
 
-  setupYearGraph(title: string, data: any) {
+  private getYearsArray() {
     const startYear = 2013;
     const endYear = new Date().getFullYear();
-    const years = Array.from(
-      new Array(endYear - startYear),
-      (_, i) => i + startYear
-    );
+    return Array.from(new Array(endYear - startYear), (_, i) => i + startYear);
+  }
 
+  setupYearGraph(title: string, data: any) {
+    const years = this.getYearsArray();
     const statsPerYear = years.map(year =>
       getCommitsPerAuthorInDateRange(
         data,
