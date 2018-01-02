@@ -6,12 +6,20 @@ import {
 } from "../stats_helper";
 import * as Plotly from "plotly.js";
 
+interface GithubAuthorData {
+  author: { login: string };
+  total: number;
+  weeks: { w: number; a: number; d: number; c: number }[];
+}
+
+type GithubData = GithubAuthorData[];
+
 interface State {
   error: any;
   token: string;
   owner: string;
   repositoryNames: string[];
-  data: any[];
+  data: GithubData[];
 }
 
 export class Stats extends React.Component<{}, State> {
