@@ -15,6 +15,7 @@ interface State {
 }
 
 export class Stats extends React.Component<{}, State> {
+  private readonly startYear = 2013;
   constructor(props: {}) {
     super(props);
     this.state = {
@@ -53,12 +54,11 @@ export class Stats extends React.Component<{}, State> {
             { step: "all" }
           ]
         },
-        rangeslider: { range: ["2013-1-1", "2018-1-1"] as any },
+        rangeslider: { range: [`${this.startYear}-1-1`, "2018-1-1"] as any },
         type: "date"
       },
       yaxis: {
         autorange: true,
-        // range: [86.8700008333, 138.870004167],
         type: "linear"
       }
     };
@@ -67,7 +67,10 @@ export class Stats extends React.Component<{}, State> {
   }
 
   setupYearGraph(title: string, data: any) {
-    const years = [2013, 2014, 2015, 2016, 2017];
+    const years = Array.from(
+      new Array(2018 - this.startYear),
+      (_, i) => i + this.startYear
+    );
 
     const statsPerYear = years.map(year =>
       getCommitsPerAuthorInDateRange(
