@@ -102,10 +102,7 @@ export class Stats extends React.Component<{}, State> {
     const params: RequestInit = {
       method: "GET",
       mode: "cors",
-      headers: [
-        ["User-Agent", this.state.owner],
-        ["Authorization", `token ${this.state.token}`]
-      ]
+      headers: [["Authorization", `token ${this.state.token}`]]
     };
 
     return fetch(`https://api.github.com/${path}`, params);
