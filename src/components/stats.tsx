@@ -31,19 +31,18 @@ export class Stats extends React.Component<{}, State> {
       title,
       xaxis: {
         autorange: true,
-        // range: ['2015-02-17', '2017-02-16'],
         rangeselector: {
           buttons: [
-            {
-              count: 1,
-              label: "1m",
-              step: "month",
-              stepmode: "backward"
-            },
             {
               count: 6,
               label: "6m",
               step: "month",
+              stepmode: "backward"
+            },
+            {
+              count: 1,
+              label: "1y",
+              step: "year",
               stepmode: "backward"
             },
             { step: "all" }
