@@ -15,7 +15,6 @@ interface State {
 }
 
 export class Stats extends React.Component<{}, State> {
-  private readonly startYear = 2013;
   constructor(props: {}) {
     super(props);
     this.state = {
@@ -54,7 +53,7 @@ export class Stats extends React.Component<{}, State> {
             { step: "all" }
           ]
         },
-        rangeslider: { range: [`${this.startYear}-1-1`, "2018-1-1"] as any },
+        rangeslider: { autorange: true },
         type: "date"
       },
       yaxis: {
@@ -67,9 +66,11 @@ export class Stats extends React.Component<{}, State> {
   }
 
   setupYearGraph(title: string, data: any) {
+    const startYear = 2013;
+    const endYear = new Date().getFullYear();
     const years = Array.from(
-      new Array(2018 - this.startYear),
-      (_, i) => i + this.startYear
+      new Array(endYear - startYear),
+      (_, i) => i + startYear
     );
 
     const statsPerYear = years.map(year =>
