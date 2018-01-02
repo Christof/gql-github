@@ -1,5 +1,5 @@
+import { Owner } from "./owner";
 import * as React from "react";
-import { FormEvent, ChangeEvent } from "react";
 import {
   getNamesOfOwnRepositories,
   getCommitsPerAuthorInDateRange
@@ -24,9 +24,6 @@ export class Stats extends React.Component<{}, State> {
       repos: [],
       data: []
     };
-
-    this.changeOwner = this.changeOwner.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   setupGraph(title: string, data: any) {
@@ -152,8 +149,8 @@ export class Stats extends React.Component<{}, State> {
     };
   }
 
-  async handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  async handleSubmit(owner: string) {
+    this.setState({ owner });
     await this.loadRepos();
 
     this.state.repos.map(async repo => {
@@ -161,12 +158,6 @@ export class Stats extends React.Component<{}, State> {
       const data = stats.map((author: any) => this.traceForAuthor(author));
       this.setupGraph(repo, data);
       this.setupYearGraph(repo, stats);
-    });
-  }
-
-  changeOwner(event: ChangeEvent<HTMLInputElement>) {
-    this.setState({
-      owner: event.target.value
     });
   }
 
@@ -182,17 +173,7 @@ export class Stats extends React.Component<{}, State> {
   render() {
     return (
       <div>
-        <form onSubmit={this.handleSubmit}>
-          <label>
-            Owner
-            <input
-              type="text"
-              value={this.state.owner}
-              onChange={this.changeOwner}
-            />
-          </label>
-          <input type="submit" value="Submit" />
-        </form>
+        <Owner updateOwner={owner => this.handleSubmit(owner)} />
 
         <h2>Own repositories</h2>
         <div>{this.state.repos.map(item => this.renderRepoGraph(item))}</div>
