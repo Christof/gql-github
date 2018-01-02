@@ -30,6 +30,7 @@ export class Stats extends React.Component<{}, State> {
     const layout = {
       title,
       xaxis: {
+        title: "time",
         autorange: true,
         rangeselector: {
           buttons: [
@@ -52,6 +53,7 @@ export class Stats extends React.Component<{}, State> {
         type: "date"
       },
       yaxis: {
+        title: "commit count",
         autorange: true,
         type: "linear"
       }
@@ -92,8 +94,14 @@ export class Stats extends React.Component<{}, State> {
       };
     });
 
-    const layout = {
-      title: `Yearly commits in ${title}`
+    const layout: Partial<Plotly.Layout> = {
+      title: `Yearly commits in ${title}`,
+      xaxis: {
+        title: "time"
+      },
+      yaxis: {
+        title: "commit count"
+      }
     };
 
     Plotly.newPlot(title + "-perYear", traces as any, layout);
