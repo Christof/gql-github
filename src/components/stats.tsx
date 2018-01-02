@@ -34,7 +34,8 @@ export class Stats extends React.Component<{}, State> {
     };
   }
 
-  setupGraph(title: string, data: any) {
+  setupGraph(title: string, data: GithubData) {
+    const authorTimeLine = data.map(author => this.traceForAuthor(author));
     const layout = {
       title,
       xaxis: {
@@ -67,7 +68,7 @@ export class Stats extends React.Component<{}, State> {
       }
     };
 
-    Plotly.newPlot(title + "-all", data, layout as any);
+    Plotly.newPlot(title + "-all", authorTimeLine as any, layout as any);
   }
 
   private getYearsArray() {
@@ -148,7 +149,7 @@ export class Stats extends React.Component<{}, State> {
     }
   }
 
-  async getStatsFor(owner: string, repo: string) {
+  async getStatsFor(owner: string, repo: string): Promise<GithubData> {
     const response = await this.getRequestGithub(
       `repos/${owner}/${repo}/stats/contributors`
     );
@@ -156,7 +157,7 @@ export class Stats extends React.Component<{}, State> {
     return response.json();
   }
 
-  private traceForAuthor(statsForAuthor: any) {
+  private traceForAuthor(statsForAuthor: GithubAuthorData) {
     return {
       type: "scatter",
       mode: "lines",
@@ -172,8 +173,7 @@ export class Stats extends React.Component<{}, State> {
 
     this.state.repositoryNames.map(async repo => {
       const stats = await this.getStatsFor(this.state.owner, repo);
-      const data = stats.map((author: any) => this.traceForAuthor(author));
-      this.setupGraph(repo, data);
+      this.setupGraph(repo, stats);
       this.setupYearGraph(repo, stats);
     });
   }
@@ -187,6 +187,7 @@ export class Stats extends React.Component<{}, State> {
       </div>
     );
   }
+
   render() {
     return (
       <div>
