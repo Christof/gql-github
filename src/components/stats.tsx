@@ -10,7 +10,7 @@ interface State {
   error: any;
   token: string;
   owner: string;
-  repos: any[];
+  repositoryNames: string[];
   data: any[];
 }
 
@@ -21,7 +21,7 @@ export class Stats extends React.Component<{}, State> {
       error: null,
       token: JSON.parse(window.localStorage.github).access_token,
       owner: "skillslab",
-      repos: [],
+      repositoryNames: [],
       data: []
     };
   }
@@ -117,7 +117,7 @@ export class Stats extends React.Component<{}, State> {
       const result = await res.json();
       const own = getNamesOfOwnRepositories(result);
       this.setState({
-        repos: own
+        repositoryNames: own
       });
     } catch (error) {
       console.error(error);
@@ -149,7 +149,7 @@ export class Stats extends React.Component<{}, State> {
     this.setState({ owner });
     await this.loadRepos();
 
-    this.state.repos.map(async repo => {
+    this.state.repositoryNames.map(async repo => {
       const stats = await this.getStatsFor(this.state.owner, repo);
       const data = stats.map((author: any) => this.traceForAuthor(author));
       this.setupGraph(repo, data);
@@ -172,7 +172,9 @@ export class Stats extends React.Component<{}, State> {
         <Owner updateOwner={owner => this.handleSubmit(owner)} />
 
         <h2>Own repositories</h2>
-        <div>{this.state.repos.map(item => this.renderRepoGraph(item))}</div>
+        <div>
+          {this.state.repositoryNames.map(item => this.renderRepoGraph(item))}
+        </div>
       </div>
     );
   }
