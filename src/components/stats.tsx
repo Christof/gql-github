@@ -28,6 +28,10 @@ export class Stats extends React.Component<{}, State> {
   }
 
   setupGraph(title: string, data: GithubData) {
+    if (data === undefined) {
+      console.error("No data for", title);
+      return;
+    }
     const authorTimeLine = data.map(author => this.traceForAuthor(author));
     const layout = {
       title,
