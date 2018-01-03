@@ -43,12 +43,36 @@ export class OverallPlot extends React.Component<Props, {}> {
     };
   }
 
+  private getTotalCommitCountAnnotations() {
+    return this.props.reposData.map((repositoryData, index) => {
+      const totalCommits = repositoryData.reduce(
+        (sum, authorData) => sum + authorData.total,
+        0
+      );
+      return {
+        x: this.props.repositoryNames[index],
+        y: totalCommits,
+        text: totalCommits,
+        xanchor: "center",
+        yanchor: "bottom",
+        showarrow: false
+      };
+    });
+  }
+
   componentDidMount() {
     const data = this.getAuthors().map(author => this.getAuthorTrace(author));
 
     const layout = {
       title: "Overall",
-      barmode: "stack"
+      barmode: "stack",
+      annotations: this.getTotalCommitCountAnnotations(),
+      xaxis: {
+        title: "repositories"
+      },
+      yaxis: {
+        title: "commit count"
+      }
     };
 
     Plotly.newPlot(this.divId, data as any, layout as any);
