@@ -1,4 +1,5 @@
 import { Owner } from "./owner";
+import { OverallPlot } from "./overall_plot";
 import * as React from "react";
 import {
   getNamesOfOwnRepositories,
@@ -194,8 +195,13 @@ export class Stats extends React.Component<{}, State> {
     return (
       <div>
         <Owner updateOwner={owner => this.handleSubmit(owner)} />
-
         <h2>Own repositories</h2>
+        {this.state.data.length > 0 && (
+          <OverallPlot
+            reposData={this.state.data}
+            repositoryNames={this.state.repositoryNames}
+          />
+        )}
         <div>
           {this.state.repositoryNames.map(item => this.renderRepoGraph(item))}
         </div>
