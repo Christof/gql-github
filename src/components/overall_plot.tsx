@@ -25,22 +25,26 @@ export class OverallPlot extends React.Component<Props, {}> {
     return unique(flatten(authorsForRepos));
   }
 
-  componentDidMount() {
-    const data = this.getAuthors().map(author => {
-      const authorData = this.props.reposData.map(repo => {
-        const dataForAuthor = repo.find(
-          authorData => authorData.author.login === author
-        );
-        return dataForAuthor === undefined ? 0 : dataForAuthor.total;
-      });
-      console.log(author, authorData);
-      return {
-        x: this.props.repositoryNames,
-        y: authorData,
-        name: author,
-        type: "bar"
-      };
+  private getCommitsPerRepoFor(author: string) {
+    return this.props.reposData.map(repo => {
+      const dataForAuthor = repo.find(
+        authorData => authorData.author.login === author
+      );
+      return dataForAuthor === undefined ? 0 : dataForAuthor.total;
     });
+  }
+
+  private getAuthorTrace(author: string) {
+    return {
+      x: this.props.repositoryNames,
+      y: this.getCommitsPerRepoFor(author),
+      name: author,
+      type: "bar"
+    };
+  }
+
+  componentDidMount() {
+    const data = this.getAuthors().map(author => this.getAuthorTrace(author));
 
     const layout = {
       title: "Overall",
@@ -49,6 +53,7 @@ export class OverallPlot extends React.Component<Props, {}> {
 
     Plotly.newPlot(this.divId, data as any, layout as any);
   }
+
   render() {
     return (
       <div>
