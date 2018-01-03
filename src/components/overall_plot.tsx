@@ -6,18 +6,27 @@ interface Props {
   reposData: GithubData[];
   repositoryNames: string[];
 }
+
+function flatten<T>(arrayOfArrays: T[][]): T[] {
+  return [].concat.apply([], arrayOfArrays);
+}
+
+function unique<T>(arrayWithDuplicates: T[]): T[] {
+  return [...new Set(arrayWithDuplicates)];
+}
+
 export class OverallPlot extends React.Component<Props, {}> {
   private readonly divId = "overall";
 
-  componentDidMount() {
+  private getAuthors() {
     const authorsForRepos = this.props.reposData.map(repoData =>
       repoData.map(authorData => authorData.author.login)
     );
-    const authors = [].concat.apply([], authorsForRepos);
-    const uniqueAuthors = [...new Set(authors)];
-    console.log(uniqueAuthors);
+    return unique(flatten(authorsForRepos));
+  }
 
-    const data = uniqueAuthors.map(author => {
+  componentDidMount() {
+    const data = this.getAuthors().map(author => {
       const authorData = this.props.reposData.map(repo => {
         const dataForAuthor = repo.find(
           authorData => authorData.author.login === author
