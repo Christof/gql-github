@@ -20,7 +20,7 @@ export class GithubCallback extends React.Component<Props, {}> {
     const retrievedParams = await response.json();
     console.log(retrievedParams);
     window.localStorage.github = JSON.stringify(retrievedParams);
-    this.props.history.push("/hello");
+    this.props.history.push("/stats");
   }
 
   componentDidMount() {
