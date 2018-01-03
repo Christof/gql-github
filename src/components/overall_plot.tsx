@@ -36,10 +36,11 @@ export class OverallPlot extends React.Component<Props, {}> {
 
   private getAuthorTrace(author: string) {
     return {
-      x: this.props.repositoryNames,
-      y: this.getCommitsPerRepoFor(author),
+      y: this.props.repositoryNames,
+      x: this.getCommitsPerRepoFor(author),
       name: author,
-      type: "bar"
+      type: "bar",
+      orientation: "h"
     };
   }
 
@@ -50,11 +51,11 @@ export class OverallPlot extends React.Component<Props, {}> {
         0
       );
       return {
-        x: this.props.repositoryNames[index],
-        y: totalCommits,
+        x: totalCommits,
+        y: this.props.repositoryNames[index],
         text: totalCommits,
-        xanchor: "center",
-        yanchor: "bottom",
+        xanchor: "left",
+        yanchor: "center",
         showarrow: false
       };
     });
@@ -68,10 +69,10 @@ export class OverallPlot extends React.Component<Props, {}> {
       barmode: "stack",
       annotations: this.getTotalCommitCountAnnotations(),
       xaxis: {
-        title: "repositories"
-      },
-      yaxis: {
         title: "commit count"
+      },
+      margin: {
+        l: 140
       }
     };
 
