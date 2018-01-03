@@ -168,11 +168,16 @@ export class Stats extends React.Component<{}, State> {
     this.setState({ owner });
     await this.loadRepos();
 
-    this.state.repositoryNames.map(async repo => {
-      const stats = await this.getStatsFor(this.state.owner, repo);
-      this.setupGraph(repo, stats);
-      this.setupYearGraph(repo, stats);
-    });
+    const data = await Promise.all(
+      this.state.repositoryNames.map(async repo => {
+        const stats = await this.getStatsFor(this.state.owner, repo);
+        this.setupGraph(repo, stats);
+        this.setupYearGraph(repo, stats);
+        return stats;
+      })
+    );
+
+    this.setState({ data });
   }
 
   renderRepoGraph(repo: string) {
