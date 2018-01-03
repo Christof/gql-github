@@ -5,14 +5,7 @@ import {
   getCommitsPerAuthorInDateRange
 } from "../stats_helper";
 import * as Plotly from "plotly.js";
-
-interface GithubAuthorData {
-  author: { login: string };
-  total: number;
-  weeks: { w: number; a: number; d: number; c: number }[];
-}
-
-type GithubData = GithubAuthorData[];
+import { GithubData, GithubAuthorData } from "../github_data";
 
 interface State {
   error: any;
