@@ -11,7 +11,7 @@ export class GithubCallback extends React.Component<Props, {}> {
     };
 
     const githubAuthUrl =
-      "http://localhost:7000/authenticate?" +
+      `http://${window.location.hostname}:7000/authenticate?` +
       qs.stringify({
         code,
         state
