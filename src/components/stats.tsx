@@ -6,7 +6,7 @@ import {
   getCommitsPerAuthorInDateRange
 } from "../stats_helper";
 import * as Plotly from "plotly.js";
-import { GithubData, GithubAuthorData } from "../github";
+import { GithubData, GithubAuthorData, getRequestGithub } from "../github";
 
 interface State {
   error: any;
@@ -118,21 +118,17 @@ export class Stats extends React.Component<{}, State> {
     Plotly.newPlot(title + "-perYear", traces as any, layout);
   }
 
-  getRequestGithub(path: string) {
-    const params: RequestInit = {
-      method: "GET",
-      mode: "cors",
-      headers: [["Authorization", `token ${this.state.token}`]]
-    };
-
-    return fetch(`https://api.github.com/${path}`, params);
-  }
-
   async loadRepos() {
     try {
-      let res = await this.getRequestGithub(`orgs/${this.state.owner}/repos`);
+      let res = await getRequestGithub(
+        `orgs/${this.state.owner}/repos`,
+        this.state.token
+      );
       if (res.status === 404) {
-        res = await this.getRequestGithub(`users/${this.state.owner}/repos`);
+        res = await getRequestGithub(
+          `users/${this.state.owner}/repos`,
+          this.state.token
+        );
       }
       const result = await res.json();
       const own = getNamesOfOwnRepositories(result);
@@ -148,8 +144,9 @@ export class Stats extends React.Component<{}, State> {
   }
 
   async getStatsFor(owner: string, repo: string): Promise<GithubData> {
-    const response = await this.getRequestGithub(
-      `repos/${owner}/${repo}/stats/contributors`
+    const response = await getRequestGithub(
+      `repos/${owner}/${repo}/stats/contributors`,
+      this.state.token
     );
 
     return response.json();

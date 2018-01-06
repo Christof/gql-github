@@ -5,3 +5,13 @@ export interface GithubAuthorData {
 }
 
 export type GithubData = GithubAuthorData[];
+
+export function getRequestGithub(path: string, token: string) {
+  const params: RequestInit = {
+    method: "GET",
+    mode: "cors",
+    headers: [["Authorization", `token ${token}`]]
+  };
+
+  return fetch(`https://api.github.com/${path}`, params);
+}
