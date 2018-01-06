@@ -18,11 +18,14 @@ export function getRequestGithub(path: string, token: string) {
   return fetch(`https://api.github.com/${path}`, params);
 }
 
-export async function getRepositoryNames(owner: string, token: string) {
-  let res = await getRequestGithub(`orgs/${owner}/repos`, token);
-  if (res.status === 404) {
-    res = await getRequestGithub(`users/${owner}/repos`, token);
+export async function getRepositories(owner: string, token: string) {
+  let response = await getRequestGithub(`orgs/${owner}/repos`, token);
+  if (response.status === 404) {
+    response = await getRequestGithub(`users/${owner}/repos`, token);
   }
-  const result = await res.json();
-  return getNamesOfOwnRepositories(result);
+  return await response.json();
+}
+
+export async function getRepositoryNames(owner: string, token: string) {
+  return getNamesOfOwnRepositories(await getRepositories(owner, token));
 }
