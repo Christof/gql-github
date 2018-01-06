@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Owner } from "./owner";
-import { getNamesOfOwnRepositories } from "../stats_helper";
-import { getRequestGithub } from "../github";
+import { getRequestGithub, getRepositoryNames } from "../github";
 
 interface State {
   token: string;
@@ -25,25 +24,14 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
 
   handleSubmit(owner: string) {
     this.setState({ owner });
-    this.loadRepos();
+    this.loadRepos(owner);
   }
 
-  async loadRepos() {
+  async loadRepos(owner: string) {
     try {
-      let res = await getRequestGithub(
-        `orgs/${this.state.owner}/repos`,
-        this.state.token
-      );
-      if (res.status === 404) {
-        res = await getRequestGithub(
-          `users/${this.state.owner}/repos`,
-          this.state.token
-        );
-      }
-      const result = await res.json();
-      const own = getNamesOfOwnRepositories(result);
+      const repositoryNames = await getRepositoryNames(owner, this.state.token);
       this.setState({
-        repositoryNames: own
+        repositoryNames
       });
     } catch (error) {
       console.error(error);
