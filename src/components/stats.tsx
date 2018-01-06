@@ -1,12 +1,14 @@
 import { Owner } from "./owner";
 import { OverallPlot } from "./overall_plot";
 import * as React from "react";
-import {
-  getNamesOfOwnRepositories,
-  getCommitsPerAuthorInDateRange
-} from "../stats_helper";
+import { getCommitsPerAuthorInDateRange } from "../stats_helper";
 import * as Plotly from "plotly.js";
-import { GithubData, GithubAuthorData, getRequestGithub } from "../github";
+import {
+  GithubData,
+  GithubAuthorData,
+  getRequestGithub,
+  getRepositoryNames
+} from "../github";
 
 interface State {
   error: any;
@@ -120,20 +122,13 @@ export class Stats extends React.Component<{}, State> {
 
   async loadRepos() {
     try {
-      let res = await getRequestGithub(
-        `orgs/${this.state.owner}/repos`,
+      const repositoryNames = await getRepositoryNames(
+        this.state.owner,
         this.state.token
       );
-      if (res.status === 404) {
-        res = await getRequestGithub(
-          `users/${this.state.owner}/repos`,
-          this.state.token
-        );
-      }
-      const result = await res.json();
-      const own = getNamesOfOwnRepositories(result);
+
       this.setState({
-        repositoryNames: own
+        repositoryNames
       });
     } catch (error) {
       console.error(error);
