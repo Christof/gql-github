@@ -1,5 +1,5 @@
 import * as React from "react";
-import { GithubData } from "../github_data";
+import { GithubData } from "../github";
 import * as Plotly from "plotly.js";
 
 interface Props {
