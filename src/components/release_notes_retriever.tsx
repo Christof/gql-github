@@ -96,11 +96,19 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
   renderReleasesSection() {
     if (!this.state.repo || !this.state.releases) return <section />;
 
-    return this.state.releases.map(release => (
-      <button key={release.id} onClick={() => this.selectRelease(release)}>
-        {release.tag_name}
-      </button>
-    ));
+    return (
+      <section>
+        <ul>
+          {this.state.releases.map(release => (
+            <li key={release.id}>
+              <button onClick={() => this.selectRelease(release)}>
+                {release.tag_name}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </section>
+    );
   }
 
   renderReleaseSection() {
