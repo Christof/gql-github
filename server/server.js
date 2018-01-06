@@ -48,8 +48,6 @@ app.get("/authenticate", function(req, res) {
     headers: [["Content-Type", "test/plain"], ["Accept", "application/json"]]
   };
 
-  // const redirect_uri = "localhost:3000/auth-callback";
-
   const githubAuthUrl =
     "https://github.com/login/oauth/access_token?" +
     qs.stringify({
