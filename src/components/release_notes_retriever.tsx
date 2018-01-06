@@ -8,6 +8,8 @@ interface State {
   owner: string;
   repo?: string;
   releases?: any[];
+  release?: any;
+  releaseDescription?: string;
 }
 
 export class ReleaseNotesRetriever extends React.Component<{}, State> {
@@ -81,10 +83,35 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
     );
   }
 
+  async selectRelease(release: any) {
+    const response = await this.getRequestGithub(
+      `repos/${this.state.owner}/${this.state.repo}/releases/${release.id}`
+    );
+
+    const releaseData = await response.json();
+
+    this.setState({ releaseDescription: releaseData.body, release });
+  }
+
   renderReleasesSection() {
     if (!this.state.repo || !this.state.releases) return <section />;
 
-    return this.state.releases.map(release => <div>{release.tag_name}</div>);
+    return this.state.releases.map(release => (
+      <button key={release.id} onClick={() => this.selectRelease(release)}>
+        {release.tag_name}
+      </button>
+    ));
+  }
+
+  renderReleaseSection() {
+    if (!this.state.releaseDescription) return <section />;
+
+    return (
+      <section>
+        <h1>{this.state.release.tag_name}</h1>
+        <div>{this.state.releaseDescription}</div>
+      </section>
+    );
   }
 
   render() {
@@ -94,6 +121,7 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
         <ul>{this.state.repositoryNames.map(repo => this.renderRepo(repo))}</ul>
         {this.renderRepositorySection()}
         {this.renderReleasesSection()}
+        {this.renderReleaseSection()}
       </div>
     );
   }
