@@ -6,7 +6,8 @@ interface State {
   token: string;
   repositoryNames: string[];
   owner: string;
-  selectedRepository?: string;
+  repo?: string;
+  releases?: any[];
 }
 
 export class ReleaseNotesRetriever extends React.Component<{}, State> {
@@ -49,31 +50,50 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
     }
   }
 
+  async loadReleases(repo: string) {
+    const response = await this.getRequestGithub(
+      `repos/${this.state.owner}/${repo}/releases`
+    );
+    const result = await response.json();
+    this.setState({ releases: result });
+  }
+
+  selectRepository(repo: string) {
+    this.setState({ repo: repo });
+    return this.loadReleases(repo);
+  }
+
   renderRepo(repo: string) {
     return (
       <li key={repo}>
-        <button onClick={() => this.setState({ selectedRepository: repo })}>
-          {repo}
-        </button>
+        <button onClick={() => this.selectRepository(repo)}>{repo}</button>
       </li>
     );
   }
 
   renderRepositorySection() {
-    if (!this.state.selectedRepository) return <section />;
+    if (!this.state.repo) return <section />;
 
     return (
       <section>
-        <h1>{this.state.selectedRepository}</h1>
+        <h1>{this.state.repo}</h1>
       </section>
     );
   }
+
+  renderReleasesSection() {
+    if (!this.state.repo || !this.state.releases) return <section />;
+
+    return this.state.releases.map(release => <div>{release.tag_name}</div>);
+  }
+
   render() {
     return (
       <div>
         <Owner updateOwner={owner => this.handleSubmit(owner)} />
         <ul>{this.state.repositoryNames.map(repo => this.renderRepo(repo))}</ul>
         {this.renderRepositorySection()}
+        {this.renderReleasesSection()}
       </div>
     );
   }
