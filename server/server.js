@@ -15,6 +15,18 @@ program
   .description(`TBD`)
   .parse(process.argv);
 
+if (
+  !program.clientId ||
+  !program.clientSecret ||
+  !program.port ||
+  !program.host ||
+  !program.origin
+) {
+  console.log("Please provide all parameters. See help output:");
+  program.outputHelp();
+  process.exit(1);
+}
+
 const app = express();
 
 app.all("*", function(req, res, next) {
