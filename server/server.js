@@ -12,7 +12,12 @@ program
   .option("--port <server port>", "Server port")
   .option("--host <server host>", "Server host")
   .option("--origin <allowed origin>", "CORS allow origin pattern")
-  .description(`TBD`)
+  .description(
+    `Server to retrieve OAuth access tokens from GitHub.
+
+  It listens for get requests on {host}:{port}/authenticate.
+  The whole response body from GitHub is returned as JSON.`
+  )
   .parse(process.argv);
 
 if (
