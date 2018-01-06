@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Owner } from "./owner";
 import { getNamesOfOwnRepositories } from "../stats_helper";
+import { getRequestGithub } from "../github";
 
 interface State {
   token: string;
@@ -27,20 +28,17 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
     this.loadRepos();
   }
 
-  getRequestGithub(path: string) {
-    const params: RequestInit = {
-      method: "GET",
-      mode: "cors",
-      headers: [["Authorization", `token ${this.state.token}`]]
-    };
-
-    return fetch(`https://api.github.com/${path}`, params);
-  }
   async loadRepos() {
     try {
-      let res = await this.getRequestGithub(`orgs/${this.state.owner}/repos`);
+      let res = await getRequestGithub(
+        `orgs/${this.state.owner}/repos`,
+        this.state.token
+      );
       if (res.status === 404) {
-        res = await this.getRequestGithub(`users/${this.state.owner}/repos`);
+        res = await getRequestGithub(
+          `users/${this.state.owner}/repos`,
+          this.state.token
+        );
       }
       const result = await res.json();
       const own = getNamesOfOwnRepositories(result);
@@ -53,8 +51,9 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
   }
 
   async loadReleases(repo: string) {
-    const response = await this.getRequestGithub(
-      `repos/${this.state.owner}/${repo}/releases`
+    const response = await getRequestGithub(
+      `repos/${this.state.owner}/${repo}/releases`,
+      this.state.token
     );
     const result = await response.json();
     this.setState({ releases: result });
@@ -84,8 +83,9 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
   }
 
   async selectRelease(release: any) {
-    const response = await this.getRequestGithub(
-      `repos/${this.state.owner}/${this.state.repo}/releases/${release.id}`
+    const response = await getRequestGithub(
+      `repos/${this.state.owner}/${this.state.repo}/releases/${release.id}`,
+      this.state.token
     );
 
     const releaseData = await response.json();
