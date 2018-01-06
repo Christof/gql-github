@@ -1,15 +1,28 @@
 # gql-github
 
-Tool to communicat with [github](github.com) using
-[GraphQL](http://graphql.org).
-
-The main purpose is just to play with GraphQL.
+Tool to communicat with [github](github.com).
 
 # Installation and building
 
 ```bash
 yarn
 yarn run tsc-watch
+```
+
+# Web-Server
+
+The development server can be started by executing:
+
+```
+yarn run start
+```
+
+# Auth-Server
+
+To access GitHub from the web app authentication requires to run a local server:
+
+```
+node server.js --port=7000 --host=localhost --client-id=... --client-secret=.... --origin="http://localhost:3000"
 ```
 
 # Create Release Notes
