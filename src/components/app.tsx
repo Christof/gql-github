@@ -34,7 +34,7 @@ export class App extends React.Component<{}, {}> {
             <Route path="/auth-callback" component={GithubCallback} />
             <Route path="/stats" component={Stats} />
             <Route
-              path="/retriever-release-notes"
+              path="/retrieve-release-notes"
               component={ReleaseNotesRetriever}
             />
           </div>
