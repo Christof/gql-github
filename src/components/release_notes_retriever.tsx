@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as ReactMarkdown from "react-markdown";
 import { Owner } from "./owner";
 import { getRequestGithub, getRepositoryNames } from "../github";
 
@@ -109,7 +110,7 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
     return (
       <section>
         <h1>{this.state.release.tag_name}</h1>
-        <div>{this.state.releaseDescription}</div>
+        <ReactMarkdown source={this.state.releaseDescription} />
       </section>
     );
   }
