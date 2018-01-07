@@ -104,12 +104,31 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
     );
   }
 
+  copyToClipboard() {
+    var copyText = document.getElementById("textarea");
+    (copyText as any).select();
+    document.execCommand("Copy");
+  }
+
   renderReleaseSection() {
     if (!this.state.releaseDescription) return <section />;
 
     return (
       <section>
         <h1>{this.state.release.tag_name}</h1>
+        <input
+          style={{
+            "user-select": "text",
+            whiteSpace: "pre",
+            position: "absolute",
+            clip: "rect(0, 0, 0, 0)"
+          }}
+          type="textarea"
+          readOnly
+          value={this.state.releaseDescription}
+          id="textarea"
+        />
+        <button onClick={() => this.copyToClipboard()}>Copy</button>
         <ReactMarkdown source={this.state.releaseDescription} />
       </section>
     );
