@@ -71,7 +71,7 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
     );
   }
 
-  async selectRelease(release: any) {
+  async getRelease(release: any) {
     const response = await getRequestGithub(
       `repos/${this.state.owner}/${this.state.repo}/releases/${release.id}`,
       this.state.token
@@ -82,13 +82,17 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
     this.setState({ releaseDescription: releaseData.body, release });
   }
 
-  renderRelease(release: any) {
+  selectRelease(event: React.ChangeEvent<HTMLSelectElement>) {
+    event.preventDefault();
+
+    this.getRelease(this.state.releases[Number(event.target.value)]);
+  }
+
+  renderRelease(release: any, index: number) {
     return (
-      <li key={release.id}>
-        <button onClick={() => this.selectRelease(release)}>
-          {release.tag_name}
-        </button>
-      </li>
+      <option key={index} value={index}>
+        {release.tag_name}
+      </option>
     );
   }
 
@@ -97,9 +101,14 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
 
     return (
       <section>
-        <ul>
-          {this.state.releases.map(release => this.renderRelease(release))}
-        </ul>
+        <select
+          style={{ width: "100px" }}
+          onChange={event => this.selectRelease(event)}
+        >
+          {this.state.releases.map((release, index) =>
+            this.renderRelease(release, index)
+          )}
+        </select>
       </section>
     );
   }
