@@ -118,7 +118,7 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
         <h1>{this.state.release.tag_name}</h1>
         <input
           style={{
-            "user-select": "text",
+            userSelect: "text",
             whiteSpace: "pre",
             position: "absolute",
             clip: "rect(0, 0, 0, 0)"
