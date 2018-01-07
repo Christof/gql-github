@@ -105,8 +105,11 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
   }
 
   copyToClipboard() {
-    var copyText = document.getElementById("textarea");
-    (copyText as any).select();
+    const range = document.createRange();
+    const selection = document.getSelection();
+    const copyText = document.getElementById("textToCopy");
+    range.selectNode(copyText);
+    selection.addRange(range);
     document.execCommand("Copy");
   }
 
@@ -116,18 +119,17 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
     return (
       <section>
         <h1>{this.state.release.tag_name}</h1>
-        <input
+        <span
           style={{
             userSelect: "text",
             whiteSpace: "pre",
             position: "absolute",
             clip: "rect(0, 0, 0, 0)"
           }}
-          type="textarea"
-          readOnly
-          value={this.state.releaseDescription}
-          id="textarea"
-        />
+          id="textToCopy"
+        >
+          {this.state.releaseDescription}
+        </span>
         <button onClick={() => this.copyToClipboard()}>Copy</button>
         <ReactMarkdown source={this.state.releaseDescription} />
       </section>
