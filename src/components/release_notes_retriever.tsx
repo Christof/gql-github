@@ -3,6 +3,7 @@ import * as ReactMarkdown from "react-markdown";
 import { Owner } from "./owner";
 import { getRequestGithub, getRepositoryNames } from "../github";
 import { Dropdown } from "./dropdown";
+import { CopyToClipboard } from "./copy_to_clipboard";
 
 interface State {
   token: string;
@@ -97,33 +98,13 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
     );
   }
 
-  copyToClipboard() {
-    const range = document.createRange();
-    const selection = document.getSelection();
-    const copyText = document.getElementById("textToCopy");
-    range.selectNode(copyText);
-    selection.addRange(range);
-    document.execCommand("Copy");
-  }
-
   renderReleaseSection() {
     if (!this.state.releaseDescription) return <section />;
 
     return (
       <section>
         <h1>{this.state.release.tag_name}</h1>
-        <span
-          style={{
-            userSelect: "text",
-            whiteSpace: "pre",
-            position: "absolute",
-            clip: "rect(0, 0, 0, 0)"
-          }}
-          id="textToCopy"
-        >
-          {this.state.releaseDescription}
-        </span>
-        <button onClick={() => this.copyToClipboard()}>Copy</button>
+        <CopyToClipboard text={this.state.releaseDescription} />
         <ReactMarkdown source={this.state.releaseDescription} />
       </section>
     );
