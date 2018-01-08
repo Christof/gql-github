@@ -79,10 +79,9 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
     this.setState({ releaseDescription: releaseData.body, release });
   }
 
-  selectRelease(event: React.ChangeEvent<HTMLSelectElement>) {
-    event.preventDefault();
-
-    this.getRelease(this.state.releases[Number(event.target.value)]);
+  selectRelease(tagName: string) {
+    const release = this.state.releases.find(x => x.tag_name === tagName);
+    this.getRelease(release);
   }
 
   renderReleasesSection() {
@@ -92,10 +91,10 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
       <section>
         <select
           style={{ width: "100px" }}
-          onChange={event => this.selectRelease(event)}
+          onChange={event => this.selectRelease(event.target.value)}
         >
-          {this.state.releases.map((release, index) => (
-            <option key={index} value={index}>
+          {this.state.releases.map(release => (
+            <option key={release.tag_name} value={release.tag_name}>
               {release.tag_name}
             </option>
           ))}
