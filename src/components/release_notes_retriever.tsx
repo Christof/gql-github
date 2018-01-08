@@ -55,10 +55,6 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
     return this.loadReleases(repo);
   }
 
-  renderRepo(repo: string) {
-    return <li key={repo} />;
-  }
-
   renderRepositorySection() {
     if (!this.state.repo) return <section />;
 
