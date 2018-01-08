@@ -145,11 +145,17 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
     );
   }
 
+  renderRepositorySelection() {
+    return (
+      <ul>{this.state.repositoryNames.map(repo => this.renderRepo(repo))}</ul>
+    );
+  }
+
   render() {
     return (
       <div>
         <Owner updateOwner={owner => this.handleSubmit(owner)} />
-        <ul>{this.state.repositoryNames.map(repo => this.renderRepo(repo))}</ul>
+        {this.renderRepositorySelection()}
         {this.renderRepositorySection()}
         {this.renderReleasesSection()}
         {this.renderReleaseSection()}
