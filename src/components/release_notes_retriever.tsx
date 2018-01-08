@@ -89,16 +89,10 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
 
     return (
       <section>
-        <select
-          style={{ width: "100px" }}
-          onChange={event => this.selectRelease(event.target.value)}
-        >
-          {this.state.releases.map(release => (
-            <option key={release.tag_name} value={release.tag_name}>
-              {release.tag_name}
-            </option>
-          ))}
-        </select>
+        <Dropdown
+          options={this.state.releases.map(release => release.tag_name)}
+          onSelect={tagName => this.selectRelease(tagName)}
+        />
       </section>
     );
   }
