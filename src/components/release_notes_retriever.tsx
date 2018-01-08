@@ -2,6 +2,7 @@ import * as React from "react";
 import * as ReactMarkdown from "react-markdown";
 import { Owner } from "./owner";
 import { getRequestGithub, getRepositoryNames } from "../github";
+import { Dropdown } from "./dropdown";
 
 interface State {
   token: string;
@@ -141,16 +142,10 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
     }
 
     return (
-      <select
-        style={{ width: "100px" }}
-        onChange={event => this.selectRepository(event.target.value)}
-      >
-        {this.state.repositoryNames.map(repo => (
-          <option key={repo} value={repo}>
-            {repo}
-          </option>
-        ))}
-      </select>
+      <Dropdown
+        options={this.state.repositoryNames}
+        onSelect={repo => this.selectRepository(repo)}
+      />
     );
   }
 
