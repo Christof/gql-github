@@ -54,11 +54,7 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
   }
 
   renderRepo(repo: string) {
-    return (
-      <li key={repo}>
-        <button onClick={() => this.selectRepository(repo)}>{repo}</button>
-      </li>
-    );
+    return <li key={repo} />;
   }
 
   renderRepositorySection() {
@@ -146,8 +142,21 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
   }
 
   renderRepositorySelection() {
+    if (this.state.repositoryNames.length === 0) {
+      return <div />;
+    }
+
     return (
-      <ul>{this.state.repositoryNames.map(repo => this.renderRepo(repo))}</ul>
+      <select
+        style={{ width: "100px" }}
+        onChange={event => this.selectRepository(event.target.value)}
+      >
+        {this.state.repositoryNames.map(repo => (
+          <option key={repo} value={repo}>
+            {repo}
+          </option>
+        ))}
+      </select>
     );
   }
 
