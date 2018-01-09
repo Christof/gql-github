@@ -18,6 +18,10 @@ interface State {
   data: GithubData[];
 }
 
+function sum(array: number[]) {
+  return array.reduce((sum, value) => sum + value, 0);
+}
+
 export class Stats extends React.Component<{}, State> {
   constructor(props: {}) {
     super(props);
@@ -89,10 +93,7 @@ export class Stats extends React.Component<{}, State> {
 
     const authors = Object.keys(statsPerYear[0]);
     const x = years.map((year, index) => {
-      const commitsInYear = Object.values(statsPerYear[index]).reduce(
-        (sum, value) => sum + value,
-        0
-      );
+      const commitsInYear = sum(Object.values(statsPerYear[index]));
       return `${year} (${commitsInYear})`;
     });
 
@@ -110,10 +111,8 @@ export class Stats extends React.Component<{}, State> {
       };
     });
 
-    const overallCommitCount = data.reduce(
-      (sum, authorData) => sum + authorData.total,
-      0
-    );
+    const overallCommitCount = sum(data.map(authorData => authorData.total));
+
     const layout: Partial<Plotly.Layout> = {
       title: `Yearly commits in ${title} ${overallCommitCount}`,
       xaxis: {
