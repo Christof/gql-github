@@ -88,12 +88,19 @@ export class Stats extends React.Component<{}, State> {
     );
 
     const authors = Object.keys(statsPerYear[0]);
+    const x = years.map((year, index) => {
+      const commitsInYear = Object.values(statsPerYear[index]).reduce(
+        (sum, value) => sum + value,
+        0
+      );
+      return `${year} (${commitsInYear})`;
+    });
 
     const traces = authors.map((author: string) => {
       const yValues = statsPerYear.map(year => year[author]);
       const authorSum = data.find(d => d.author.login === author).total;
       return {
-        x: years,
+        x,
         y: yValues,
         type: "bar",
         textposition: "outside",
