@@ -8,6 +8,15 @@ export interface GithubAuthorData {
 
 export type GithubData = GithubAuthorData[];
 
+export interface GithubCompareResult {
+  commits: GithubCommit[];
+}
+
+export interface GithubCommit {
+  author: { login: string };
+  commit: { message: string };
+}
+
 export function getRequestGithub(path: string, token: string) {
   const params: RequestInit = {
     method: "GET",

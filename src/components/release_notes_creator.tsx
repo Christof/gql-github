@@ -1,5 +1,9 @@
 import { Dropdown } from "./dropdown";
-import { getRepositoryNames, getRequestGithub } from "../github";
+import {
+  getRepositoryNames,
+  getRequestGithub,
+  GithubCompareResult
+} from "../github";
 import { Owner } from "./owner";
 import * as React from "react";
 
@@ -47,8 +51,14 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
       this.state.token
     );
 
-    const result = await response.json();
+    const result = (await response.json()) as GithubCompareResult;
     console.log(result);
+
+    const pullRequestRegex = new RegExp(/Merge pull request/);
+    const pullRequestMerges = result.commits.filter(commit =>
+      commit.commit.message.match(pullRequestRegex)
+    );
+    console.log(pullRequestMerges);
   }
 
   async loadReleases(repo: string) {
