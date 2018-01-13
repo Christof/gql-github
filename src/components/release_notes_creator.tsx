@@ -17,6 +17,29 @@ interface State {
   endRelease?: string;
 }
 
+enum ChangeCategory {
+  Basic,
+  Training,
+  Breaking
+}
+
+class PullRequest {
+  text: string;
+  id: string;
+  changeCategory: ChangeCategory;
+
+  constructor(commitMessage: string) {
+    const pullRequestPartsRegex = new RegExp(
+      /Merge pull request #(\d*) .*?\n\n(.*)/
+    );
+    const match = commitMessage.match(pullRequestPartsRegex);
+
+    this.text = match[2];
+    this.id = match[1];
+    this.changeCategory = ChangeCategory.Basic;
+  }
+}
+
 export class ReleaseNotesCreator extends React.Component<{}, State> {
   constructor(props: {}) {
     super(props);
@@ -52,13 +75,15 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
     );
 
     const result = (await response.json()) as GithubCompareResult;
-    console.log(result);
 
     const pullRequestRegex = new RegExp(/Merge pull request/);
     const pullRequestMerges = result.commits.filter(commit =>
       commit.commit.message.match(pullRequestRegex)
     );
-    console.log(pullRequestMerges);
+    const pullRequests = pullRequestMerges.map(
+      commit => new PullRequest(commit.commit.message)
+    );
+    console.log(pullRequests);
   }
 
   async loadReleases(repo: string) {
