@@ -5,6 +5,7 @@ import { Stats } from "./stats";
 import { GithubButton } from "./github_button";
 import { GithubCallback } from "./github_callback";
 import { ReleaseNotesRetriever } from "./release_notes_retriever";
+import { ReleaseNotesCreator } from "./release_notes_creator";
 import * as uuid from "node-uuid";
 
 export class App extends React.Component<{}, {}> {
@@ -27,7 +28,10 @@ export class App extends React.Component<{}, {}> {
               Stats
             </Link>
             <Link className={navClass} to="/retrieve-release-notes">
-              Release Notes
+              Retrieve Release Notes
+            </Link>
+            <Link className={navClass} to="/create-release-notes">
+              Create Release Notes
             </Link>
           </div>
           <div className="ph2 pv3">
@@ -36,6 +40,10 @@ export class App extends React.Component<{}, {}> {
             <Route
               path="/retrieve-release-notes"
               component={ReleaseNotesRetriever}
+            />
+            <Route
+              path="/create-release-notes"
+              component={ReleaseNotesCreator}
             />
           </div>
         </div>
