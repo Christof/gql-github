@@ -25,7 +25,7 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
     };
   }
 
-  handleSubmit(owner: string) {
+  handleOwnerSubmit(owner: string) {
     this.setState({ owner });
     this.loadRepos(owner);
   }
@@ -122,7 +122,7 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
   render() {
     return (
       <div>
-        <Owner updateOwner={owner => this.handleSubmit(owner)} />
+        <Owner updateOwner={owner => this.handleOwnerSubmit(owner)} />
         {this.renderRepositorySelection()}
         {this.renderRepositorySection()}
         {this.renderReleasesSection()}
