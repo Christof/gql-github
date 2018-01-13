@@ -39,6 +39,18 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
     }
   }
 
+  async getCommits() {
+    const response = await getRequestGithub(
+      `repos/${this.state.owner}/${this.state.repo}/compare/${
+        this.state.startRelease
+      }...${this.state.endRelease}`,
+      this.state.token
+    );
+
+    const result = await response.json();
+    console.log(result);
+  }
+
   async loadReleases(repo: string) {
     const response = await getRequestGithub(
       `repos/${this.state.owner}/${repo}/releases`,
@@ -65,6 +77,7 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
       />
     );
   }
+
   renderReleasesSection() {
     if (!this.state.repo || !this.state.releases) return <section />;
 
@@ -86,6 +99,9 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
             onSelect={tagName => this.setState({ endRelease: tagName })}
           />
         </label>
+        <button onClick={() => this.getCommits()}>
+          Get merged PRs in range
+        </button>
       </section>
     );
   }
