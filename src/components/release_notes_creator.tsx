@@ -9,8 +9,8 @@ interface State {
   owner: string;
   repo?: string;
   releases?: any[];
-  startRelease?: any;
-  endRelease?: any;
+  startRelease?: string;
+  endRelease?: string;
 }
 
 export class ReleaseNotesCreator extends React.Component<{}, State> {
@@ -65,12 +65,37 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
       />
     );
   }
+  renderReleasesSection() {
+    if (!this.state.repo || !this.state.releases) return <section />;
+
+    const releaseNames = this.state.releases.map(release => release.tag_name);
+    return (
+      <section>
+        <h3>Select range</h3>
+        <label>
+          Start
+          <Dropdown
+            options={releaseNames}
+            onSelect={tagName => this.setState({ startRelease: tagName })}
+          />
+        </label>
+        <label className="ph2">
+          End
+          <Dropdown
+            options={releaseNames}
+            onSelect={tagName => this.setState({ endRelease: tagName })}
+          />
+        </label>
+      </section>
+    );
+  }
 
   render() {
     return (
       <div>
         <Owner updateOwner={owner => this.handleOwnerSubmit(owner)} />
         {this.renderRepositorySelection()}
+        {this.renderReleasesSection()}
       </div>
     );
   }
