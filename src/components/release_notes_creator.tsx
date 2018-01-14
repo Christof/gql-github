@@ -11,6 +11,7 @@ import {
 } from "../github";
 import { Owner } from "./owner";
 import * as React from "react";
+import * as ReactMarkdown from "react-markdown";
 
 interface State {
   token: string;
@@ -143,7 +144,7 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
     if (pullRequests.length === 0) return releaseNote;
 
     return (
-      releaseNote + `**${category} Changes:***\n\n${pullRequests.join("\n")}\n`
+      releaseNote + `**${category} Changes:**\n\n${pullRequests.join("\n")}\n`
     );
   }
 
@@ -171,7 +172,7 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
             }
           />
         ))}
-        <div>{this.state.releaseNote}</div>
+        <ReactMarkdown source={this.state.releaseNote} />
       </section>
     );
   }
