@@ -1,9 +1,10 @@
 import * as React from "react";
+import { Dropdown } from "./dropdown";
 
 export enum ChangeCategory {
-  Basic,
-  Training,
-  Breaking
+  Basic = "Basic",
+  Training = "Training",
+  Breaking = "Breaking"
 }
 
 export class PullRequest {
@@ -32,11 +33,30 @@ interface State {
 }
 
 export class PullRequestComponent extends React.Component<Props, State> {
+  selectChangeCategory(changeCategory: string) {
+    const category =
+      ChangeCategory[changeCategory as keyof typeof ChangeCategory];
+    console.log("Change category to", category);
+  }
+
+  renderChangeCategorySelection() {
+    return (
+      <Dropdown
+        options={[
+          ChangeCategory.Basic,
+          ChangeCategory.Training,
+          ChangeCategory.Breaking
+        ]}
+        onSelect={changeCategory => this.selectChangeCategory(changeCategory)}
+      />
+    );
+  }
   render() {
     return (
       <div>
         <span>{this.props.pullRequest.text}</span>
         <span>{this.props.pullRequest.id}</span>
+        {this.renderChangeCategorySelection()}
       </div>
     );
   }
