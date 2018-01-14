@@ -162,6 +162,7 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
 
     return (
       <section>
+        <h3>Adjust categories</h3>
         {this.state.pullRequests.map((pullRequest, index) => (
           <PullRequestComponent
             key={pullRequest.id}
@@ -171,6 +172,7 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
             }
           />
         ))}
+        <h3 className="pt2">Release Note</h3>
         <ReactMarkdown source={this.state.releaseNote} />
       </section>
     );
