@@ -1,3 +1,4 @@
+import { PullRequest, PullRequestComponent } from "./pull_request";
 import { Dropdown } from "./dropdown";
 import {
   getRepositoryNames,
@@ -15,29 +16,7 @@ interface State {
   releases?: any[];
   startRelease?: string;
   endRelease?: string;
-}
-
-enum ChangeCategory {
-  Basic,
-  Training,
-  Breaking
-}
-
-class PullRequest {
-  text: string;
-  id: string;
-  changeCategory: ChangeCategory;
-
-  constructor(commitMessage: string) {
-    const pullRequestPartsRegex = new RegExp(
-      /Merge pull request #(\d*) .*?\n\n(.*)/
-    );
-    const match = commitMessage.match(pullRequestPartsRegex);
-
-    this.text = match[2];
-    this.id = match[1];
-    this.changeCategory = ChangeCategory.Basic;
-  }
+  pullRequests: PullRequest[];
 }
 
 export class ReleaseNotesCreator extends React.Component<{}, State> {
@@ -46,7 +25,8 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
     this.state = {
       owner: "skillslab",
       repositoryNames: [],
-      token: JSON.parse(window.localStorage.github).access_token
+      token: JSON.parse(window.localStorage.github).access_token,
+      pullRequests: []
     };
   }
 
@@ -80,10 +60,11 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
     const pullRequestMerges = result.commits.filter(commit =>
       commit.commit.message.match(pullRequestRegex)
     );
-    const pullRequests = pullRequestMerges.map(
-      commit => new PullRequest(commit.commit.message)
-    );
-    console.log(pullRequests);
+    this.setState({
+      pullRequests: pullRequestMerges.map(
+        commit => new PullRequest(commit.commit.message)
+      )
+    });
   }
 
   async loadReleases(repo: string) {
@@ -141,12 +122,25 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
     );
   }
 
+  renderPullRequestsSection() {
+    if (this.state.pullRequests.length === 0) return <section />;
+
+    return (
+      <section>
+        {this.state.pullRequests.map(pullRequest => (
+          <PullRequestComponent pullRequest={pullRequest} />
+        ))}
+      </section>
+    );
+  }
+
   render() {
     return (
       <div>
         <Owner updateOwner={owner => this.handleOwnerSubmit(owner)} />
         {this.renderRepositorySelection()}
         {this.renderReleasesSection()}
+        {this.renderPullRequestsSection()}
       </div>
     );
   }
