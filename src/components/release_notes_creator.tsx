@@ -143,9 +143,8 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
 
     if (pullRequests.length === 0) return releaseNote;
 
-    return (
-      releaseNote + `**${category} Changes:**\n\n${pullRequests.join("\n")}\n`
-    );
+    const innerText = pullRequests.join("\n");
+    return `${releaseNote}**${category} Changes:**\n\n${innerText}\n\n`;
   }
 
   updateReleaseNote() {
