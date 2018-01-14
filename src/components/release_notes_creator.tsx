@@ -134,6 +134,7 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
     const pullRequests = [...this.state.pullRequests];
     pullRequests[index] = pullRequest;
     this.setState({ pullRequests });
+    this.updateReleaseNote();
   }
 
   appendChangeCategory(category: ChangeCategory, releaseNote = "") {
