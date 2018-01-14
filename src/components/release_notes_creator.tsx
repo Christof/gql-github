@@ -128,7 +128,10 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
     return (
       <section>
         {this.state.pullRequests.map(pullRequest => (
-          <PullRequestComponent pullRequest={pullRequest} />
+          <PullRequestComponent
+            key={pullRequest.id}
+            pullRequest={pullRequest}
+          />
         ))}
       </section>
     );
