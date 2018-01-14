@@ -22,6 +22,10 @@ export class PullRequest {
     this.id = match[1];
     this.changeCategory = ChangeCategory.Basic;
   }
+
+  toString() {
+    return `- ${this.text} (${this.id})`;
+  }
 }
 
 interface Props {
