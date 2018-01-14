@@ -63,9 +63,9 @@ export class PullRequestComponent extends React.Component<Props, State> {
   render() {
     return (
       <div>
-        <span>{this.props.pullRequest.text}</span>
-        <span>{this.props.pullRequest.id}</span>
         {this.renderChangeCategorySelection()}
+        <span>{this.props.pullRequest.text}</span>
+        <span className="ph1">({this.props.pullRequest.id})</span>
       </div>
     );
   }
