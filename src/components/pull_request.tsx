@@ -8,19 +8,21 @@ export enum ChangeCategory {
 }
 
 export class PullRequest {
-  text: string;
-  id: string;
-  changeCategory: ChangeCategory;
+  constructor(
+    public text: string,
+    public id: string,
+    public changeCategory: ChangeCategory
+  ) {}
 
-  constructor(commitMessage: string) {
+  static parseFrom(commitMessage: string) {
     const pullRequestPartsRegex = new RegExp(
       /Merge pull request #(\d*) .*?\n\n(.*)/
     );
     const match = commitMessage.match(pullRequestPartsRegex);
 
-    this.text = match[2];
-    this.id = match[1];
-    this.changeCategory = ChangeCategory.Basic;
+    const text = match[2];
+    const id = match[1];
+    return new PullRequest(text, id, ChangeCategory.Basic);
   }
 
   toString() {
@@ -42,10 +44,8 @@ export class PullRequestComponent extends React.Component<Props, State> {
     const changeCategory =
       ChangeCategory[categoryName as keyof typeof ChangeCategory];
 
-    const changedPullRequest = Object.assign({}, this.props.pullRequest, {
-      changeCategory
-    });
-    this.props.onChange(changedPullRequest);
+    const pr = this.props.pullRequest;
+    this.props.onChange(new PullRequest(pr.text, pr.id, changeCategory));
   }
 
   renderChangeCategorySelection() {
