@@ -122,15 +122,24 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
     );
   }
 
+  setPullRequest(pullRequest: PullRequest, index: number) {
+    const pullRequests = [...this.state.pullRequests];
+    pullRequests[index] = pullRequest;
+    this.setState({ pullRequests });
+  }
+
   renderPullRequestsSection() {
     if (this.state.pullRequests.length === 0) return <section />;
 
     return (
       <section>
-        {this.state.pullRequests.map(pullRequest => (
+        {this.state.pullRequests.map((pullRequest, index) => (
           <PullRequestComponent
             key={pullRequest.id}
             pullRequest={pullRequest}
+            onChange={updatedPullRequest =>
+              this.setPullRequest(updatedPullRequest, index)
+            }
           />
         ))}
       </section>

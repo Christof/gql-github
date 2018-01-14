@@ -26,6 +26,7 @@ export class PullRequest {
 
 interface Props {
   pullRequest: PullRequest;
+  onChange: (changedPullRequest: PullRequest) => void;
 }
 
 interface State {
@@ -33,10 +34,14 @@ interface State {
 }
 
 export class PullRequestComponent extends React.Component<Props, State> {
-  selectChangeCategory(changeCategory: string) {
-    const category =
-      ChangeCategory[changeCategory as keyof typeof ChangeCategory];
-    console.log("Change category to", category);
+  selectChangeCategory(categoryName: string) {
+    const changeCategory =
+      ChangeCategory[categoryName as keyof typeof ChangeCategory];
+
+    const changedPullRequest = Object.assign({}, this.props.pullRequest, {
+      changeCategory
+    });
+    this.props.onChange(changedPullRequest);
   }
 
   renderChangeCategorySelection() {
