@@ -1,4 +1,8 @@
-import { PullRequest, PullRequestComponent } from "./pull_request";
+import {
+  PullRequest,
+  PullRequestComponent,
+  ChangeCategory
+} from "./pull_request";
 import { Dropdown } from "./dropdown";
 import {
   getRepositoryNames,
@@ -17,6 +21,7 @@ interface State {
   startRelease?: string;
   endRelease?: string;
   pullRequests: PullRequest[];
+  releaseNote: string;
 }
 
 export class ReleaseNotesCreator extends React.Component<{}, State> {
@@ -26,7 +31,8 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
       owner: "skillslab",
       repositoryNames: [],
       token: JSON.parse(window.localStorage.github).access_token,
-      pullRequests: []
+      pullRequests: [],
+      releaseNote: ""
     };
   }
 
@@ -65,6 +71,7 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
         commit => new PullRequest(commit.commit.message)
       )
     });
+    this.updateReleaseNote();
   }
 
   async loadReleases(repo: string) {
@@ -128,6 +135,28 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
     this.setState({ pullRequests });
   }
 
+  appendChangeCategory(category: ChangeCategory, releaseNote = "") {
+    const pullRequests = this.state.pullRequests.filter(
+      pullRequest => pullRequest.changeCategory === category
+    );
+
+    if (pullRequests.length === 0) return releaseNote;
+
+    return (
+      releaseNote + `**${category} Changes:***\n\n${pullRequests.join("\n")}\n`
+    );
+  }
+
+  updateReleaseNote() {
+    let releaseNote = this.appendChangeCategory(ChangeCategory.Breaking);
+    releaseNote = this.appendChangeCategory(ChangeCategory.Basic, releaseNote);
+    releaseNote = this.appendChangeCategory(
+      ChangeCategory.Training,
+      releaseNote
+    );
+    this.setState({ releaseNote });
+  }
+
   renderPullRequestsSection() {
     if (this.state.pullRequests.length === 0) return <section />;
 
@@ -142,6 +171,7 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
             }
           />
         ))}
+        <div>{this.state.releaseNote}</div>
       </section>
     );
   }
