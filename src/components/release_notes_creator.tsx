@@ -19,9 +19,9 @@ interface State {
   repositoryNames: string[];
   owner: string;
   repo?: string;
-  releases?: any[];
-  startRelease?: string;
-  endRelease?: string;
+  tags?: { name: string }[];
+  startTag?: string;
+  releaseTag?: string;
   pullRequests: PullRequest[];
   releaseNote: string;
 }
@@ -57,8 +57,8 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
   async getCommits() {
     const response = await getRequestGithub(
       `repos/${this.state.owner}/${this.state.repo}/compare/${
-        this.state.startRelease
-      }...${this.state.endRelease}`,
+        this.state.startTag
+      }...${this.state.releaseTag}`,
       this.state.token
     );
 
@@ -83,7 +83,7 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
     );
     const result = await response.json();
 
-    this.setState({ releases: result });
+    this.setState({ tags: result });
   }
 
   selectRepository(repo: string) {
@@ -104,10 +104,10 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
     );
   }
 
-  renderReleasesSection() {
-    if (!this.state.repo || !this.state.releases) return <section />;
+  renderTagsSection() {
+    if (!this.state.repo || !this.state.tags) return <section />;
 
-    const releaseNames = this.state.releases.map(release => release.name);
+    const releaseNames = this.state.tags.map(release => release.name);
     return (
       <section>
         <h3>Select range</h3>
@@ -115,14 +115,14 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
           Start
           <Dropdown
             options={releaseNames}
-            onSelect={tagName => this.setState({ startRelease: tagName })}
+            onSelect={tagName => this.setState({ startTag: tagName })}
           />
         </label>
         <label className="ph2">
           End
           <Dropdown
             options={releaseNames}
-            onSelect={tagName => this.setState({ endRelease: tagName })}
+            onSelect={tagName => this.setState({ releaseTag: tagName })}
           />
         </label>
         <button onClick={() => this.getCommits()}>
@@ -161,9 +161,9 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
 
   postRelease() {
     const release = {
-      tag_name: this.state.endRelease,
+      tag_name: this.state.releaseTag,
       target_commitish: "master",
-      name: this.state.endRelease,
+      name: this.state.releaseTag,
       body: this.state.releaseNote,
       draft: false,
       prerelease: false
@@ -198,7 +198,7 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
       <div>
         <Owner updateOwner={owner => this.handleOwnerSubmit(owner)} />
         {this.renderRepositorySelection()}
-        {this.renderReleasesSection()}
+        {this.renderTagsSection()}
         {this.renderPullRequestsSection()}
       </div>
     );
