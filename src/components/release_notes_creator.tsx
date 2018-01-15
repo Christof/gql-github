@@ -7,7 +7,8 @@ import { Dropdown } from "./dropdown";
 import {
   getRepositoryNames,
   getRequestGithub,
-  GithubCompareResult
+  GithubCompareResult,
+  postRelease
 } from "../github";
 import { Owner } from "./owner";
 import * as React from "react";
@@ -157,6 +158,18 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
     this.setState({ releaseNote });
   }
 
+  postRelease() {
+    const release = {
+      tag_name: this.state.endRelease,
+      target_commitish: "master",
+      name: this.state.endRelease,
+      body: this.state.releaseNote,
+      draft: false,
+      prerelease: false
+    };
+    postRelease(this.state.owner, this.state.repo, release, this.state.token);
+  }
+
   renderPullRequestsSection() {
     if (this.state.pullRequests.length === 0) return <section />;
 
@@ -174,6 +187,7 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
         ))}
         <h3 className="pt2">Release Note</h3>
         <ReactMarkdown source={this.state.releaseNote} />
+        <button onClick={() => this.postRelease()}>Create Release</button>
       </section>
     );
   }
