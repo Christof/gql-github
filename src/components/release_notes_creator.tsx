@@ -111,23 +111,29 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
     return (
       <section>
         <h3>Select range</h3>
-        <label>
-          Start
-          <Dropdown
-            options={releaseNames}
-            onSelect={tagName => this.setState({ startTag: tagName })}
-          />
-        </label>
-        <label className="ph2">
-          End
-          <Dropdown
-            options={releaseNames}
-            onSelect={tagName => this.setState({ releaseTag: tagName })}
-          />
-        </label>
-        <button onClick={() => this.getCommits()}>
-          Get merged PRs in range
-        </button>
+        <div>
+          <label>
+            Start
+            <Dropdown
+              options={releaseNames}
+              onSelect={tagName => this.setState({ startTag: tagName })}
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            End
+            <Dropdown
+              options={releaseNames}
+              onSelect={tagName => this.setState({ releaseTag: tagName })}
+            />
+          </label>
+        </div>
+        <div>
+          <button onClick={() => this.getCommits()}>
+            Get merged PRs in range
+          </button>
+        </div>
       </section>
     );
   }
