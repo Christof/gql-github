@@ -26,7 +26,7 @@ export class PullRequest {
   }
 
   toString() {
-    return `- ${this.text} (${this.id})`;
+    return `- ${this.text} (#${this.id})`;
   }
 }
 
