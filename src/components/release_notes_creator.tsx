@@ -76,18 +76,19 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
     this.updateReleaseNote();
   }
 
-  async loadReleases(repo: string) {
+  async loadTags(repo: string) {
     const response = await getRequestGithub(
-      `repos/${this.state.owner}/${repo}/releases`,
+      `repos/${this.state.owner}/${repo}/tags`,
       this.state.token
     );
     const result = await response.json();
+
     this.setState({ releases: result });
   }
 
   selectRepository(repo: string) {
     this.setState({ repo: repo });
-    return this.loadReleases(repo);
+    return this.loadTags(repo);
   }
 
   renderRepositorySelection() {
@@ -106,7 +107,7 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
   renderReleasesSection() {
     if (!this.state.repo || !this.state.releases) return <section />;
 
-    const releaseNames = this.state.releases.map(release => release.tag_name);
+    const releaseNames = this.state.releases.map(release => release.name);
     return (
       <section>
         <h3>Select range</h3>
