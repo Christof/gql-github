@@ -27,6 +27,25 @@ export function getRequestGithub(path: string, token: string) {
   return fetch(`https://api.github.com/${path}`, params);
 }
 
+export function postRelease(
+  owner: string,
+  repo: string,
+  release: any,
+  token: string
+) {
+  const params: RequestInit = {
+    method: "POST",
+    mode: "cors",
+    body: JSON.stringify(release),
+    headers: [["Authorization", `token ${token}`]]
+  };
+
+  return fetch(
+    `https://api.github.com/repos/${owner}/${repo}/releases`,
+    params
+  );
+}
+
 export async function getRepositories(owner: string, token: string) {
   let response = await getRequestGithub(`orgs/${owner}/repos`, token);
   if (response.status === 404) {
