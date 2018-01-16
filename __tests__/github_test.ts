@@ -1,8 +1,25 @@
 import { Github } from "../src/github";
 
 describe("Github", () => {
-  const fetchMock = jest.fn();
-  const github = new Github("owner", "token", fetchMock);
+  const fetchMock = jest.fn<Promise<Request>>();
+  const github = new Github("owner", "secret-token", fetchMock);
+
+  describe("getRequest", () => {
+    it("sends request to github api, with cors and headers", async () => {
+      fetchMock.mockReset();
+      fetchMock.mockReturnValue({});
+      await github.getRequest("specific-path");
+
+      expect(fetchMock.mock.calls.length).toBe(1);
+      expect(fetchMock.mock.calls[0][0]).toBe(
+        "https://api.github.com/specific-path"
+      );
+      const params = fetchMock.mock.calls[0][1];
+      expect(params.method).toBe("GET");
+      expect(params.mode).toBe("cors");
+      expect(params.headers).toEqual([["Authorization", "token secret-token"]]);
+    });
+  });
 
   describe("getRepositories", () => {
     it("first requests repositories from organization named owner", async () => {

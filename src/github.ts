@@ -24,7 +24,7 @@ export class Github {
     private fetch = window.fetch
   ) {}
 
-  getRequestGithub(path: string) {
+  getRequest(path: string) {
     const params: RequestInit = {
       method: "GET",
       mode: "cors",
@@ -35,9 +35,9 @@ export class Github {
   }
 
   async getRepositories() {
-    let response = await this.getRequestGithub(`orgs/${this.owner}/repos`);
+    let response = await this.getRequest(`orgs/${this.owner}/repos`);
     if (response.status === 404) {
-      response = await this.getRequestGithub(`users/${this.owner}/repos`);
+      response = await this.getRequest(`users/${this.owner}/repos`);
     }
     return await response.json();
   }
