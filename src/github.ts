@@ -17,11 +17,21 @@ export interface GithubCommit {
   commit: { message: string };
 }
 
+/**
+ * Wrapper for fetch.
+ *
+ * Direct assignment as default parameter in constructor below
+ * doesn't work.
+ */
+function windowFetch(input: RequestInfo, init?: RequestInit) {
+  return fetch(input, init);
+}
+
 export class Github {
   constructor(
     private owner: string,
     private token: string,
-    private fetch = window.fetch
+    private fetch = windowFetch
   ) {}
 
   getRequest(path: string) {
