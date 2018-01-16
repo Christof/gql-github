@@ -57,4 +57,21 @@ describe("Github", () => {
       );
     });
   });
+
+  describe("getRepositoryNames", function() {
+    it("returns names of not forked repositories", async () => {
+      fetchMock.mockReset();
+      fetchMock.mockReturnValueOnce({
+        status: 200,
+        json() {
+          return [
+            { name: "repository 1", fork: true },
+            { name: "repository 2", fork: false }
+          ];
+        }
+      });
+
+      expect(await github.getRepositoryNames()).toEqual(["repository 2"]);
+    });
+  });
 });

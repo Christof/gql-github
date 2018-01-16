@@ -41,6 +41,10 @@ export class Github {
     }
     return await response.json();
   }
+
+  async getRepositoryNames() {
+    return getNamesOfOwnRepositories(await this.getRepositories());
+  }
 }
 
 export function getRequestGithub(path: string, token: string) {
