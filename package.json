@@ -4,10 +4,17 @@
   "description": "Tool to talk to github via GraphQL",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "tsc-watch": "./node_modules/typescript/bin/tsc -w",
     "webpack": "./node_modules/webpack/bin/webpack.js",
     "start": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js -w --host=0.0.0.0"
+  },
+  "jest": {
+    "moduleFileExtensions": ["ts", "tsx", "js"],
+    "transform": {
+      "^.+\\.(ts|tsx)$": "<rootDir>/preprocessor.js"
+    },
+    "testMatch": ["**/__tests__/*.(ts|tsx|js)"]
   },
   "author": "Christof Sirk",
   "license": "MIT",
