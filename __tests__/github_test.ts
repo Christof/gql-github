@@ -10,7 +10,7 @@ describe("Github", () => {
       fetchMock.mockReturnValue({});
       await github.getRequest("specific-path");
 
-      expect(fetchMock.mock.calls.length).toBe(1);
+      expect(fetchMock).toHaveBeenCalled();
       expect(fetchMock.mock.calls[0][0]).toBe(
         "https://api.github.com/specific-path"
       );
@@ -32,7 +32,7 @@ describe("Github", () => {
       });
       await github.getRepositories();
 
-      expect(fetchMock.mock.calls.length).toBe(1);
+      expect(fetchMock).toHaveBeenCalled();
       expect(fetchMock.mock.calls[0][0]).toBe(
         "https://api.github.com/orgs/owner/repos"
       );
@@ -51,7 +51,7 @@ describe("Github", () => {
       });
       await github.getRepositories();
 
-      expect(fetchMock.mock.calls.length).toBe(2);
+      expect(fetchMock).toHaveBeenCalledTimes(2);
       expect(fetchMock.mock.calls[1][0]).toBe(
         "https://api.github.com/users/owner/repos"
       );
