@@ -17,6 +17,32 @@ export interface GithubCommit {
   commit: { message: string };
 }
 
+export class Github {
+  constructor(
+    private owner: string,
+    private token: string,
+    private fetch = window.fetch
+  ) {}
+
+  getRequestGithub(path: string) {
+    const params: RequestInit = {
+      method: "GET",
+      mode: "cors",
+      headers: [["Authorization", `token ${this.token}`]]
+    };
+
+    return this.fetch(`https://api.github.com/${path}`, params);
+  }
+
+  async getRepositories() {
+    let response = await this.getRequestGithub(`orgs/${this.owner}/repos`);
+    if (response.status === 404) {
+      response = await this.getRequestGithub(`users/${this.owner}/repos`);
+    }
+    return await response.json();
+  }
+}
+
 export function getRequestGithub(path: string, token: string) {
   const params: RequestInit = {
     method: "GET",
