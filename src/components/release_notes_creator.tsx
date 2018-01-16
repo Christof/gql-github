@@ -5,10 +5,10 @@ import {
 } from "./pull_request";
 import { Dropdown } from "./dropdown";
 import {
-  getRepositoryNames,
   getRequestGithub,
   GithubCompareResult,
-  postRelease
+  postRelease,
+  Github
 } from "../github";
 import { Owner } from "./owner";
 import * as React from "react";
@@ -18,6 +18,7 @@ interface State {
   token: string;
   repositoryNames: string[];
   owner: string;
+  github?: Github;
   repo?: string;
   tags?: { name: string }[];
   startTag?: string;
@@ -38,20 +39,10 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
     };
   }
 
-  handleOwnerSubmit(owner: string) {
-    this.setState({ owner });
-    this.loadRepos(owner);
-  }
-
-  async loadRepos(owner: string) {
-    try {
-      const repositoryNames = await getRepositoryNames(owner, this.state.token);
-      this.setState({
-        repositoryNames
-      });
-    } catch (error) {
-      console.error(error);
-    }
+  async handleOwnerSubmit(owner: string) {
+    const github = new Github(owner, this.state.token);
+    const repositoryNames = await github.getRepositoryNames();
+    this.setState({ owner, github, repositoryNames });
   }
 
   async getCommits() {
