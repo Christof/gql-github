@@ -112,4 +112,27 @@ describe("Github", () => {
       expect(tags).toEqual(expectedTags);
     });
   });
+
+  describe("getReleases", function() {
+    it("returns list of releases", async function() {
+      const expectedReleases = [
+        { id: "0", tag_name: "v0.0.1" },
+        { id: "1", tag_name: "v0.0.2" }
+      ];
+      fetchMock.mockReset();
+      fetchMock.mockReturnValue({
+        status: 200,
+        json() {
+          return expectedReleases;
+        }
+      });
+      const releases = await github.getReleases("repoName");
+
+      expect(fetchMock).toHaveBeenCalled();
+      expect(fetchMock.mock.calls[0][0]).toBe(
+        "https://api.github.com/repos/owner/repoName/releases"
+      );
+      expect(releases).toEqual(expectedReleases);
+    });
+  });
 });

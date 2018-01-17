@@ -21,6 +21,11 @@ export interface GithubTag {
   name: string;
 }
 
+export interface GithubRelease {
+  id: string;
+  tag_name: string;
+}
+
 /**
  * Wrapper for fetch.
  *
@@ -71,6 +76,13 @@ export class Github {
   async getTags(repository: string): Promise<GithubTag[]> {
     const response = await this.getRequest(
       `repos/${this.owner}/${repository}/tags`
+    );
+    return await response.json();
+  }
+
+  async getReleases(repository: string): Promise<GithubRelease[]> {
+    const response = await this.getRequest(
+      `repos/${this.owner}/${repository}/releases`
     );
     return await response.json();
   }
