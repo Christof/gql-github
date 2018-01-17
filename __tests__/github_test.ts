@@ -135,4 +135,24 @@ describe("Github", () => {
       expect(releases).toEqual(expectedReleases);
     });
   });
+
+  describe("getRelease", function() {
+    it("returns details for given release id", async function() {
+      const expectedReleaseDetail = { body: "release description" };
+      fetchMock.mockReset();
+      fetchMock.mockReturnValue({
+        status: 200,
+        json() {
+          return expectedReleaseDetail;
+        }
+      });
+      const release = await github.getRelease("repoName", "releaseId");
+
+      expect(fetchMock).toHaveBeenCalled();
+      expect(fetchMock.mock.calls[0][0]).toBe(
+        "https://api.github.com/repos/owner/repoName/releases/releaseId"
+      );
+      expect(release).toEqual(expectedReleaseDetail);
+    });
+  });
 });
