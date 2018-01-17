@@ -33,12 +33,9 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
   }
 
   async loadReleases(repo: string) {
-    const response = await getRequestGithub(
-      `repos/${this.state.owner}/${repo}/releases`,
-      this.state.token
-    );
-    const result = await response.json();
-    this.setState({ releases: result });
+    const releases = await this.state.github.getReleases(repo);
+
+    this.setState({ releases });
   }
 
   selectRepository(repo: string) {
