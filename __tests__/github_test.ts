@@ -92,4 +92,24 @@ describe("Github", () => {
       );
     });
   });
+
+  describe("getTags", function() {
+    it("returns list of tags", async function() {
+      const expectedTags = [{ name: "v0.0.1" }, { name: "v0.0.2" }];
+      fetchMock.mockReset();
+      fetchMock.mockReturnValue({
+        status: 200,
+        json() {
+          return expectedTags;
+        }
+      });
+      const tags = await github.getTags("repoName");
+
+      expect(fetchMock).toHaveBeenCalled();
+      expect(fetchMock.mock.calls[0][0]).toBe(
+        "https://api.github.com/repos/owner/repoName/tags"
+      );
+      expect(tags).toEqual(expectedTags);
+    });
+  });
 });

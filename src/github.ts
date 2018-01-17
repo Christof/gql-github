@@ -67,6 +67,13 @@ export class Github {
 
     return (await response.json()) as GithubCompareResult;
   }
+
+  async getTags(repository: string): Promise<GithubTag[]> {
+    const response = await this.getRequest(
+      `repos/${this.owner}/${repository}/tags`
+    );
+    return await response.json();
+  }
 }
 
 export function getRequestGithub(path: string, token: string) {
