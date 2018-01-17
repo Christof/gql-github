@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as ReactMarkdown from "react-markdown";
 import { Owner } from "./owner";
-import { getRequestGithub, getRepositoryNames } from "../github";
+import { getRequestGithub, Github } from "../github";
 import { Dropdown } from "./dropdown";
 import { CopyToClipboard } from "./copy_to_clipboard";
 
@@ -9,6 +9,7 @@ interface State {
   token: string;
   repositoryNames: string[];
   owner: string;
+  github?: Github;
   repo?: string;
   releases?: any[];
   release?: any;
@@ -25,20 +26,10 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
     };
   }
 
-  handleOwnerSubmit(owner: string) {
-    this.setState({ owner });
-    this.loadRepos(owner);
-  }
-
-  async loadRepos(owner: string) {
-    try {
-      const repositoryNames = await getRepositoryNames(owner, this.state.token);
-      this.setState({
-        repositoryNames
-      });
-    } catch (error) {
-      console.error(error);
-    }
+  async handleOwnerSubmit(owner: string) {
+    const github = new Github(owner, this.state.token);
+    const repositoryNames = await github.getRepositoryNames();
+    this.setState({ owner, github, repositoryNames });
   }
 
   async loadReleases(repo: string) {
