@@ -46,14 +46,11 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
   }
 
   async getCommits() {
-    const response = await getRequestGithub(
-      `repos/${this.state.owner}/${this.state.repo}/compare/${
-        this.state.startTag
-      }...${this.state.releaseTag}`,
-      this.state.token
+    const result = await this.state.github.compare(
+      this.state.repo,
+      this.state.startTag,
+      this.state.releaseTag
     );
-
-    const result = (await response.json()) as GithubCompareResult;
 
     const pullRequestRegex = new RegExp(/Merge pull request/);
     const pullRequestMerges = result.commits.filter(commit =>
