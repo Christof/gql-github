@@ -17,6 +17,10 @@ export interface GithubCommit {
   commit: { message: string };
 }
 
+export interface GithubTag {
+  name: string;
+}
+
 /**
  * Wrapper for fetch.
  *

@@ -4,12 +4,7 @@ import {
   ChangeCategory
 } from "./pull_request";
 import { Dropdown } from "./dropdown";
-import {
-  getRequestGithub,
-  GithubCompareResult,
-  postRelease,
-  Github
-} from "../github";
+import { getRequestGithub, postRelease, Github, GithubTag } from "../github";
 import { Owner } from "./owner";
 import * as React from "react";
 import * as ReactMarkdown from "react-markdown";
@@ -20,7 +15,7 @@ interface State {
   owner: string;
   github?: Github;
   repo?: string;
-  tags?: { name: string }[];
+  tags?: GithubTag[];
   startTag?: string;
   releaseTag?: string;
   pullRequests: PullRequest[];
