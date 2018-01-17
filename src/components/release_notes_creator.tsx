@@ -56,11 +56,11 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
     const pullRequestMerges = result.commits.filter(commit =>
       commit.commit.message.match(pullRequestRegex)
     );
-    this.setState({
-      pullRequests: pullRequestMerges.map(commit =>
-        PullRequest.parseFrom(commit.commit.message)
-      )
-    });
+    const pullRequests = pullRequestMerges.map(commit =>
+      PullRequest.parseFrom(commit.commit.message)
+    );
+
+    this.setState({ pullRequests });
     this.updateReleaseNote();
   }
 
