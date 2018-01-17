@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as ReactMarkdown from "react-markdown";
 import { Owner } from "./owner";
-import { getRequestGithub, Github } from "../github";
+import { Github } from "../github";
 import { Dropdown } from "./dropdown";
 import { CopyToClipboard } from "./copy_to_clipboard";
 
@@ -54,12 +54,10 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
   }
 
   async getRelease(release: any) {
-    const response = await getRequestGithub(
-      `repos/${this.state.owner}/${this.state.repo}/releases/${release.id}`,
-      this.state.token
+    const releaseData = await this.state.github.getRelease(
+      this.state.repo,
+      release.id
     );
-
-    const releaseData = await response.json();
 
     this.setState({ releaseDescription: releaseData.body, release });
   }
