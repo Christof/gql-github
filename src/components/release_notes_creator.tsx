@@ -4,7 +4,7 @@ import {
   ChangeCategory
 } from "./pull_request";
 import { Dropdown } from "./dropdown";
-import { getRequestGithub, postRelease, Github, GithubTag } from "../github";
+import { postRelease, Github, GithubTag } from "../github";
 import { Owner } from "./owner";
 import * as React from "react";
 import * as ReactMarkdown from "react-markdown";
@@ -60,13 +60,9 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
   }
 
   async loadTags(repo: string) {
-    const response = await getRequestGithub(
-      `repos/${this.state.owner}/${repo}/tags`,
-      this.state.token
-    );
-    const result = await response.json();
+    const tags = await this.state.github.getTags(repo);
 
-    this.setState({ tags: result });
+    this.setState({ tags });
   }
 
   selectRepository(repo: string) {
