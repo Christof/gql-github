@@ -74,4 +74,22 @@ describe("Github", () => {
       expect(await github.getRepositoryNames()).toEqual(["repository 2"]);
     });
   });
+
+  describe("compare", function() {
+    it("returns compare result", async function() {
+      fetchMock.mockReset();
+      fetchMock.mockReturnValue({
+        status: 200,
+        json() {
+          return { commits: [] };
+        }
+      });
+      await github.compare("repoName", "startTag", "endTag");
+
+      expect(fetchMock).toHaveBeenCalled();
+      expect(fetchMock.mock.calls[0][0]).toBe(
+        "https://api.github.com/repos/owner/repoName/compare/startTag...endTag"
+      );
+    });
+  });
 });

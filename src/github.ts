@@ -55,6 +55,14 @@ export class Github {
   async getRepositoryNames() {
     return getNamesOfOwnRepositories(await this.getRepositories());
   }
+
+  async compare(repository: string, start: string, end: string) {
+    const response = await this.getRequest(
+      `repos/${this.owner}/${repository}/compare/${start}...${end}`
+    );
+
+    return (await response.json()) as GithubCompareResult;
+  }
 }
 
 export function getRequestGithub(path: string, token: string) {
