@@ -102,6 +102,14 @@ export class Github {
     return await response.json();
   }
 
+  async getStats(repository: string): Promise<GithubData> {
+    const response = await this.getRequest(
+      `repos/${this.owner}/${repository}/stats/contributors`
+    );
+
+    return response.json();
+  }
+
   postRelease(repository: string, release: any) {
     const params: RequestInit = {
       method: "POST",

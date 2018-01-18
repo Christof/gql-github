@@ -1,4 +1,4 @@
-import { Github } from "../src/github";
+import { Github, GithubData } from "../src/github";
 
 describe("Github", () => {
   const fetchMock = jest.fn<Promise<Request>>();
@@ -153,6 +153,32 @@ describe("Github", () => {
         "https://api.github.com/repos/owner/repoName/releases/releaseId"
       );
       expect(release).toEqual(expectedReleaseDetail);
+    });
+  });
+
+  describe("getStats", function() {
+    it("returns contribution statistic", async function() {
+      const expectedStats: GithubData = [
+        {
+          author: { login: "author name" },
+          total: 2,
+          weeks: [{ w: 51, a: 1, d: 1, c: 2 }]
+        }
+      ];
+      fetchMock.mockReset();
+      fetchMock.mockReturnValue({
+        status: 200,
+        json() {
+          return expectedStats;
+        }
+      });
+      const stats = await github.getStats("repoName");
+
+      expect(fetchMock).toHaveBeenCalled();
+      expect(fetchMock.mock.calls[0][0]).toBe(
+        "https://api.github.com/repos/owner/repoName/stats/contributors"
+      );
+      expect(stats).toEqual(expectedStats);
     });
   });
 
