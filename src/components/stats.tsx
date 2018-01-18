@@ -3,17 +3,13 @@ import { OverallPlot } from "./overall_plot";
 import * as React from "react";
 import { getCommitsPerAuthorInDateRange } from "../stats_helper";
 import * as Plotly from "plotly.js";
-import {
-  GithubData,
-  GithubAuthorData,
-  getRequestGithub,
-  getRepositoryNames
-} from "../github";
+import { GithubData, GithubAuthorData, Github } from "../github";
 
 interface State {
   error: any;
   token: string;
   owner: string;
+  github?: Github;
   repositoryNames: string[];
   data: GithubData[];
 }
@@ -126,33 +122,6 @@ export class Stats extends React.Component<{}, State> {
     Plotly.newPlot(title + "-perYear", traces as any, layout);
   }
 
-  async loadRepos() {
-    try {
-      const repositoryNames = await getRepositoryNames(
-        this.state.owner,
-        this.state.token
-      );
-
-      this.setState({
-        repositoryNames
-      });
-    } catch (error) {
-      console.error(error);
-      this.setState({
-        error
-      });
-    }
-  }
-
-  async getStatsFor(owner: string, repo: string): Promise<GithubData> {
-    const response = await getRequestGithub(
-      `repos/${owner}/${repo}/stats/contributors`,
-      this.state.token
-    );
-
-    return response.json();
-  }
-
   private traceForAuthor(statsForAuthor: GithubAuthorData) {
     return {
       type: "scatter",
@@ -164,12 +133,13 @@ export class Stats extends React.Component<{}, State> {
   }
 
   async handleSubmit(owner: string) {
-    this.setState({ owner });
-    await this.loadRepos();
+    const github = new Github(owner, this.state.token);
+    const repositoryNames = await github.getRepositoryNames();
+    this.setState({ owner, github, repositoryNames });
 
     const data = await Promise.all(
       this.state.repositoryNames.map(async repo => {
-        const stats = await this.getStatsFor(this.state.owner, repo);
+        const stats = await github.getStats(repo);
         this.setupGraph(repo, stats);
         this.setupYearGraph(repo, stats);
         return stats;
