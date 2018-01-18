@@ -101,6 +101,20 @@ export class Github {
 
     return await response.json();
   }
+
+  postRelease(repository: string, release: any) {
+    const params: RequestInit = {
+      method: "POST",
+      mode: "cors",
+      body: JSON.stringify(release),
+      headers: [["Authorization", `token ${this.token}`]]
+    };
+
+    return this.fetch(
+      `https://api.github.com/repos/${this.owner}/${repository}/releases`,
+      params
+    );
+  }
 }
 
 export function getRequestGithub(path: string, token: string) {

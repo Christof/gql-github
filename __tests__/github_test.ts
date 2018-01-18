@@ -155,4 +155,29 @@ describe("Github", () => {
       expect(release).toEqual(expectedReleaseDetail);
     });
   });
+
+  describe("postRelease", function() {
+    it("sends post request", async function() {
+      const release = {
+        tag_name: "v0.0.1",
+        target_commitish: "master",
+        name: "v0.0.1",
+        body: "release description",
+        draft: false,
+        prerelease: false
+      };
+      fetchMock.mockReset();
+      fetchMock.mockReturnValue({});
+      await github.postRelease("repoName", release);
+
+      expect(fetchMock).toHaveBeenCalled();
+      expect(fetchMock.mock.calls[0][0]).toBe(
+        "https://api.github.com/repos/owner/repoName/releases"
+      );
+      const params = fetchMock.mock.calls[0][1];
+      expect(params.method).toBe("POST");
+      expect(params.mode).toBe("cors");
+      expect(params.headers).toEqual([["Authorization", "token secret-token"]]);
+    });
+  });
 });
