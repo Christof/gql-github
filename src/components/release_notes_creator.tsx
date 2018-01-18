@@ -4,7 +4,7 @@ import {
   ChangeCategory
 } from "./pull_request";
 import { Dropdown } from "./dropdown";
-import { postRelease, Github, GithubTag } from "../github";
+import { Github, GithubTag } from "../github";
 import { Owner } from "./owner";
 import * as React from "react";
 import * as ReactMarkdown from "react-markdown";
@@ -153,7 +153,7 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
       draft: false,
       prerelease: false
     };
-    postRelease(this.state.owner, this.state.repo, release, this.state.token);
+    this.state.github.postRelease(this.state.repo, release);
   }
 
   renderPullRequestsSection() {
