@@ -22,12 +22,13 @@ export interface GithubTag {
 }
 
 export interface GithubRelease {
-  id: string;
+  id?: number;
   tag_name: string;
-}
-
-export interface GithubReleaseDetail {
+  name: string;
   body: string;
+  draft: boolean;
+  prerelease: boolean;
+  target_commitish: string;
 }
 
 /**
@@ -94,7 +95,7 @@ export class Github {
   async getRelease(
     repository: string,
     releaseId: string
-  ): Promise<GithubReleaseDetail> {
+  ): Promise<GithubRelease> {
     const response = await this.getRequest(
       `repos/${this.owner}/${repository}/releases/${releaseId}`
     );
@@ -110,7 +111,7 @@ export class Github {
     return response.json();
   }
 
-  postRelease(repository: string, release: any) {
+  postRelease(repository: string, release: GithubRelease) {
     const params: RequestInit = {
       method: "POST",
       mode: "cors",

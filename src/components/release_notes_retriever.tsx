@@ -49,12 +49,8 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
 
   async selectRelease(tagName: string) {
     const release = this.state.releases.find(x => x.tag_name === tagName);
-    const releaseDetail = await this.state.github.getRelease(
-      this.state.repo,
-      release.id
-    );
 
-    this.setState({ releaseDescription: releaseDetail.body, release });
+    this.setState({ releaseDescription: release.body, release });
   }
 
   renderReleasesSection() {
