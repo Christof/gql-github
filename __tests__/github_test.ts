@@ -2,11 +2,15 @@ import { Github, GithubData } from "../src/github";
 
 describe("Github", () => {
   const fetchMock = jest.fn<Promise<Request>>();
-  const github = new Github("owner", "secret-token", fetchMock);
+  let github: Github;
+
+  beforeEach(() => {
+    fetchMock.mockReset();
+    github = new Github("owner", "secret-token", fetchMock);
+  });
 
   describe("getRequest", () => {
     it("sends request to github api, with cors and headers", async () => {
-      fetchMock.mockReset();
       fetchMock.mockReturnValue({});
       await github.getRequest("specific-path");
 
@@ -24,7 +28,6 @@ describe("Github", () => {
   describe("getUser", () => {
     it("returns authenticated user", async () => {
       const expectedUser = { login: "username" };
-      fetchMock.mockReset();
       fetchMock.mockReturnValue({
         status: 200,
         json() {
@@ -42,7 +45,6 @@ describe("Github", () => {
   describe("getOrganization", () => {
     it("returns organization that are accessible for the user", async () => {
       const expectedOrgs = [{ login: "org1" }, { login: "org2" }];
-      fetchMock.mockReset();
       fetchMock.mockReturnValue({
         status: 200,
         json() {
@@ -61,7 +63,6 @@ describe("Github", () => {
 
   describe("getRepositories", () => {
     it("first requests repositories from organization named owner", async () => {
-      fetchMock.mockReset();
       fetchMock.mockReturnValue({
         status: 200,
         json() {
@@ -77,7 +78,6 @@ describe("Github", () => {
     });
 
     it("if first fails requests repositories from user named owner", async () => {
-      fetchMock.mockReset();
       fetchMock.mockReturnValueOnce({
         status: 404
       });
@@ -98,7 +98,6 @@ describe("Github", () => {
 
   describe("getRepositoryNames", function() {
     it("returns names of not forked repositories", async () => {
-      fetchMock.mockReset();
       fetchMock.mockReturnValueOnce({
         status: 200,
         json() {
@@ -115,7 +114,6 @@ describe("Github", () => {
 
   describe("compare", function() {
     it("returns compare result", async function() {
-      fetchMock.mockReset();
       fetchMock.mockReturnValue({
         status: 200,
         json() {
@@ -134,7 +132,6 @@ describe("Github", () => {
   describe("getTags", function() {
     it("returns list of tags", async function() {
       const expectedTags = [{ name: "v0.0.1" }, { name: "v0.0.2" }];
-      fetchMock.mockReset();
       fetchMock.mockReturnValue({
         status: 200,
         json() {
@@ -157,7 +154,6 @@ describe("Github", () => {
         { id: "0", tag_name: "v0.0.1" },
         { id: "1", tag_name: "v0.0.2" }
       ];
-      fetchMock.mockReset();
       fetchMock.mockReturnValue({
         status: 200,
         json() {
@@ -177,7 +173,6 @@ describe("Github", () => {
   describe("getRelease", function() {
     it("returns details for given release id", async function() {
       const expectedReleaseDetail = { body: "release description" };
-      fetchMock.mockReset();
       fetchMock.mockReturnValue({
         status: 200,
         json() {
@@ -203,7 +198,6 @@ describe("Github", () => {
           weeks: [{ w: 51, a: 1, d: 1, c: 2 }]
         }
       ];
-      fetchMock.mockReset();
       fetchMock.mockReturnValue({
         status: 200,
         json() {
@@ -230,7 +224,6 @@ describe("Github", () => {
         draft: false,
         prerelease: false
       };
-      fetchMock.mockReset();
       fetchMock.mockReturnValue({});
       await github.postRelease("repoName", release);
 
