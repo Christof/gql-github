@@ -62,6 +62,26 @@ describe("Github", () => {
     });
   });
 
+  describe("getOwners", function() {
+    it("returns name of possible owners", async () => {
+      fetchMock.mockReturnValueOnce({
+        status: 200,
+        json() {
+          return { login: "user" };
+        }
+      });
+      fetchMock.mockReturnValueOnce({
+        status: 200,
+        json() {
+          return [{ login: "org1" }, { login: "org2" }];
+        }
+      });
+
+      const owners = await github.getOwners();
+      expect(owners).toEqual(["user", "org1", "org2"]);
+    });
+  });
+
   describe("getRepositories", () => {
     it("first requests repositories from organization named owner", async () => {
       fetchMock.mockReturnValue({

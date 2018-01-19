@@ -70,6 +70,12 @@ export class Github {
     return await response.json();
   }
 
+  async getOwners(): Promise<string[]> {
+    const user = await this.getUser();
+    const orgs = await this.getOrganizations();
+    return [user.login, ...orgs.map(org => org.login)];
+  }
+
   async getRepositories() {
     let response = await this.getRequest(`orgs/${this.owner}/repos`);
     if (response.status === 404) {
