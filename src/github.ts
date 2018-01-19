@@ -65,7 +65,7 @@ export class Github {
     return await response.json();
   }
 
-  async getOrganizations(): Promise<GithubUser> {
+  async getOrganizations(): Promise<GithubUser[]> {
     const response = await this.getRequest(`user/orgs`);
     return await response.json();
   }
