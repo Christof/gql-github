@@ -1,5 +1,9 @@
 import { getNamesOfOwnRepositories } from "./stats_helper";
 
+export interface GithubUser {
+  login: string;
+}
+
 export interface GithubAuthorData {
   author: { login: string };
   total: number;
@@ -56,6 +60,11 @@ export class Github {
     };
 
     return this.fetch(`https://api.github.com/${path}`, params);
+  }
+
+  async getUser(): Promise<GithubUser> {
+    const response = await this.getRequest(`user`);
+    return await response.json();
   }
 
   async getRepositories() {

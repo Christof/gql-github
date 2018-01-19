@@ -21,6 +21,24 @@ describe("Github", () => {
     });
   });
 
+  describe("getUser", () => {
+    it("returns authenticated user", async () => {
+      const expectedUser = { login: "username" };
+      fetchMock.mockReset();
+      fetchMock.mockReturnValue({
+        status: 200,
+        json() {
+          return expectedUser;
+        }
+      });
+      const user = await github.getUser();
+
+      expect(fetchMock).toHaveBeenCalled();
+      expect(fetchMock.mock.calls[0][0]).toBe("https://api.github.com/user");
+      expect(user).toEqual(expectedUser);
+    });
+  });
+
   describe("getRepositories", () => {
     it("first requests repositories from organization named owner", async () => {
       fetchMock.mockReset();
