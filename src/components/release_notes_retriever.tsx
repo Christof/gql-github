@@ -1,13 +1,12 @@
 import * as React from "react";
 import * as ReactMarkdown from "react-markdown";
-import { Owner } from "./owner";
 import { Github, GithubRelease } from "../github";
 import { Dropdown } from "./dropdown";
 import { CopyToClipboard } from "./copy_to_clipboard";
 
 interface State {
   repositoryNames: string[];
-  owner: string;
+  owners: string[];
   github: Github;
   repo?: string;
   releases?: GithubRelease[];
@@ -20,16 +19,18 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
     super(props);
     const token = JSON.parse(window.localStorage.github).access_token;
     this.state = {
-      owner: "skillslab",
+      owners: [],
       repositoryNames: [],
       github: new Github(token)
     };
+
+    this.state.github.getOwners().then(owners => this.setState({ owners }));
   }
 
   async handleOwnerSubmit(owner: string) {
     this.state.github.owner = owner;
     const repositoryNames = await this.state.github.getRepositoryNames();
-    this.setState({ owner, repositoryNames });
+    this.setState({ repositoryNames });
   }
 
   async selectRepository(repo: string) {
@@ -94,7 +95,10 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
   render() {
     return (
       <div>
-        <Owner updateOwner={owner => this.handleOwnerSubmit(owner)} />
+        <Dropdown
+          options={this.state.owners}
+          onSelect={owner => this.handleOwnerSubmit(owner)}
+        />
         {this.renderRepositorySelection()}
         {this.renderRepositorySection()}
         {this.renderReleasesSection()}
