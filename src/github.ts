@@ -67,6 +67,11 @@ export class Github {
     return await response.json();
   }
 
+  async getOrganizations(): Promise<GithubUser> {
+    const response = await this.getRequest(`user/orgs`);
+    return await response.json();
+  }
+
   async getRepositories() {
     let response = await this.getRequest(`orgs/${this.owner}/repos`);
     if (response.status === 404) {

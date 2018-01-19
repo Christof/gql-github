@@ -39,6 +39,26 @@ describe("Github", () => {
     });
   });
 
+  describe("getOrganization", () => {
+    it("returns organization that are accessible for the user", async () => {
+      const expectedOrgs = [{ login: "org1" }, { login: "org2" }];
+      fetchMock.mockReset();
+      fetchMock.mockReturnValue({
+        status: 200,
+        json() {
+          return expectedOrgs;
+        }
+      });
+      const orgs = await github.getOrganizations();
+
+      expect(fetchMock).toHaveBeenCalled();
+      expect(fetchMock.mock.calls[0][0]).toBe(
+        "https://api.github.com/user/orgs"
+      );
+      expect(orgs).toEqual(expectedOrgs);
+    });
+  });
+
   describe("getRepositories", () => {
     it("first requests repositories from organization named owner", async () => {
       fetchMock.mockReset();
