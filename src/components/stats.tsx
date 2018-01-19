@@ -7,9 +7,8 @@ import { GithubData, GithubAuthorData, Github } from "../github";
 
 interface State {
   error: any;
-  token: string;
   owner: string;
-  github?: Github;
+  github: Github;
   repositoryNames: string[];
   data: GithubData[];
 }
@@ -21,9 +20,10 @@ function sum(array: number[]) {
 export class Stats extends React.Component<{}, State> {
   constructor(props: {}) {
     super(props);
+    const token = JSON.parse(window.localStorage.github).access_token;
     this.state = {
       error: null,
-      token: JSON.parse(window.localStorage.github).access_token,
+      github: new Github(token),
       owner: "skillslab",
       repositoryNames: [],
       data: []
@@ -133,13 +133,13 @@ export class Stats extends React.Component<{}, State> {
   }
 
   async handleSubmit(owner: string) {
-    const github = new Github(owner, this.state.token);
-    const repositoryNames = await github.getRepositoryNames();
-    this.setState({ owner, github, repositoryNames });
+    this.state.github.owner = owner;
+    const repositoryNames = await this.state.github.getRepositoryNames();
+    this.setState({ owner, repositoryNames });
 
     const data = await Promise.all(
       this.state.repositoryNames.map(async repo => {
-        const stats = await github.getStats(repo);
+        const stats = await this.state.github.getStats(repo);
         this.setupGraph(repo, stats);
         this.setupYearGraph(repo, stats);
         return stats;

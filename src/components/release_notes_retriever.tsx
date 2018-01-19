@@ -6,10 +6,9 @@ import { Dropdown } from "./dropdown";
 import { CopyToClipboard } from "./copy_to_clipboard";
 
 interface State {
-  token: string;
   repositoryNames: string[];
   owner: string;
-  github?: Github;
+  github: Github;
   repo?: string;
   releases?: GithubRelease[];
   release?: GithubRelease;
@@ -19,17 +18,18 @@ interface State {
 export class ReleaseNotesRetriever extends React.Component<{}, State> {
   constructor(props: {}) {
     super(props);
+    const token = JSON.parse(window.localStorage.github).access_token;
     this.state = {
       owner: "skillslab",
       repositoryNames: [],
-      token: JSON.parse(window.localStorage.github).access_token
+      github: new Github(token)
     };
   }
 
   async handleOwnerSubmit(owner: string) {
-    const github = new Github(owner, this.state.token);
-    const repositoryNames = await github.getRepositoryNames();
-    this.setState({ owner, github, repositoryNames });
+    this.state.github.owner = owner;
+    const repositoryNames = await this.state.github.getRepositoryNames();
+    this.setState({ owner, repositoryNames });
   }
 
   async selectRepository(repo: string) {

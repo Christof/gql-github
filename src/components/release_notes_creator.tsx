@@ -10,10 +10,9 @@ import * as React from "react";
 import * as ReactMarkdown from "react-markdown";
 
 interface State {
-  token: string;
   repositoryNames: string[];
   owner: string;
-  github?: Github;
+  github: Github;
   repo?: string;
   tags?: GithubTag[];
   startTag?: string;
@@ -25,19 +24,20 @@ interface State {
 export class ReleaseNotesCreator extends React.Component<{}, State> {
   constructor(props: {}) {
     super(props);
+    const token = JSON.parse(window.localStorage.github).access_token;
     this.state = {
       owner: "skillslab",
       repositoryNames: [],
-      token: JSON.parse(window.localStorage.github).access_token,
+      github: new Github(token),
       pullRequests: [],
       releaseNote: ""
     };
   }
 
   async handleOwnerSubmit(owner: string) {
-    const github = new Github(owner, this.state.token);
-    const repositoryNames = await github.getRepositoryNames();
-    this.setState({ owner, github, repositoryNames });
+    this.state.github.owner = owner;
+    const repositoryNames = await this.state.github.getRepositoryNames();
+    this.setState({ owner, repositoryNames });
   }
 
   async getCommits() {

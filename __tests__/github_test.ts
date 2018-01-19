@@ -6,7 +6,8 @@ describe("Github", () => {
 
   beforeEach(() => {
     fetchMock.mockReset();
-    github = new Github("owner", "secret-token", fetchMock);
+    github = new Github("secret-token", fetchMock);
+    github.owner = "owner";
   });
 
   describe("getRequest", () => {

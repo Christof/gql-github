@@ -46,11 +46,9 @@ function windowFetch(input: RequestInfo, init?: RequestInit) {
 }
 
 export class Github {
-  constructor(
-    private owner: string,
-    private token: string,
-    private fetch = windowFetch
-  ) {}
+  public owner: string;
+
+  constructor(private token: string, private fetch = windowFetch) {}
 
   getRequest(path: string) {
     const params: RequestInit = {
