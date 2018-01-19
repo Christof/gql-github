@@ -35,7 +35,7 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
     this.state.github.getOwners().then(owners => this.setState({ owners }));
   }
 
-  async handleOwnerSubmit(owner: string) {
+  async selectOwner(owner: string) {
     this.state.github.owner = owner;
     const repositoryNames = await this.state.github.getRepositoryNames();
     this.setState({ repositoryNames });
@@ -184,7 +184,7 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
       <div>
         <Dropdown
           options={this.state.owners}
-          onSelect={owner => this.handleOwnerSubmit(owner)}
+          onSelect={owner => this.selectOwner(owner)}
         />
         {this.renderRepositorySelection()}
         {this.renderTagsSection()}
