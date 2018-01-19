@@ -1,13 +1,13 @@
-import { Owner } from "./owner";
 import { OverallPlot } from "./overall_plot";
 import * as React from "react";
 import { getCommitsPerAuthorInDateRange } from "../stats_helper";
 import * as Plotly from "plotly.js";
 import { GithubData, GithubAuthorData, Github } from "../github";
+import { Dropdown } from "./dropdown";
 
 interface State {
   error: any;
-  owner: string;
+  owners: string[];
   github: Github;
   repositoryNames: string[];
   data: GithubData[];
@@ -24,10 +24,12 @@ export class Stats extends React.Component<{}, State> {
     this.state = {
       error: null,
       github: new Github(token),
-      owner: "skillslab",
+      owners: [],
       repositoryNames: [],
       data: []
     };
+
+    this.state.github.getOwners().then(owners => this.setState({ owners }));
   }
 
   setupGraph(title: string, data: GithubData) {
@@ -132,10 +134,10 @@ export class Stats extends React.Component<{}, State> {
     };
   }
 
-  async handleSubmit(owner: string) {
+  async selectOwner(owner: string) {
     this.state.github.owner = owner;
     const repositoryNames = await this.state.github.getRepositoryNames();
-    this.setState({ owner, repositoryNames });
+    this.setState({ repositoryNames });
 
     const data = await Promise.all(
       this.state.repositoryNames.map(async repo => {
@@ -162,7 +164,10 @@ export class Stats extends React.Component<{}, State> {
   render() {
     return (
       <div>
-        <Owner updateOwner={owner => this.handleSubmit(owner)} />
+        <Dropdown
+          options={this.state.owners}
+          onSelect={owner => this.selectOwner(owner)}
+        />
         <h2>Own repositories</h2>
         {this.state.data.length > 0 && (
           <OverallPlot
