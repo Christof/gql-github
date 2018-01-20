@@ -98,7 +98,7 @@ describe("Github", () => {
       );
     });
 
-    it("if first fails requests repositories from user named owner", async () => {
+    it("if first fails requests repositories from logged in user", async () => {
       fetchMock.mockReturnValueOnce({
         status: 404
       });
@@ -112,7 +112,7 @@ describe("Github", () => {
 
       expect(fetchMock).toHaveBeenCalledTimes(2);
       expect(fetchMock.mock.calls[1][0]).toBe(
-        "https://api.github.com/user/repos"
+        "https://api.github.com/user/repos?affiliation=owner"
       );
     });
   });

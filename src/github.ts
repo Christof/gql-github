@@ -79,7 +79,7 @@ export class Github {
   async getRepositories() {
     let response = await this.getRequest(`orgs/${this.owner}/repos`);
     if (response.status === 404) {
-      response = await this.getRequest(`user/repos`);
+      response = await this.getRequest(`user/repos?affiliation=owner`);
     }
     return await response.json();
   }
