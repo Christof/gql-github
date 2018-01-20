@@ -41,7 +41,6 @@
     "html-webpack-plugin": "^2.30.1",
     "jest": "^22.1.1",
     "source-map-loader": "^0.2.3",
-    "tachyons": "4.9.0",
     "tslint": "^5.8.0",
     "typescript": "^2.6.1",
     "webpack": "^3.10.0",
