@@ -46,12 +46,14 @@ class App extends React.Component<{} & WithStyles, {}> {
                 component={props => <Link to="/stats" {...props} />}
                 raised
                 color="primary"
+                className={classes.menuButton}
               >
                 Stats
               </Button>
               <Button
                 raised
                 color="primary"
+                className={classes.menuButton}
                 component={props => (
                   <Link to="/retrieve-release-notes" {...props} />
                 )}
@@ -61,6 +63,7 @@ class App extends React.Component<{} & WithStyles, {}> {
               <Button
                 raised
                 color="primary"
+                className={classes.menuButton}
                 component={props => (
                   <Link to="/create-release-notes" {...props} />
                 )}
