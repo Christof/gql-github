@@ -10,11 +10,17 @@
     "start": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js -w --host=0.0.0.0"
   },
   "jest": {
-    "moduleFileExtensions": ["ts", "tsx", "js"],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
     "transform": {
       "^.+\\.(ts|tsx)$": "<rootDir>/preprocessor.js"
     },
-    "testMatch": ["**/__tests__/*.(ts|tsx|js)"]
+    "testMatch": [
+      "**/__tests__/*.(ts|tsx|js)"
+    ]
   },
   "author": "Christof Sirk",
   "license": "MIT",
@@ -49,6 +55,7 @@
     "express": "^4.16.2",
     "graphql": "^0.11.7",
     "graphql-tag": "^2.5.0",
+    "material-ui": "^1.0.0-beta.29",
     "node-fetch": "^1.7.3",
     "node-uuid": "^1.4.8",
     "plotly.js": "^1.31.2",
