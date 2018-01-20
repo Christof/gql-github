@@ -7,7 +7,7 @@ import { GithubCallback } from "./github_callback";
 import { ReleaseNotesRetriever } from "./release_notes_retriever";
 import { ReleaseNotesCreator } from "./release_notes_creator";
 import * as uuid from "node-uuid";
-import { AppBar, Typography, Toolbar } from "material-ui";
+import { AppBar, Typography, Toolbar, Button } from "material-ui";
 import { withStyles, Theme, StyleRules } from "material-ui/styles";
 import { WithStyles } from "material-ui/styles/withStyles";
 
@@ -34,7 +34,6 @@ class App extends React.Component<{} & WithStyles, {}> {
 
   render() {
     const { classes } = this.props;
-    const navClass = "f6 link dim ba ph3 pv2 mh2 mb2 dib bg-light-blue";
     return (
       <BrowserRouter>
         <div>
@@ -43,16 +42,28 @@ class App extends React.Component<{} & WithStyles, {}> {
               <Typography type="title" color="inherit" className={classes.flex}>
                 Github Stats & Releases
               </Typography>
+              <Link to="/stats" style={{ textDecoration: "none" }}>
+                <Button raised color="primary">
+                  Stats
+                </Button>
+              </Link>
+              <Link
+                to="/retrieve-release-notes"
+                style={{ textDecoration: "none" }}
+              >
+                <Button raised color="primary">
+                  Retrieve Release Notes
+                </Button>
+              </Link>
+              <Link
+                to="/create-release-notes"
+                style={{ textDecoration: "none" }}
+              >
+                <Button raised color="primary">
+                  Create Release Notes
+                </Button>
+              </Link>
               <GithubButton />
-              <Link className={navClass} to="/stats">
-                Stats
-              </Link>
-              <Link className={navClass} to="/retrieve-release-notes">
-                Retrieve Release Notes
-              </Link>
-              <Link className={navClass} to="/create-release-notes">
-                Create Release Notes
-              </Link>
             </Toolbar>
           </AppBar>
           <div className="ph2 pv3">
