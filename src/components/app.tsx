@@ -80,7 +80,15 @@ class App extends React.Component<{} & WithStyles, State> {
             </Toolbar>
           </AppBar>
           <div style={{ margin: 16 }}>
-            <Route path="/auth-callback" component={GithubCallback} />
+            <Route
+              path="/auth-callback"
+              render={props => (
+                <GithubCallback
+                  {...props}
+                  onChangeToken={token => this.setState({ token })}
+                />
+              )}
+            />
             <Route path="/stats" component={Stats} />
             <Route
               path="/retrieve-release-notes"
