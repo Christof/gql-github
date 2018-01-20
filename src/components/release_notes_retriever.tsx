@@ -96,6 +96,7 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
     return (
       <div>
         <Dropdown
+          label="Owner"
           options={this.state.owners}
           onSelect={owner => this.selectOwner(owner)}
         />
