@@ -70,7 +70,7 @@ class App extends React.Component<{} & WithStyles, {}> {
               <GithubButton />
             </Toolbar>
           </AppBar>
-          <div className="ph2 pv3">
+          <div style={{ margin: 16 }}>
             <Route path="/auth-callback" component={GithubCallback} />
             <Route path="/stats" component={Stats} />
             <Route
