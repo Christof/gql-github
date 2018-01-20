@@ -1,7 +1,10 @@
 import * as React from "react";
 import * as qs from "qs";
+import { Button } from "material-ui";
 
-interface Props {}
+interface Props {
+  className: string;
+}
 
 export class GithubButton extends React.Component<Props, {}> {
   constructor(props: Props) {
@@ -26,20 +29,16 @@ export class GithubButton extends React.Component<Props, {}> {
 
     if (window.localStorage.github !== undefined) {
       return (
-        <button
-          className="f6 link dim ba ph3 pv2 mh2 mb2 dib bg-light-blue"
-          onClick={this.signout}
-        >
+        <Button raised {...this.props} onClick={this.signout}>
           Signout from GitHub
-        </button>
+        </Button>
       );
     }
     return (
-      <a
-        className="f6 link dim ba ph3 pv2 mh2 mb2 dib bg-light-blue"
-        href={githubLoginUrl}
-      >
-        Login with GitHub
+      <a href={githubLoginUrl}>
+        <Button raised {...this.props}>
+          Login with GitHub
+        </Button>
       </a>
     );
   }

@@ -70,7 +70,7 @@ class App extends React.Component<{} & WithStyles, {}> {
               >
                 Create Release Notes
               </Button>
-              <GithubButton />
+              <GithubButton className={classes.menuButton} />
             </Toolbar>
           </AppBar>
           <div style={{ margin: 16 }}>
