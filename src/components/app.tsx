@@ -24,12 +24,17 @@ const styles = (_theme: Theme): StyleRules => ({
   }
 });
 
-class App extends React.Component<{} & WithStyles, {}> {
+interface State {
+  token?: string;
+}
+
+class App extends React.Component<{} & WithStyles, State> {
   constructor(props: any) {
     super(props);
     if (window.localStorage.githubState === undefined) {
       window.localStorage.githubState = uuid.v4();
     }
+    this.state = {};
   }
 
   render() {
@@ -45,6 +50,7 @@ class App extends React.Component<{} & WithStyles, {}> {
               <Button
                 component={props => <Link to="/stats" {...props} />}
                 raised
+                disabled={this.state.token === undefined}
                 color="primary"
                 className={classes.menuButton}
               >
