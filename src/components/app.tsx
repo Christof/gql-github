@@ -42,27 +42,31 @@ class App extends React.Component<{} & WithStyles, {}> {
               <Typography type="title" color="inherit" className={classes.flex}>
                 Github Stats & Releases
               </Typography>
-              <Link to="/stats" style={{ textDecoration: "none" }}>
-                <Button raised color="primary">
-                  Stats
-                </Button>
-              </Link>
-              <Link
-                to="/retrieve-release-notes"
-                style={{ textDecoration: "none" }}
+              <Button
+                component={props => <Link to="/stats" {...props} />}
+                raised
+                color="primary"
               >
-                <Button raised color="primary">
-                  Retrieve Release Notes
-                </Button>
-              </Link>
-              <Link
-                to="/create-release-notes"
-                style={{ textDecoration: "none" }}
+                Stats
+              </Button>
+              <Button
+                raised
+                color="primary"
+                component={props => (
+                  <Link to="/retrieve-release-notes" {...props} />
+                )}
               >
-                <Button raised color="primary">
-                  Create Release Notes
-                </Button>
-              </Link>
+                Retrieve Release Notes
+              </Button>
+              <Button
+                raised
+                color="primary"
+                component={props => (
+                  <Link to="/create-release-notes" {...props} />
+                )}
+              >
+                Create Release Notes
+              </Button>
               <GithubButton />
             </Toolbar>
           </AppBar>
