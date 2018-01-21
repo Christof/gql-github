@@ -7,7 +7,7 @@ import { GithubButton } from "./github_button";
 import { GithubCallback } from "./github_callback";
 import { ReleaseNotesRetriever } from "./release_notes_retriever";
 import { ReleaseNotesCreator } from "./release_notes_creator";
-import { AppBar, Typography, Toolbar } from "material-ui";
+import { AppBar, Typography, Toolbar, Reboot } from "material-ui";
 import { withStyles, Theme, StyleRules } from "material-ui/styles";
 import { WithStyles } from "material-ui/styles/withStyles";
 
@@ -77,46 +77,52 @@ class App extends React.Component<{} & WithStyles, State> {
 
   render() {
     return (
-      <BrowserRouter>
-        <div>
-          {this.renderAppBar()}
-          <div style={{ margin: 16 }}>
-            <Route
-              path="/auth-callback"
-              render={props => (
-                <GithubCallback
-                  {...props}
-                  onChangeToken={token => this.setState({ token })}
-                />
-              )}
-            />
-            <Route
-              path="/stats"
-              render={props =>
-                this.renderOnlyIfLoggedIn(() => (
-                  <Stats {...props} token={this.state.token} />
-                ))
-              }
-            />
-            <Route
-              path="/retrieve-release-notes"
-              render={props =>
-                this.renderOnlyIfLoggedIn(() => (
-                  <ReleaseNotesRetriever {...props} token={this.state.token} />
-                ))
-              }
-            />
-            <Route
-              path="/create-release-notes"
-              render={props =>
-                this.renderOnlyIfLoggedIn(() => (
-                  <ReleaseNotesCreator {...props} token={this.state.token} />
-                ))
-              }
-            />
+      <div>
+        <Reboot />
+        <BrowserRouter>
+          <div>
+            {this.renderAppBar()}
+            <div style={{ margin: 16 }}>
+              <Route
+                path="/auth-callback"
+                render={props => (
+                  <GithubCallback
+                    {...props}
+                    onChangeToken={token => this.setState({ token })}
+                  />
+                )}
+              />
+              <Route
+                path="/stats"
+                render={props =>
+                  this.renderOnlyIfLoggedIn(() => (
+                    <Stats {...props} token={this.state.token} />
+                  ))
+                }
+              />
+              <Route
+                path="/retrieve-release-notes"
+                render={props =>
+                  this.renderOnlyIfLoggedIn(() => (
+                    <ReleaseNotesRetriever
+                      {...props}
+                      token={this.state.token}
+                    />
+                  ))
+                }
+              />
+              <Route
+                path="/create-release-notes"
+                render={props =>
+                  this.renderOnlyIfLoggedIn(() => (
+                    <ReleaseNotesCreator {...props} token={this.state.token} />
+                  ))
+                }
+              />
+            </div>
           </div>
-        </div>
-      </BrowserRouter>
+        </BrowserRouter>
+      </div>
     );
   }
 }
