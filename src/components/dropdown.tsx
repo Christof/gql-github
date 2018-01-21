@@ -20,7 +20,7 @@ export class Dropdown extends React.Component<Props, {}> {
 
   render() {
     return (
-      <FormControl>
+      <FormControl style={{ marginRight: 8 }}>
         {this.props.label && (
           <InputLabel htmlFor="age-simple">{this.props.label}</InputLabel>
         )}
