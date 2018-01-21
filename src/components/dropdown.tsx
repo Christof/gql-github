@@ -29,7 +29,7 @@ export class Dropdown extends React.Component<Props, {}> {
           value={this.state.selected}
         >
           <MenuItem disabled value="none">
-            Select another item
+            Select {this.props.label}
           </MenuItem>
           {this.props.options.map(option => (
             <MenuItem key={option} value={option}>
