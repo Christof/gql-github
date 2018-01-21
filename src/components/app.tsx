@@ -39,7 +39,6 @@ class MenuButton extends React.Component<
       <Button
         component={props => <Link to={to} {...props} />}
         raised
-        //disabled={this.state.token === undefined}
         color={isActive ? "accent" : "primary"}
         {...rest}
       >
