@@ -32,13 +32,13 @@ export class GithubButton extends React.Component<Props, {}> {
 
     if (this.props.token !== undefined) {
       return (
-        <Button raised {...this.props} onClick={this.signout}>
+        <Button raised className={this.props.className} onClick={this.signout}>
           Signout from GitHub
         </Button>
       );
     }
     return (
-      <Button raised {...this.props} href={githubLoginUrl}>
+      <Button raised className={this.props.className} href={githubLoginUrl}>
         Login with GitHub
       </Button>
     );
