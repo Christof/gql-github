@@ -60,41 +60,44 @@ class App extends React.Component<{} & WithStyles, State> {
     this.state = { token };
   }
 
-  render() {
+  renderAppBar() {
     const { classes } = this.props;
+    const props = {
+      disabled: this.state.token === undefined,
+      className: classes.menuButton
+    };
+    return (
+      <AppBar position="static">
+        <Toolbar>
+          <Typography type="title" color="inherit" className={classes.flex}>
+            Github Stats & Releases
+          </Typography>
+          <MenuButton to="/stats" text="Stats" {...props} />
+          <MenuButton
+            to="/retrieve-release-notes"
+            text="Retrieve Release Notes"
+            {...props}
+          />
+          <MenuButton
+            to="/create-release-notes"
+            text="Create Release Notes"
+            {...props}
+          />
+          <GithubButton
+            className={classes.menuButton}
+            token={this.state.token}
+            onChangeToken={token => this.setState({ token })}
+          />
+        </Toolbar>
+      </AppBar>
+    );
+  }
+
+  render() {
     return (
       <BrowserRouter>
         <div>
-          <AppBar position="static">
-            <Toolbar>
-              <Typography type="title" color="inherit" className={classes.flex}>
-                Github Stats & Releases
-              </Typography>
-              <MenuButton
-                to="/stats"
-                text="Stats"
-                disabled={this.state.token === undefined}
-                className={classes.menuButton}
-              />
-              <MenuButton
-                to="/retrieve-release-notes"
-                text="Retrieve Release Notes"
-                className={classes.menuButton}
-                disabled={this.state.token === undefined}
-              />
-              <MenuButton
-                to="/create-release-notes"
-                text="Create Release Notes"
-                className={classes.menuButton}
-                disabled={this.state.token === undefined}
-              />
-              <GithubButton
-                className={classes.menuButton}
-                token={this.state.token}
-                onChangeToken={token => this.setState({ token })}
-              />
-            </Toolbar>
-          </AppBar>
+          {this.renderAppBar()}
           <div style={{ margin: 16 }}>
             <Route
               path="/auth-callback"
