@@ -105,7 +105,16 @@ class App extends React.Component<{} & WithStyles, State> {
                 />
               )}
             />
-            <Route path="/stats" component={Stats} />
+            <Route
+              path="/stats"
+              render={props =>
+                this.state.token ? (
+                  <Stats {...props} token={this.state.token} />
+                ) : (
+                  <div />
+                )
+              }
+            />
             <Route
               path="/retrieve-release-notes"
               component={ReleaseNotesRetriever}

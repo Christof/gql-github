@@ -5,6 +5,10 @@ import * as Plotly from "plotly.js";
 import { GithubData, GithubAuthorData, Github } from "../github";
 import { Dropdown } from "./dropdown";
 
+interface Props {
+  token: string;
+}
+
 interface State {
   error: any;
   owners: string[];
@@ -17,13 +21,12 @@ function sum(array: number[]) {
   return array.reduce((sum, value) => sum + value, 0);
 }
 
-export class Stats extends React.Component<{}, State> {
-  constructor(props: {}) {
+export class Stats extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
-    const token = JSON.parse(window.localStorage.github).access_token;
     this.state = {
       error: null,
-      github: new Github(token),
+      github: new Github(this.props.token),
       owners: [],
       repositoryNames: [],
       data: []
