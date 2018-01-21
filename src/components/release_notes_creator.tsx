@@ -8,6 +8,7 @@ import { Github, GithubTag } from "../github";
 import * as React from "react";
 import * as ReactMarkdown from "react-markdown";
 import { Button } from "material-ui";
+import Typography from "material-ui/Typography/Typography";
 
 interface State {
   repositoryNames: string[];
@@ -95,7 +96,9 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
     const releaseNames = this.state.tags.map(release => release.name);
     return (
       <section>
-        <h3>Select range</h3>
+        <Typography type="headline" paragraph>
+          Range
+        </Typography>
         <Dropdown
           label="Start Tag"
           options={releaseNames}
@@ -169,7 +172,9 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
         ))}
         <h3 className="pt2">Release Note</h3>
         <ReactMarkdown source={this.state.releaseNote} />
-        <button onClick={() => this.postRelease()}>Create Release</button>
+        <Button raised onClick={() => this.postRelease()}>
+          Create Release
+        </Button>
       </section>
     );
   }
