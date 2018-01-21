@@ -35,11 +35,9 @@ export class GithubButton extends React.Component<Props, {}> {
       );
     }
     return (
-      <a href={githubLoginUrl}>
-        <Button raised {...this.props}>
-          Login with GitHub
-        </Button>
-      </a>
+      <Button raised {...this.props} href={githubLoginUrl}>
+        Login with GitHub
+      </Button>
     );
   }
 }
