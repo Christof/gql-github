@@ -7,7 +7,7 @@ import { Dropdown } from "./dropdown";
 import { Github, GithubTag } from "../github";
 import * as React from "react";
 import * as ReactMarkdown from "react-markdown";
-import { Button } from "material-ui";
+import { Button, Paper } from "material-ui";
 import Typography from "material-ui/Typography/Typography";
 
 interface State {
@@ -95,24 +95,26 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
 
     const releaseNames = this.state.tags.map(release => release.name);
     return (
-      <section>
-        <Typography type="headline" paragraph>
-          Range
-        </Typography>
-        <Dropdown
-          label="Start Tag"
-          options={releaseNames}
-          onSelect={tagName => this.setState({ startTag: tagName })}
-        />
-        <Dropdown
-          label="End Tag"
-          options={releaseNames}
-          onSelect={tagName => this.setState({ releaseTag: tagName })}
-        />
-        <Button raised onClick={() => this.getCommits()}>
-          Get merged PRs in range
-        </Button>
-      </section>
+      <Paper>
+        <section>
+          <Typography type="headline" paragraph>
+            Range
+          </Typography>
+          <Dropdown
+            label="Start Tag"
+            options={releaseNames}
+            onSelect={tagName => this.setState({ startTag: tagName })}
+          />
+          <Dropdown
+            label="End Tag"
+            options={releaseNames}
+            onSelect={tagName => this.setState({ releaseTag: tagName })}
+          />
+          <Button raised onClick={() => this.getCommits()}>
+            Get merged PRs in range
+          </Button>
+        </section>
+      </Paper>
     );
   }
 
@@ -159,20 +161,22 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
     if (this.state.pullRequests.length === 0) return <section />;
 
     return (
-      <section>
-        <Typography type="headline" paragraph>
-          Adjust Categories
-        </Typography>
-        {this.state.pullRequests.map((pullRequest, index) => (
-          <PullRequestComponent
-            key={pullRequest.id}
-            pullRequest={pullRequest}
-            onChange={updatedPullRequest =>
-              this.setPullRequest(updatedPullRequest, index)
-            }
-          />
-        ))}
-      </section>
+      <Paper>
+        <section>
+          <Typography type="headline" paragraph>
+            Adjust Categories
+          </Typography>
+          {this.state.pullRequests.map((pullRequest, index) => (
+            <PullRequestComponent
+              key={pullRequest.id}
+              pullRequest={pullRequest}
+              onChange={updatedPullRequest =>
+                this.setPullRequest(updatedPullRequest, index)
+              }
+            />
+          ))}
+        </section>
+      </Paper>
     );
   }
 
@@ -180,15 +184,17 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
     if (this.state.releaseNote.length === 0) return <section />;
 
     return (
-      <section>
-        <Typography type="headline" paragraph>
-          Release Note
-        </Typography>
-        <ReactMarkdown source={this.state.releaseNote} />
-        <Button raised onClick={() => this.postRelease()}>
-          Create Release
-        </Button>
-      </section>
+      <Paper>
+        <section>
+          <Typography type="headline" paragraph>
+            Release Note
+          </Typography>
+          <ReactMarkdown source={this.state.releaseNote} />
+          <Button raised onClick={() => this.postRelease()}>
+            Create Release
+          </Button>
+        </section>
+      </Paper>
     );
   }
 
