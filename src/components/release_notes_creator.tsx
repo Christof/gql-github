@@ -7,6 +7,7 @@ import { Dropdown } from "./dropdown";
 import { Github, GithubTag } from "../github";
 import * as React from "react";
 import * as ReactMarkdown from "react-markdown";
+import { Button } from "material-ui";
 
 interface State {
   repositoryNames: string[];
@@ -95,23 +96,19 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
     return (
       <section>
         <h3>Select range</h3>
-        <div>
-          <Dropdown
-            label="Start Tag"
-            options={releaseNames}
-            onSelect={tagName => this.setState({ startTag: tagName })}
-          />
-          <Dropdown
-            label="End Tag"
-            options={releaseNames}
-            onSelect={tagName => this.setState({ releaseTag: tagName })}
-          />
-        </div>
-        <div>
-          <button onClick={() => this.getCommits()}>
-            Get merged PRs in range
-          </button>
-        </div>
+        <Dropdown
+          label="Start Tag"
+          options={releaseNames}
+          onSelect={tagName => this.setState({ startTag: tagName })}
+        />
+        <Dropdown
+          label="End Tag"
+          options={releaseNames}
+          onSelect={tagName => this.setState({ releaseTag: tagName })}
+        />
+        <Button raised onClick={() => this.getCommits()}>
+          Get merged PRs in range
+        </Button>
       </section>
     );
   }
