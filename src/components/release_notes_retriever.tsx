@@ -14,14 +14,17 @@ interface State {
   releaseDescription?: string;
 }
 
-export class ReleaseNotesRetriever extends React.Component<{}, State> {
-  constructor(props: {}) {
+interface Props {
+  token: string;
+}
+
+export class ReleaseNotesRetriever extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
-    const token = JSON.parse(window.localStorage.github).access_token;
     this.state = {
       owners: [],
       repositoryNames: [],
-      github: new Github(token)
+      github: new Github(this.props.token)
     };
 
     this.state.github.getOwners().then(owners => this.setState({ owners }));

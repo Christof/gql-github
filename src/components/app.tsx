@@ -122,11 +122,19 @@ class App extends React.Component<{} & WithStyles, State> {
             />
             <Route
               path="/retrieve-release-notes"
-              component={ReleaseNotesRetriever}
+              render={props =>
+                this.renderOnlyIfLoggedIn(() => (
+                  <ReleaseNotesRetriever {...props} token={this.state.token} />
+                ))
+              }
             />
             <Route
               path="/create-release-notes"
-              component={ReleaseNotesCreator}
+              render={props =>
+                this.renderOnlyIfLoggedIn(() => (
+                  <ReleaseNotesCreator {...props} token={this.state.token} />
+                ))
+              }
             />
           </div>
         </div>
