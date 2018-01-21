@@ -93,6 +93,10 @@ class App extends React.Component<{} & WithStyles, State> {
     );
   }
 
+  renderOnlyIfLoggedIn(createInner: () => JSX.Element) {
+    return this.state.token ? createInner() : <div />;
+  }
+
   render() {
     return (
       <BrowserRouter>
@@ -111,11 +115,9 @@ class App extends React.Component<{} & WithStyles, State> {
             <Route
               path="/stats"
               render={props =>
-                this.state.token ? (
+                this.renderOnlyIfLoggedIn(() => (
                   <Stats {...props} token={this.state.token} />
-                ) : (
-                  <div />
-                )
+                ))
               }
             />
             <Route
