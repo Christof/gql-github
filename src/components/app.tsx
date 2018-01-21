@@ -7,7 +7,6 @@ import { GithubButton } from "./github_button";
 import { GithubCallback } from "./github_callback";
 import { ReleaseNotesRetriever } from "./release_notes_retriever";
 import { ReleaseNotesCreator } from "./release_notes_creator";
-import * as uuid from "node-uuid";
 import { AppBar, Typography, Toolbar } from "material-ui";
 import { withStyles, Theme, StyleRules } from "material-ui/styles";
 import { WithStyles } from "material-ui/styles/withStyles";
@@ -32,9 +31,7 @@ interface State {
 class App extends React.Component<{} & WithStyles, State> {
   constructor(props: any) {
     super(props);
-    if (window.localStorage.githubState === undefined) {
-      window.localStorage.githubState = uuid.v4();
-    }
+
     const token = window.localStorage.github
       ? JSON.parse(window.localStorage.github).access_token
       : undefined;
