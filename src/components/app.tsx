@@ -76,7 +76,11 @@ class App extends React.Component<{} & WithStyles, State> {
               >
                 Create Release Notes
               </Button>
-              <GithubButton className={classes.menuButton} />
+              <GithubButton
+                className={classes.menuButton}
+                token={this.state.token}
+                onChangeToken={token => this.setState({ token })}
+              />
             </Toolbar>
           </AppBar>
           <div style={{ margin: 16 }}>

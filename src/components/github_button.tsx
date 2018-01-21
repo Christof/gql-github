@@ -4,6 +4,8 @@ import { Button } from "material-ui";
 
 interface Props {
   className: string;
+  onChangeToken: (token: string) => void;
+  token?: string;
 }
 
 export class GithubButton extends React.Component<Props, {}> {
@@ -15,6 +17,7 @@ export class GithubButton extends React.Component<Props, {}> {
 
   signout() {
     window.localStorage.clear();
+    this.props.onChangeToken(undefined);
   }
 
   render() {
@@ -27,7 +30,7 @@ export class GithubButton extends React.Component<Props, {}> {
         state: window.localStorage.githubState
       });
 
-    if (window.localStorage.github !== undefined) {
+    if (this.props.token !== undefined) {
       return (
         <Button raised {...this.props} onClick={this.signout}>
           Signout from GitHub
