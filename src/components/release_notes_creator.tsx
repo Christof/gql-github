@@ -172,6 +172,15 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
             }
           />
         ))}
+      </section>
+    );
+  }
+
+  renderReleaseNoteSection() {
+    if (this.state.releaseNote.length === 0) return <section />;
+
+    return (
+      <section>
         <Typography type="headline" paragraph>
           Release Note
         </Typography>
@@ -194,6 +203,7 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
         {this.renderRepositorySelection()}
         {this.renderTagsSection()}
         {this.renderPullRequestsSection()}
+        {this.renderReleaseNoteSection()}
       </div>
     );
   }
