@@ -1,13 +1,14 @@
 import * as React from "react";
-import { BrowserRouter, Link, Route } from "react-router-dom";
+import { BrowserRouter, Route } from "react-router-dom";
 
+import { MenuButton } from "./menu_button";
 import { Stats } from "./stats";
 import { GithubButton } from "./github_button";
 import { GithubCallback } from "./github_callback";
 import { ReleaseNotesRetriever } from "./release_notes_retriever";
 import { ReleaseNotesCreator } from "./release_notes_creator";
 import * as uuid from "node-uuid";
-import { AppBar, Typography, Toolbar, Button } from "material-ui";
+import { AppBar, Typography, Toolbar } from "material-ui";
 import { withStyles, Theme, StyleRules } from "material-ui/styles";
 import { WithStyles } from "material-ui/styles/withStyles";
 
@@ -26,26 +27,6 @@ const styles = (_theme: Theme): StyleRules => ({
 
 interface State {
   token?: string;
-}
-
-class MenuButton extends React.Component<
-  { text: string; to: string; disabled: boolean; className: string },
-  {}
-> {
-  render() {
-    const { text, to, ...rest } = this.props;
-    const isActive = window.location.pathname === to;
-    return (
-      <Button
-        component={props => <Link to={to} {...props} />}
-        raised
-        color={isActive ? "accent" : "primary"}
-        {...rest}
-      >
-        {text}
-      </Button>
-    );
-  }
 }
 
 class App extends React.Component<{} & WithStyles, State> {
