@@ -28,6 +28,26 @@ interface State {
   token?: string;
 }
 
+class MenuButton extends React.Component<
+  { text: string; to: string; disabled: boolean; className: string },
+  {}
+> {
+  render() {
+    const { text, to, ...rest } = this.props;
+    return (
+      <Button
+        component={props => <Link to={to} {...props} />}
+        raised
+        //disabled={this.state.token === undefined}
+        color="primary"
+        {...rest}
+      >
+        {text}
+      </Button>
+    );
+  }
+}
+
 class App extends React.Component<{} & WithStyles, State> {
   constructor(props: any) {
     super(props);
@@ -47,35 +67,24 @@ class App extends React.Component<{} & WithStyles, State> {
               <Typography type="title" color="inherit" className={classes.flex}>
                 Github Stats & Releases
               </Typography>
-              <Button
-                component={props => <Link to="/stats" {...props} />}
-                raised
+              <MenuButton
+                to="/stats"
+                text="Stats"
                 disabled={this.state.token === undefined}
-                color="primary"
                 className={classes.menuButton}
-              >
-                Stats
-              </Button>
-              <Button
-                raised
-                color="primary"
+              />
+              <MenuButton
+                to="/retrieve-release-notes"
+                text="Retrieve Release Notes"
                 className={classes.menuButton}
-                component={props => (
-                  <Link to="/retrieve-release-notes" {...props} />
-                )}
-              >
-                Retrieve Release Notes
-              </Button>
-              <Button
-                raised
-                color="primary"
+                disabled={this.state.token === undefined}
+              />
+              <MenuButton
+                to="/create-release-notes"
+                text="Create Release Notes"
                 className={classes.menuButton}
-                component={props => (
-                  <Link to="/create-release-notes" {...props} />
-                )}
-              >
-                Create Release Notes
-              </Button>
+                disabled={this.state.token === undefined}
+              />
               <GithubButton
                 className={classes.menuButton}
                 token={this.state.token}
