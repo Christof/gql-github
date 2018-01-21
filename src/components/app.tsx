@@ -54,7 +54,10 @@ class App extends React.Component<{} & WithStyles, State> {
     if (window.localStorage.githubState === undefined) {
       window.localStorage.githubState = uuid.v4();
     }
-    this.state = {};
+    const token = window.localStorage.github
+      ? JSON.parse(window.localStorage.github).access_token
+      : undefined;
+    this.state = { token };
   }
 
   render() {
