@@ -101,8 +101,6 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
             options={releaseNames}
             onSelect={tagName => this.setState({ startTag: tagName })}
           />
-        </div>
-        <div>
           <Dropdown
             label="End Tag"
             options={releaseNames}
