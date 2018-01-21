@@ -160,7 +160,9 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
 
     return (
       <section>
-        <h3>Adjust categories</h3>
+        <Typography type="headline" paragraph>
+          Adjust Categories
+        </Typography>
         {this.state.pullRequests.map((pullRequest, index) => (
           <PullRequestComponent
             key={pullRequest.id}
@@ -170,7 +172,9 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
             }
           />
         ))}
-        <h3 className="pt2">Release Note</h3>
+        <Typography type="headline" paragraph>
+          Release Note
+        </Typography>
         <ReactMarkdown source={this.state.releaseNote} />
         <Button raised onClick={() => this.postRelease()}>
           Create Release
