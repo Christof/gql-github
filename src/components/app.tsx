@@ -34,12 +34,13 @@ class MenuButton extends React.Component<
 > {
   render() {
     const { text, to, ...rest } = this.props;
+    const isActive = window.location.pathname === to;
     return (
       <Button
         component={props => <Link to={to} {...props} />}
         raised
         //disabled={this.state.token === undefined}
-        color="primary"
+        color={isActive ? "accent" : "primary"}
         {...rest}
       >
         {text}
