@@ -168,6 +168,7 @@ export class Stats extends React.Component<Props, State> {
     return (
       <div>
         <Dropdown
+          label="Owner"
           options={this.state.owners}
           onSelect={owner => this.selectOwner(owner)}
         />

@@ -81,6 +81,7 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
 
     return (
       <Dropdown
+        label="Repository"
         options={this.state.repositoryNames}
         onSelect={repo => this.selectRepository(repo)}
       />
@@ -95,22 +96,18 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
       <section>
         <h3>Select range</h3>
         <div>
-          <label>
-            Start
-            <Dropdown
-              options={releaseNames}
-              onSelect={tagName => this.setState({ startTag: tagName })}
-            />
-          </label>
+          <Dropdown
+            label="Start Tag"
+            options={releaseNames}
+            onSelect={tagName => this.setState({ startTag: tagName })}
+          />
         </div>
         <div>
-          <label>
-            End
-            <Dropdown
-              options={releaseNames}
-              onSelect={tagName => this.setState({ releaseTag: tagName })}
-            />
-          </label>
+          <Dropdown
+            label="End Tag"
+            options={releaseNames}
+            onSelect={tagName => this.setState({ releaseTag: tagName })}
+          />
         </div>
         <div>
           <button onClick={() => this.getCommits()}>
@@ -186,6 +183,7 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
     return (
       <div>
         <Dropdown
+          label="Owner"
           options={this.state.owners}
           onSelect={owner => this.selectOwner(owner)}
         />

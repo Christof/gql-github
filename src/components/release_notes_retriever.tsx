@@ -63,6 +63,7 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
     return (
       <section>
         <Dropdown
+          label="Release"
           options={this.state.releases.map(release => release.tag_name)}
           onSelect={tagName => this.selectRelease(tagName)}
         />
@@ -89,6 +90,7 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
 
     return (
       <Dropdown
+        label="Repository"
         options={this.state.repositoryNames}
         onSelect={repo => this.selectRepository(repo)}
       />
