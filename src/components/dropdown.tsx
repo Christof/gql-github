@@ -9,6 +9,7 @@ export interface Props {
   options: string[];
   initialSelection?: string;
   onSelect: (selected: string) => void;
+  style?: React.CSSProperties;
 }
 
 export class Dropdown extends React.Component<Props, { selected: string }> {
@@ -28,11 +29,12 @@ export class Dropdown extends React.Component<Props, { selected: string }> {
 
   render() {
     return (
-      <FormControl style={{ marginRight: 8 }}>
+      <FormControl style={{ marginRight: 8, ...this.props.style }}>
         {this.props.label && (
           <InputLabel htmlFor="age-simple">{this.props.label}</InputLabel>
         )}
         <Select
+          autoWidth={true}
           onChange={event => this.onChange(event.target.value)}
           value={this.state.selected}
         >
