@@ -61,6 +61,7 @@ export class PullRequestComponent extends React.Component<Props, State> {
           ChangeCategory.Training,
           ChangeCategory.Breaking
         ]}
+        initialSelection={this.props.pullRequest.changeCategory}
         onSelect={changeCategory => this.selectChangeCategory(changeCategory)}
       />
     );
