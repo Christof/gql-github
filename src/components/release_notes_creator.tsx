@@ -7,7 +7,7 @@ import { Dropdown } from "./dropdown";
 import { Github, GithubTag } from "../github";
 import * as React from "react";
 import * as ReactMarkdown from "react-markdown";
-import { Button, Paper } from "material-ui";
+import { Button, Paper, Grid } from "material-ui";
 import Typography from "material-ui/Typography/Typography";
 
 interface State {
@@ -208,12 +208,14 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
 
   render() {
     return (
-      <div>
-        {this.renderRepositorySelection()}
-        {this.renderTagsSection()}
-        {this.renderPullRequestsSection()}
-        {this.renderReleaseNoteSection()}
-      </div>
+      <Grid container spacing={24} justify="center">
+        <Grid item xs={12} md={10} lg={8}>
+          {this.renderRepositorySelection()}
+          {this.renderTagsSection()}
+          {this.renderPullRequestsSection()}
+          {this.renderReleaseNoteSection()}
+        </Grid>
+      </Grid>
     );
   }
 }
