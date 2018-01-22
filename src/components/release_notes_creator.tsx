@@ -77,16 +77,24 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
   }
 
   renderRepositorySelection() {
-    if (this.state.repositoryNames.length === 0) {
-      return <div />;
-    }
-
     return (
-      <Dropdown
-        label="Repository"
-        options={this.state.repositoryNames}
-        onSelect={repo => this.selectRepository(repo)}
-      />
+      <Paper>
+        <section>
+          <Typography type="headline" paragraph>
+            Repository
+          </Typography>
+          <Dropdown
+            label="Owner"
+            options={this.state.owners}
+            onSelect={owner => this.selectOwner(owner)}
+          />
+          <Dropdown
+            label="Repository"
+            options={this.state.repositoryNames}
+            onSelect={repo => this.selectRepository(repo)}
+          />
+        </section>
+      </Paper>
     );
   }
 
@@ -201,11 +209,6 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
   render() {
     return (
       <div>
-        <Dropdown
-          label="Owner"
-          options={this.state.owners}
-          onSelect={owner => this.selectOwner(owner)}
-        />
         {this.renderRepositorySelection()}
         {this.renderTagsSection()}
         {this.renderPullRequestsSection()}
