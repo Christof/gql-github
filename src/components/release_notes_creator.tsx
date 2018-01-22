@@ -205,7 +205,9 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
         <Typography type="headline" paragraph>
           Release Note
         </Typography>
-        <ReactMarkdown source={this.state.releaseNote} />
+        <div style={{ fontFamily: "Roboto, Helvetica, Arial, sans-serif" }}>
+          <ReactMarkdown source={this.state.releaseNote} />
+        </div>
         <Button raised onClick={() => this.postRelease()}>
           Create Release
         </Button>
