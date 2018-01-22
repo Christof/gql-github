@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Dropdown } from "./dropdown";
+import Typography from "material-ui/Typography/Typography";
 
 export enum ChangeCategory {
   Basic = "Basic",
@@ -27,6 +28,10 @@ export class PullRequest {
 
   toString() {
     return `- ${this.text} (#${this.id})`;
+  }
+
+  toText() {
+    return `${this.text} (#${this.id})`;
   }
 }
 
@@ -64,8 +69,9 @@ export class PullRequestComponent extends React.Component<Props, State> {
     return (
       <div>
         {this.renderChangeCategorySelection()}
-        <span className="ph1">{this.props.pullRequest.text}</span>
-        <span className="ph1">({this.props.pullRequest.id})</span>
+        <Typography style={{ display: "inline" }}>
+          {this.props.pullRequest.toText()}
+        </Typography>
       </div>
     );
   }
