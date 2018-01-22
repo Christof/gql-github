@@ -56,6 +56,7 @@ export class PullRequestComponent extends React.Component<Props, State> {
   renderChangeCategorySelection() {
     return (
       <Dropdown
+        style={{ width: "5em" }}
         options={[
           ChangeCategory.Basic,
           ChangeCategory.Training,
