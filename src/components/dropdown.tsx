@@ -7,11 +7,19 @@ import { InputLabel } from "material-ui";
 export interface Props {
   label?: string;
   options: string[];
+  initialSelection?: string;
   onSelect: (selected: string) => void;
 }
 
-export class Dropdown extends React.Component<Props, {}> {
-  state = { selected: "none" };
+export class Dropdown extends React.Component<Props, { selected: string }> {
+  constructor(props: Props) {
+    super(props);
+
+    this.state = {
+      selected:
+        props.initialSelection !== undefined ? props.initialSelection : "none"
+    };
+  }
 
   onChange(selected: string) {
     this.setState({ selected });
