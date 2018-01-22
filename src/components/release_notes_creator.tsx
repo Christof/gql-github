@@ -8,8 +8,13 @@ import { Section } from "./section";
 import { Github, GithubTag } from "../github";
 import * as React from "react";
 import * as ReactMarkdown from "react-markdown";
-import { Button, Grid } from "material-ui";
+import { Button, Grid, Snackbar, Slide } from "material-ui";
 import Typography from "material-ui/Typography/Typography";
+import { SlideProps } from "material-ui/transitions";
+
+function TransitionLeft(props: SlideProps) {
+  return <Slide direction="left" {...props} />;
+}
 
 interface State {
   repositoryNames: string[];
@@ -21,6 +26,7 @@ interface State {
   releaseTag?: string;
   pullRequests: PullRequest[];
   releaseNote: string;
+  releaseCreated: boolean;
 }
 
 interface Props {
@@ -35,7 +41,8 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
       repositoryNames: [],
       github: new Github(this.props.token),
       pullRequests: [],
-      releaseNote: ""
+      releaseNote: "",
+      releaseCreated: false
     };
 
     this.state.github.getOwners().then(owners => this.setState({ owners }));
@@ -150,7 +157,7 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
     this.setState({ releaseNote });
   }
 
-  postRelease() {
+  async postRelease() {
     const release = {
       tag_name: this.state.releaseTag,
       target_commitish: "master",
@@ -159,7 +166,14 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
       draft: false,
       prerelease: false
     };
-    this.state.github.postRelease(this.state.repo, release);
+
+    const response = await this.state.github.postRelease(
+      this.state.repo,
+      release
+    );
+    if (response.ok) {
+      this.setState({ releaseCreated: true });
+    }
   }
 
   renderPullRequestsSection() {
@@ -195,6 +209,14 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
         <Button raised onClick={() => this.postRelease()}>
           Create Release
         </Button>
+        <Snackbar
+          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+          autoHideDuration={2000}
+          transition={TransitionLeft}
+          onClose={() => this.setState({ releaseCreated: false })}
+          open={this.state.releaseCreated}
+          message={<span>Release created</span>}
+        />
       </Section>
     );
   }
