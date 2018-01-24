@@ -1,6 +1,8 @@
 import * as React from "react";
 import { GithubData } from "../github";
 import * as Plotly from "plotly.js";
+import { Typography } from "material-ui";
+import { Section } from "./section";
 
 interface Props {
   reposData: GithubData[];
@@ -81,10 +83,12 @@ export class OverallPlot extends React.Component<Props, {}> {
 
   render() {
     return (
-      <div>
-        <h1>Overall</h1>
+      <Section>
+        <Typography type="headline" paragraph>
+          Overall
+        </Typography>
         <div id={this.divId} />
-      </div>
+      </Section>
     );
   }
 }

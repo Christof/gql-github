@@ -158,11 +158,13 @@ export class Stats extends React.Component<Props, State> {
 
   renderRepoGraph(repo: string) {
     return (
-      <div key={repo}>
-        <h1>{repo}</h1>
+      <Section key={repo}>
+        <Typography type="headline" paragraph>
+          {repo}
+        </Typography>
         <div id={repo + "-all"} />
         <div id={repo + "-perYear"} />
-      </div>
+      </Section>
     );
   }
 
