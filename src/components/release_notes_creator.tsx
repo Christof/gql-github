@@ -5,11 +5,11 @@ import {
 } from "./pull_request";
 import { Dropdown } from "./dropdown";
 import { Section } from "./section";
+import { RepositorySelector } from "./repository_selector";
 import { Github, GithubTag } from "../github";
 import * as React from "react";
 import * as ReactMarkdown from "react-markdown";
-import { Button, Grid, Snackbar, Slide } from "material-ui";
-import Typography from "material-ui/Typography/Typography";
+import { Button, Grid, Snackbar, Slide, Typography } from "material-ui";
 import { SlideProps } from "material-ui/transitions";
 
 function TransitionLeft(props: SlideProps) {
@@ -18,7 +18,6 @@ function TransitionLeft(props: SlideProps) {
 
 interface State {
   repositoryNames: string[];
-  owners: string[];
   github: Github;
   repo?: string;
   tags?: GithubTag[];
@@ -37,21 +36,12 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      owners: [],
       repositoryNames: [],
       github: new Github(this.props.token),
       pullRequests: [],
       releaseNote: "",
       releaseCreated: false
     };
-
-    this.state.github.getOwners().then(owners => this.setState({ owners }));
-  }
-
-  async selectOwner(owner: string) {
-    this.state.github.owner = owner;
-    const repositoryNames = await this.state.github.getRepositoryNames();
-    this.setState({ repositoryNames });
   }
 
   async getCommits() {
@@ -82,26 +72,6 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
   selectRepository(repo: string) {
     this.setState({ repo: repo });
     return this.loadTags(repo);
-  }
-
-  renderRepositorySelection() {
-    return (
-      <Section>
-        <Typography type="headline" paragraph>
-          Repository
-        </Typography>
-        <Dropdown
-          label="Owner"
-          options={this.state.owners}
-          onSelect={owner => this.selectOwner(owner)}
-        />
-        <Dropdown
-          label="Repository"
-          options={this.state.repositoryNames}
-          onSelect={repo => this.selectRepository(repo)}
-        />
-      </Section>
-    );
   }
 
   renderTagsSection() {
@@ -227,7 +197,10 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
     return (
       <Grid container spacing={24} justify="center">
         <Grid item xs={12} md={10} lg={8}>
-          {this.renderRepositorySelection()}
+          <RepositorySelector
+            github={this.state.github}
+            onRepositorySelect={repo => this.selectRepository(repo)}
+          />
           {this.renderTagsSection()}
           {this.renderPullRequestsSection()}
           {this.renderReleaseNoteSection()}
