@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Button } from "material-ui";
 
 export class CopyToClipboard extends React.Component<{ text: string }, {}> {
   private copyToClipboard() {
@@ -25,7 +26,9 @@ export class CopyToClipboard extends React.Component<{ text: string }, {}> {
         >
           {this.props.text}
         </span>
-        <button onClick={() => this.copyToClipboard()}>Copy</button>
+        <Button raised onClick={() => this.copyToClipboard()}>
+          Copy
+        </Button>
       </div>
     );
   }
