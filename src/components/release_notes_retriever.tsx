@@ -1,6 +1,6 @@
 import * as React from "react";
-import * as ReactMarkdown from "react-markdown";
 import { RepositorySelector } from "./repository_selector";
+import { Markdown } from "./markdown";
 import { Github, GithubRelease } from "../github";
 import { Dropdown } from "./dropdown";
 import { CopyToClipboard } from "./copy_to_clipboard";
@@ -63,9 +63,7 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
         <Typography type="headline" paragraph>
           {this.state.release.tag_name}
         </Typography>
-        <div style={{ fontFamily: "Roboto, Helvetica, Arial, sans-serif" }}>
-          <ReactMarkdown source={this.state.releaseDescription} />
-        </div>
+        <Markdown source={this.state.releaseDescription} />
         <CopyToClipboard text={this.state.releaseDescription} />
       </Section>
     );

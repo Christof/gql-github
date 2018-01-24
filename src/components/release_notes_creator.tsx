@@ -6,9 +6,9 @@ import {
 import { Dropdown } from "./dropdown";
 import { Section } from "./section";
 import { RepositorySelector } from "./repository_selector";
+import { Markdown } from "./markdown";
 import { Github, GithubTag } from "../github";
 import * as React from "react";
-import * as ReactMarkdown from "react-markdown";
 import { Button, Grid, Snackbar, Slide, Typography } from "material-ui";
 import { SlideProps } from "material-ui/transitions";
 
@@ -175,9 +175,7 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
         <Typography type="headline" paragraph>
           Release Note
         </Typography>
-        <div style={{ fontFamily: "Roboto, Helvetica, Arial, sans-serif" }}>
-          <ReactMarkdown source={this.state.releaseNote} />
-        </div>
+        <Markdown source={this.state.releaseNote} />
         <Button raised onClick={() => this.postRelease()}>
           Create Release
         </Button>
