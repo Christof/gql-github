@@ -1,12 +1,12 @@
 import * as React from "react";
 import * as ReactMarkdown from "react-markdown";
+import { RepositorySelector } from "./repository_selector";
 import { Github, GithubRelease } from "../github";
 import { Dropdown } from "./dropdown";
 import { CopyToClipboard } from "./copy_to_clipboard";
+import { Grid } from "material-ui";
 
 interface State {
-  repositoryNames: string[];
-  owners: string[];
   github: Github;
   repo?: string;
   releases?: GithubRelease[];
@@ -22,18 +22,8 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      owners: [],
-      repositoryNames: [],
       github: new Github(this.props.token)
     };
-
-    this.state.github.getOwners().then(owners => this.setState({ owners }));
-  }
-
-  async selectOwner(owner: string) {
-    this.state.github.owner = owner;
-    const repositoryNames = await this.state.github.getRepositoryNames();
-    this.setState({ repositoryNames });
   }
 
   async selectRepository(repo: string) {
@@ -83,33 +73,19 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
     );
   }
 
-  renderRepositorySelection() {
-    if (this.state.repositoryNames.length === 0) {
-      return <div />;
-    }
-
-    return (
-      <Dropdown
-        label="Repository"
-        options={this.state.repositoryNames}
-        onSelect={repo => this.selectRepository(repo)}
-      />
-    );
-  }
-
   render() {
     return (
-      <div>
-        <Dropdown
-          label="Owner"
-          options={this.state.owners}
-          onSelect={owner => this.selectOwner(owner)}
-        />
-        {this.renderRepositorySelection()}
-        {this.renderRepositorySection()}
-        {this.renderReleasesSection()}
-        {this.renderReleaseSection()}
-      </div>
+      <Grid container spacing={24} justify="center">
+        <Grid item xs={12} md={10} lg={8}>
+          <RepositorySelector
+            github={this.state.github}
+            onRepositorySelect={repo => this.selectRepository(repo)}
+          />
+          {this.renderRepositorySection()}
+          {this.renderReleasesSection()}
+          {this.renderReleaseSection()}
+        </Grid>
+      </Grid>
     );
   }
 }
