@@ -4,6 +4,8 @@ import { getCommitsPerAuthorInDateRange } from "../stats_helper";
 import * as Plotly from "plotly.js";
 import { GithubData, GithubAuthorData, Github } from "../github";
 import { Dropdown } from "./dropdown";
+import { Typography, Grid } from "material-ui";
+import { Section } from "./section";
 
 interface Props {
   token: string;
@@ -164,25 +166,37 @@ export class Stats extends React.Component<Props, State> {
     );
   }
 
-  render() {
+  renderRepositorySelection() {
     return (
-      <div>
+      <Section>
+        <Typography type="headline" paragraph>
+          Repository
+        </Typography>
         <Dropdown
           label="Owner"
           options={this.state.owners}
           onSelect={owner => this.selectOwner(owner)}
         />
-        <h2>Own repositories</h2>
-        {this.state.data.length > 0 && (
-          <OverallPlot
-            reposData={this.state.data}
-            repositoryNames={this.state.repositoryNames}
-          />
-        )}
-        <div>
-          {this.state.repositoryNames.map(item => this.renderRepoGraph(item))}
-        </div>
-      </div>
+      </Section>
+    );
+  }
+
+  render() {
+    return (
+      <Grid container spacing={24} justify="center">
+        <Grid item xs={12}>
+          {this.renderRepositorySelection()}
+          {this.state.data.length > 0 && (
+            <OverallPlot
+              reposData={this.state.data}
+              repositoryNames={this.state.repositoryNames}
+            />
+          )}
+          <div>
+            {this.state.repositoryNames.map(item => this.renderRepoGraph(item))}
+          </div>
+        </Grid>
+      </Grid>
     );
   }
 }
