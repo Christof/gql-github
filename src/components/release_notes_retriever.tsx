@@ -63,8 +63,10 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
         <Typography type="headline" paragraph>
           {this.state.release.tag_name}
         </Typography>
+        <div style={{ fontFamily: "Roboto, Helvetica, Arial, sans-serif" }}>
+          <ReactMarkdown source={this.state.releaseDescription} />
+        </div>
         <CopyToClipboard text={this.state.releaseDescription} />
-        <ReactMarkdown source={this.state.releaseDescription} />
       </Section>
     );
   }
