@@ -4,13 +4,20 @@ import {
   ChangeCategory
 } from "./pull_request";
 import { Dropdown } from "./dropdown";
+import { Section } from "./section";
+import { RepositorySelector } from "./repository_selector";
+import { Markdown } from "./markdown";
 import { Github, GithubTag } from "../github";
 import * as React from "react";
-import * as ReactMarkdown from "react-markdown";
+import { Button, Grid, Snackbar, Slide, Typography } from "material-ui";
+import { SlideProps } from "material-ui/transitions";
+
+function TransitionLeft(props: SlideProps) {
+  return <Slide direction="left" {...props} />;
+}
 
 interface State {
   repositoryNames: string[];
-  owners: string[];
   github: Github;
   repo?: string;
   tags?: GithubTag[];
@@ -18,27 +25,23 @@ interface State {
   releaseTag?: string;
   pullRequests: PullRequest[];
   releaseNote: string;
+  releaseCreated: boolean;
 }
 
-export class ReleaseNotesCreator extends React.Component<{}, State> {
-  constructor(props: {}) {
+interface Props {
+  token: string;
+}
+
+export class ReleaseNotesCreator extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
-    const token = JSON.parse(window.localStorage.github).access_token;
     this.state = {
-      owners: [],
       repositoryNames: [],
-      github: new Github(token),
+      github: new Github(this.props.token),
       pullRequests: [],
-      releaseNote: ""
+      releaseNote: "",
+      releaseCreated: false
     };
-
-    this.state.github.getOwners().then(owners => this.setState({ owners }));
-  }
-
-  async selectOwner(owner: string) {
-    this.state.github.owner = owner;
-    const repositoryNames = await this.state.github.getRepositoryNames();
-    this.setState({ repositoryNames });
   }
 
   async getCommits() {
@@ -71,50 +74,29 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
     return this.loadTags(repo);
   }
 
-  renderRepositorySelection() {
-    if (this.state.repositoryNames.length === 0) {
-      return <div />;
-    }
-
-    return (
-      <Dropdown
-        options={this.state.repositoryNames}
-        onSelect={repo => this.selectRepository(repo)}
-      />
-    );
-  }
-
   renderTagsSection() {
     if (!this.state.repo || !this.state.tags) return <section />;
 
     const releaseNames = this.state.tags.map(release => release.name);
     return (
-      <section>
-        <h3>Select range</h3>
-        <div>
-          <label>
-            Start
-            <Dropdown
-              options={releaseNames}
-              onSelect={tagName => this.setState({ startTag: tagName })}
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            End
-            <Dropdown
-              options={releaseNames}
-              onSelect={tagName => this.setState({ releaseTag: tagName })}
-            />
-          </label>
-        </div>
-        <div>
-          <button onClick={() => this.getCommits()}>
-            Get merged PRs in range
-          </button>
-        </div>
-      </section>
+      <Section>
+        <Typography type="headline" paragraph>
+          Range
+        </Typography>
+        <Dropdown
+          label="Start Tag"
+          options={releaseNames}
+          onSelect={tagName => this.setState({ startTag: tagName })}
+        />
+        <Dropdown
+          label="End Tag"
+          options={releaseNames}
+          onSelect={tagName => this.setState({ releaseTag: tagName })}
+        />
+        <Button raised onClick={() => this.getCommits()}>
+          Get merged PRs in range
+        </Button>
+      </Section>
     );
   }
 
@@ -145,7 +127,7 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
     this.setState({ releaseNote });
   }
 
-  postRelease() {
+  async postRelease() {
     const release = {
       tag_name: this.state.releaseTag,
       target_commitish: "master",
@@ -154,15 +136,24 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
       draft: false,
       prerelease: false
     };
-    this.state.github.postRelease(this.state.repo, release);
+
+    const response = await this.state.github.postRelease(
+      this.state.repo,
+      release
+    );
+    if (response.ok) {
+      this.setState({ releaseCreated: true });
+    }
   }
 
   renderPullRequestsSection() {
     if (this.state.pullRequests.length === 0) return <section />;
 
     return (
-      <section>
-        <h3>Adjust categories</h3>
+      <Section>
+        <Typography type="headline" paragraph>
+          Adjust Categories
+        </Typography>
         {this.state.pullRequests.map((pullRequest, index) => (
           <PullRequestComponent
             key={pullRequest.id}
@@ -172,24 +163,47 @@ export class ReleaseNotesCreator extends React.Component<{}, State> {
             }
           />
         ))}
-        <h3 className="pt2">Release Note</h3>
-        <ReactMarkdown source={this.state.releaseNote} />
-        <button onClick={() => this.postRelease()}>Create Release</button>
-      </section>
+      </Section>
+    );
+  }
+
+  renderReleaseNoteSection() {
+    if (this.state.releaseNote.length === 0) return <section />;
+
+    return (
+      <Section>
+        <Typography type="headline" paragraph>
+          Release Note
+        </Typography>
+        <Markdown source={this.state.releaseNote} />
+        <Button raised onClick={() => this.postRelease()}>
+          Create Release
+        </Button>
+        <Snackbar
+          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+          autoHideDuration={2000}
+          transition={TransitionLeft}
+          onClose={() => this.setState({ releaseCreated: false })}
+          open={this.state.releaseCreated}
+          message={<span>Release created</span>}
+        />
+      </Section>
     );
   }
 
   render() {
     return (
-      <div>
-        <Dropdown
-          options={this.state.owners}
-          onSelect={owner => this.selectOwner(owner)}
-        />
-        {this.renderRepositorySelection()}
-        {this.renderTagsSection()}
-        {this.renderPullRequestsSection()}
-      </div>
+      <Grid container spacing={24} justify="center">
+        <Grid item xs={12} md={10} lg={8}>
+          <RepositorySelector
+            github={this.state.github}
+            onRepositorySelect={repo => this.selectRepository(repo)}
+          />
+          {this.renderTagsSection()}
+          {this.renderPullRequestsSection()}
+          {this.renderReleaseNoteSection()}
+        </Grid>
+      </Grid>
     );
   }
 }

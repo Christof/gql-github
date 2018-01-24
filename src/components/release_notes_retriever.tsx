@@ -1,12 +1,13 @@
 import * as React from "react";
-import * as ReactMarkdown from "react-markdown";
+import { RepositorySelector } from "./repository_selector";
+import { Markdown } from "./markdown";
 import { Github, GithubRelease } from "../github";
 import { Dropdown } from "./dropdown";
 import { CopyToClipboard } from "./copy_to_clipboard";
+import { Grid, Typography } from "material-ui";
+import { Section } from "./section";
 
 interface State {
-  repositoryNames: string[];
-  owners: string[];
   github: Github;
   repo?: string;
   releases?: GithubRelease[];
@@ -14,38 +15,21 @@ interface State {
   releaseDescription?: string;
 }
 
-export class ReleaseNotesRetriever extends React.Component<{}, State> {
-  constructor(props: {}) {
+interface Props {
+  token: string;
+}
+
+export class ReleaseNotesRetriever extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
-    const token = JSON.parse(window.localStorage.github).access_token;
     this.state = {
-      owners: [],
-      repositoryNames: [],
-      github: new Github(token)
+      github: new Github(this.props.token)
     };
-
-    this.state.github.getOwners().then(owners => this.setState({ owners }));
-  }
-
-  async selectOwner(owner: string) {
-    this.state.github.owner = owner;
-    const repositoryNames = await this.state.github.getRepositoryNames();
-    this.setState({ repositoryNames });
   }
 
   async selectRepository(repo: string) {
     const releases = await this.state.github.getReleases(repo);
     this.setState({ releases, repo });
-  }
-
-  renderRepositorySection() {
-    if (!this.state.repo) return <section />;
-
-    return (
-      <section>
-        <h1>{this.state.repo}</h1>
-      </section>
-    );
   }
 
   async selectRelease(tagName: string) {
@@ -58,12 +42,16 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
     if (!this.state.repo || !this.state.releases) return <section />;
 
     return (
-      <section>
+      <Section>
+        <Typography type="headline" paragraph>
+          {this.state.repo}
+        </Typography>
         <Dropdown
+          label="Release"
           options={this.state.releases.map(release => release.tag_name)}
           onSelect={tagName => this.selectRelease(tagName)}
         />
-      </section>
+      </Section>
     );
   }
 
@@ -71,39 +59,28 @@ export class ReleaseNotesRetriever extends React.Component<{}, State> {
     if (!this.state.releaseDescription) return <section />;
 
     return (
-      <section>
-        <h1>{this.state.release.tag_name}</h1>
+      <Section>
+        <Typography type="headline" paragraph>
+          {this.state.release.tag_name}
+        </Typography>
+        <Markdown source={this.state.releaseDescription} />
         <CopyToClipboard text={this.state.releaseDescription} />
-        <ReactMarkdown source={this.state.releaseDescription} />
-      </section>
-    );
-  }
-
-  renderRepositorySelection() {
-    if (this.state.repositoryNames.length === 0) {
-      return <div />;
-    }
-
-    return (
-      <Dropdown
-        options={this.state.repositoryNames}
-        onSelect={repo => this.selectRepository(repo)}
-      />
+      </Section>
     );
   }
 
   render() {
     return (
-      <div>
-        <Dropdown
-          options={this.state.owners}
-          onSelect={owner => this.selectOwner(owner)}
-        />
-        {this.renderRepositorySelection()}
-        {this.renderRepositorySection()}
-        {this.renderReleasesSection()}
-        {this.renderReleaseSection()}
-      </div>
+      <Grid container spacing={24} justify="center">
+        <Grid item xs={12} md={10} lg={8}>
+          <RepositorySelector
+            github={this.state.github}
+            onRepositorySelect={repo => this.selectRepository(repo)}
+          />
+          {this.renderReleasesSection()}
+          {this.renderReleaseSection()}
+        </Grid>
+      </Grid>
     );
   }
 }

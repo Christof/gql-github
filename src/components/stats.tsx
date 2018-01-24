@@ -4,6 +4,12 @@ import { getCommitsPerAuthorInDateRange } from "../stats_helper";
 import * as Plotly from "plotly.js";
 import { GithubData, GithubAuthorData, Github } from "../github";
 import { Dropdown } from "./dropdown";
+import { Typography, Grid } from "material-ui";
+import { Section } from "./section";
+
+interface Props {
+  token: string;
+}
 
 interface State {
   error: any;
@@ -17,13 +23,12 @@ function sum(array: number[]) {
   return array.reduce((sum, value) => sum + value, 0);
 }
 
-export class Stats extends React.Component<{}, State> {
-  constructor(props: {}) {
+export class Stats extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
-    const token = JSON.parse(window.localStorage.github).access_token;
     this.state = {
       error: null,
-      github: new Github(token),
+      github: new Github(this.props.token),
       owners: [],
       repositoryNames: [],
       data: []
@@ -153,32 +158,47 @@ export class Stats extends React.Component<{}, State> {
 
   renderRepoGraph(repo: string) {
     return (
-      <div key={repo}>
-        <h1>{repo}</h1>
+      <Section key={repo}>
+        <Typography type="headline" paragraph>
+          {repo}
+        </Typography>
         <div id={repo + "-all"} />
         <div id={repo + "-perYear"} />
-      </div>
+      </Section>
+    );
+  }
+
+  renderRepositorySelection() {
+    return (
+      <Section>
+        <Typography type="headline" paragraph>
+          Repository
+        </Typography>
+        <Dropdown
+          label="Owner"
+          options={this.state.owners}
+          onSelect={owner => this.selectOwner(owner)}
+        />
+      </Section>
     );
   }
 
   render() {
     return (
-      <div>
-        <Dropdown
-          options={this.state.owners}
-          onSelect={owner => this.selectOwner(owner)}
-        />
-        <h2>Own repositories</h2>
-        {this.state.data.length > 0 && (
-          <OverallPlot
-            reposData={this.state.data}
-            repositoryNames={this.state.repositoryNames}
-          />
-        )}
-        <div>
-          {this.state.repositoryNames.map(item => this.renderRepoGraph(item))}
-        </div>
-      </div>
+      <Grid container spacing={24} justify="center">
+        <Grid item xs={12}>
+          {this.renderRepositorySelection()}
+          {this.state.data.length > 0 && (
+            <OverallPlot
+              reposData={this.state.data}
+              repositoryNames={this.state.repositoryNames}
+            />
+          )}
+          <div>
+            {this.state.repositoryNames.map(item => this.renderRepoGraph(item))}
+          </div>
+        </Grid>
+      </Grid>
     );
   }
 }

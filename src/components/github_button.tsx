@@ -1,46 +1,53 @@
 import * as React from "react";
 import * as qs from "qs";
+import { Button } from "material-ui";
+import * as uuid from "node-uuid";
 
-interface Props {}
+interface Props {
+  className: string;
+  onChangeToken: (token: string) => void;
+  token?: string;
+}
 
 export class GithubButton extends React.Component<Props, {}> {
   constructor(props: Props) {
     super(props);
 
     this.signout = this.signout.bind(this);
+    this.login = this.login.bind(this);
   }
 
   signout() {
     window.localStorage.clear();
+    this.props.onChangeToken(undefined);
   }
 
-  render() {
+  login() {
+    const githubState = uuid.v4();
+    window.localStorage.githubState = githubState;
     const githubLoginUrl =
       "https://github.com/login/oauth/authorize?" +
       qs.stringify({
         client_id: "1e031c3e419938e53c8e",
         redirect_uri: window.location.origin + "/auth-callback",
         scope: "repo,user",
-        state: window.localStorage.githubState
+        state: githubState
       });
+    window.location.href = githubLoginUrl;
+  }
 
-    if (window.localStorage.github !== undefined) {
+  render() {
+    if (this.props.token !== undefined) {
       return (
-        <button
-          className="f6 link dim ba ph3 pv2 mh2 mb2 dib bg-light-blue"
-          onClick={this.signout}
-        >
+        <Button raised className={this.props.className} onClick={this.signout}>
           Signout from GitHub
-        </button>
+        </Button>
       );
     }
     return (
-      <a
-        className="f6 link dim ba ph3 pv2 mh2 mb2 dib bg-light-blue"
-        href={githubLoginUrl}
-      >
+      <Button raised className={this.props.className} onClick={this.login}>
         Login with GitHub
-      </a>
+      </Button>
     );
   }
 }

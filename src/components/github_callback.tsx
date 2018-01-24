@@ -2,7 +2,9 @@ import * as React from "react";
 import * as qs from "qs";
 import { RouteComponentProps } from "react-router";
 
-interface Props extends RouteComponentProps<{}> {}
+interface Props extends RouteComponentProps<{}> {
+  onChangeToken: (token: string) => void;
+}
 
 export class GithubCallback extends React.Component<Props, {}> {
   async retrieveAccessToken(code: string, state: string) {
@@ -18,8 +20,8 @@ export class GithubCallback extends React.Component<Props, {}> {
       });
     const response = await fetch(githubAuthUrl, params);
     const retrievedParams = await response.json();
-    console.log(retrievedParams);
     window.localStorage.github = JSON.stringify(retrievedParams);
+    this.props.onChangeToken(retrievedParams.access_token);
     this.props.history.push("/stats");
   }
 
