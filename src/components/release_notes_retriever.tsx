@@ -4,7 +4,8 @@ import { RepositorySelector } from "./repository_selector";
 import { Github, GithubRelease } from "../github";
 import { Dropdown } from "./dropdown";
 import { CopyToClipboard } from "./copy_to_clipboard";
-import { Grid } from "material-ui";
+import { Grid, Typography } from "material-ui";
+import { Section } from "./section";
 
 interface State {
   github: Github;
@@ -31,16 +32,6 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
     this.setState({ releases, repo });
   }
 
-  renderRepositorySection() {
-    if (!this.state.repo) return <section />;
-
-    return (
-      <section>
-        <h1>{this.state.repo}</h1>
-      </section>
-    );
-  }
-
   async selectRelease(tagName: string) {
     const release = this.state.releases.find(x => x.tag_name === tagName);
 
@@ -51,13 +42,16 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
     if (!this.state.repo || !this.state.releases) return <section />;
 
     return (
-      <section>
+      <Section>
+        <Typography type="headline" paragraph>
+          {this.state.repo}
+        </Typography>
         <Dropdown
           label="Release"
           options={this.state.releases.map(release => release.tag_name)}
           onSelect={tagName => this.selectRelease(tagName)}
         />
-      </section>
+      </Section>
     );
   }
 
@@ -65,11 +59,13 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
     if (!this.state.releaseDescription) return <section />;
 
     return (
-      <section>
-        <h1>{this.state.release.tag_name}</h1>
+      <Section>
+        <Typography type="headline" paragraph>
+          {this.state.release.tag_name}
+        </Typography>
         <CopyToClipboard text={this.state.releaseDescription} />
         <ReactMarkdown source={this.state.releaseDescription} />
-      </section>
+      </Section>
     );
   }
 
@@ -81,7 +77,6 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
             github={this.state.github}
             onRepositorySelect={repo => this.selectRepository(repo)}
           />
-          {this.renderRepositorySection()}
           {this.renderReleasesSection()}
           {this.renderReleaseSection()}
         </Grid>
