@@ -88,7 +88,7 @@ export class Stats extends React.Component<Props, State> {
     return Array.from(new Array(endYear - startYear), (_, i) => i + startYear);
   }
 
-  setupYearGraph(title: string, data: GithubData) {
+  renderYearGraph(title: string, data: GithubData) {
     const years = this.getYearsArray();
     const statsPerYear = years.map(year =>
       getCommitsPerAuthorInDateRange(
@@ -130,7 +130,9 @@ export class Stats extends React.Component<Props, State> {
       }
     };
 
-    Plotly.newPlot(title + "-perYear", traces as any, layout);
+    return (
+      <Plot title={title + "-perYear"} data={traces as any} layout={layout} />
+    );
   }
 
   private traceForAuthor(statsForAuthor: GithubAuthorData) {
@@ -149,24 +151,24 @@ export class Stats extends React.Component<Props, State> {
     this.setState({ repositoryNames });
 
     const data = await Promise.all(
-      this.state.repositoryNames.map(async repo => {
-        const stats = await this.state.github.getStats(repo);
-        this.setupYearGraph(repo, stats);
-        return stats;
-      })
+      this.state.repositoryNames.map(repo => this.state.github.getStats(repo))
     );
 
     this.setState({ data });
   }
 
   renderRepoGraph(repo: string, index: number) {
+    const data = this.state.data[index];
+
+    if (!data) return null;
+
     return (
       <Section key={repo}>
         <Typography type="headline" paragraph>
           {repo}
         </Typography>
-        {this.renderGraph(repo, this.state.data[index])}
-        <div id={repo + "-perYear"} />
+        {this.renderGraph(repo, data)}
+        {this.renderYearGraph(repo, data)}
       </Section>
     );
   }
