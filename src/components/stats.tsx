@@ -4,6 +4,7 @@ import { getCommitsPerAuthorInDateRange } from "../stats_helper";
 import * as Plotly from "plotly.js";
 import { GithubData, GithubAuthorData, Github } from "../github";
 import { Dropdown } from "./dropdown";
+import { Plot } from "./plot";
 import { Typography, Grid } from "material-ui";
 import { Section } from "./section";
 
@@ -37,11 +38,12 @@ export class Stats extends React.Component<Props, State> {
     this.state.github.getOwners().then(owners => this.setState({ owners }));
   }
 
-  setupGraph(title: string, data: GithubData) {
+  renderGraph(title: string, data: GithubData) {
     if (data === undefined || data.map === undefined) {
       console.error("No data for", title, data);
-      return;
+      return <div>{`No data returned for ${title} (${data})`}</div>;
     }
+
     const authorTimeLine = data.map(author => this.traceForAuthor(author));
     const layout = {
       title,
@@ -75,7 +77,9 @@ export class Stats extends React.Component<Props, State> {
       }
     };
 
-    Plotly.newPlot(title + "-all", authorTimeLine as any, layout as any);
+    return (
+      <Plot title={title} data={authorTimeLine as any} layout={layout as any} />
+    );
   }
 
   private getYearsArray() {
@@ -147,7 +151,6 @@ export class Stats extends React.Component<Props, State> {
     const data = await Promise.all(
       this.state.repositoryNames.map(async repo => {
         const stats = await this.state.github.getStats(repo);
-        this.setupGraph(repo, stats);
         this.setupYearGraph(repo, stats);
         return stats;
       })
@@ -156,13 +159,13 @@ export class Stats extends React.Component<Props, State> {
     this.setState({ data });
   }
 
-  renderRepoGraph(repo: string) {
+  renderRepoGraph(repo: string, index: number) {
     return (
       <Section key={repo}>
         <Typography type="headline" paragraph>
           {repo}
         </Typography>
-        <div id={repo + "-all"} />
+        {this.renderGraph(repo, this.state.data[index])}
         <div id={repo + "-perYear"} />
       </Section>
     );
@@ -195,7 +198,9 @@ export class Stats extends React.Component<Props, State> {
             />
           )}
           <div>
-            {this.state.repositoryNames.map(item => this.renderRepoGraph(item))}
+            {this.state.repositoryNames.map((item, index) =>
+              this.renderRepoGraph(item, index)
+            )}
           </div>
         </Grid>
       </Grid>
