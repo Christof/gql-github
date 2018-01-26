@@ -15,101 +15,106 @@ interface Props {
 }
 
 interface State {
-  owners: string[];
-  ownersState: boolean[];
-  repositories: { name: string; selected: boolean }[][];
+  owners: OwnerState[];
+}
+
+class OwnerState {
+  name: string;
+  selected = false;
+
+  repositories: string[];
+  selectedRepositories: string[];
+
+  constructor(name: string, repositories: string[]) {
+    this.name = name;
+    this.repositories = repositories;
+    this.selectedRepositories = [...repositories];
+  }
 }
 
 export class DetailedRepositorySelector extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      owners: [],
-      ownersState: [],
-      repositories: []
+      owners: []
     };
 
-    props.github.getOwners().then(owners => {
-      const ownersState = Array.from(new Array(owners.length), () => false);
-      this.setState({ owners, ownersState });
-    });
+    this.loadData();
   }
 
-  createDefaultRepositoryState(repository: string) {
-    return { name: repository, selected: true };
-  }
-
-  async loadRepositoriesFromOwners() {
-    const repositories = await Promise.all(
-      this.state.owners.map(async (owner, index) => {
-        if (!this.state.ownersState[index]) return [];
-
-        const names = await this.props.github
+  async loadData() {
+    const ownerNames = await this.props.github.getOwners();
+    const owners = await Promise.all(
+      ownerNames.map(async owner => {
+        const repositories = await this.props.github
           .copyFor(owner)
           .getRepositoryNames();
-
-        return names.map(repository =>
-          this.createDefaultRepositoryState(repository)
-        );
+        return new OwnerState(owner, repositories);
       })
     );
 
-    this.setState({ repositories });
+    this.setState({ owners });
   }
 
-  renderOwnerCheckbox(owner: string, index: number) {
+  renderOwnerCheckbox(owner: OwnerState, index: number) {
     const handleChange = (_event: any, checked: boolean) => {
-      const ownersState = [...this.state.ownersState];
-      ownersState[index] = checked;
-      this.setState({ ownersState }, () => this.loadRepositoriesFromOwners());
+      const owners = [...this.state.owners];
+
+      owners[index] = { ...owners[index], selected: checked };
+      this.setState({ owners });
     };
 
     return (
       <FormControlLabel
-        key={`checked-${owner}`}
+        key={`checked-${owner.name}`}
         control={
           <Checkbox
-            checked={this.state.ownersState[index]}
+            checked={owner.selected}
             onChange={handleChange}
-            value={`checked-${owner}`}
+            value={`checked-${owner.name}`}
           />
         }
-        label={owner}
+        label={owner.name}
       />
     );
   }
 
-  renderRepositoryCheckbox(
-    ownerIndex: number,
-    name: string,
-    selected: boolean
-  ) {
-    const handleChange = (_event: any, checked: boolean) => {
-      const ownersRepos = [...this.state.repositories[ownerIndex]];
-      ownersRepos.find(repoState => repoState.name === name).selected = checked;
+  renderOwnerRepositories(ownerState: OwnerState, ownerIndex: number) {
+    const handleChange = (name: string, checked: boolean) => {
+      const selectedRepositories = checked
+        ? [...ownerState.selectedRepositories, name]
+        : ownerState.selectedRepositories.filter(repoName => repoName !== name);
 
-      const repositories = [...this.state.repositories];
-      repositories[ownerIndex] = ownersRepos;
+      const owners = [...this.state.owners];
+      owners[ownerIndex] = { ...ownerState, selectedRepositories };
 
-      this.setState({ repositories });
+      this.setState({ owners });
     };
 
+    if (!ownerState.selected) return null;
+
     return (
-      <FormControlLabel
-        key={`checked-${name}`}
-        control={
-          <Checkbox
-            checked={selected}
-            onChange={handleChange}
-            value={`checked-${name}`}
+      <FormGroup row key={ownerState.name}>
+        {ownerState.repositories.map(name => (
+          <FormControlLabel
+            key={`checked-${name}`}
+            control={
+              <Checkbox
+                checked={ownerState.selectedRepositories.includes(name)}
+                onChange={(_, checked) => handleChange(name, checked)}
+                value={`checked-${name}`}
+              />
+            }
+            label={name}
           />
-        }
-        label={name}
-      />
+        ))}
+      </FormGroup>
     );
   }
 
   render() {
+    if (this.state.owners.length === 0) return null;
+
     return (
       <Section>
         <Typography type="headline" paragraph>
@@ -126,17 +131,9 @@ export class DetailedRepositorySelector extends React.Component<Props, State> {
 
         <FormControl component="fieldset">
           <FormLabel component="legend">Repositories</FormLabel>
-          <FormGroup row>
-            {this.state.repositories.map((ownerRepositories, ownerIndex) =>
-              ownerRepositories.map(repository =>
-                this.renderRepositoryCheckbox(
-                  ownerIndex,
-                  repository.name,
-                  repository.selected
-                )
-              )
-            )}
-          </FormGroup>
+          {this.state.owners.map((owner, ownerIndex) =>
+            this.renderOwnerRepositories(owner, ownerIndex)
+          )}
         </FormControl>
       </Section>
     );
