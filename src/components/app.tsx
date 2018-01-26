@@ -3,6 +3,7 @@ import { BrowserRouter, Route } from "react-router-dom";
 
 import { MenuButton } from "./menu_button";
 import { Stats } from "./stats";
+import { PersonalStats } from "./personal_stats";
 import { GithubButton } from "./github_button";
 import { GithubCallback } from "./github_callback";
 import { ReleaseNotesRetriever } from "./release_notes_retriever";
@@ -51,6 +52,7 @@ class App extends React.Component<{} & WithStyles, State> {
             Github Stats & Releases
           </Typography>
           <MenuButton to="/stats" text="Stats" {...props} />
+          <MenuButton to="/personal-stats" text="Personal Stats" {...props} />
           <MenuButton
             to="/retrieve-release-notes"
             text="Retrieve Release Notes"
@@ -97,6 +99,14 @@ class App extends React.Component<{} & WithStyles, State> {
                 render={props =>
                   this.renderOnlyIfLoggedIn(() => (
                     <Stats {...props} token={this.state.token} />
+                  ))
+                }
+              />
+              <Route
+                path="/personal-stats"
+                render={props =>
+                  this.renderOnlyIfLoggedIn(() => (
+                    <PersonalStats {...props} token={this.state.token} />
                   ))
                 }
               />
