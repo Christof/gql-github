@@ -69,10 +69,32 @@ export class PersonalStats extends React.Component<Props, State> {
     };
   }
 
+  private traceForSum() {
+    const data = new Map<number, number>();
+    for (const repoData of this.state.data) {
+      repoData.data.weeks.forEach(week => {
+        const commits = data.get(week.w);
+        const sum = week.c + (commits === undefined ? 0 : commits);
+        data.set(week.w, sum);
+      });
+    }
+
+    return {
+      type: "scatter",
+      mode: "lines",
+      name: "Sum",
+      x: Array.from(data.keys()).map(week => new Date(week * 1000)),
+      y: Array.from(data.values())
+    };
+  }
+
   renderGraph() {
     const repositoryTimeline = this.state.data.map(repo =>
       this.traceForRepo(repo.name, repo.data)
     );
+
+    repositoryTimeline.push(this.traceForSum());
+
     const title = "Commits in Repositories";
 
     const layout = {
