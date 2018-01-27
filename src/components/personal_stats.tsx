@@ -4,6 +4,8 @@ import {
   RepositoriesPerOwner
 } from "./detailed_repository_selector";
 import { Github, GithubAuthorData } from "../github";
+import { Section } from "./section";
+import { Typography, Grid } from "material-ui";
 
 interface Props {
   token: string;
@@ -33,10 +35,15 @@ export class PersonalStats extends React.Component<Props, State> {
       await Promise.all(
         repositories.map(async repo => {
           const stats = await github.getStats(repo);
+          if (stats === undefined || stats.length === 0) {
+            console.error("No stats found for", repo);
+            return;
+          }
           const authorData = stats.find(
             authorData => authorData.author.login === this.state.author
           );
-          data.push(authorData);
+
+          if (authorData !== undefined) data.push(authorData);
         })
       );
     }
@@ -45,12 +52,38 @@ export class PersonalStats extends React.Component<Props, State> {
     console.log(data);
   }
 
+  renderStatsSection() {
+    if (this.state.data.length === 0) return null;
+
+    const total = this.state.data.reduce((sum, repo) => sum + repo.total, 0);
+    return (
+      <Section>
+        <Typography type="headline" paragraph>
+          Stats
+        </Typography>
+        <Typography paragraph>
+          {`${total} total commit count in ${
+            this.state.data.length
+          } repositories`}
+        </Typography>
+      </Section>
+    );
+  }
+
   render() {
     return (
-      <DetailedRepositorySelector
-        github={this.state.github}
-        onChange={repositoriesPerOwner => this.loadData(repositoriesPerOwner)}
-      />
+      <Grid container spacing={24} justify="center">
+        <Grid item xs={12}>
+          <DetailedRepositorySelector
+            github={this.state.github}
+            onChange={repositoriesPerOwner =>
+              this.loadData(repositoriesPerOwner)
+            }
+          />
+
+          {this.renderStatsSection()}
+        </Grid>
+      </Grid>
     );
   }
 }
