@@ -6,7 +6,8 @@ import {
   FormGroup,
   FormControlLabel,
   Checkbox,
-  FormLabel
+  FormLabel,
+  Button
 } from "material-ui";
 import FormControl from "material-ui/Form/FormControl";
 
@@ -129,6 +130,7 @@ export class DetailedRepositorySelector extends React.Component<Props, State> {
   render() {
     if (this.state.owners.length === 0) return null;
 
+    const noOwnerSelected = this.state.owners.every(owner => !owner.selected);
     return (
       <Section>
         <Typography type="headline" paragraph>
@@ -143,12 +145,22 @@ export class DetailedRepositorySelector extends React.Component<Props, State> {
           </FormGroup>
         </FormControl>
 
-        <FormControl component="fieldset" fullWidth={true}>
-          <FormLabel component="legend">Repositories</FormLabel>
-          {this.state.owners.map((owner, ownerIndex) =>
-            this.renderOwnerRepositories(owner, ownerIndex)
-          )}
-        </FormControl>
+        {noOwnerSelected || (
+          <FormControl component="fieldset" fullWidth={true}>
+            <FormLabel component="legend">Repositories</FormLabel>
+            {this.state.owners.map((owner, ownerIndex) =>
+              this.renderOwnerRepositories(owner, ownerIndex)
+            )}
+          </FormControl>
+        )}
+
+        <Button
+          raised
+          disabled={noOwnerSelected}
+          onClick={() => this.triggerOnChange()}
+        >
+          Accept
+        </Button>
       </Section>
     );
   }
