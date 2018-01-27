@@ -120,7 +120,7 @@ export class DetailedRepositorySelector extends React.Component<Props, State> {
         <Typography type="headline" paragraph>
           Repositories
         </Typography>
-        <FormControl component="fieldset">
+        <FormControl component="fieldset" fullWidth={true}>
           <FormLabel component="legend">Owners</FormLabel>
           <FormGroup row>
             {this.state.owners.map((owner, index) =>
@@ -129,7 +129,7 @@ export class DetailedRepositorySelector extends React.Component<Props, State> {
           </FormGroup>
         </FormControl>
 
-        <FormControl component="fieldset">
+        <FormControl component="fieldset" fullWidth={true}>
           <FormLabel component="legend">Repositories</FormLabel>
           {this.state.owners.map((owner, ownerIndex) =>
             this.renderOwnerRepositories(owner, ownerIndex)
