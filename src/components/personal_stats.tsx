@@ -6,16 +6,22 @@ import {
 import { Github, GithubAuthorData } from "../github";
 import { Section } from "./section";
 import { Typography, Grid } from "material-ui";
+import { Plot } from "./plot";
 
 interface Props {
   token: string;
+}
+
+interface Repo {
+  name: string;
+  data: GithubAuthorData;
 }
 
 interface State {
   github: Github;
   repositoriesPerOwner?: RepositoriesPerOwner;
   author: string;
-  data: GithubAuthorData[];
+  data: Repo[];
 }
 
 export class PersonalStats extends React.Component<Props, State> {
@@ -29,7 +35,7 @@ export class PersonalStats extends React.Component<Props, State> {
   }
 
   async loadData(repositoriesPerOwner: RepositoriesPerOwner) {
-    const data = [] as GithubAuthorData[];
+    const data = [] as Repo[];
     for (let [owner, repositories] of repositoriesPerOwner.entries()) {
       const github = this.state.github.copyFor(owner);
       await Promise.all(
@@ -43,7 +49,8 @@ export class PersonalStats extends React.Component<Props, State> {
             authorData => authorData.author.login === this.state.author
           );
 
-          if (authorData !== undefined) data.push(authorData);
+          if (authorData !== undefined)
+            data.push({ name: repo, data: authorData });
         })
       );
     }
@@ -52,10 +59,70 @@ export class PersonalStats extends React.Component<Props, State> {
     console.log(data);
   }
 
+  private traceForRepo(name: string, data: GithubAuthorData) {
+    return {
+      type: "scatter",
+      mode: "lines",
+      name,
+      x: data.weeks.map((week: any) => new Date(week.w * 1000)),
+      y: data.weeks.map((week: any) => week.c)
+    };
+  }
+
+  renderGraph() {
+    const repositoryTimeline = this.state.data.map(repo =>
+      this.traceForRepo(repo.name, repo.data)
+    );
+    const title = "Commits in Repositories";
+
+    const layout = {
+      title,
+      xaxis: {
+        title: "time",
+        autorange: true,
+        rangeselector: {
+          buttons: [
+            {
+              count: 6,
+              label: "6m",
+              step: "month",
+              stepmode: "backward"
+            },
+            {
+              count: 1,
+              label: "1y",
+              step: "year",
+              stepmode: "backward"
+            },
+            { step: "all" }
+          ]
+        },
+        rangeslider: { autorange: true },
+        type: "date"
+      },
+      yaxis: {
+        title: "commit count",
+        autorange: true,
+        type: "linear"
+      }
+    };
+
+    return (
+      <Plot
+        title={title}
+        data={repositoryTimeline as any}
+        layout={layout as any}
+      />
+    );
+  }
+
   renderStatsSection() {
     if (this.state.data.length === 0) return null;
 
-    const total = this.state.data.reduce((sum, repo) => sum + repo.total, 0);
+    const total = this.state.data.reduce(
+      (sum, repo) => sum + repo.data.total,
+      0
+    );
     return (
       <Section>
         <Typography type="headline" paragraph>
@@ -66,6 +133,8 @@ export class PersonalStats extends React.Component<Props, State> {
             this.state.data.length
           } repositories`}
         </Typography>
+
+        {this.renderGraph()}
       </Section>
     );
   }
