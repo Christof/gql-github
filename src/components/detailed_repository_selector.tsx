@@ -133,34 +133,36 @@ export class DetailedRepositorySelector extends React.Component<Props, State> {
     const noOwnerSelected = this.state.owners.every(owner => !owner.selected);
     return (
       <Section>
-        <Typography type="headline" paragraph>
-          Repositories
-        </Typography>
-        <FormControl component="fieldset" fullWidth={true}>
-          <FormLabel component="legend">Owners</FormLabel>
-          <FormGroup row>
-            {this.state.owners.map((owner, index) =>
-              this.renderOwnerCheckbox(owner, index)
-            )}
-          </FormGroup>
-        </FormControl>
-
-        {noOwnerSelected || (
+        <div>
+          <Typography type="headline" paragraph>
+            Repositories
+          </Typography>
           <FormControl component="fieldset" fullWidth={true}>
-            <FormLabel component="legend">Repositories</FormLabel>
-            {this.state.owners.map((owner, ownerIndex) =>
-              this.renderOwnerRepositories(owner, ownerIndex)
-            )}
+            <FormLabel component="legend">Owners</FormLabel>
+            <FormGroup row>
+              {this.state.owners.map((owner, index) =>
+                this.renderOwnerCheckbox(owner, index)
+              )}
+            </FormGroup>
           </FormControl>
-        )}
 
-        <Button
-          raised
-          disabled={noOwnerSelected}
-          onClick={() => this.triggerOnChange()}
-        >
-          Accept
-        </Button>
+          {noOwnerSelected || (
+            <FormControl component="fieldset" fullWidth={true}>
+              <FormLabel component="legend">Repositories</FormLabel>
+              {this.state.owners.map((owner, ownerIndex) =>
+                this.renderOwnerRepositories(owner, ownerIndex)
+              )}
+            </FormControl>
+          )}
+
+          <Button
+            raised
+            disabled={noOwnerSelected}
+            onClick={() => this.triggerOnChange()}
+          >
+            Accept
+          </Button>
+        </div>
       </Section>
     );
   }
