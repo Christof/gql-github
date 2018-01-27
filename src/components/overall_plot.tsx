@@ -73,6 +73,11 @@ export class OverallPlot extends React.Component<Props, {}> {
       xaxis: {
         title: "commit count"
       },
+      yaxis: {
+        type: "category",
+        dtick: 1,
+        tick0: 0
+      },
       margin: {
         l: 140
       }
