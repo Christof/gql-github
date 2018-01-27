@@ -7,6 +7,7 @@ import { Github, GithubAuthorData } from "../github";
 import { Section } from "./section";
 import { Typography, Grid } from "material-ui";
 import { Plot } from "./plot";
+import { OverallPlot } from "./overall_plot";
 
 interface Props {
   token: string;
@@ -142,6 +143,16 @@ export class PersonalStats extends React.Component<Props, State> {
     );
   }
 
+  renderRepositorySums() {
+    const names = this.state.data.map(repo => repo.name);
+    return (
+      <OverallPlot
+        reposData={this.state.data.map(repo => [repo.data])}
+        repositoryNames={names}
+      />
+    );
+  }
+
   renderStatsSection() {
     if (this.state.data.length === 0) return null;
 
@@ -161,6 +172,7 @@ export class PersonalStats extends React.Component<Props, State> {
         </Typography>
 
         {this.renderGraph()}
+        {this.renderRepositorySums()}
       </Section>
     );
   }
