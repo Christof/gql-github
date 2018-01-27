@@ -79,12 +79,16 @@ export class PersonalStats extends React.Component<Props, State> {
       });
     }
 
+    const sortedEntries = Array.from(data.entries()).sort(
+      (a, b) => a[0] - b[0]
+    );
+
     return {
       type: "scatter",
       mode: "lines",
       name: "Sum",
-      x: Array.from(data.keys()).map(week => new Date(week * 1000)),
-      y: Array.from(data.values())
+      x: sortedEntries.map(entry => new Date(entry[0] * 1000)),
+      y: sortedEntries.map(entry => entry[1])
     };
   }
 
