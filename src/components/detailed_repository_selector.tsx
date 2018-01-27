@@ -10,8 +10,11 @@ import {
 } from "material-ui";
 import FormControl from "material-ui/Form/FormControl";
 
+export type RepositoriesPerOwner = Map<string, string[]>;
+
 interface Props {
   github: Github;
+  onChange: (repositoresPerOwner: RepositoriesPerOwner) => void;
 }
 
 interface State {
@@ -40,6 +43,17 @@ export class DetailedRepositorySelector extends React.Component<Props, State> {
     };
 
     this.loadData();
+  }
+
+  triggerOnChange() {
+    const repositoresPerOwner = this.state.owners
+      .filter(owner => owner.selected)
+      .reduce((acc, owner) => {
+        acc.set(owner.name, owner.selectedRepositories);
+        return acc;
+      }, new Map<string, string[]>());
+
+    this.props.onChange(repositoresPerOwner);
   }
 
   async loadData() {
