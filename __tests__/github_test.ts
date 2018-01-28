@@ -10,6 +10,29 @@ describe("Github", () => {
     github.owner = "owner";
   });
 
+  describe("copyFor", function() {
+    it("sets the new owner", function() {
+      const copy = github.copyFor("other-owner");
+
+      expect(copy.owner).toEqual("other-owner");
+    });
+
+    it("copies token and fetch function", async () => {
+      const copy = github.copyFor("other-owner");
+
+      expect(copy.owner).toEqual("other-owner");
+      fetchMock.mockReturnValue({});
+      await github.getRequest("specific-path");
+
+      expect(fetchMock).toHaveBeenCalled();
+      expect(fetchMock.mock.calls[0][0]).toBe(
+        "https://api.github.com/specific-path"
+      );
+      const params = fetchMock.mock.calls[0][1];
+      expect(params.headers).toEqual([["Authorization", "token secret-token"]]);
+    });
+  });
+
   describe("getRequest", () => {
     it("sends request to github api, with cors and headers", async () => {
       fetchMock.mockReturnValue({});

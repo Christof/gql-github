@@ -50,6 +50,13 @@ export class Github {
 
   constructor(private token: string, private fetch = windowFetch) {}
 
+  copyFor(owner: string) {
+    const copy = new Github(this.token, this.fetch);
+    copy.owner = owner;
+
+    return copy;
+  }
+
   getRequest(path: string) {
     const params: RequestInit = {
       method: "GET",

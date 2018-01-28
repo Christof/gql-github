@@ -1,8 +1,6 @@
 import * as React from "react";
 import { GithubData } from "../github";
 import * as Plotly from "plotly.js";
-import { Typography } from "material-ui";
-import { Section } from "./section";
 
 interface Props {
   reposData: GithubData[];
@@ -73,6 +71,11 @@ export class OverallPlot extends React.Component<Props, {}> {
       xaxis: {
         title: "commit count"
       },
+      yaxis: {
+        type: "category",
+        dtick: 1,
+        tick0: 0
+      },
       margin: {
         l: 140
       }
@@ -82,13 +85,6 @@ export class OverallPlot extends React.Component<Props, {}> {
   }
 
   render() {
-    return (
-      <Section>
-        <Typography type="headline" paragraph>
-          Overall
-        </Typography>
-        <div id={this.divId} />
-      </Section>
-    );
+    return <div id={this.divId} />;
   }
 }
