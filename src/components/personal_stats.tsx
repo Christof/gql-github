@@ -84,13 +84,33 @@ export class PersonalStats extends React.Component<Props, State> {
       (a, b) => a[0] - b[0]
     );
 
-    return {
-      type: "scatter",
-      mode: "lines",
-      name: "Sum",
-      x: sortedEntries.map(entry => new Date(entry[0] * 1000)),
-      y: sortedEntries.map(entry => entry[1])
-    };
+    const x = sortedEntries.map(entry => new Date(entry[0] * 1000));
+
+    return [
+      {
+        type: "scatter",
+        mode: "lines",
+        name: "Sum",
+        x,
+        y: sortedEntries.map(entry => entry[1])
+      },
+      {
+        type: "scatter",
+        mode: "lines",
+        name: "Trend",
+        x,
+        y: sortedEntries.map((entry, index) => {
+          const before = sortedEntries[index - 1];
+          const after = sortedEntries[index + 1];
+          if (index === 0) return (entry[1] + after[1]) / 2.0;
+
+          if (index === sortedEntries.length - 1)
+            return (entry[1] + before[1]) / 2.0;
+
+          return (entry[1] + before[1] + after[1]) / 3.0;
+        })
+      }
+    ];
   }
 
   renderGraph() {
@@ -98,7 +118,7 @@ export class PersonalStats extends React.Component<Props, State> {
       this.traceForRepo(repo.name, repo.data)
     );
 
-    repositoryTimeline.push(this.traceForSum());
+    repositoryTimeline.push(...this.traceForSum());
 
     const title = "Commits in Repositories";
 
