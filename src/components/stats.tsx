@@ -7,6 +7,7 @@ import { Dropdown } from "./dropdown";
 import { Plot } from "./plot";
 import { Typography, Grid } from "material-ui";
 import { Section } from "./section";
+import LinearProgress from "material-ui/Progress/LinearProgress";
 
 interface Props {
   token: string;
@@ -18,6 +19,7 @@ interface State {
   github: Github;
   repositoryNames: string[];
   data: GithubData[];
+  startedLoading: boolean;
 }
 
 function sum(array: number[]) {
@@ -32,7 +34,8 @@ export class Stats extends React.Component<Props, State> {
       github: new Github(this.props.token),
       owners: [],
       repositoryNames: [],
-      data: []
+      data: [],
+      startedLoading: false
     };
 
     this.state.github.getOwners().then(owners => this.setState({ owners }));
@@ -146,6 +149,7 @@ export class Stats extends React.Component<Props, State> {
   }
 
   async selectOwner(owner: string) {
+    this.setState({ startedLoading: true });
     this.state.github.owner = owner;
     const repositoryNames = await this.state.github.getRepositoryNames();
     this.setState({ repositoryNames });
@@ -187,28 +191,34 @@ export class Stats extends React.Component<Props, State> {
       </Section>
     );
   }
+  renderStatsSection() {
+    if (!this.state.startedLoading) return null;
 
+    if (this.state.data.length === 0) return <LinearProgress />;
+
+    return (
+      <div>
+        <Section>
+          <Typography type="headline" paragraph>
+            Overall
+          </Typography>
+          <OverallPlot
+            reposData={this.state.data}
+            repositoryNames={this.state.repositoryNames}
+          />
+        </Section>
+        {this.state.repositoryNames.map((item, index) =>
+          this.renderRepoGraph(item, index)
+        )}
+      </div>
+    );
+  }
   render() {
     return (
       <Grid container spacing={24} justify="center">
         <Grid item xs={12}>
           {this.renderRepositorySelection()}
-          {this.state.data.length > 0 && (
-            <Section>
-              <Typography type="headline" paragraph>
-                Overall
-              </Typography>
-              <OverallPlot
-                reposData={this.state.data}
-                repositoryNames={this.state.repositoryNames}
-              />
-            </Section>
-          )}
-          <div>
-            {this.state.repositoryNames.map((item, index) =>
-              this.renderRepoGraph(item, index)
-            )}
-          </div>
+          {this.renderStatsSection()}
         </Grid>
       </Grid>
     );
