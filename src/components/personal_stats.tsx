@@ -5,7 +5,7 @@ import {
 } from "./detailed_repository_selector";
 import { Github, GithubAuthorData } from "../github";
 import { Section } from "./section";
-import { Typography, Grid } from "material-ui";
+import { Typography, Grid, LinearProgress } from "material-ui";
 import { Plot } from "./plot";
 import { OverallPlot } from "./overall_plot";
 
@@ -23,6 +23,7 @@ interface State {
   repositoriesPerOwner?: RepositoriesPerOwner;
   author: string;
   data: Repo[];
+  startedLoading: boolean;
 }
 
 export class PersonalStats extends React.Component<Props, State> {
@@ -30,12 +31,13 @@ export class PersonalStats extends React.Component<Props, State> {
     super(props);
 
     const github = new Github(props.token);
-    this.state = { github, author: "", data: [] };
+    this.state = { github, author: "", data: [], startedLoading: false };
 
     github.getUser().then(user => this.setState({ author: user.login }));
   }
 
   async loadData(repositoriesPerOwner: RepositoriesPerOwner) {
+    this.setState({ startedLoading: true });
     const data = [] as Repo[];
     for (let [owner, repositories] of repositoriesPerOwner.entries()) {
       const github = this.state.github.copyFor(owner);
@@ -190,18 +192,16 @@ export class PersonalStats extends React.Component<Props, State> {
     );
   }
 
-  renderStatsSection() {
-    if (this.state.data.length === 0) return null;
+  renderStats() {
+    if (this.state.data.length === 0) return <LinearProgress />;
 
     const total = this.state.data.reduce(
       (sum, repo) => sum + repo.data.total,
       0
     );
+
     return (
-      <Section>
-        <Typography type="headline" paragraph>
-          Stats
-        </Typography>
+      <div>
         <Typography paragraph>
           {`${total} total commit count in ${
             this.state.data.length
@@ -210,6 +210,20 @@ export class PersonalStats extends React.Component<Props, State> {
 
         {this.renderGraph()}
         {this.renderRepositorySums()}
+      </div>
+    );
+  }
+
+  renderStatsSection() {
+    if (!this.state.startedLoading) return null;
+
+    return (
+      <Section>
+        <Typography type="headline" paragraph>
+          Stats
+        </Typography>
+
+        {this.renderStats()}
       </Section>
     );
   }
