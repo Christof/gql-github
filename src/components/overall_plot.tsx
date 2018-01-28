@@ -1,8 +1,6 @@
 import * as React from "react";
 import { GithubData } from "../github";
 import * as Plotly from "plotly.js";
-import { Typography } from "material-ui";
-import { Section } from "./section";
 
 interface Props {
   reposData: GithubData[];
