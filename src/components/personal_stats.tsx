@@ -88,6 +88,18 @@ export class PersonalStats extends React.Component<Props, State> {
     return Array.from(data.entries()).sort((a, b) => a[0] - b[0]);
   }
 
+  private runningAverage(data: number[][]) {
+    return data.map((entry, index) => {
+      const before = data[index - 1];
+      const after = data[index + 1];
+      if (index === 0) return (entry[1] + after[1]) / 2.0;
+
+      if (index === data.length - 1) return (entry[1] + before[1]) / 2.0;
+
+      return (entry[1] + before[1] + after[1]) / 3.0;
+    });
+  }
+
   private traceForSum() {
     const sortedEntries = this.calculateSum();
     const x = sortedEntries.map(entry => new Date(entry[0] * 1000));
@@ -105,16 +117,7 @@ export class PersonalStats extends React.Component<Props, State> {
         mode: "lines",
         name: "Trend",
         x,
-        y: sortedEntries.map((entry, index) => {
-          const before = sortedEntries[index - 1];
-          const after = sortedEntries[index + 1];
-          if (index === 0) return (entry[1] + after[1]) / 2.0;
-
-          if (index === sortedEntries.length - 1)
-            return (entry[1] + before[1]) / 2.0;
-
-          return (entry[1] + before[1] + after[1]) / 3.0;
-        })
+        y: this.runningAverage(sortedEntries)
       }
     ];
   }
