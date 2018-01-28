@@ -70,7 +70,12 @@ export class PersonalStats extends React.Component<Props, State> {
     };
   }
 
-  private traceForSum() {
+  /**
+   * Calculates sum of commits per week.
+   *
+   * @returns Array of [week, commitsInWeek]
+   */
+  private calculateSum(): number[][] {
     const data = new Map<number, number>();
     for (const repoData of this.state.data) {
       repoData.data.weeks.forEach(week => {
@@ -80,10 +85,11 @@ export class PersonalStats extends React.Component<Props, State> {
       });
     }
 
-    const sortedEntries = Array.from(data.entries()).sort(
-      (a, b) => a[0] - b[0]
-    );
+    return Array.from(data.entries()).sort((a, b) => a[0] - b[0]);
+  }
 
+  private traceForSum() {
+    const sortedEntries = this.calculateSum();
     const x = sortedEntries.map(entry => new Date(entry[0] * 1000));
 
     return [
