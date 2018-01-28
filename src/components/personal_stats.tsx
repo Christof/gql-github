@@ -88,15 +88,24 @@ export class PersonalStats extends React.Component<Props, State> {
     return Array.from(data.entries()).sort((a, b) => a[0] - b[0]);
   }
 
-  private runningAverage(data: number[][]) {
+  private runningAverage(data: number[][], neighbours: number) {
     return data.map((entry, index) => {
-      const before = data[index - 1];
-      const after = data[index + 1];
-      if (index === 0) return (entry[1] + after[1]) / 2.0;
+      const group = [entry];
+      for (let offset = 1; offset <= neighbours; ++offset) {
+        group.push(data[index + offset]);
+        group.push(data[index - offset]);
+      }
 
-      if (index === data.length - 1) return (entry[1] + before[1]) / 2.0;
+      let count = 0;
+      let sum = 0;
+      for (let value of group) {
+        if (value === undefined) continue;
 
-      return (entry[1] + before[1] + after[1]) / 3.0;
+        ++count;
+        sum += value[1];
+      }
+
+      return sum / count;
     });
   }
 
@@ -117,7 +126,7 @@ export class PersonalStats extends React.Component<Props, State> {
         mode: "lines",
         name: "Trend",
         x,
-        y: this.runningAverage(sortedEntries)
+        y: this.runningAverage(sortedEntries, 2)
       }
     ];
   }
