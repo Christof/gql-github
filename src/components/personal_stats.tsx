@@ -57,7 +57,6 @@ export class PersonalStats extends React.Component<Props, State> {
     }
 
     this.setState({ data });
-    console.log(data);
   }
 
   private traceForRepo(name: string, data: GithubAuthorData) {
