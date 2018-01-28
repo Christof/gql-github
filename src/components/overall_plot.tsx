@@ -87,13 +87,6 @@ export class OverallPlot extends React.Component<Props, {}> {
   }
 
   render() {
-    return (
-      <Section>
-        <Typography type="headline" paragraph>
-          Overall
-        </Typography>
-        <div id={this.divId} />
-      </Section>
-    );
+    return <div id={this.divId} />;
   }
 }

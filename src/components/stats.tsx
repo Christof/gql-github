@@ -194,10 +194,15 @@ export class Stats extends React.Component<Props, State> {
         <Grid item xs={12}>
           {this.renderRepositorySelection()}
           {this.state.data.length > 0 && (
-            <OverallPlot
-              reposData={this.state.data}
-              repositoryNames={this.state.repositoryNames}
-            />
+            <Section>
+              <Typography type="headline" paragraph>
+                Overall
+              </Typography>
+              <OverallPlot
+                reposData={this.state.data}
+                repositoryNames={this.state.repositoryNames}
+              />
+            </Section>
           )}
           <div>
             {this.state.repositoryNames.map((item, index) =>
