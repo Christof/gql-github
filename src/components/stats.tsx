@@ -194,7 +194,15 @@ export class Stats extends React.Component<Props, State> {
   renderStatsSection() {
     if (!this.state.startedLoading) return null;
 
-    if (this.state.data.length === 0) return <LinearProgress />;
+    if (this.state.data.length === 0)
+      return (
+        <Section>
+          <Typography type="headline" paragraph>
+            Stats
+          </Typography>
+          <LinearProgress />
+        </Section>
+      );
 
     return (
       <div>
