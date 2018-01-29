@@ -152,13 +152,12 @@ export class Stats extends React.Component<Props, State> {
     this.setState({ startedLoading: true });
     this.state.github.owner = owner;
     const repositoryNames = await this.state.github.getRepositoryNames();
-    this.setState({ repositoryNames });
 
     const data = await Promise.all(
-      this.state.repositoryNames.map(repo => this.state.github.getStats(repo))
+      repositoryNames.map(repo => this.state.github.getStats(repo))
     );
 
-    this.setState({ data });
+    this.setState({ data, repositoryNames });
   }
 
   renderRepoGraph(repo: string, index: number) {
