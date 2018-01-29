@@ -25,6 +25,10 @@ export class OverallPlot extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
+    this.state = this.getPlotData();
+  }
+
+  getPlotData() {
     const data = this.getAuthors().map(author => this.getAuthorTrace(author));
 
     const layout: Partial<Layout> & { barmode: string } = {
@@ -44,7 +48,7 @@ export class OverallPlot extends React.Component<Props, State> {
       }
     };
 
-    this.state = { data, layout };
+    return { data, layout };
   }
   private getAuthors() {
     const authorsForRepos = this.props.reposData.map(repoData =>
@@ -89,7 +93,18 @@ export class OverallPlot extends React.Component<Props, State> {
     });
   }
 
-  componentDidMount() {}
+  componentDidUpdate(prevProps: Props) {
+    if (
+      prevProps.repositoryNames.length === this.props.repositoryNames.length &&
+      prevProps.repositoryNames.every(
+        (name, index) => name === this.props.repositoryNames[index]
+      )
+    ) {
+      return;
+    }
+
+    this.setState(this.getPlotData());
+  }
 
   render() {
     return <PlotlyChart data={this.state.data} layout={this.state.layout} />;
