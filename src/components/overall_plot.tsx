@@ -1,10 +1,16 @@
 import * as React from "react";
 import { GithubData } from "../github";
-import * as Plotly from "plotly.js";
+import PlotlyChart from "react-plotlyjs-ts";
+import { ScatterData, Layout } from "plotly.js";
 
 interface Props {
   reposData: GithubData[];
   repositoryNames: string[];
+}
+
+interface State {
+  data: Partial<ScatterData>[];
+  layout: Partial<Layout>;
 }
 
 function flatten<T>(arrayOfArrays: T[][]): T[] {
@@ -15,9 +21,31 @@ function unique<T>(arrayWithDuplicates: T[]): T[] {
   return [...new Set(arrayWithDuplicates)];
 }
 
-export class OverallPlot extends React.Component<Props, {}> {
-  private readonly divId = "overall";
+export class OverallPlot extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
 
+    const data = this.getAuthors().map(author => this.getAuthorTrace(author));
+
+    const layout: Partial<Layout> & { barmode: string } = {
+      title: "Overall",
+      barmode: "stack" as any,
+      annotations: this.getTotalCommitCountAnnotations(),
+      xaxis: {
+        title: "commit count"
+      },
+      yaxis: {
+        type: "category",
+        dtick: 1,
+        tick0: 0
+      },
+      margin: {
+        l: 140
+      }
+    };
+
+    this.state = { data, layout };
+  }
   private getAuthors() {
     const authorsForRepos = this.props.reposData.map(repoData =>
       repoData.map(authorData => authorData.author.login)
@@ -41,7 +69,7 @@ export class OverallPlot extends React.Component<Props, {}> {
       name: author,
       type: "bar",
       orientation: "h"
-    };
+    } as Partial<ScatterData>;
   }
 
   private getTotalCommitCountAnnotations() {
@@ -61,30 +89,9 @@ export class OverallPlot extends React.Component<Props, {}> {
     });
   }
 
-  componentDidMount() {
-    const data = this.getAuthors().map(author => this.getAuthorTrace(author));
-
-    const layout = {
-      title: "Overall",
-      barmode: "stack",
-      annotations: this.getTotalCommitCountAnnotations(),
-      xaxis: {
-        title: "commit count"
-      },
-      yaxis: {
-        type: "category",
-        dtick: 1,
-        tick0: 0
-      },
-      margin: {
-        l: 140
-      }
-    };
-
-    Plotly.newPlot(this.divId, data as any, layout as any);
-  }
+  componentDidMount() {}
 
   render() {
-    return <div id={this.divId} />;
+    return <PlotlyChart data={this.state.data} layout={this.state.layout} />;
   }
 }
