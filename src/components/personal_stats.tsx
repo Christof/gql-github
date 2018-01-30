@@ -26,7 +26,7 @@ interface State {
   startedLoading: boolean;
 }
 
-export function runningAverage(data: number[][], neighbours: number) {
+export function runningAverage(data: number[], neighbours: number) {
   return data.map((entry, index) => {
     const group = [entry];
     for (let offset = 1; offset <= neighbours; ++offset) {
@@ -40,7 +40,7 @@ export function runningAverage(data: number[][], neighbours: number) {
       if (value === undefined) continue;
 
       ++count;
-      sum += value[1];
+      sum += value;
     }
 
     return sum / count;
@@ -128,7 +128,7 @@ export class PersonalStats extends React.Component<Props, State> {
         mode: "lines",
         name: "Trend",
         x,
-        y: runningAverage(sortedEntries, 2)
+        y: runningAverage(sortedEntries.map(entry => entry[1]), 2)
       }
     ];
   }
