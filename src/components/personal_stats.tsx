@@ -38,6 +38,7 @@ export class PersonalStats extends React.Component<Props, State> {
 
   async loadData(repositoriesPerOwner: RepositoriesPerOwner) {
     this.setState({ startedLoading: true });
+
     const data = [] as Repo[];
     for (let [owner, repositories] of repositoriesPerOwner.entries()) {
       const github = this.state.github.copyFor(owner);
@@ -76,7 +77,7 @@ export class PersonalStats extends React.Component<Props, State> {
    *
    * @returns Array of [week, commitsInWeek]
    */
-  private calculateSum(): number[][] {
+  private calculateWeeklyCommits(): number[][] {
     const data = new Map<number, number>();
     for (const repoData of this.state.data) {
       repoData.data.weeks.forEach(week => {
@@ -111,7 +112,7 @@ export class PersonalStats extends React.Component<Props, State> {
   }
 
   private traceForSum() {
-    const sortedEntries = this.calculateSum();
+    const sortedEntries = this.calculateWeeklyCommits();
     const x = sortedEntries.map(entry => new Date(entry[0] * 1000));
 
     return [
