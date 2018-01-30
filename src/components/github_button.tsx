@@ -56,7 +56,9 @@ export class GithubButton extends React.Component<Props, State> {
     window.location.href = githubLoginUrl;
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps: Props) {
+    if (this.props.token === prevProps.token) return;
+
     this.loadAvatarUrl();
   }
 
