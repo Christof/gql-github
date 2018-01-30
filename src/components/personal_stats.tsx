@@ -26,6 +26,27 @@ interface State {
   startedLoading: boolean;
 }
 
+export function runningAverage(data: number[][], neighbours: number) {
+  return data.map((entry, index) => {
+    const group = [entry];
+    for (let offset = 1; offset <= neighbours; ++offset) {
+      group.push(data[index + offset]);
+      group.push(data[index - offset]);
+    }
+
+    let count = 0;
+    let sum = 0;
+    for (let value of group) {
+      if (value === undefined) continue;
+
+      ++count;
+      sum += value[1];
+    }
+
+    return sum / count;
+  });
+}
+
 export class PersonalStats extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -90,27 +111,6 @@ export class PersonalStats extends React.Component<Props, State> {
     return Array.from(data.entries()).sort((a, b) => a[0] - b[0]);
   }
 
-  private runningAverage(data: number[][], neighbours: number) {
-    return data.map((entry, index) => {
-      const group = [entry];
-      for (let offset = 1; offset <= neighbours; ++offset) {
-        group.push(data[index + offset]);
-        group.push(data[index - offset]);
-      }
-
-      let count = 0;
-      let sum = 0;
-      for (let value of group) {
-        if (value === undefined) continue;
-
-        ++count;
-        sum += value[1];
-      }
-
-      return sum / count;
-    });
-  }
-
   private traceForSum() {
     const sortedEntries = this.calculateWeeklyCommits();
     const x = sortedEntries.map(entry => new Date(entry[0] * 1000));
@@ -128,7 +128,7 @@ export class PersonalStats extends React.Component<Props, State> {
         mode: "lines",
         name: "Trend",
         x,
-        y: this.runningAverage(sortedEntries, 2)
+        y: runningAverage(sortedEntries, 2)
       }
     ];
   }
