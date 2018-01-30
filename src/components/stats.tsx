@@ -150,6 +150,7 @@ export class Stats extends React.Component<Props, State> {
 
   async selectOwner(owner: string) {
     this.setState({ startedLoading: true });
+
     this.state.github.owner = owner;
     const repositoryNames = await this.state.github.getRepositoryNames();
 
@@ -190,6 +191,7 @@ export class Stats extends React.Component<Props, State> {
       </Section>
     );
   }
+
   renderStatsSection() {
     if (!this.state.startedLoading) return null;
 
