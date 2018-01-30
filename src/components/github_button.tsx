@@ -46,7 +46,8 @@ export class GithubButton extends React.Component<Props, {}> {
     }
     return (
       <Button raised className={this.props.className} onClick={this.login}>
-        Login with GitHub
+        Login &nbsp;
+        <img src="https://cdnjs.cloudflare.com/ajax/libs/octicons/4.4.0/svg/mark-github.svg" />
       </Button>
     );
   }
