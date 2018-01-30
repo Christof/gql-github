@@ -5,6 +5,7 @@ import { Section } from "./section";
 import { Dropdown } from "./dropdown";
 import { ScatterData, Layout } from "plotly.js";
 import PlotlyChart from "react-plotlyjs-ts";
+import { runningAverage } from "./personal_stats";
 
 interface Props {
   token: string;
@@ -54,10 +55,11 @@ export class OrgStats extends React.Component<Props, State> {
 
     const result = new Map<string, number[][]>();
     for (const authorResult of collector.entries()) {
-      result.set(
-        authorResult[0],
-        Array.from(authorResult[1].entries()).sort((a, b) => a[0] - b[0])
+      const author = authorResult[0];
+      const sortedEntries = Array.from(authorResult[1].entries()).sort(
+        (a, b) => a[0] - b[0]
       );
+      result.set(author, sortedEntries);
     }
 
     return result;
@@ -86,6 +88,14 @@ export class OrgStats extends React.Component<Props, State> {
         name: authorData[0],
         x: weeks.map(week => new Date(week[0] * 1000)),
         y: weeks.map(week => week[1])
+      });
+
+      traces.push({
+        type: "scatter" as any,
+        mode: "lines" as any,
+        name: `${authorData[0]} Avg`,
+        x: weeks.map(week => new Date(week[0] * 1000)),
+        y: runningAverage(weeks.map(week => week[1]), 2)
       });
     }
 
