@@ -2,6 +2,7 @@ import { getNamesOfOwnRepositories } from "./stats_helper";
 
 export interface GithubUser {
   login: string;
+  avatar_url: string;
 }
 
 export interface GithubAuthorData {

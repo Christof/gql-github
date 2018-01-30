@@ -2,6 +2,7 @@ import * as React from "react";
 import * as qs from "qs";
 import { Button } from "material-ui";
 import * as uuid from "node-uuid";
+import { Github } from "../github";
 
 interface Props {
   className: string;
@@ -9,12 +10,31 @@ interface Props {
   token?: string;
 }
 
-export class GithubButton extends React.Component<Props, {}> {
+interface State {
+  avatar_url?: string;
+}
+
+export class GithubButton extends React.Component<Props, State> {
+  readonly githubMarkUrl = "https://cdnjs.cloudflare.com/ajax/libs/octicons/4.4.0/svg/mark-github.svg";
+
   constructor(props: Props) {
     super(props);
 
     this.signout = this.signout.bind(this);
     this.login = this.login.bind(this);
+
+    this.state = { avatar_url: this.githubMarkUrl };
+    if (props.token) {
+      this.loadAvatarUrl();
+    }
+  }
+
+  loadAvatarUrl() {
+    if (!this.props.token) return;
+
+    new Github(this.props.token)
+      .getUser()
+      .then(user => this.setState({ avatar_url: user.avatar_url }));
   }
 
   signout() {
@@ -36,18 +56,28 @@ export class GithubButton extends React.Component<Props, {}> {
     window.location.href = githubLoginUrl;
   }
 
+  componentDidUpdate() {
+    this.loadAvatarUrl();
+  }
+
   render() {
     if (this.props.token !== undefined) {
       return (
         <Button raised className={this.props.className} onClick={this.signout}>
-          Signout from GitHub
+          Logout &nbsp;
+          <img
+            width="16px"
+            height="16px"
+            style={{ borderRadius: "50%" }}
+            src={this.state.avatar_url}
+          />
         </Button>
       );
     }
     return (
       <Button raised className={this.props.className} onClick={this.login}>
         Login &nbsp;
-        <img src="https://cdnjs.cloudflare.com/ajax/libs/octicons/4.4.0/svg/mark-github.svg" />
+        <img src={this.githubMarkUrl} />
       </Button>
     );
   }
