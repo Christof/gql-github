@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Github, GithubData } from "../github";
-import { Grid, Typography } from "material-ui";
+import { Grid, Typography, LinearProgress } from "material-ui";
 import { Section } from "./section";
 import { Dropdown } from "./dropdown";
 
@@ -43,6 +43,22 @@ export class OrgStats extends React.Component<Props, State> {
     this.setState({ data, repositoryNames });
   }
 
+  renderStatsSection() {
+    if (!this.state.startedLoading) return null;
+
+    if (this.state.data.length === 0)
+      return (
+        <Section>
+          <Typography type="headline" paragraph>
+            Stats
+          </Typography>
+          <LinearProgress />
+        </Section>
+      );
+
+    return <div>Stats</div>;
+  }
+
   renderRepositorySelection() {
     return (
       <Section>
@@ -63,6 +79,7 @@ export class OrgStats extends React.Component<Props, State> {
       <Grid container spacing={24} justify="center">
         <Grid item xs={12}>
           {this.renderRepositorySelection()}
+          {this.renderStatsSection()}
         </Grid>
       </Grid>
     );
