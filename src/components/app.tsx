@@ -12,6 +12,7 @@ import { ReleaseNotesCreator } from "./release_notes_creator";
 import { AppBar, Typography, Toolbar, Reboot } from "material-ui";
 import { withStyles, Theme, StyleRules } from "material-ui/styles";
 import { WithStyles } from "material-ui/styles/withStyles";
+import { Github } from "../github";
 
 const styles = (_theme: Theme): StyleRules => ({
   root: {
@@ -28,6 +29,7 @@ const styles = (_theme: Theme): StyleRules => ({
 
 interface State {
   token?: string;
+  github?: Github;
 }
 
 class App extends React.Component<{} & WithStyles, State> {
@@ -37,7 +39,11 @@ class App extends React.Component<{} & WithStyles, State> {
     const token = window.localStorage.github
       ? JSON.parse(window.localStorage.github).access_token
       : undefined;
-    this.state = { token };
+    this.state = { token, github: this.createGithub(token) };
+  }
+
+  createGithub(token: string) {
+    return new Github(token);
   }
 
   renderAppBar() {
@@ -68,7 +74,9 @@ class App extends React.Component<{} & WithStyles, State> {
           <GithubButton
             className={classes.menuButton}
             token={this.state.token}
-            onChangeToken={token => this.setState({ token })}
+            onChangeToken={token =>
+              this.setState({ token, github: this.createGithub(token) })
+            }
           />
         </Toolbar>
       </AppBar>
