@@ -102,7 +102,6 @@ export class Github {
         }
       }`);
     const response = await this.client.query({ query });
-    console.log(response);
     return (response.data as any).viewer;
   }
 
@@ -138,10 +137,17 @@ export class Github {
   }
 
   async getTags(repository: string): Promise<GithubTag[]> {
-    const response = await this.getRequest(
-      `repos/${this.owner}/${repository}/tags`
-    );
-    return await response.json();
+    const query = gql(`
+    query {
+      repository(owner: "${this.owner}", name: "${repository}") {
+        refs(refPrefix: "refs/tags/", first: 20,
+          orderBy: {field: TAG_COMMIT_DATE, direction: DESC}) {
+          nodes {name}
+        }
+      }
+      }`);
+    const response = await this.client.query({ query });
+    return (response.data as any).repository.refs.nodes;
   }
 
   async getReleases(repository: string): Promise<GithubRelease[]> {
