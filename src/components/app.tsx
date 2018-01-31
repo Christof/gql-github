@@ -143,7 +143,7 @@ class App extends React.Component<{} & WithStyles, State> {
                   this.renderOnlyIfLoggedIn(() => (
                     <ReleaseNotesRetriever
                       {...props}
-                      token={this.state.token}
+                      github={this.state.github}
                     />
                   ))
                 }

@@ -8,7 +8,6 @@ import { Grid, Typography } from "material-ui";
 import { Section } from "./section";
 
 interface State {
-  github: Github;
   repo?: string;
   releases?: GithubRelease[];
   release?: GithubRelease;
@@ -16,19 +15,17 @@ interface State {
 }
 
 interface Props {
-  token: string;
+  github: Github;
 }
 
 export class ReleaseNotesRetriever extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {
-      github: new Github(this.props.token)
-    };
+    this.state = {};
   }
 
   async selectRepository(repo: string) {
-    const releases = await this.state.github.getReleases(repo);
+    const releases = await this.props.github.getReleases(repo);
     this.setState({ releases, repo });
   }
 
@@ -75,7 +72,7 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
       <Grid container spacing={24} justify="center">
         <Grid item xs={12} md={10} lg={8}>
           <RepositorySelector
-            github={this.state.github}
+            github={this.props.github}
             onRepositorySelect={repo => this.selectRepository(repo)}
           />
           {this.renderReleasesSection()}
