@@ -75,8 +75,6 @@ export class OrgStats extends React.Component<Props, State> {
 
     const weeklyCommitsPerAuthor = this.calculateWeeklyCommits(data);
 
-    console.log(weeklyCommitsPerAuthor);
-
     const traces = [];
     for (const authorData of weeklyCommitsPerAuthor.entries()) {
       const weeks = authorData[1];
@@ -127,8 +125,6 @@ export class OrgStats extends React.Component<Props, State> {
         type: "linear"
       }
     };
-
-    console.log(traces);
 
     this.setState({ data, repositoryNames, traces, layout });
   }
