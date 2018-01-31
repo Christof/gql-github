@@ -35,7 +35,8 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
   async selectRelease(tagName: string) {
     const release = this.state.releases.find(x => x.tag_name === tagName);
 
-    this.setState({ releaseDescription: release.body, release });
+    const releaseDescription = `# ${release.tag_name}\n\n${release.body}\n`;
+    this.setState({ releaseDescription, release });
   }
 
   renderReleasesSection() {
@@ -44,7 +45,7 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
     return (
       <Section>
         <Typography type="headline" paragraph>
-          {this.state.repo}
+          Release Note
         </Typography>
         <Dropdown
           label="Release"
