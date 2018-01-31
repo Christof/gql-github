@@ -133,7 +133,7 @@ class App extends React.Component<{} & WithStyles, State> {
                 path="/org-stats"
                 render={props =>
                   this.renderOnlyIfLoggedIn(() => (
-                    <OrgStats {...props} token={this.state.token} />
+                    <OrgStats {...props} github={this.state.github} />
                   ))
                 }
               />

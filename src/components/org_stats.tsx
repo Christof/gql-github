@@ -8,12 +8,11 @@ import PlotlyChart from "react-plotlyjs-ts";
 import { runningAverage } from "./personal_stats";
 
 interface Props {
-  token: string;
+  github: Github;
 }
 
 interface State {
   owners: string[];
-  github: Github;
   repositoryNames: string[];
   data: GithubData[];
   startedLoading: boolean;
@@ -25,14 +24,13 @@ export class OrgStats extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      github: new Github(this.props.token),
       owners: [],
       repositoryNames: [],
       data: [],
       startedLoading: false
     };
 
-    this.state.github.getOwners().then(owners => this.setState({ owners }));
+    this.props.github.getOwners().then(owners => this.setState({ owners }));
   }
 
   private calculateWeeklyCommits(
@@ -68,11 +66,11 @@ export class OrgStats extends React.Component<Props, State> {
   async selectOwner(owner: string) {
     this.setState({ startedLoading: true });
 
-    this.state.github.owner = owner;
-    const repositoryNames = await this.state.github.getRepositoryNames();
+    this.props.github.owner = owner;
+    const repositoryNames = await this.props.github.getRepositoryNames();
 
     const data = await Promise.all(
-      repositoryNames.map(repo => this.state.github.getStats(repo))
+      repositoryNames.map(repo => this.props.github.getStats(repo))
     );
 
     const weeklyCommitsPerAuthor = this.calculateWeeklyCommits(data);
