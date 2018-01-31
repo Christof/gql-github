@@ -28,7 +28,6 @@ const styles = (_theme: Theme): StyleRules => ({
 });
 
 interface State {
-  token?: string;
   github?: Github;
 }
 
@@ -40,7 +39,6 @@ class App extends React.Component<{} & WithStyles, State> {
       ? JSON.parse(window.localStorage.github).access_token
       : undefined;
     this.state = {
-      token,
       github: token ? this.createGithub(token) : undefined
     };
   }
@@ -52,7 +50,7 @@ class App extends React.Component<{} & WithStyles, State> {
   renderAppBar() {
     const { classes } = this.props;
     const props = {
-      disabled: this.state.token === undefined,
+      disabled: this.state.github === undefined,
       className: classes.menuButton
     };
     return (
@@ -85,15 +83,11 @@ class App extends React.Component<{} & WithStyles, State> {
   }
 
   renderOnlyIfLoggedIn(createInner: () => JSX.Element) {
-    return this.state.token ? createInner() : <div />;
+    return this.state.github ? createInner() : <div />;
   }
 
   onChangeToken(token: string) {
-    if (token === undefined) {
-      this.setState({ token, github: undefined });
-    } else {
-      this.setState({ token, github: this.createGithub(token) });
-    }
+    this.setState({ github: token ? this.createGithub(token) : undefined });
   }
 
   render() {
