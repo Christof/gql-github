@@ -10,13 +10,12 @@ import { Section } from "./section";
 import LinearProgress from "material-ui/Progress/LinearProgress";
 
 interface Props {
-  token: string;
+  github: Github;
 }
 
 interface State {
   error: any;
   owners: string[];
-  github: Github;
   repositoryNames: string[];
   data: GithubData[];
   startedLoading: boolean;
@@ -31,14 +30,13 @@ export class Stats extends React.Component<Props, State> {
     super(props);
     this.state = {
       error: null,
-      github: new Github(this.props.token),
       owners: [],
       repositoryNames: [],
       data: [],
       startedLoading: false
     };
 
-    this.state.github.getOwners().then(owners => this.setState({ owners }));
+    this.props.github.getOwners().then(owners => this.setState({ owners }));
   }
 
   renderGraph(title: string, data: GithubData) {
@@ -151,11 +149,11 @@ export class Stats extends React.Component<Props, State> {
   async selectOwner(owner: string) {
     this.setState({ startedLoading: true });
 
-    this.state.github.owner = owner;
-    const repositoryNames = await this.state.github.getRepositoryNames();
+    this.props.github.owner = owner;
+    const repositoryNames = await this.props.github.getRepositoryNames();
 
     const data = await Promise.all(
-      repositoryNames.map(repo => this.state.github.getStats(repo))
+      repositoryNames.map(repo => this.props.github.getStats(repo))
     );
 
     this.setState({ data, repositoryNames });
