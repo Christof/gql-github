@@ -125,7 +125,7 @@ class App extends React.Component<{} & WithStyles, State> {
                 path="/personal-stats"
                 render={props =>
                   this.renderOnlyIfLoggedIn(() => (
-                    <PersonalStats {...props} token={this.state.token} />
+                    <PersonalStats {...props} github={this.state.github} />
                   ))
                 }
               />

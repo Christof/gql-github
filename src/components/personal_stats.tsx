@@ -10,7 +10,7 @@ import { Plot } from "./plot";
 import { OverallPlot } from "./overall_plot";
 
 interface Props {
-  token: string;
+  github: Github;
 }
 
 interface Repo {
@@ -19,7 +19,6 @@ interface Repo {
 }
 
 interface State {
-  github: Github;
   repositoriesPerOwner?: RepositoriesPerOwner;
   author: string;
   data: Repo[];
@@ -51,10 +50,11 @@ export class PersonalStats extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
-    const github = new Github(props.token);
-    this.state = { github, author: "", data: [], startedLoading: false };
+    this.state = { author: "", data: [], startedLoading: false };
 
-    github.getUser().then(user => this.setState({ author: user.login }));
+    this.props.github
+      .getUser()
+      .then(user => this.setState({ author: user.login }));
   }
 
   async loadData(repositoriesPerOwner: RepositoriesPerOwner) {
@@ -62,7 +62,7 @@ export class PersonalStats extends React.Component<Props, State> {
 
     const data = [] as Repo[];
     for (let [owner, repositories] of repositoriesPerOwner.entries()) {
-      const github = this.state.github.copyFor(owner);
+      const github = this.props.github.copyFor(owner);
       await Promise.all(
         repositories.map(async repo => {
           const stats = await github.getStats(repo);
@@ -234,7 +234,7 @@ export class PersonalStats extends React.Component<Props, State> {
       <Grid container spacing={24} justify="center">
         <Grid item xs={12}>
           <DetailedRepositorySelector
-            github={this.state.github}
+            github={this.props.github}
             onChange={repositoriesPerOwner =>
               this.loadData(repositoriesPerOwner)
             }
