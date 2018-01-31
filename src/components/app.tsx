@@ -152,7 +152,10 @@ class App extends React.Component<{} & WithStyles, State> {
                 path="/create-release-notes"
                 render={props =>
                   this.renderOnlyIfLoggedIn(() => (
-                    <ReleaseNotesCreator {...props} token={this.state.token} />
+                    <ReleaseNotesCreator
+                      {...props}
+                      github={this.state.github}
+                    />
                   ))
                 }
               />

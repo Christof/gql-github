@@ -18,7 +18,6 @@ function TransitionLeft(props: SlideProps) {
 
 interface State {
   repositoryNames: string[];
-  github: Github;
   repo?: string;
   tags?: GithubTag[];
   startTag?: string;
@@ -29,7 +28,7 @@ interface State {
 }
 
 interface Props {
-  token: string;
+  github: Github;
 }
 
 export class ReleaseNotesCreator extends React.Component<Props, State> {
@@ -37,7 +36,6 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
     super(props);
     this.state = {
       repositoryNames: [],
-      github: new Github(this.props.token),
       pullRequests: [],
       releaseNote: "",
       releaseCreated: false
@@ -45,7 +43,7 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
   }
 
   async getCommits() {
-    const result = await this.state.github.compare(
+    const result = await this.props.github.compare(
       this.state.repo,
       this.state.startTag,
       this.state.releaseTag
@@ -64,7 +62,7 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
   }
 
   async loadTags(repo: string) {
-    const tags = await this.state.github.getTags(repo);
+    const tags = await this.props.github.getTags(repo);
 
     this.setState({ tags });
   }
@@ -137,7 +135,7 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
       prerelease: false
     };
 
-    const response = await this.state.github.postRelease(
+    const response = await this.props.github.postRelease(
       this.state.repo,
       release
     );
@@ -196,7 +194,7 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
       <Grid container spacing={24} justify="center">
         <Grid item xs={12} md={10} lg={8}>
           <RepositorySelector
-            github={this.state.github}
+            github={this.props.github}
             onRepositorySelect={repo => this.selectRepository(repo)}
           />
           {this.renderTagsSection()}
