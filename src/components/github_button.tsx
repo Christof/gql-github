@@ -34,7 +34,7 @@ export class GithubButton extends React.Component<Props, State> {
 
     new Github(this.props.token)
       .getUser()
-      .then(user => this.setState({ avatar_url: user.avatar_url }));
+      .then(user => this.setState({ avatar_url: user.avatarUrl }));
   }
 
   signout() {

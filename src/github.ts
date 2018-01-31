@@ -1,8 +1,13 @@
 import { getNamesOfOwnRepositories } from "./stats_helper";
+import { ApolloClient } from "apollo-client";
+import { createHttpLink } from "apollo-link-http";
+import { InMemoryCache, NormalizedCacheObject } from "apollo-cache-inmemory";
+import { setContext } from "apollo-link-context";
+import gql from "graphql-tag";
 
 export interface GithubUser {
   login: string;
-  avatar_url: string;
+  avatarUrl: string;
 }
 
 export interface GithubAuthorData {
@@ -48,8 +53,28 @@ function windowFetch(input: RequestInfo, init?: RequestInit) {
 
 export class Github {
   public owner: string;
+  private client: ApolloClient<NormalizedCacheObject>;
 
-  constructor(private token: string, private fetch = windowFetch) {}
+  constructor(private token: string, private fetch = windowFetch) {
+    const authLink = setContext((_, { headers }) => {
+      return {
+        headers: {
+          ...headers,
+          authorization: token ? `Bearer ${token}` : null
+        }
+      };
+    });
+
+    const httpLink = createHttpLink({
+      uri: "https://api.github.com/graphql",
+      fetch: fetch as any
+    });
+
+    this.client = new ApolloClient({
+      link: authLink.concat(httpLink),
+      cache: new InMemoryCache()
+    });
+  }
 
   copyFor(owner: string) {
     const copy = new Github(this.token, this.fetch);
@@ -69,8 +94,16 @@ export class Github {
   }
 
   async getUser(): Promise<GithubUser> {
-    const response = await this.getRequest(`user`);
-    return await response.json();
+    const query = gql(`
+      query {
+        viewer {
+          login
+          avatarUrl
+        }
+      }`);
+    const response = await this.client.query({ query });
+    console.log(response);
+    return (response.data as any).viewer;
   }
 
   async getOrganizations(): Promise<GithubUser[]> {
