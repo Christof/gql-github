@@ -7,7 +7,7 @@ import { Github } from "../github";
 interface Props {
   className: string;
   onChangeToken: (token: string) => void;
-  token?: string;
+  github?: Github;
 }
 
 interface State {
@@ -24,15 +24,15 @@ export class GithubButton extends React.Component<Props, State> {
     this.login = this.login.bind(this);
 
     this.state = { avatar_url: this.githubMarkUrl };
-    if (props.token) {
+    if (props.github) {
       this.loadAvatarUrl();
     }
   }
 
   loadAvatarUrl() {
-    if (!this.props.token) return;
+    if (!this.props.github) return;
 
-    new Github(this.props.token)
+    this.props.github
       .getUser()
       .then(user => this.setState({ avatar_url: user.avatarUrl }));
   }
@@ -57,13 +57,13 @@ export class GithubButton extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    if (this.props.token === prevProps.token) return;
+    if (this.props.github === prevProps.github) return;
 
     this.loadAvatarUrl();
   }
 
   render() {
-    if (this.props.token !== undefined) {
+    if (this.props.github !== undefined) {
       return (
         <Button raised className={this.props.className} onClick={this.signout}>
           Logout &nbsp;

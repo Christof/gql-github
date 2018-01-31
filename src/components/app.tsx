@@ -39,7 +39,10 @@ class App extends React.Component<{} & WithStyles, State> {
     const token = window.localStorage.github
       ? JSON.parse(window.localStorage.github).access_token
       : undefined;
-    this.state = { token, github: this.createGithub(token) };
+    this.state = {
+      token,
+      github: token ? this.createGithub(token) : undefined
+    };
   }
 
   createGithub(token: string) {
@@ -73,10 +76,8 @@ class App extends React.Component<{} & WithStyles, State> {
           />
           <GithubButton
             className={classes.menuButton}
-            token={this.state.token}
-            onChangeToken={token =>
-              this.setState({ token, github: this.createGithub(token) })
-            }
+            github={this.state.github}
+            onChangeToken={token => this.onChangeToken(token)}
           />
         </Toolbar>
       </AppBar>
@@ -85,6 +86,14 @@ class App extends React.Component<{} & WithStyles, State> {
 
   renderOnlyIfLoggedIn(createInner: () => JSX.Element) {
     return this.state.token ? createInner() : <div />;
+  }
+
+  onChangeToken(token: string) {
+    if (token === undefined) {
+      this.setState({ token, github: undefined });
+    } else {
+      this.setState({ token, github: this.createGithub(token) });
+    }
   }
 
   render() {
@@ -100,7 +109,7 @@ class App extends React.Component<{} & WithStyles, State> {
                 render={props => (
                   <GithubCallback
                     {...props}
-                    onChangeToken={token => this.setState({ token })}
+                    onChangeToken={token => this.onChangeToken(token)}
                   />
                 )}
               />
