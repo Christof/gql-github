@@ -1,8 +1,6 @@
 import { getNamesOfOwnRepositories } from "./stats_helper";
 import { ApolloClient } from "apollo-client";
-import { createHttpLink } from "apollo-link-http";
-import { InMemoryCache, NormalizedCacheObject } from "apollo-cache-inmemory";
-import { setContext } from "apollo-link-context";
+import { NormalizedCacheObject } from "apollo-cache-inmemory";
 import gql from "graphql-tag";
 
 export interface GithubUser {
@@ -53,31 +51,15 @@ function windowFetch(input: RequestInfo, init?: RequestInit) {
 
 export class Github {
   public owner: string;
-  private client: ApolloClient<NormalizedCacheObject>;
 
-  constructor(private token: string, private fetch = windowFetch) {
-    const authLink = setContext((_, { headers }) => {
-      return {
-        headers: {
-          ...headers,
-          authorization: token ? `Bearer ${token}` : null
-        }
-      };
-    });
-
-    const httpLink = createHttpLink({
-      uri: "https://api.github.com/graphql",
-      fetch: fetch as any
-    });
-
-    this.client = new ApolloClient({
-      link: authLink.concat(httpLink),
-      cache: new InMemoryCache()
-    });
-  }
+  constructor(
+    private token: string,
+    private client: ApolloClient<NormalizedCacheObject>,
+    private fetch = windowFetch
+  ) {}
 
   copyFor(owner: string) {
-    const copy = new Github(this.token, this.fetch);
+    const copy = new Github(this.token, this.client, this.fetch);
     copy.owner = owner;
 
     return copy;

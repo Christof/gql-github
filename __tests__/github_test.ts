@@ -2,11 +2,17 @@ import { Github, GithubData } from "../src/github";
 
 describe("Github", () => {
   const fetchMock = jest.fn<Promise<Request>>();
+  const clientQueryMock = jest.fn<any>();
   let github: Github;
 
   beforeEach(() => {
     fetchMock.mockReset();
-    github = new Github("secret-token", fetchMock);
+    clientQueryMock.mockReset();
+    github = new Github(
+      "secret-token",
+      { query: clientQueryMock } as any,
+      fetchMock
+    );
     github.owner = "owner";
   });
 
@@ -51,17 +57,15 @@ describe("Github", () => {
 
   describe("getUser", () => {
     it("returns authenticated user", async () => {
-      const expectedUser = { login: "username" };
-      fetchMock.mockReturnValue({
-        status: 200,
-        json() {
-          return expectedUser;
+      const expectedUser = { login: "username", avatarUrl: "uavatar url" };
+      clientQueryMock.mockReturnValue({
+        data: {
+          viewer: expectedUser
         }
       });
       const user = await github.getUser();
 
-      expect(fetchMock).toHaveBeenCalled();
-      expect(fetchMock.mock.calls[0][0]).toBe("https://api.github.com/user");
+      expect(clientQueryMock).toHaveBeenCalled();
       expect(user).toEqual(expectedUser);
     });
   });
@@ -87,10 +91,9 @@ describe("Github", () => {
 
   describe("getOwners", function() {
     it("returns name of possible owners", async () => {
-      fetchMock.mockReturnValueOnce({
-        status: 200,
-        json() {
-          return { login: "user" };
+      clientQueryMock.mockReturnValue({
+        data: {
+          viewer: { login: "user", avatarUrl: "url" }
         }
       });
       fetchMock.mockReturnValueOnce({
@@ -176,18 +179,14 @@ describe("Github", () => {
   describe("getTags", function() {
     it("returns list of tags", async function() {
       const expectedTags = [{ name: "v0.0.1" }, { name: "v0.0.2" }];
-      fetchMock.mockReturnValue({
-        status: 200,
-        json() {
-          return expectedTags;
+      clientQueryMock.mockReturnValue({
+        data: {
+          repository: { refs: { nodes: expectedTags } }
         }
       });
       const tags = await github.getTags("repoName");
 
-      expect(fetchMock).toHaveBeenCalled();
-      expect(fetchMock.mock.calls[0][0]).toBe(
-        "https://api.github.com/repos/owner/repoName/tags"
-      );
+      expect(clientQueryMock).toHaveBeenCalled();
       expect(tags).toEqual(expectedTags);
     });
   });

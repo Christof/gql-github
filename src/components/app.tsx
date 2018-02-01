@@ -13,6 +13,10 @@ import { AppBar, Typography, Toolbar, Reboot } from "material-ui";
 import { withStyles, Theme, StyleRules } from "material-ui/styles";
 import { WithStyles } from "material-ui/styles/withStyles";
 import { Github } from "../github";
+import { createHttpLink } from "apollo-link-http";
+import { setContext } from "apollo-link-context";
+import { ApolloClient } from "apollo-client";
+import { InMemoryCache } from "apollo-cache-inmemory";
 
 const styles = (_theme: Theme): StyleRules => ({
   root: {
@@ -44,7 +48,26 @@ class App extends React.Component<{} & WithStyles, State> {
   }
 
   createGithub(token: string) {
-    return new Github(token);
+    const authLink = setContext((_, { headers }) => {
+      return {
+        headers: {
+          ...headers,
+          authorization: token ? `Bearer ${token}` : null
+        }
+      };
+    });
+
+    const httpLink = createHttpLink({
+      uri: "https://api.github.com/graphql",
+      fetch: fetch as any
+    });
+
+    const client = new ApolloClient({
+      link: authLink.concat(httpLink),
+      cache: new InMemoryCache()
+    });
+
+    return new Github(token, client);
   }
 
   renderAppBar() {
