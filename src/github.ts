@@ -30,13 +30,8 @@ export interface GithubTag {
 }
 
 export interface GithubRelease {
-  id?: number;
   tag_name: string;
-  name: string;
   body: string;
-  draft: boolean;
-  prerelease: boolean;
-  target_commitish: string;
 }
 
 /**

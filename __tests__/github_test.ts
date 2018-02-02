@@ -193,10 +193,7 @@ describe("Github", () => {
 
   describe("getReleases", function() {
     it("returns list of releases", async function() {
-      const expectedReleases = [
-        { id: "0", tag_name: "v0.0.1" },
-        { id: "1", tag_name: "v0.0.2" }
-      ];
+      const expectedReleases = [{ tag_name: "v0.0.1" }, { tag_name: "v0.0.2" }];
       fetchMock.mockReturnValue({
         status: 200,
         json() {
