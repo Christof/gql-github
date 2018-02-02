@@ -193,19 +193,25 @@ describe("Github", () => {
 
   describe("getReleases", function() {
     it("returns list of releases", async function() {
-      const expectedReleases = [{ tag_name: "v0.0.1" }, { tag_name: "v0.0.2" }];
-      fetchMock.mockReturnValue({
-        status: 200,
-        json() {
-          return expectedReleases;
+      const expectedReleases = [
+        { tagName: "v0.0.1", description: "desc1" },
+        { tagName: "v0.0.2", description: "desc2" }
+      ];
+      clientQueryMock.mockReturnValue({
+        data: {
+          repository: {
+            releases: {
+              nodes: [
+                { tag: { name: "v0.0.1" }, description: "desc1" },
+                { tag: { name: "v0.0.2" }, description: "desc2" }
+              ]
+            }
+          }
         }
       });
       const releases = await github.getReleases("repoName");
 
-      expect(fetchMock).toHaveBeenCalled();
-      expect(fetchMock.mock.calls[0][0]).toBe(
-        "https://api.github.com/repos/owner/repoName/releases"
-      );
+      expect(clientQueryMock).toHaveBeenCalled();
       expect(releases).toEqual(expectedReleases);
     });
   });

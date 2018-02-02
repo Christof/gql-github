@@ -30,9 +30,11 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
   }
 
   async selectRelease(tagName: string) {
-    const release = this.state.releases.find(x => x.tag_name === tagName);
+    const release = this.state.releases.find(x => x.tagName === tagName);
 
-    const releaseDescription = `# ${release.tag_name}\n\n${release.body}\n`;
+    const releaseDescription = `# ${release.tagName}\n\n${
+      release.description
+    }\n`;
     this.setState({ releaseDescription, release });
   }
 
@@ -46,7 +48,7 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
         </Typography>
         <Dropdown
           label="Release"
-          options={this.state.releases.map(release => release.tag_name)}
+          options={this.state.releases.map(release => release.tagName)}
           onSelect={tagName => this.selectRelease(tagName)}
         />
       </Section>
@@ -59,7 +61,7 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
     return (
       <Section>
         <Typography type="headline" paragraph>
-          {this.state.release.tag_name}
+          {this.state.release.tagName}
         </Typography>
         <Markdown source={this.state.releaseDescription} />
         <CopyToClipboard text={this.state.releaseDescription} />

@@ -30,8 +30,17 @@ export interface GithubTag {
 }
 
 export interface GithubRelease {
+  tagName: string;
+  description: string;
+}
+
+export interface GithubPostRelease {
   tag_name: string;
+  target_commitish: string;
+  name: string;
   body: string;
+  draft: boolean;
+  prerelease: boolean;
 }
 
 /**
@@ -144,10 +153,26 @@ export class Github {
   }
 
   async getReleases(repository: string): Promise<GithubRelease[]> {
-    const response = await this.getRequest(
-      `repos/${this.owner}/${repository}/releases`
+    const responseData = await this.query(
+      gql(`
+    query getReleases($owner: String!, $repository: String!) {
+      repository(owner: $owner, name: $repository) {
+        releases(first: 20, orderBy: {field: CREATED_AT, direction: DESC}) {
+          nodes {
+            tag {
+              name
+            }
+            description
+          }
+        }
+      }
+    }
+    `),
+      { owner: this.owner, repository }
     );
-    return await response.json();
+    return responseData.repository.releases.nodes.map((node: any) => {
+      return { tagName: node.tag.name, description: node.description };
+    });
   }
 
   async getStats(repository: string): Promise<GithubData> {
@@ -158,7 +183,7 @@ export class Github {
     return response.json();
   }
 
-  postRelease(repository: string, release: GithubRelease) {
+  postRelease(repository: string, release: GithubPostRelease) {
     const params: RequestInit = {
       method: "POST",
       mode: "cors",
