@@ -155,17 +155,6 @@ export class Github {
     return await response.json();
   }
 
-  async getRelease(
-    repository: string,
-    releaseId: string
-  ): Promise<GithubRelease> {
-    const response = await this.getRequest(
-      `repos/${this.owner}/${repository}/releases/${releaseId}`
-    );
-
-    return await response.json();
-  }
-
   async getStats(repository: string): Promise<GithubData> {
     const response = await this.getRequest(
       `repos/${this.owner}/${repository}/stats/contributors`

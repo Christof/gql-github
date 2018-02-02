@@ -213,25 +213,6 @@ describe("Github", () => {
     });
   });
 
-  describe("getRelease", function() {
-    it("returns details for given release id", async function() {
-      const expectedReleaseDetail = { body: "release description" };
-      fetchMock.mockReturnValue({
-        status: 200,
-        json() {
-          return expectedReleaseDetail;
-        }
-      });
-      const release = await github.getRelease("repoName", "releaseId");
-
-      expect(fetchMock).toHaveBeenCalled();
-      expect(fetchMock.mock.calls[0][0]).toBe(
-        "https://api.github.com/repos/owner/repoName/releases/releaseId"
-      );
-      expect(release).toEqual(expectedReleaseDetail);
-    });
-  });
-
   describe("getStats", function() {
     it("returns contribution statistic", async function() {
       const expectedStats: GithubData = [
