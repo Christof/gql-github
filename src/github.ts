@@ -58,8 +58,8 @@ export class Github {
     private fetch = windowFetch
   ) {}
 
-  private async query(query: any) {
-    const response = await this.client.query({ query });
+  private async query(query: any, variables?: any) {
+    const response = await this.client.query({ query, variables });
     if (response.errors) throw response.errors;
 
     return response.data as any;
@@ -128,15 +128,22 @@ export class Github {
 
   async getTags(repository: string): Promise<GithubTag[]> {
     const responseData = await this.query(
-      gql(`
-      query {
-        repository(owner: "${this.owner}", name: "${repository}") {
-          refs(refPrefix: "refs/tags/", first: 20,
-            orderBy: {field: TAG_COMMIT_DATE, direction: DESC}) {
-            nodes {name}
+      gql(
+        `
+      query getTags($owner: String!, $repository: String!) {
+        repository(owner: $owner, name: $repository) {
+          refs(refPrefix: "refs/tags/", first: 20, orderBy: {field: TAG_COMMIT_DATE, direction: DESC}) {
+            nodes {
+              name
+            }
           }
         }
-      }`)
+      }`
+      ),
+      {
+        owner: this.owner,
+        repository
+      }
     );
     return responseData.repository.refs.nodes;
   }
