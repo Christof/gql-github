@@ -58,6 +58,13 @@ export class Github {
     private fetch = windowFetch
   ) {}
 
+  private async query(query: any) {
+    const response = await this.client.query({ query });
+    if (response.errors) throw response.errors;
+
+    return response.data as any;
+  }
+
   copyFor(owner: string) {
     const copy = new Github(this.token, this.client, this.fetch);
     copy.owner = owner;
@@ -76,15 +83,16 @@ export class Github {
   }
 
   async getUser(): Promise<GithubUser> {
-    const query = gql(`
+    const responseData = await this.query(
+      gql(`
       query {
         viewer {
           login
           avatarUrl
         }
-      }`);
-    const response = await this.client.query({ query });
-    return (response.data as any).viewer;
+      }`)
+    );
+    return responseData.viewer;
   }
 
   async getOrganizations(): Promise<GithubUser[]> {
@@ -119,17 +127,18 @@ export class Github {
   }
 
   async getTags(repository: string): Promise<GithubTag[]> {
-    const query = gql(`
-    query {
-      repository(owner: "${this.owner}", name: "${repository}") {
-        refs(refPrefix: "refs/tags/", first: 20,
-          orderBy: {field: TAG_COMMIT_DATE, direction: DESC}) {
-          nodes {name}
+    const responseData = await this.query(
+      gql(`
+      query {
+        repository(owner: "${this.owner}", name: "${repository}") {
+          refs(refPrefix: "refs/tags/", first: 20,
+            orderBy: {field: TAG_COMMIT_DATE, direction: DESC}) {
+            nodes {name}
+          }
         }
-      }
-      }`);
-    const response = await this.client.query({ query });
-    return (response.data as any).repository.refs.nodes;
+      }`)
+    );
+    return responseData.repository.refs.nodes;
   }
 
   async getReleases(repository: string): Promise<GithubRelease[]> {
