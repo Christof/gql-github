@@ -2,7 +2,7 @@ import { OverallPlot } from "./overall_plot";
 import * as React from "react";
 import { getCommitsPerAuthorInDateRange } from "../stats_helper";
 import * as Plotly from "plotly.js";
-import { GithubData, GithubAuthorData, Github } from "../github";
+import { GithubData, GithubAuthorData, Github, GithubUser } from "../github";
 import { Dropdown } from "./dropdown";
 import { Plot } from "./plot";
 import { Typography, Grid } from "material-ui";
@@ -15,7 +15,7 @@ interface Props {
 
 interface State {
   error: any;
-  owners: string[];
+  ownersWithAvatar: GithubUser[];
   repositoryNames: string[];
   data: GithubData[];
   startedLoading: boolean;
@@ -30,13 +30,15 @@ export class Stats extends React.Component<Props, State> {
     super(props);
     this.state = {
       error: null,
-      owners: [],
+      ownersWithAvatar: [],
       repositoryNames: [],
       data: [],
       startedLoading: false
     };
 
-    this.props.github.getOwners().then(owners => this.setState({ owners }));
+    this.props.github
+      .getOwnersWithAvatar()
+      .then(ownersWithAvatar => this.setState({ ownersWithAvatar }));
   }
 
   renderGraph(title: string, data: GithubData) {
@@ -183,7 +185,8 @@ export class Stats extends React.Component<Props, State> {
         </Typography>
         <Dropdown
           label="Owner"
-          options={this.state.owners}
+          options={this.state.ownersWithAvatar.map(owner => owner.login)}
+          iconUrls={this.state.ownersWithAvatar.map(owner => owner.avatarUrl)}
           onSelect={owner => this.selectOwner(owner)}
         />
       </Section>
