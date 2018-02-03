@@ -2,7 +2,7 @@ import * as React from "react";
 import { Github, GithubData, GithubAuthorData } from "../github";
 import { Grid, Typography, LinearProgress } from "material-ui";
 import { Section } from "./section";
-import { Dropdown } from "./dropdown";
+import { OwnerDropdown } from "./owner_dropdown";
 import { ScatterData, Layout } from "plotly.js";
 import PlotlyChart from "react-plotlyjs-ts";
 import { runningAverage } from "./personal_stats";
@@ -12,7 +12,6 @@ interface Props {
 }
 
 interface State {
-  owners: string[];
   repositoryNames: string[];
   data: GithubData[];
   startedLoading: boolean;
@@ -24,13 +23,10 @@ export class OrgStats extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      owners: [],
       repositoryNames: [],
       data: [],
       startedLoading: false
     };
-
-    this.props.github.getOwners().then(owners => this.setState({ owners }));
   }
 
   private calculateWeeklyCommits(
@@ -152,9 +148,8 @@ export class OrgStats extends React.Component<Props, State> {
         <Typography type="headline" paragraph>
           Repository
         </Typography>
-        <Dropdown
-          label="Owner"
-          options={this.state.owners}
+        <OwnerDropdown
+          github={this.props.github}
           onSelect={owner => this.selectOwner(owner)}
         />
       </Section>
