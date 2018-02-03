@@ -46,9 +46,9 @@ export class Dropdown extends React.Component<Props, { selected: string }> {
             <MenuItem key={option} value={option}>
               {this.props.iconUrls ? (
                 <img
-                  width="20px"
-                  height="20px"
-                  style={{ marginRight: 8 }}
+                  width="14px"
+                  height="14px"
+                  style={{ marginRight: 8, marginLeft: 4 }}
                   src={this.props.iconUrls[index]}
                 />
               ) : null}
