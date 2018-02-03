@@ -78,7 +78,7 @@ describe("Github", () => {
       ];
       clientQueryMock.mockReturnValue({
         data: {
-          user: {
+          viewer: {
             organizations: {
               nodes: expectedOrgs
             }
@@ -101,7 +101,7 @@ describe("Github", () => {
       });
       clientQueryMock.mockReturnValueOnce({
         data: {
-          user: {
+          viewer: {
             organizations: {
               nodes: [{ login: "org1" }, { login: "org2" }]
             }
