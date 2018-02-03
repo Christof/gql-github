@@ -100,8 +100,24 @@ export class Github {
   }
 
   async getOrganizations(): Promise<GithubUser[]> {
-    const response = await this.getRequest(`user/orgs`);
-    return await response.json();
+    console.log("owner:", this.owner);
+    const responseData = await this.query(
+      gql(
+        `
+      query getOrgs($login: String!) {
+        user(login: $login) {
+          organizations(last: 100) {
+            nodes {
+              avatarUrl
+              login
+            }
+          }
+        }
+      }`
+      ),
+      { login: "Christof" }
+    );
+    return responseData.user.organizations.nodes;
   }
 
   async getOwners(): Promise<string[]> {

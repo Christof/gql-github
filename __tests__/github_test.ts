@@ -72,34 +72,40 @@ describe("Github", () => {
 
   describe("getOrganization", () => {
     it("returns organization that are accessible for the user", async () => {
-      const expectedOrgs = [{ login: "org1" }, { login: "org2" }];
-      fetchMock.mockReturnValue({
-        status: 200,
-        json() {
-          return expectedOrgs;
+      const expectedOrgs = [
+        { login: "org1", avatarUrl: "url1" },
+        { login: "org2", avatarUrl: "url2" }
+      ];
+      clientQueryMock.mockReturnValue({
+        data: {
+          user: {
+            organizations: {
+              nodes: expectedOrgs
+            }
+          }
         }
       });
       const orgs = await github.getOrganizations();
 
-      expect(fetchMock).toHaveBeenCalled();
-      expect(fetchMock.mock.calls[0][0]).toBe(
-        "https://api.github.com/user/orgs"
-      );
+      expect(clientQueryMock).toHaveBeenCalled();
       expect(orgs).toEqual(expectedOrgs);
     });
   });
 
   describe("getOwners", function() {
     it("returns name of possible owners", async () => {
-      clientQueryMock.mockReturnValue({
+      clientQueryMock.mockReturnValueOnce({
         data: {
           viewer: { login: "user", avatarUrl: "url" }
         }
       });
-      fetchMock.mockReturnValueOnce({
-        status: 200,
-        json() {
-          return [{ login: "org1" }, { login: "org2" }];
+      clientQueryMock.mockReturnValueOnce({
+        data: {
+          user: {
+            organizations: {
+              nodes: [{ login: "org1" }, { login: "org2" }]
+            }
+          }
         }
       });
 
