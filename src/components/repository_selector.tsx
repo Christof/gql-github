@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Typography } from "material-ui";
 import { Dropdown } from "./dropdown";
+import { OwnerDropdown } from "./owner_dropdown";
 import { Section } from "./section";
 import { Github } from "../github";
 
@@ -10,18 +11,14 @@ interface Props {
 }
 
 interface Stats {
-  owners: string[];
   repositoryNames: string[];
 }
 export class RepositorySelector extends React.Component<Props, Stats> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      owners: [],
       repositoryNames: []
     };
-
-    props.github.getOwners().then(owners => this.setState({ owners }));
   }
 
   async selectOwner(owner: string) {
@@ -36,9 +33,8 @@ export class RepositorySelector extends React.Component<Props, Stats> {
         <Typography type="headline" paragraph>
           Repository
         </Typography>
-        <Dropdown
-          label="Owner"
-          options={this.state.owners}
+        <OwnerDropdown
+          github={this.props.github}
           onSelect={owner => this.selectOwner(owner)}
         />
         <Dropdown
