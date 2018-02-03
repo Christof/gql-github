@@ -7,6 +7,7 @@ import { InputLabel } from "material-ui";
 export interface Props {
   label?: string;
   options: string[];
+  iconUrls?: string[];
   initialSelection?: string;
   onSelect: (selected: string) => void;
   style?: React.CSSProperties;
@@ -41,8 +42,16 @@ export class Dropdown extends React.Component<Props, { selected: string }> {
           <MenuItem disabled value="none">
             Select {this.props.label}
           </MenuItem>
-          {this.props.options.map(option => (
+          {this.props.options.map((option, index) => (
             <MenuItem key={option} value={option}>
+              {this.props.iconUrls ? (
+                <img
+                  width="20px"
+                  height="20px"
+                  style={{ marginRight: 8 }}
+                  src={this.props.iconUrls[index]}
+                />
+              ) : null}
               {option}
             </MenuItem>
           ))}
