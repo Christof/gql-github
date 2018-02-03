@@ -123,6 +123,12 @@ export class Github {
     return [user.login, ...orgs.map(org => org.login)];
   }
 
+  async getOwnersWithAvatar(): Promise<GithubUser[]> {
+    const user = await this.getUser();
+    const orgs = await this.getOrganizations();
+    return [user, ...orgs];
+  }
+
   async getOwnedRepositories(): Promise<string[]> {
     const responseData = await this.query(
       gql(`

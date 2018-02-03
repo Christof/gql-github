@@ -114,6 +114,34 @@ describe("Github", () => {
     });
   });
 
+  describe("getOwnersWithAvatar", function() {
+    it("returns name and avatarUrl of possible owners", async () => {
+      const userOwner = { login: "user", avatarUrl: "url" };
+      clientQueryMock.mockReturnValueOnce({
+        data: {
+          viewer: userOwner
+        }
+      });
+
+      const orgOwners = [
+        { login: "org1", avatarUrl: "org1Avatar" },
+        { login: "org2", avatarUrl: "org2Avatar" }
+      ];
+      clientQueryMock.mockReturnValueOnce({
+        data: {
+          viewer: {
+            organizations: {
+              nodes: orgOwners
+            }
+          }
+        }
+      });
+
+      const owners = await github.getOwnersWithAvatar();
+      expect(owners).toEqual([userOwner, ...orgOwners]);
+    });
+  });
+
   describe("getRepositoryNames", () => {
     it("requests repositories from organization named owner", async () => {
       clientQueryMock.mockReturnValueOnce({
