@@ -8,7 +8,6 @@ import { Grid, Typography } from "material-ui";
 import { Section } from "./section";
 
 interface State {
-  github: Github;
   repo?: string;
   releases?: GithubRelease[];
   release?: GithubRelease;
@@ -16,26 +15,26 @@ interface State {
 }
 
 interface Props {
-  token: string;
+  github: Github;
 }
 
 export class ReleaseNotesRetriever extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {
-      github: new Github(this.props.token)
-    };
+    this.state = {};
   }
 
   async selectRepository(repo: string) {
-    const releases = await this.state.github.getReleases(repo);
+    const releases = await this.props.github.getReleases(repo);
     this.setState({ releases, repo });
   }
 
   async selectRelease(tagName: string) {
-    const release = this.state.releases.find(x => x.tag_name === tagName);
+    const release = this.state.releases.find(x => x.tagName === tagName);
 
-    const releaseDescription = `# ${release.tag_name}\n\n${release.body}\n`;
+    const releaseDescription = `# ${release.tagName}\n\n${
+      release.description
+    }\n`;
     this.setState({ releaseDescription, release });
   }
 
@@ -49,7 +48,7 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
         </Typography>
         <Dropdown
           label="Release"
-          options={this.state.releases.map(release => release.tag_name)}
+          options={this.state.releases.map(release => release.tagName)}
           onSelect={tagName => this.selectRelease(tagName)}
         />
       </Section>
@@ -62,7 +61,7 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
     return (
       <Section>
         <Typography type="headline" paragraph>
-          {this.state.release.tag_name}
+          {this.state.release.tagName}
         </Typography>
         <Markdown source={this.state.releaseDescription} />
         <CopyToClipboard text={this.state.releaseDescription} />
@@ -75,7 +74,7 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
       <Grid container spacing={24} justify="center">
         <Grid item xs={12} md={10} lg={8}>
           <RepositorySelector
-            github={this.state.github}
+            github={this.props.github}
             onRepositorySelect={repo => this.selectRepository(repo)}
           />
           {this.renderReleasesSection()}

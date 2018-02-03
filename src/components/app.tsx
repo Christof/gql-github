@@ -12,6 +12,11 @@ import { ReleaseNotesCreator } from "./release_notes_creator";
 import { AppBar, Typography, Toolbar, Reboot } from "material-ui";
 import { withStyles, Theme, StyleRules } from "material-ui/styles";
 import { WithStyles } from "material-ui/styles/withStyles";
+import { Github } from "../github";
+import { createHttpLink } from "apollo-link-http";
+import { setContext } from "apollo-link-context";
+import { ApolloClient } from "apollo-client";
+import { InMemoryCache } from "apollo-cache-inmemory";
 
 const styles = (_theme: Theme): StyleRules => ({
   root: {
@@ -27,7 +32,7 @@ const styles = (_theme: Theme): StyleRules => ({
 });
 
 interface State {
-  token?: string;
+  github?: Github;
 }
 
 class App extends React.Component<{} & WithStyles, State> {
@@ -37,13 +42,38 @@ class App extends React.Component<{} & WithStyles, State> {
     const token = window.localStorage.github
       ? JSON.parse(window.localStorage.github).access_token
       : undefined;
-    this.state = { token };
+    this.state = {
+      github: token ? this.createGithub(token) : undefined
+    };
+  }
+
+  createGithub(token: string) {
+    const authLink = setContext((_, { headers }) => {
+      return {
+        headers: {
+          ...headers,
+          authorization: token ? `Bearer ${token}` : null
+        }
+      };
+    });
+
+    const httpLink = createHttpLink({
+      uri: "https://api.github.com/graphql",
+      fetch: fetch as any
+    });
+
+    const client = new ApolloClient({
+      link: authLink.concat(httpLink),
+      cache: new InMemoryCache()
+    });
+
+    return new Github(token, client);
   }
 
   renderAppBar() {
     const { classes } = this.props;
     const props = {
-      disabled: this.state.token === undefined,
+      disabled: this.state.github === undefined,
       className: classes.menuButton
     };
     return (
@@ -67,8 +97,8 @@ class App extends React.Component<{} & WithStyles, State> {
           />
           <GithubButton
             className={classes.menuButton}
-            token={this.state.token}
-            onChangeToken={token => this.setState({ token })}
+            github={this.state.github}
+            onChangeToken={token => this.onChangeToken(token)}
           />
         </Toolbar>
       </AppBar>
@@ -76,7 +106,11 @@ class App extends React.Component<{} & WithStyles, State> {
   }
 
   renderOnlyIfLoggedIn(createInner: () => JSX.Element) {
-    return this.state.token ? createInner() : <div />;
+    return this.state.github ? createInner() : <div />;
+  }
+
+  onChangeToken(token: string) {
+    this.setState({ github: token ? this.createGithub(token) : undefined });
   }
 
   render() {
@@ -92,7 +126,7 @@ class App extends React.Component<{} & WithStyles, State> {
                 render={props => (
                   <GithubCallback
                     {...props}
-                    onChangeToken={token => this.setState({ token })}
+                    onChangeToken={token => this.onChangeToken(token)}
                   />
                 )}
               />
@@ -100,7 +134,7 @@ class App extends React.Component<{} & WithStyles, State> {
                 path="/stats"
                 render={props =>
                   this.renderOnlyIfLoggedIn(() => (
-                    <Stats {...props} token={this.state.token} />
+                    <Stats {...props} github={this.state.github} />
                   ))
                 }
               />
@@ -108,7 +142,7 @@ class App extends React.Component<{} & WithStyles, State> {
                 path="/personal-stats"
                 render={props =>
                   this.renderOnlyIfLoggedIn(() => (
-                    <PersonalStats {...props} token={this.state.token} />
+                    <PersonalStats {...props} github={this.state.github} />
                   ))
                 }
               />
@@ -116,7 +150,7 @@ class App extends React.Component<{} & WithStyles, State> {
                 path="/org-stats"
                 render={props =>
                   this.renderOnlyIfLoggedIn(() => (
-                    <OrgStats {...props} token={this.state.token} />
+                    <OrgStats {...props} github={this.state.github} />
                   ))
                 }
               />
@@ -126,7 +160,7 @@ class App extends React.Component<{} & WithStyles, State> {
                   this.renderOnlyIfLoggedIn(() => (
                     <ReleaseNotesRetriever
                       {...props}
-                      token={this.state.token}
+                      github={this.state.github}
                     />
                   ))
                 }
@@ -135,7 +169,10 @@ class App extends React.Component<{} & WithStyles, State> {
                 path="/create-release-notes"
                 render={props =>
                   this.renderOnlyIfLoggedIn(() => (
-                    <ReleaseNotesCreator {...props} token={this.state.token} />
+                    <ReleaseNotesCreator
+                      {...props}
+                      github={this.state.github}
+                    />
                   ))
                 }
               />

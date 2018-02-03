@@ -7,7 +7,7 @@ import { Github } from "../github";
 interface Props {
   className: string;
   onChangeToken: (token: string) => void;
-  token?: string;
+  github?: Github;
 }
 
 interface State {
@@ -24,17 +24,17 @@ export class GithubButton extends React.Component<Props, State> {
     this.login = this.login.bind(this);
 
     this.state = { avatar_url: this.githubMarkUrl };
-    if (props.token) {
+    if (props.github) {
       this.loadAvatarUrl();
     }
   }
 
   loadAvatarUrl() {
-    if (!this.props.token) return;
+    if (!this.props.github) return;
 
-    new Github(this.props.token)
+    this.props.github
       .getUser()
-      .then(user => this.setState({ avatar_url: user.avatar_url }));
+      .then(user => this.setState({ avatar_url: user.avatarUrl }));
   }
 
   signout() {
@@ -50,20 +50,20 @@ export class GithubButton extends React.Component<Props, State> {
       qs.stringify({
         client_id: "1e031c3e419938e53c8e",
         redirect_uri: window.location.origin + "/auth-callback",
-        scope: "repo,user",
+        scope: "repo,user,read:org",
         state: githubState
       });
     window.location.href = githubLoginUrl;
   }
 
   componentDidUpdate(prevProps: Props) {
-    if (this.props.token === prevProps.token) return;
+    if (this.props.github === prevProps.github) return;
 
     this.loadAvatarUrl();
   }
 
   render() {
-    if (this.props.token !== undefined) {
+    if (this.props.github !== undefined) {
       return (
         <Button raised className={this.props.className} onClick={this.signout}>
           Logout &nbsp;

@@ -2,11 +2,17 @@ import { Github, GithubData } from "../src/github";
 
 describe("Github", () => {
   const fetchMock = jest.fn<Promise<Request>>();
+  const clientQueryMock = jest.fn<any>();
   let github: Github;
 
   beforeEach(() => {
     fetchMock.mockReset();
-    github = new Github("secret-token", fetchMock);
+    clientQueryMock.mockReset();
+    github = new Github(
+      "secret-token",
+      { query: clientQueryMock } as any,
+      fetchMock
+    );
     github.owner = "owner";
   });
 
@@ -51,52 +57,55 @@ describe("Github", () => {
 
   describe("getUser", () => {
     it("returns authenticated user", async () => {
-      const expectedUser = { login: "username" };
-      fetchMock.mockReturnValue({
-        status: 200,
-        json() {
-          return expectedUser;
+      const expectedUser = { login: "username", avatarUrl: "uavatar url" };
+      clientQueryMock.mockReturnValue({
+        data: {
+          viewer: expectedUser
         }
       });
       const user = await github.getUser();
 
-      expect(fetchMock).toHaveBeenCalled();
-      expect(fetchMock.mock.calls[0][0]).toBe("https://api.github.com/user");
+      expect(clientQueryMock).toHaveBeenCalled();
       expect(user).toEqual(expectedUser);
     });
   });
 
   describe("getOrganization", () => {
     it("returns organization that are accessible for the user", async () => {
-      const expectedOrgs = [{ login: "org1" }, { login: "org2" }];
-      fetchMock.mockReturnValue({
-        status: 200,
-        json() {
-          return expectedOrgs;
+      const expectedOrgs = [
+        { login: "org1", avatarUrl: "url1" },
+        { login: "org2", avatarUrl: "url2" }
+      ];
+      clientQueryMock.mockReturnValue({
+        data: {
+          viewer: {
+            organizations: {
+              nodes: expectedOrgs
+            }
+          }
         }
       });
       const orgs = await github.getOrganizations();
 
-      expect(fetchMock).toHaveBeenCalled();
-      expect(fetchMock.mock.calls[0][0]).toBe(
-        "https://api.github.com/user/orgs"
-      );
+      expect(clientQueryMock).toHaveBeenCalled();
       expect(orgs).toEqual(expectedOrgs);
     });
   });
 
   describe("getOwners", function() {
     it("returns name of possible owners", async () => {
-      fetchMock.mockReturnValueOnce({
-        status: 200,
-        json() {
-          return { login: "user" };
+      clientQueryMock.mockReturnValueOnce({
+        data: {
+          viewer: { login: "user", avatarUrl: "url" }
         }
       });
-      fetchMock.mockReturnValueOnce({
-        status: 200,
-        json() {
-          return [{ login: "org1" }, { login: "org2" }];
+      clientQueryMock.mockReturnValueOnce({
+        data: {
+          viewer: {
+            organizations: {
+              nodes: [{ login: "org1" }, { login: "org2" }]
+            }
+          }
         }
       });
 
@@ -105,54 +114,56 @@ describe("Github", () => {
     });
   });
 
-  describe("getRepositories", () => {
-    it("first requests repositories from organization named owner", async () => {
-      fetchMock.mockReturnValue({
-        status: 200,
-        json() {
-          return [{ name: "repository" }];
+  describe("getRepositoryNames", () => {
+    it("requests repositories from organization named owner", async () => {
+      clientQueryMock.mockReturnValueOnce({
+        data: {
+          viewer: {
+            organizations: {
+              nodes: [{ login: "owner" }, { login: "org2" }]
+            }
+          }
         }
       });
-      await github.getRepositories();
+      clientQueryMock.mockReturnValueOnce({
+        data: {
+          organization: {
+            repositories: {
+              nodes: [{ name: "repo1" }, { name: "repo2" }]
+            }
+          }
+        }
+      });
 
-      expect(fetchMock).toHaveBeenCalled();
-      expect(fetchMock.mock.calls[0][0]).toBe(
-        "https://api.github.com/orgs/owner/repos"
-      );
+      const repositories = await github.getRepositoryNames();
+
+      expect(clientQueryMock).toHaveBeenCalledTimes(2);
+      expect(repositories).toEqual(["repo1", "repo2"]);
     });
 
-    it("if first fails requests repositories from logged in user", async () => {
-      fetchMock.mockReturnValueOnce({
-        status: 404
-      });
-      fetchMock.mockReturnValueOnce({
-        status: 200,
-        json() {
-          return [{ name: "repository" }];
+    it("if owner is no org requests repositories from logged in user", async () => {
+      clientQueryMock.mockReturnValueOnce({
+        data: {
+          viewer: {
+            organizations: {
+              nodes: [{ login: "org1" }, { login: "org2" }]
+            }
+          }
         }
       });
-      await github.getRepositories();
-
-      expect(fetchMock).toHaveBeenCalledTimes(2);
-      expect(fetchMock.mock.calls[1][0]).toBe(
-        "https://api.github.com/user/repos?affiliation=owner"
-      );
-    });
-  });
-
-  describe("getRepositoryNames", function() {
-    it("returns names of not forked repositories", async () => {
-      fetchMock.mockReturnValueOnce({
-        status: 200,
-        json() {
-          return [
-            { name: "repository 1", fork: true },
-            { name: "repository 2", fork: false }
-          ];
+      clientQueryMock.mockReturnValueOnce({
+        data: {
+          viewer: {
+            repositories: {
+              nodes: [{ name: "repo1" }, { name: "repo2" }]
+            }
+          }
         }
       });
+      const repositories = await github.getRepositoryNames();
 
-      expect(await github.getRepositoryNames()).toEqual(["repository 2"]);
+      expect(clientQueryMock).toHaveBeenCalledTimes(2);
+      expect(repositories).toEqual(["repo1", "repo2"]);
     });
   });
 
@@ -176,18 +187,14 @@ describe("Github", () => {
   describe("getTags", function() {
     it("returns list of tags", async function() {
       const expectedTags = [{ name: "v0.0.1" }, { name: "v0.0.2" }];
-      fetchMock.mockReturnValue({
-        status: 200,
-        json() {
-          return expectedTags;
+      clientQueryMock.mockReturnValue({
+        data: {
+          repository: { refs: { nodes: expectedTags } }
         }
       });
       const tags = await github.getTags("repoName");
 
-      expect(fetchMock).toHaveBeenCalled();
-      expect(fetchMock.mock.calls[0][0]).toBe(
-        "https://api.github.com/repos/owner/repoName/tags"
-      );
+      expect(clientQueryMock).toHaveBeenCalled();
       expect(tags).toEqual(expectedTags);
     });
   });
@@ -195,41 +202,25 @@ describe("Github", () => {
   describe("getReleases", function() {
     it("returns list of releases", async function() {
       const expectedReleases = [
-        { id: "0", tag_name: "v0.0.1" },
-        { id: "1", tag_name: "v0.0.2" }
+        { tagName: "v0.0.1", description: "desc1" },
+        { tagName: "v0.0.2", description: "desc2" }
       ];
-      fetchMock.mockReturnValue({
-        status: 200,
-        json() {
-          return expectedReleases;
+      clientQueryMock.mockReturnValue({
+        data: {
+          repository: {
+            releases: {
+              nodes: [
+                { tag: { name: "v0.0.1" }, description: "desc1" },
+                { tag: { name: "v0.0.2" }, description: "desc2" }
+              ]
+            }
+          }
         }
       });
       const releases = await github.getReleases("repoName");
 
-      expect(fetchMock).toHaveBeenCalled();
-      expect(fetchMock.mock.calls[0][0]).toBe(
-        "https://api.github.com/repos/owner/repoName/releases"
-      );
+      expect(clientQueryMock).toHaveBeenCalled();
       expect(releases).toEqual(expectedReleases);
-    });
-  });
-
-  describe("getRelease", function() {
-    it("returns details for given release id", async function() {
-      const expectedReleaseDetail = { body: "release description" };
-      fetchMock.mockReturnValue({
-        status: 200,
-        json() {
-          return expectedReleaseDetail;
-        }
-      });
-      const release = await github.getRelease("repoName", "releaseId");
-
-      expect(fetchMock).toHaveBeenCalled();
-      expect(fetchMock.mock.calls[0][0]).toBe(
-        "https://api.github.com/repos/owner/repoName/releases/releaseId"
-      );
-      expect(release).toEqual(expectedReleaseDetail);
     });
   });
 
