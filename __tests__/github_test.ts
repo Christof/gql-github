@@ -114,54 +114,56 @@ describe("Github", () => {
     });
   });
 
-  describe("getRepositories", () => {
-    it("first requests repositories from organization named owner", async () => {
-      fetchMock.mockReturnValue({
-        status: 200,
-        json() {
-          return [{ name: "repository" }];
+  describe("getRepositoryNames", () => {
+    it("requests repositories from organization named owner", async () => {
+      clientQueryMock.mockReturnValueOnce({
+        data: {
+          viewer: {
+            organizations: {
+              nodes: [{ login: "owner" }, { login: "org2" }]
+            }
+          }
         }
       });
-      await github.getRepositories();
+      clientQueryMock.mockReturnValueOnce({
+        data: {
+          organization: {
+            repositories: {
+              nodes: [{ name: "repo1" }, { name: "repo2" }]
+            }
+          }
+        }
+      });
 
-      expect(fetchMock).toHaveBeenCalled();
-      expect(fetchMock.mock.calls[0][0]).toBe(
-        "https://api.github.com/orgs/owner/repos"
-      );
+      const repositories = await github.getRepositoryNames();
+
+      expect(clientQueryMock).toHaveBeenCalledTimes(2);
+      expect(repositories).toEqual(["repo1", "repo2"]);
     });
 
-    it("if first fails requests repositories from logged in user", async () => {
-      fetchMock.mockReturnValueOnce({
-        status: 404
-      });
-      fetchMock.mockReturnValueOnce({
-        status: 200,
-        json() {
-          return [{ name: "repository" }];
+    it("if owner is no org requests repositories from logged in user", async () => {
+      clientQueryMock.mockReturnValueOnce({
+        data: {
+          viewer: {
+            organizations: {
+              nodes: [{ login: "org1" }, { login: "org2" }]
+            }
+          }
         }
       });
-      await github.getRepositories();
-
-      expect(fetchMock).toHaveBeenCalledTimes(2);
-      expect(fetchMock.mock.calls[1][0]).toBe(
-        "https://api.github.com/user/repos?affiliation=owner"
-      );
-    });
-  });
-
-  describe("getRepositoryNames", function() {
-    it("returns names of not forked repositories", async () => {
-      fetchMock.mockReturnValueOnce({
-        status: 200,
-        json() {
-          return [
-            { name: "repository 1", fork: true },
-            { name: "repository 2", fork: false }
-          ];
+      clientQueryMock.mockReturnValueOnce({
+        data: {
+          viewer: {
+            repositories: {
+              nodes: [{ name: "repo1" }, { name: "repo2" }]
+            }
+          }
         }
       });
+      const repositories = await github.getRepositoryNames();
 
-      expect(await github.getRepositoryNames()).toEqual(["repository 2"]);
+      expect(clientQueryMock).toHaveBeenCalledTimes(2);
+      expect(repositories).toEqual(["repo1", "repo2"]);
     });
   });
 

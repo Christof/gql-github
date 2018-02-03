@@ -1,4 +1,3 @@
-import { getNamesOfOwnRepositories } from "./stats_helper";
 import { ApolloClient } from "apollo-client";
 import { NormalizedCacheObject } from "apollo-cache-inmemory";
 import gql from "graphql-tag";
@@ -124,16 +123,48 @@ export class Github {
     return [user.login, ...orgs.map(org => org.login)];
   }
 
-  async getRepositories() {
-    let response = await this.getRequest(`orgs/${this.owner}/repos`);
-    if (response.status === 404) {
-      response = await this.getRequest(`user/repos?affiliation=owner`);
-    }
-    return await response.json();
+  async getOwnedRepositories(): Promise<string[]> {
+    const responseData = await this.query(
+      gql(`
+      {
+        viewer {
+          repositories(affiliations: OWNER, first: 100) {
+            nodes {
+              name
+            }
+          }
+        }
+      }
+    `)
+    );
+    return responseData.viewer.repositories.nodes.map((repo: any) => repo.name);
   }
 
-  async getRepositoryNames() {
-    return getNamesOfOwnRepositories(await this.getRepositories());
+  async getOrgRepositories(): Promise<string[]> {
+    const responseData = await this.query(
+      gql(`
+      query getOrgRepositories($org: String!) {
+        organization(login: $org) {
+          repositories(first: 100) {
+            nodes {
+              name
+            }
+          }
+        }
+      }`),
+      { org: this.owner }
+    );
+    return responseData.organization.repositories.nodes.map(
+      (repo: any) => repo.name
+    );
+  }
+
+  async getRepositoryNames(): Promise<string[]> {
+    const orgs = await this.getOrganizations();
+    if (orgs.find(org => org.login === this.owner))
+      return this.getOrgRepositories();
+
+    return this.getOwnedRepositories();
   }
 
   async compare(repository: string, start: string, end: string) {
