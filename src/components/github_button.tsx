@@ -50,7 +50,7 @@ export class GithubButton extends React.Component<Props, State> {
       qs.stringify({
         client_id: "1e031c3e419938e53c8e",
         redirect_uri: window.location.origin + "/auth-callback",
-        scope: "repo,user",
+        scope: "repo,user,read:org",
         state: githubState
       });
     window.location.href = githubLoginUrl;
