@@ -113,6 +113,26 @@ class App extends React.Component<{} & WithStyles, State> {
     this.setState({ github: token ? this.createGithub(token) : undefined });
   }
 
+  renderRoute<
+    P,
+    T extends React.Component<P, React.ComponentState>,
+    C extends React.ComponentClass<P>
+  >(path: string, component: React.ClassType<P, T, C>) {
+    return (
+      <Route
+        path={path}
+        render={props =>
+          this.renderOnlyIfLoggedIn(() =>
+            React.createElement(component, {
+              ...props,
+              github: this.state.github
+            } as any)
+          )
+        }
+      />
+    );
+  }
+
   renderContent() {
     return (
       <div style={{ margin: 16 }}>
@@ -125,46 +145,11 @@ class App extends React.Component<{} & WithStyles, State> {
             />
           )}
         />
-        <Route
-          path="/stats"
-          render={props =>
-            this.renderOnlyIfLoggedIn(() => (
-              <Stats {...props} github={this.state.github} />
-            ))
-          }
-        />
-        <Route
-          path="/personal-stats"
-          render={props =>
-            this.renderOnlyIfLoggedIn(() => (
-              <PersonalStats {...props} github={this.state.github} />
-            ))
-          }
-        />
-        <Route
-          path="/org-stats"
-          render={props =>
-            this.renderOnlyIfLoggedIn(() => (
-              <OrgStats {...props} github={this.state.github} />
-            ))
-          }
-        />
-        <Route
-          path="/retrieve-release-notes"
-          render={props =>
-            this.renderOnlyIfLoggedIn(() => (
-              <ReleaseNotesRetriever {...props} github={this.state.github} />
-            ))
-          }
-        />
-        <Route
-          path="/create-release-notes"
-          render={props =>
-            this.renderOnlyIfLoggedIn(() => (
-              <ReleaseNotesCreator {...props} github={this.state.github} />
-            ))
-          }
-        />
+        {this.renderRoute("/stats", Stats)}
+        {this.renderRoute("/personal-stats", PersonalStats)}
+        {this.renderRoute("/org-stats", OrgStats)}
+        {this.renderRoute("/retrieve-release-notes", ReleaseNotesRetriever)}
+        {this.renderRoute("/create-release-notes", ReleaseNotesCreator)}
       </div>
     );
   }
