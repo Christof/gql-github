@@ -74,7 +74,7 @@ export class Stats extends React.Component<Props, State> {
       }
     };
 
-    return <Plot title={title} data={authorTimeLine as any} layout={layout} />;
+    return <Plot data={authorTimeLine as any} layout={layout} />;
   }
 
   private getYearsArray() {
@@ -125,9 +125,7 @@ export class Stats extends React.Component<Props, State> {
       }
     };
 
-    return (
-      <Plot title={title + "-perYear"} data={traces as any} layout={layout} />
-    );
+    return <Plot data={traces as any} layout={layout} />;
   }
 
   private traceForAuthor(statsForAuthor: GithubAuthorData) {
