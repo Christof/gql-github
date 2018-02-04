@@ -3,8 +3,8 @@ import { Github, GithubData, GithubAuthorData } from "../github";
 import { Grid, Typography, LinearProgress } from "material-ui";
 import { Section } from "./section";
 import { OwnerDropdown } from "./owner_dropdown";
-import { ScatterData, Layout } from "plotly.js";
-import PlotlyChart from "react-plotlyjs-ts";
+import { ScatterData } from "plotly.js";
+import { CommitsOverTimePlot } from "./commits_over_time_plot";
 import { runningAverage } from "./personal_stats";
 
 interface Props {
@@ -15,7 +15,6 @@ interface State {
   data: GithubData[];
   startedLoading: boolean;
   traces?: Partial<ScatterData>[];
-  layout?: Partial<Layout>;
 }
 
 export class OrgStats extends React.Component<Props, State> {
@@ -100,38 +99,7 @@ export class OrgStats extends React.Component<Props, State> {
 
     const traces = this.createTraces(data);
 
-    const layout: Partial<Layout> = {
-      title: "Commits per Author",
-      xaxis: {
-        title: "time",
-        autorange: true,
-        rangeselector: {
-          buttons: [
-            {
-              count: 6,
-              label: "6m",
-              step: "month",
-              stepmode: "backward"
-            },
-            {
-              count: 1,
-              label: "1y",
-              step: "year",
-              stepmode: "backward"
-            },
-            { step: "all" }
-          ]
-        },
-        type: "date"
-      },
-      yaxis: {
-        title: "commit count",
-        autorange: true,
-        type: "linear"
-      }
-    };
-
-    this.setState({ data, traces, layout });
+    this.setState({ data, traces });
   }
 
   renderStatsSection() {
@@ -145,7 +113,10 @@ export class OrgStats extends React.Component<Props, State> {
         {this.state.data.length === 0 ? (
           <LinearProgress />
         ) : (
-          <PlotlyChart data={this.state.traces} layout={this.state.layout} />
+          <CommitsOverTimePlot
+            title="Commits per Author"
+            data={this.state.traces}
+          />
         )}
       </Section>
     );
