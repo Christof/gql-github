@@ -6,8 +6,8 @@ import {
 import { Github, GithubAuthorData } from "../github";
 import { Section } from "./section";
 import { Typography, Grid, LinearProgress } from "material-ui";
-import PlotlyChart from "react-plotlyjs-ts";
 import { OverallPlot } from "./overall_plot";
+import { CommitsOverTimePlot } from "./commits_over_time_plot";
 
 interface Props {
   github: Github;
@@ -142,41 +142,7 @@ export class PersonalStats extends React.Component<Props, State> {
 
     const title = "Commits in Repositories";
 
-    const layout = {
-      title,
-      xaxis: {
-        title: "time",
-        autorange: true,
-        rangeselector: {
-          buttons: [
-            {
-              count: 6,
-              label: "6m",
-              step: "month",
-              stepmode: "backward"
-            },
-            {
-              count: 1,
-              label: "1y",
-              step: "year",
-              stepmode: "backward"
-            },
-            { step: "all" }
-          ]
-        },
-        rangeslider: { autorange: true },
-        type: "date"
-      },
-      yaxis: {
-        title: "commit count",
-        autorange: true,
-        type: "linear"
-      }
-    };
-
-    return (
-      <PlotlyChart data={repositoryTimeline as any} layout={layout as any} />
-    );
+    return <CommitsOverTimePlot title={title} data={repositoryTimeline} />;
   }
 
   renderRepositorySums() {
