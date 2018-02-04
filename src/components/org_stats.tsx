@@ -57,16 +57,15 @@ export class OrgStats extends React.Component<Props, State> {
     return result;
   }
 
-  async selectOwner(owner: string) {
-    this.setState({ startedLoading: true });
-
-    this.props.github.owner = owner;
+  async getData(): Promise<GithubAuthorData[][]> {
     const repositoryNames = await this.props.github.getRepositoryNames();
 
-    const data = await Promise.all(
+    return await Promise.all(
       repositoryNames.map(repo => this.props.github.getStats(repo))
     );
+  }
 
+  createTraces(data: GithubAuthorData[][]) {
     const weeklyCommitsPerAuthor = this.calculateWeeklyCommits(data);
 
     const traces = [];
@@ -88,6 +87,18 @@ export class OrgStats extends React.Component<Props, State> {
         y: runningAverage(weeks.map(week => week[1]), 2)
       });
     }
+
+    return traces;
+  }
+
+  async selectOwner(owner: string) {
+    this.setState({ startedLoading: true });
+
+    this.props.github.owner = owner;
+
+    const data = await this.getData();
+
+    const traces = this.createTraces(data);
 
     const layout: Partial<Layout> = {
       title: "Commits per Author",
