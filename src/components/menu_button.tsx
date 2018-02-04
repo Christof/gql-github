@@ -17,7 +17,7 @@ export class MenuButton extends React.Component<Props, {}> {
       <Button
         component={props => <Link to={to} {...props} />}
         raised
-        color={isActive ? "accent" : "primary"}
+        color={isActive ? "secondary" : "primary"}
         {...rest}
       >
         {text}
