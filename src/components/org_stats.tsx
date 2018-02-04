@@ -12,7 +12,6 @@ interface Props {
 }
 
 interface State {
-  repositoryNames: string[];
   data: GithubData[];
   startedLoading: boolean;
   traces?: Partial<ScatterData>[];
@@ -23,7 +22,6 @@ export class OrgStats extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      repositoryNames: [],
       data: [],
       startedLoading: false
     };
@@ -122,7 +120,7 @@ export class OrgStats extends React.Component<Props, State> {
       }
     };
 
-    this.setState({ data, repositoryNames, traces, layout });
+    this.setState({ data, traces, layout });
   }
 
   renderStatsSection() {
