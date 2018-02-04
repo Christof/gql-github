@@ -1,5 +1,7 @@
 # gql-github
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/ee86c41c08b4d90ed96f/maintainability)](https://codeclimate.com/github/Christof/gql-github/maintainability)
+
 Tool to generate stats about contribution data from [github](github.com).
 It is also able to generate release notes and retrieve them.
 
