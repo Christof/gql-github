@@ -3,6 +3,7 @@ import * as React from "react";
 import { getCommitsPerAuthorInDateRange } from "../stats_helper";
 import * as Plotly from "plotly.js";
 import PlotlyChart from "react-plotlyjs-ts";
+import { CommitsOverTimePlot } from "./commits_over_time_plot";
 import { GithubData, GithubAuthorData, Github } from "../github";
 import { OwnerDropdown } from "./owner_dropdown";
 import { Typography, Grid } from "material-ui";
@@ -42,39 +43,8 @@ export class Stats extends React.Component<Props, State> {
     }
 
     const authorTimeLine = data.map(author => this.traceForAuthor(author));
-    const layout: Partial<Plotly.Layout> = {
-      title,
-      xaxis: {
-        title: "time",
-        autorange: true,
-        rangeselector: {
-          buttons: [
-            {
-              count: 6,
-              label: "6m",
-              step: "month",
-              stepmode: "backward"
-            },
-            {
-              count: 1,
-              label: "1y",
-              step: "year",
-              stepmode: "backward"
-            },
-            { step: "all" }
-          ]
-        },
-        type: "date",
-        rangeslider: { visible: true }
-      },
-      yaxis: {
-        title: "commit count",
-        autorange: true,
-        type: "linear"
-      }
-    };
 
-    return <PlotlyChart data={authorTimeLine as any} layout={layout} />;
+    return <CommitsOverTimePlot title={title} data={authorTimeLine as any} />;
   }
 
   private getYearsArray() {
@@ -125,7 +95,7 @@ export class Stats extends React.Component<Props, State> {
       }
     };
 
-    return <PlotlyChart data={traces as any} layout={layout} />;
+    return <PlotlyChart data={traces} layout={layout} />;
   }
 
   private traceForAuthor(statsForAuthor: GithubAuthorData) {
