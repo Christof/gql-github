@@ -143,16 +143,19 @@ describe("Github", () => {
   });
 
   describe("getRepositoryNames", () => {
-    it("requests repositories from organization named owner", async () => {
+    beforeEach(function() {
       clientQueryMock.mockReturnValueOnce({
         data: {
           viewer: {
             organizations: {
-              nodes: [{ login: "owner" }, { login: "org2" }]
+              nodes: [{ login: "org1" }, { login: "org2" }]
             }
           }
         }
       });
+    });
+
+    it("requests repositories from organization named org1", async () => {
       clientQueryMock.mockReturnValueOnce({
         data: {
           organization: {
@@ -163,6 +166,8 @@ describe("Github", () => {
         }
       });
 
+      github.owner = "org1";
+
       const repositories = await github.getRepositoryNames();
 
       expect(clientQueryMock).toHaveBeenCalledTimes(2);
@@ -170,15 +175,6 @@ describe("Github", () => {
     });
 
     it("if owner is no org requests repositories from logged in user", async () => {
-      clientQueryMock.mockReturnValueOnce({
-        data: {
-          viewer: {
-            organizations: {
-              nodes: [{ login: "org1" }, { login: "org2" }]
-            }
-          }
-        }
-      });
       clientQueryMock.mockReturnValueOnce({
         data: {
           viewer: {
