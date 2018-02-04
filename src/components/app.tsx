@@ -113,6 +113,62 @@ class App extends React.Component<{} & WithStyles, State> {
     this.setState({ github: token ? this.createGithub(token) : undefined });
   }
 
+  renderContent() {
+    return (
+      <div style={{ margin: 16 }}>
+        <Route
+          path="/auth-callback"
+          render={props => (
+            <GithubCallback
+              {...props}
+              onChangeToken={token => this.onChangeToken(token)}
+            />
+          )}
+        />
+        <Route
+          path="/stats"
+          render={props =>
+            this.renderOnlyIfLoggedIn(() => (
+              <Stats {...props} github={this.state.github} />
+            ))
+          }
+        />
+        <Route
+          path="/personal-stats"
+          render={props =>
+            this.renderOnlyIfLoggedIn(() => (
+              <PersonalStats {...props} github={this.state.github} />
+            ))
+          }
+        />
+        <Route
+          path="/org-stats"
+          render={props =>
+            this.renderOnlyIfLoggedIn(() => (
+              <OrgStats {...props} github={this.state.github} />
+            ))
+          }
+        />
+        <Route
+          path="/retrieve-release-notes"
+          render={props =>
+            this.renderOnlyIfLoggedIn(() => (
+              <ReleaseNotesRetriever {...props} github={this.state.github} />
+            ))
+          }
+        />
+        <Route
+          path="/create-release-notes"
+          render={props =>
+            this.renderOnlyIfLoggedIn(() => (
+              <ReleaseNotesCreator {...props} github={this.state.github} />
+            ))
+          }
+        />
+      </div>
+    );
+  }
+
   render() {
     return (
       <div>
@@ -120,63 +176,7 @@ class App extends React.Component<{} & WithStyles, State> {
         <BrowserRouter>
           <div>
             {this.renderAppBar()}
-            <div style={{ margin: 16 }}>
-              <Route
-                path="/auth-callback"
-                render={props => (
-                  <GithubCallback
-                    {...props}
-                    onChangeToken={token => this.onChangeToken(token)}
-                  />
-                )}
-              />
-              <Route
-                path="/stats"
-                render={props =>
-                  this.renderOnlyIfLoggedIn(() => (
-                    <Stats {...props} github={this.state.github} />
-                  ))
-                }
-              />
-              <Route
-                path="/personal-stats"
-                render={props =>
-                  this.renderOnlyIfLoggedIn(() => (
-                    <PersonalStats {...props} github={this.state.github} />
-                  ))
-                }
-              />
-              <Route
-                path="/org-stats"
-                render={props =>
-                  this.renderOnlyIfLoggedIn(() => (
-                    <OrgStats {...props} github={this.state.github} />
-                  ))
-                }
-              />
-              <Route
-                path="/retrieve-release-notes"
-                render={props =>
-                  this.renderOnlyIfLoggedIn(() => (
-                    <ReleaseNotesRetriever
-                      {...props}
-                      github={this.state.github}
-                    />
-                  ))
-                }
-              />
-              <Route
-                path="/create-release-notes"
-                render={props =>
-                  this.renderOnlyIfLoggedIn(() => (
-                    <ReleaseNotesCreator
-                      {...props}
-                      github={this.state.github}
-                    />
-                  ))
-                }
-              />
-            </div>
+            {this.renderContent()}
           </div>
         </BrowserRouter>
       </div>
