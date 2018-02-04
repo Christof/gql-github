@@ -2,9 +2,9 @@ import { OverallPlot } from "./overall_plot";
 import * as React from "react";
 import { getCommitsPerAuthorInDateRange } from "../stats_helper";
 import * as Plotly from "plotly.js";
+import PlotlyChart from "react-plotlyjs-ts";
 import { GithubData, GithubAuthorData, Github } from "../github";
 import { OwnerDropdown } from "./owner_dropdown";
-import { Plot } from "./plot";
 import { Typography, Grid } from "material-ui";
 import { Section } from "./section";
 import LinearProgress from "material-ui/Progress/LinearProgress";
@@ -74,7 +74,7 @@ export class Stats extends React.Component<Props, State> {
       }
     };
 
-    return <Plot data={authorTimeLine as any} layout={layout} />;
+    return <PlotlyChart data={authorTimeLine as any} layout={layout} />;
   }
 
   private getYearsArray() {
@@ -125,7 +125,7 @@ export class Stats extends React.Component<Props, State> {
       }
     };
 
-    return <Plot data={traces as any} layout={layout} />;
+    return <PlotlyChart data={traces as any} layout={layout} />;
   }
 
   private traceForAuthor(statsForAuthor: GithubAuthorData) {

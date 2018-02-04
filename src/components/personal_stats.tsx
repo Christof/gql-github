@@ -6,7 +6,7 @@ import {
 import { Github, GithubAuthorData } from "../github";
 import { Section } from "./section";
 import { Typography, Grid, LinearProgress } from "material-ui";
-import { Plot } from "./plot";
+import PlotlyChart from "react-plotlyjs-ts";
 import { OverallPlot } from "./overall_plot";
 
 interface Props {
@@ -175,11 +175,7 @@ export class PersonalStats extends React.Component<Props, State> {
     };
 
     return (
-      <Plot
-        title={title}
-        data={repositoryTimeline as any}
-        layout={layout as any}
-      />
+      <PlotlyChart data={repositoryTimeline as any} layout={layout as any} />
     );
   }
 
