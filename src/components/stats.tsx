@@ -42,7 +42,7 @@ export class Stats extends React.Component<Props, State> {
     }
 
     const authorTimeLine = data.map(author => this.traceForAuthor(author));
-    const layout = {
+    const layout: Partial<Plotly.Layout> = {
       title,
       xaxis: {
         title: "time",
@@ -64,8 +64,8 @@ export class Stats extends React.Component<Props, State> {
             { step: "all" }
           ]
         },
-        rangeslider: { autorange: true },
-        type: "date"
+        type: "date",
+        rangeslider: { visible: true }
       },
       yaxis: {
         title: "commit count",
@@ -74,9 +74,7 @@ export class Stats extends React.Component<Props, State> {
       }
     };
 
-    return (
-      <Plot title={title} data={authorTimeLine as any} layout={layout as any} />
-    );
+    return <Plot title={title} data={authorTimeLine as any} layout={layout} />;
   }
 
   private getYearsArray() {
