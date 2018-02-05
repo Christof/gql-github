@@ -168,7 +168,9 @@ describe("Github", () => {
 
       github.owner = "org1";
 
-      const repositories = await github.getRepositoryNames();
+      const repositories = await github.getRepositoryNames({
+        includeForks: false
+      });
 
       expect(clientQueryMock).toHaveBeenCalledTimes(2);
       expect(repositories).toEqual(["repo1", "repo2"]);
