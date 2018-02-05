@@ -5,10 +5,10 @@ import * as Plotly from "plotly.js";
 import PlotlyChart from "react-plotlyjs-ts";
 import { CommitsOverTimePlot } from "./commits_over_time_plot";
 import { GithubData, GithubAuthorData, Github } from "../github";
-import { OwnerDropdown } from "./owner_dropdown";
-import { Typography, Grid, FormControlLabel, Checkbox } from "material-ui";
+import { Typography, Grid } from "material-ui";
 import { Section } from "./section";
 import LinearProgress from "material-ui/Progress/LinearProgress";
+import { RepositoriesByOwnerSelector } from "./repositories_by_owner_selector";
 
 interface Props {
   github: Github;
@@ -17,7 +17,6 @@ interface Props {
 interface State {
   error: any;
   repositoryNames: string[];
-  includeForks: boolean;
   data: GithubData[];
   startedLoading: boolean;
 }
@@ -32,7 +31,6 @@ export class Stats extends React.Component<Props, State> {
     this.state = {
       error: null,
       repositoryNames: [],
-      includeForks: false,
       data: [],
       startedLoading: false
     };
@@ -110,12 +108,14 @@ export class Stats extends React.Component<Props, State> {
     };
   }
 
-  async selectOwner(owner: string) {
+  async selectOwner(options: { owner?: string; includeForks: boolean }) {
+    if (options.owner === undefined) return;
+
     this.setState({ startedLoading: true });
 
-    this.props.github.owner = owner;
+    this.props.github.owner = options.owner;
     const repositoryNames = await this.props.github.getRepositoryNames({
-      includeForks: this.state.includeForks
+      includeForks: options.includeForks
     });
 
     const data = await Promise.all(
@@ -143,27 +143,10 @@ export class Stats extends React.Component<Props, State> {
 
   renderRepositorySelection() {
     return (
-      <Section>
-        <Typography type="headline" paragraph>
-          Repository
-        </Typography>
-        <OwnerDropdown
-          github={this.props.github}
-          onSelect={owner => this.selectOwner(owner)}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={this.state.includeForks}
-              onChange={(_, checked) =>
-                this.setState({ includeForks: checked })
-              }
-              value="includeForks"
-            />
-          }
-          label="Include Forks"
-        />
-      </Section>
+      <RepositoriesByOwnerSelector
+        github={this.props.github}
+        onLoad={options => this.selectOwner(options)}
+      />
     );
   }
 
@@ -197,6 +180,7 @@ export class Stats extends React.Component<Props, State> {
       </div>
     );
   }
+
   render() {
     return (
       <Grid container spacing={24} justify="center">
