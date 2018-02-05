@@ -129,19 +129,24 @@ export class Github {
     return [user, ...orgs];
   }
 
-  async getOwnedRepositories(): Promise<string[]> {
+  async getOwnedRepositories(options: {
+    includeForks: boolean;
+  }): Promise<string[]> {
     const responseData = await this.query(
       gql(`
-      {
+      query getRepos($isFork: Boolean) {
         viewer {
-          repositories(affiliations: OWNER, first: 100) {
+          repositories(affiliations: OWNER, first: 100, isFork: $isFork) {
             nodes {
               name
             }
           }
         }
       }
-    `)
+      `),
+      {
+        isFork: options.includeForks ? null : false
+      }
     );
     return responseData.viewer.repositories.nodes.map((repo: any) => repo.name);
   }
@@ -175,7 +180,7 @@ export class Github {
     if (orgs.find(org => org.login === this.owner))
       return this.getOrgRepositories(options);
 
-    return this.getOwnedRepositories();
+    return this.getOwnedRepositories(options);
   }
 
   async compare(repository: string, start: string, end: string) {
