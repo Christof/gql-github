@@ -25,7 +25,7 @@ module.exports = {
       {
         test: /\.tsx?$/,
         loader: "awesome-typescript-loader",
-        exclude: [/node_modules/, /build/, /__test__/]
+        exclude: [/node_modules/, /__test__/]
       },
 
       // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
@@ -33,7 +33,7 @@ module.exports = {
         enforce: "pre",
         test: /\.js$/,
         loader: "source-map-loader",
-        exclude: [/node_modules/, /build/, /__test__/]
+        exclude: [/node_modules/, /__test__/]
       }
     ]
   },
