@@ -53,22 +53,43 @@ export class Stats extends React.Component<Props, State> {
     return Array.from(new Array(endYear - startYear), (_, i) => i + startYear);
   }
 
-  renderYearGraph(title: string, data: GithubData) {
-    const years = this.getYearsArray();
-    const statsPerYear = years.map(year =>
+  private getStatsPerYear(years: number[], data: GithubData) {
+    return years.map(year =>
       getCommitsPerAuthorInDateRange(
         data,
         new Date(year, 0),
         new Date(year + 1, 0)
       )
     );
+  }
 
-    const authors = Object.keys(statsPerYear[0]);
+  private getYearGraphLayout(
+    title: string,
+    data: GithubData
+  ): Partial<Plotly.Layout> {
+    const overallCommitCount = sum(data.map(authorData => authorData.total));
+
+    return {
+      title: `Yearly commits in ${title} ${overallCommitCount}`,
+      xaxis: {
+        title: "time"
+      },
+      yaxis: {
+        title: "commit count"
+      }
+    };
+  }
+
+  renderYearGraph(title: string, data: GithubData) {
+    const years = this.getYearsArray();
+    const statsPerYear = this.getStatsPerYear(years, data);
+
     const x = years.map((year, index) => {
       const commitsInYear = sum(Object.values(statsPerYear[index]));
       return `${year} (${commitsInYear})`;
     });
 
+    const authors = Object.keys(statsPerYear[0]);
     const traces = authors.map((author: string) => {
       const yValues = statsPerYear.map(year => year[author]);
       const authorSum = data.find(d => d.author.login === author).total;
@@ -83,18 +104,7 @@ export class Stats extends React.Component<Props, State> {
       };
     });
 
-    const overallCommitCount = sum(data.map(authorData => authorData.total));
-
-    const layout: Partial<Plotly.Layout> = {
-      title: `Yearly commits in ${title} ${overallCommitCount}`,
-      xaxis: {
-        title: "time"
-      },
-      yaxis: {
-        title: "commit count"
-      }
-    };
-
+    const layout = this.getYearGraphLayout(title, data);
     return <PlotlyChart data={traces} layout={layout} />;
   }
 
