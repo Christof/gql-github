@@ -2,7 +2,7 @@ import * as React from "react";
 import { Github, GithubData, GithubAuthorData } from "../github";
 import { Grid, Typography, LinearProgress } from "material-ui";
 import { Section } from "./section";
-import { OwnerDropdown } from "./owner_dropdown";
+import { RepositoriesByOwnerSelector } from "./repositories_by_owner_selector";
 import { ScatterData } from "plotly.js";
 import { CommitsOverTimePlot } from "./commits_over_time_plot";
 import { runningAverage } from "./personal_stats";
@@ -56,14 +56,6 @@ export class OrgStats extends React.Component<Props, State> {
     return result;
   }
 
-  async getData(): Promise<GithubAuthorData[][]> {
-    const repositoryNames = await this.props.github.getRepositoryNames();
-
-    return await Promise.all(
-      repositoryNames.map(repo => this.props.github.getStats(repo))
-    );
-  }
-
   createTraces(data: GithubAuthorData[][]) {
     const weeklyCommitsPerAuthor = this.calculateWeeklyCommits(data);
 
@@ -90,12 +82,17 @@ export class OrgStats extends React.Component<Props, State> {
     return traces;
   }
 
-  async selectOwner(owner: string) {
+  async selectOwner(options: { owner?: string; includeForks: boolean }) {
+    if (options.owner === undefined) return;
+
     this.setState({ startedLoading: true });
 
-    this.props.github.owner = owner;
+    this.props.github.owner = options.owner;
+    const repositoryNames = await this.props.github.getRepositoryNames(options);
 
-    const data = await this.getData();
+    const data = await Promise.all(
+      repositoryNames.map(repo => this.props.github.getStats(repo))
+    );
 
     const traces = this.createTraces(data);
 
@@ -122,25 +119,14 @@ export class OrgStats extends React.Component<Props, State> {
     );
   }
 
-  renderRepositorySelection() {
-    return (
-      <Section>
-        <Typography type="headline" paragraph>
-          Repository
-        </Typography>
-        <OwnerDropdown
-          github={this.props.github}
-          onSelect={owner => this.selectOwner(owner)}
-        />
-      </Section>
-    );
-  }
-
   render() {
     return (
       <Grid container spacing={24} justify="center">
         <Grid item xs={12}>
-          {this.renderRepositorySelection()}
+          <RepositoriesByOwnerSelector
+            github={this.props.github}
+            onLoad={options => this.selectOwner(options)}
+          />
           {this.renderStatsSection()}
         </Grid>
       </Grid>
