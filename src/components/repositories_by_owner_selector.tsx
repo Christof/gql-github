@@ -1,8 +1,15 @@
 import * as React from "react";
 import { Section } from "./section";
 import { OwnerDropdown } from "./owner_dropdown";
-import { Typography, FormControlLabel, Checkbox, Button } from "material-ui";
+import {
+  Typography,
+  FormControlLabel,
+  Checkbox,
+  Button,
+  FormGroup
+} from "material-ui";
 import { Github } from "../github";
+import FormControl from "material-ui/Form/FormControl";
 
 interface State {
   owner?: string;
@@ -20,16 +27,10 @@ export class RepositoriesByOwnerSelector extends React.Component<Props, State> {
 
     this.state = { includeForks: false };
   }
-  render() {
+
+  renderIncludeForksCheckbox() {
     return (
-      <Section>
-        <Typography type="headline" paragraph>
-          Repository
-        </Typography>
-        <OwnerDropdown
-          github={this.props.github}
-          onSelect={owner => this.setState({ owner })}
-        />
+      <FormControl>
         <FormControlLabel
           control={
             <Checkbox
@@ -42,9 +43,34 @@ export class RepositoriesByOwnerSelector extends React.Component<Props, State> {
           }
           label="Include Forks"
         />
-        <Button raised onClick={() => this.props.onLoad(this.state)}>
-          Load
-        </Button>
+      </FormControl>
+    );
+  }
+
+  renderControls() {
+    return (
+      <FormGroup row>
+        <OwnerDropdown
+          github={this.props.github}
+          onSelect={owner => this.setState({ owner })}
+        />
+        {this.renderIncludeForksCheckbox()}
+        <FormControl>
+          <Button raised onClick={() => this.props.onLoad(this.state)}>
+            Load
+          </Button>
+        </FormControl>
+      </FormGroup>
+    );
+  }
+
+  render() {
+    return (
+      <Section>
+        <Typography type="headline" paragraph>
+          Repository
+        </Typography>
+        {this.renderControls()}
       </Section>
     );
   }
