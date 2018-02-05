@@ -6,7 +6,7 @@ import PlotlyChart from "react-plotlyjs-ts";
 import { CommitsOverTimePlot } from "./commits_over_time_plot";
 import { GithubData, GithubAuthorData, Github } from "../github";
 import { OwnerDropdown } from "./owner_dropdown";
-import { Typography, Grid } from "material-ui";
+import { Typography, Grid, FormControlLabel, Checkbox } from "material-ui";
 import { Section } from "./section";
 import LinearProgress from "material-ui/Progress/LinearProgress";
 
@@ -17,6 +17,7 @@ interface Props {
 interface State {
   error: any;
   repositoryNames: string[];
+  includeForks: boolean;
   data: GithubData[];
   startedLoading: boolean;
 }
@@ -31,6 +32,7 @@ export class Stats extends React.Component<Props, State> {
     this.state = {
       error: null,
       repositoryNames: [],
+      includeForks: false,
       data: [],
       startedLoading: false
     };
@@ -112,7 +114,9 @@ export class Stats extends React.Component<Props, State> {
     this.setState({ startedLoading: true });
 
     this.props.github.owner = owner;
-    const repositoryNames = await this.props.github.getRepositoryNames();
+    const repositoryNames = await this.props.github.getRepositoryNames({
+      includeForks: this.state.includeForks
+    });
 
     const data = await Promise.all(
       repositoryNames.map(repo => this.props.github.getStats(repo))
@@ -146,6 +150,18 @@ export class Stats extends React.Component<Props, State> {
         <OwnerDropdown
           github={this.props.github}
           onSelect={owner => this.selectOwner(owner)}
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={this.state.includeForks}
+              onChange={(_, checked) =>
+                this.setState({ includeForks: checked })
+              }
+              value="includeForks"
+            />
+          }
+          label="Include Forks"
         />
       </Section>
     );
