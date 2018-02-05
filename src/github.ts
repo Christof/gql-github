@@ -146,29 +146,34 @@ export class Github {
     return responseData.viewer.repositories.nodes.map((repo: any) => repo.name);
   }
 
-  async getOrgRepositories(): Promise<string[]> {
+  async getOrgRepositories(options: {
+    includeForks: boolean;
+  }): Promise<string[]> {
     const responseData = await this.query(
       gql(`
-      query getOrgRepositories($org: String!) {
-        organization(login: $org) {
-          repositories(first: 100) {
-            nodes {
-              name
+        query getOrgRepositories($org: String!, $isFork: Boolean) {
+          organization(login: $org) {
+            repositories(first: 100, isFork: $isFork) {
+              nodes {
+                name
+              }
             }
           }
         }
-      }`),
-      { org: this.owner }
+      `),
+      { org: this.owner, isFork: options.includeForks ? null : false }
     );
     return responseData.organization.repositories.nodes.map(
       (repo: any) => repo.name
     );
   }
 
-  async getRepositoryNames(): Promise<string[]> {
+  async getRepositoryNames(
+    options = { includeForks: false }
+  ): Promise<string[]> {
     const orgs = await this.getOrganizations();
     if (orgs.find(org => org.login === this.owner))
-      return this.getOrgRepositories();
+      return this.getOrgRepositories(options);
 
     return this.getOwnedRepositories();
   }
