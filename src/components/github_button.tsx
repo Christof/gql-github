@@ -3,6 +3,7 @@ import * as qs from "qs";
 import { Button } from "material-ui";
 import * as uuid from "node-uuid";
 import { Github } from "../github";
+const netlify = require("netlify-auth-providers");
 
 interface Props {
   className: string;
@@ -55,16 +56,20 @@ export class GithubButton extends React.Component<Props, State> {
       });
 
     const host = document.location.host.split(":")[0];
-    const netlifyLoginUrl =
-      "https://api.netlify.com/auth?" +
-      qs.stringify({
-        provider: "github",
-        "site-id": host,
-        scope: "repo,user,read:org"
-      });
 
-    window.location.href =
-      host === "localhost" ? githubLoginUrl : netlifyLoginUrl;
+    if (host === "localhost") window.location.href = githubLoginUrl;
+
+    var authenticator = new netlify.default({});
+    authenticator.authenticate({ provider: "github", scope: "user" }, function(
+      err: any,
+      data: any
+    ) {
+      if (err) {
+        return console.error("Error Authenticating with GitHub: " + err);
+      }
+
+      console.log("Authenticated with GitHub. Access Token: " + data.token);
+    });
   }
 
   componentDidUpdate(prevProps: Props) {
