@@ -5,10 +5,11 @@ import * as Plotly from "plotly.js";
 import PlotlyChart from "react-plotlyjs-ts";
 import { CommitsOverTimePlot } from "./commits_over_time_plot";
 import { GithubData, GithubAuthorData, Github } from "../github";
-import { Typography, Grid } from "material-ui";
+import { Typography } from "material-ui";
 import { Section } from "./section";
 import LinearProgress from "material-ui/Progress/LinearProgress";
 import { RepositoriesByOwnerSelector } from "./repositories_by_owner_selector";
+import { DefaultGrid } from "./default_grid";
 
 interface Props {
   github: Github;
@@ -193,12 +194,10 @@ export class Stats extends React.Component<Props, State> {
 
   render() {
     return (
-      <Grid container spacing={24} justify="center">
-        <Grid item xs={12}>
-          {this.renderRepositorySelection()}
-          {this.renderStatsSection()}
-        </Grid>
-      </Grid>
+      <DefaultGrid>
+        {this.renderRepositorySelection()}
+        {this.renderStatsSection()}
+      </DefaultGrid>
     );
   }
 }
