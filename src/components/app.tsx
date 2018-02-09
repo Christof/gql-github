@@ -39,8 +39,8 @@ class App extends React.Component<{} & WithStyles, State> {
   constructor(props: any) {
     super(props);
 
-    const token = window.localStorage.github
-      ? JSON.parse(window.localStorage.github).access_token
+    const token = window.localStorage.githubToken
+      ? window.localStorage.githubToken
       : undefined;
     this.state = {
       github: token ? this.createGithub(token) : undefined
@@ -110,6 +110,7 @@ class App extends React.Component<{} & WithStyles, State> {
   }
 
   onChangeToken(token: string) {
+    window.localStorage.githubToken = token;
     this.setState({ github: token ? this.createGithub(token) : undefined });
   }
 

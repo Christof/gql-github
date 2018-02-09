@@ -3,6 +3,7 @@ import * as qs from "qs";
 import { Button } from "material-ui";
 import * as uuid from "node-uuid";
 import { Github } from "../github";
+const netlify = require("netlify-auth-providers");
 
 interface Props {
   className: string;
@@ -16,6 +17,7 @@ interface State {
 
 export class GithubButton extends React.Component<Props, State> {
   readonly githubMarkUrl = "https://cdnjs.cloudflare.com/ajax/libs/octicons/4.4.0/svg/mark-github.svg";
+  readonly scope = "repo,user,read:org";
 
   constructor(props: Props) {
     super(props);
@@ -43,17 +45,42 @@ export class GithubButton extends React.Component<Props, State> {
   }
 
   login() {
+    const host = document.location.host.split(":")[0];
+
+    if (host === "localhost") {
+      this.loginWithGithub();
+    } else {
+      this.loginWithNetlify();
+    }
+  }
+
+  loginWithGithub() {
     const githubState = uuid.v4();
     window.localStorage.githubState = githubState;
+
     const githubLoginUrl =
       "https://github.com/login/oauth/authorize?" +
       qs.stringify({
         client_id: "1e031c3e419938e53c8e",
         redirect_uri: window.location.origin + "/auth-callback",
-        scope: "repo,user,read:org",
+        scope: this.scope,
         state: githubState
       });
     window.location.href = githubLoginUrl;
+  }
+
+  loginWithNetlify() {
+    const authenticator = new netlify.default({});
+    authenticator.authenticate(
+      { provider: "github", scope: this.scope },
+      (error: any, data: { token: string }) => {
+        if (error) {
+          return console.error("Error Authenticating with GitHub: " + error);
+        }
+
+        this.props.onChangeToken(data.token);
+      }
+    );
   }
 
   componentDidUpdate(prevProps: Props) {

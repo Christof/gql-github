@@ -6,7 +6,6 @@ import {
   FormControlLabel,
   Checkbox,
   Button,
-  FormGroup,
   Grid
 } from "material-ui";
 import { Github } from "../github";
@@ -40,26 +39,25 @@ export class RepositoriesByOwnerSelector extends React.Component<Props, State> {
           />
         }
         label="Include Forks"
+        style={{ marginLeft: 4, marginRight: 24 }}
       />
     );
   }
 
   renderControls() {
     return (
-      <FormGroup row>
-        <Grid alignContent="flex-end">
-          <OwnerDropdown
-            github={this.props.github}
-            onSelect={owner => this.setState({ owner })}
-          />
-          {this.renderIncludeForksCheckbox()}
-          <FormControl>
-            <Button raised onClick={() => this.props.onLoad(this.state)}>
-              Load
-            </Button>
-          </FormControl>
-        </Grid>
-      </FormGroup>
+      <Grid>
+        <OwnerDropdown
+          github={this.props.github}
+          onSelect={owner => this.setState({ owner })}
+        />
+        {this.renderIncludeForksCheckbox()}
+        <FormControl>
+          <Button raised onClick={() => this.props.onLoad(this.state)}>
+            Load
+          </Button>
+        </FormControl>
+      </Grid>
     );
   }
 
