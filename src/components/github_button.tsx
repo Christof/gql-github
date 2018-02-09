@@ -46,12 +46,14 @@ export class GithubButton extends React.Component<Props, State> {
   login() {
     const githubState = uuid.v4();
     window.localStorage.githubState = githubState;
+    const scope = "repo,user,read:org";
+
     const githubLoginUrl =
       "https://github.com/login/oauth/authorize?" +
       qs.stringify({
         client_id: "1e031c3e419938e53c8e",
         redirect_uri: window.location.origin + "/auth-callback",
-        scope: "repo,user,read:org",
+        scope,
         state: githubState
       });
 
@@ -59,17 +61,17 @@ export class GithubButton extends React.Component<Props, State> {
 
     if (host === "localhost") window.location.href = githubLoginUrl;
 
-    var authenticator = new netlify.default({});
-    authenticator.authenticate({ provider: "github", scope: "user" }, function(
-      err: any,
-      data: any
-    ) {
-      if (err) {
-        return console.error("Error Authenticating with GitHub: " + err);
-      }
+    const authenticator = new netlify.default({});
+    authenticator.authenticate(
+      { provider: "github", scope },
+      (err: any, data: any) => {
+        if (err) {
+          return console.error("Error Authenticating with GitHub: " + err);
+        }
 
-      console.log("Authenticated with GitHub. Access Token: " + data.token);
-    });
+        this.props.onChangeToken(data.token);
+      }
+    );
   }
 
   componentDidUpdate(prevProps: Props) {
