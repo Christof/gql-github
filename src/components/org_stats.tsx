@@ -1,11 +1,12 @@
 import * as React from "react";
 import { Github, GithubData, GithubAuthorData } from "../github";
-import { Grid, Typography, LinearProgress } from "material-ui";
+import { Typography, LinearProgress } from "material-ui";
 import { Section } from "./section";
 import { RepositoriesByOwnerSelector } from "./repositories_by_owner_selector";
 import { ScatterData } from "plotly.js";
 import { CommitsOverTimePlot } from "./commits_over_time_plot";
 import { runningAverage } from "./personal_stats";
+import { DefaultGrid } from "./default_grid";
 
 interface Props {
   github: Github;
@@ -121,15 +122,13 @@ export class OrgStats extends React.Component<Props, State> {
 
   render() {
     return (
-      <Grid container spacing={24} justify="center">
-        <Grid item xs={12}>
-          <RepositoriesByOwnerSelector
-            github={this.props.github}
-            onLoad={options => this.selectOwner(options)}
-          />
-          {this.renderStatsSection()}
-        </Grid>
-      </Grid>
+      <DefaultGrid>
+        <RepositoriesByOwnerSelector
+          github={this.props.github}
+          onLoad={options => this.selectOwner(options)}
+        />
+        {this.renderStatsSection()}
+      </DefaultGrid>
     );
   }
 }
