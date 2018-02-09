@@ -67,6 +67,7 @@ export class PullRequestComponent extends React.Component<Props, State> {
       />
     );
   }
+
   render() {
     return (
       <div>
