@@ -7,7 +7,8 @@ import {
   FormControlLabel,
   Checkbox,
   FormLabel,
-  Button
+  Button,
+  LinearProgress
 } from "material-ui";
 import FormControl from "material-ui/Form/FormControl";
 
@@ -127,41 +128,51 @@ export class DetailedRepositorySelector extends React.Component<Props, State> {
     );
   }
 
-  render() {
-    if (this.state.owners.length === 0) return null;
-
+  renderSelection() {
     const noOwnerSelected = this.state.owners.every(owner => !owner.selected);
+    return (
+      <div>
+        <FormControl component="fieldset" fullWidth={true}>
+          <FormLabel component="legend">Owners</FormLabel>
+          <FormGroup row>
+            {this.state.owners.map((owner, index) =>
+              this.renderOwnerCheckbox(owner, index)
+            )}
+          </FormGroup>
+        </FormControl>
+
+        {noOwnerSelected || (
+          <FormControl component="fieldset" fullWidth={true}>
+            <FormLabel component="legend">Repositories</FormLabel>
+            {this.state.owners.map((owner, ownerIndex) =>
+              this.renderOwnerRepositories(owner, ownerIndex)
+            )}
+          </FormControl>
+        )}
+
+        <Button
+          raised
+          disabled={noOwnerSelected}
+          onClick={() => this.triggerOnChange()}
+        >
+          Accept
+        </Button>
+      </div>
+    );
+  }
+
+  render() {
     return (
       <Section>
         <div>
           <Typography type="headline" paragraph>
             Repositories
           </Typography>
-          <FormControl component="fieldset" fullWidth={true}>
-            <FormLabel component="legend">Owners</FormLabel>
-            <FormGroup row>
-              {this.state.owners.map((owner, index) =>
-                this.renderOwnerCheckbox(owner, index)
-              )}
-            </FormGroup>
-          </FormControl>
-
-          {noOwnerSelected || (
-            <FormControl component="fieldset" fullWidth={true}>
-              <FormLabel component="legend">Repositories</FormLabel>
-              {this.state.owners.map((owner, ownerIndex) =>
-                this.renderOwnerRepositories(owner, ownerIndex)
-              )}
-            </FormControl>
+          {this.state.owners.length === 0 ? (
+            <LinearProgress />
+          ) : (
+            this.renderSelection()
           )}
-
-          <Button
-            raised
-            disabled={noOwnerSelected}
-            onClick={() => this.triggerOnChange()}
-          >
-            Accept
-          </Button>
         </div>
       </Section>
     );
