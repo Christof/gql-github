@@ -159,8 +159,10 @@ export class Github {
         query getOrgRepositories($org: String!, $isFork: Boolean) {
           organization(login: $org) {
             repositories(first: 100, isFork: $isFork) {
-              nodes {
-                name
+              edges {
+                node {
+                  name
+                }
               }
             }
           }
@@ -168,8 +170,8 @@ export class Github {
       `),
       { org: this.owner, isFork: options.includeForks ? null : false }
     );
-    return responseData.organization.repositories.nodes.map(
-      (repo: any) => repo.name
+    return responseData.organization.repositories.edges.map(
+      (node: any) => node.name
     );
   }
 
