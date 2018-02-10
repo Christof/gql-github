@@ -95,7 +95,11 @@ export class DetailedRepositorySelector extends React.Component<Props, State> {
     );
   }
 
-  renderOwnerRepositories(ownerState: OwnerState, ownerIndex: number) {
+  renderOwnerRepository(
+    name: string,
+    ownerState: OwnerState,
+    ownerIndex: number
+  ) {
     const handleChange = (name: string, checked: boolean) => {
       const selectedRepositories = checked
         ? [...ownerState.selectedRepositories, name]
@@ -107,24 +111,43 @@ export class DetailedRepositorySelector extends React.Component<Props, State> {
       this.setState({ owners });
     };
 
+    return (
+      <FormControlLabel
+        key={`checked-${name}`}
+        control={
+          <Checkbox
+            checked={ownerState.selectedRepositories.includes(name)}
+            onChange={(_, checked) => handleChange(name, checked)}
+            value={`checked-${name}`}
+          />
+        }
+        label={name}
+      />
+    );
+  }
+
+  renderOwnerRepositories(ownerState: OwnerState, ownerIndex: number) {
     if (!ownerState.selected) return null;
 
     return (
       <FormGroup row key={ownerState.name}>
-        {ownerState.repositories.map(name => (
-          <FormControlLabel
-            key={`checked-${name}`}
-            control={
-              <Checkbox
-                checked={ownerState.selectedRepositories.includes(name)}
-                onChange={(_, checked) => handleChange(name, checked)}
-                value={`checked-${name}`}
-              />
-            }
-            label={name}
-          />
-        ))}
+        {ownerState.repositories.map(name =>
+          this.renderOwnerRepository(name, ownerState, ownerIndex)
+        )}
       </FormGroup>
+    );
+  }
+
+  renderOwnerSection() {
+    return (
+      <FormControl component="fieldset" fullWidth={true}>
+        <FormLabel component="legend">Owners</FormLabel>
+        <FormGroup row>
+          {this.state.owners.map((owner, index) =>
+            this.renderOwnerCheckbox(owner, index)
+          )}
+        </FormGroup>
+      </FormControl>
     );
   }
 
@@ -132,14 +155,7 @@ export class DetailedRepositorySelector extends React.Component<Props, State> {
     const noOwnerSelected = this.state.owners.every(owner => !owner.selected);
     return (
       <div>
-        <FormControl component="fieldset" fullWidth={true}>
-          <FormLabel component="legend">Owners</FormLabel>
-          <FormGroup row>
-            {this.state.owners.map((owner, index) =>
-              this.renderOwnerCheckbox(owner, index)
-            )}
-          </FormGroup>
-        </FormControl>
+        {this.renderOwnerSection()}
 
         {noOwnerSelected || (
           <FormControl component="fieldset" fullWidth={true}>
