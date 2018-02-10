@@ -4,8 +4,9 @@ import { Markdown } from "./markdown";
 import { Github, GithubRelease } from "../github";
 import { Dropdown } from "./dropdown";
 import { CopyToClipboard } from "./copy_to_clipboard";
-import { Grid, Typography } from "material-ui";
+import { Typography } from "material-ui";
 import { Section } from "./section";
+import { DefaultGrid } from "./default_grid";
 
 interface State {
   repo?: string;
@@ -71,16 +72,14 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
 
   render() {
     return (
-      <Grid container spacing={24} justify="center">
-        <Grid item xs={12} md={10} lg={8}>
-          <RepositorySelector
-            github={this.props.github}
-            onRepositorySelect={repo => this.selectRepository(repo)}
-          />
-          {this.renderReleasesSection()}
-          {this.renderReleaseSection()}
-        </Grid>
-      </Grid>
+      <DefaultGrid small>
+        <RepositorySelector
+          github={this.props.github}
+          onRepositorySelect={repo => this.selectRepository(repo)}
+        />
+        {this.renderReleasesSection()}
+        {this.renderReleaseSection()}
+      </DefaultGrid>
     );
   }
 }

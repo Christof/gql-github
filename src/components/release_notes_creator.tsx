@@ -9,8 +9,9 @@ import { RepositorySelector } from "./repository_selector";
 import { Markdown } from "./markdown";
 import { Github, GithubTag } from "../github";
 import * as React from "react";
-import { Button, Grid, Snackbar, Slide, Typography } from "material-ui";
+import { Button, Snackbar, Slide, Typography } from "material-ui";
 import { SlideProps } from "material-ui/transitions";
+import { DefaultGrid } from "./default_grid";
 
 function TransitionLeft(props: SlideProps) {
   return <Slide direction="left" {...props} />;
@@ -191,17 +192,15 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
 
   render() {
     return (
-      <Grid container spacing={24} justify="center">
-        <Grid item xs={12} md={10} lg={8}>
-          <RepositorySelector
-            github={this.props.github}
-            onRepositorySelect={repo => this.selectRepository(repo)}
-          />
-          {this.renderTagsSection()}
-          {this.renderPullRequestsSection()}
-          {this.renderReleaseNoteSection()}
-        </Grid>
-      </Grid>
+      <DefaultGrid small>
+        <RepositorySelector
+          github={this.props.github}
+          onRepositorySelect={repo => this.selectRepository(repo)}
+        />
+        {this.renderTagsSection()}
+        {this.renderPullRequestsSection()}
+        {this.renderReleaseNoteSection()}
+      </DefaultGrid>
     );
   }
 }
