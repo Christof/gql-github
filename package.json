@@ -7,20 +7,17 @@
     "test": "jest",
     "tsc-watch": "./node_modules/typescript/bin/tsc -w",
     "webpack": "./node_modules/webpack/bin/webpack.js",
-    "start": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js -w --host=0.0.0.0"
+    "start":
+      "./node_modules/webpack-dev-server/bin/webpack-dev-server.js -w --host=0.0.0.0"
   },
   "jest": {
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js"
-    ],
+    "moduleFileExtensions": ["ts", "tsx", "js"],
     "transform": {
       "^.+\\.(ts|tsx)$": "<rootDir>/preprocessor.js"
     },
-    "testMatch": [
-      "**/__tests__/*.(ts|tsx|js)"
-    ]
+    "setupFiles": ["<rootDir>/__tests__/shim.js"],
+    "setupTestFrameworkScriptFile": "<rootDir>/__tests__/preprocessor_test.js",
+    "testMatch": ["**/__tests__/**.(ts|tsx|js)"]
   },
   "author": "Christof Sirk",
   "license": "MIT",
