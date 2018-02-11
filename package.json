@@ -4,7 +4,7 @@
   "description": "Tool to talk to github via GraphQL",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --coverage",
     "tsc-watch": "./node_modules/typescript/bin/tsc -w",
     "webpack": "./node_modules/webpack/bin/webpack.js",
     "start":
