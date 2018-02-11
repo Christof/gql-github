@@ -18,7 +18,8 @@
     "setupFiles": ["<rootDir>/config/shim.js"],
     "setupTestFrameworkScriptFile": "<rootDir>/config/preprocessor_test.js",
     "testMatch": ["**/__tests__/**.(ts|tsx|js)"],
-    "collectCoverageFrom": ["src/**/*.{ts,js,tsx}"]
+    "collectCoverageFrom": ["src/**/*.{ts,js,tsx}"],
+    "testURL": "http://test.com/unknown"
   },
   "author": "Christof Sirk",
   "license": "MIT",
