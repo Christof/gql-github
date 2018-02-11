@@ -13,10 +13,10 @@
   "jest": {
     "moduleFileExtensions": ["ts", "tsx", "js"],
     "transform": {
-      "^.+\\.(ts|tsx)$": "<rootDir>/preprocessor.js"
+      "^.+\\.(ts|tsx)$": "<rootDir>/config/preprocessor.js"
     },
-    "setupFiles": ["<rootDir>/__tests__/shim.js"],
-    "setupTestFrameworkScriptFile": "<rootDir>/__tests__/preprocessor_test.js",
+    "setupFiles": ["<rootDir>/config/shim.js"],
+    "setupTestFrameworkScriptFile": "<rootDir>/config/preprocessor_test.js",
     "testMatch": ["**/__tests__/**.(ts|tsx|js)"]
   },
   "author": "Christof Sirk",
