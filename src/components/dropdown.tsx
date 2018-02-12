@@ -28,6 +28,22 @@ export class Dropdown extends React.Component<Props, { selected: string }> {
     this.props.onSelect(selected);
   }
 
+  private renderMenuItem(option: string, index: number) {
+    return (
+      <MenuItem key={option} value={option}>
+        {this.props.iconUrls ? (
+          <img
+            width="14px"
+            height="14px"
+            style={{ marginRight: 8, marginLeft: 4 }}
+            src={this.props.iconUrls[index]}
+          />
+        ) : null}
+        {option}
+      </MenuItem>
+    );
+  }
+
   render() {
     return (
       <FormControl style={{ marginRight: 8, ...this.props.style }}>
@@ -42,19 +58,9 @@ export class Dropdown extends React.Component<Props, { selected: string }> {
           <MenuItem disabled value="none">
             Select {this.props.label}
           </MenuItem>
-          {this.props.options.map((option, index) => (
-            <MenuItem key={option} value={option}>
-              {this.props.iconUrls ? (
-                <img
-                  width="14px"
-                  height="14px"
-                  style={{ marginRight: 8, marginLeft: 4 }}
-                  src={this.props.iconUrls[index]}
-                />
-              ) : null}
-              {option}
-            </MenuItem>
-          ))}
+          {this.props.options.map((option, index) =>
+            this.renderMenuItem(option, index)
+          )}
         </Select>
       </FormControl>
     );
