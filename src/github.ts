@@ -1,4 +1,4 @@
-import { ApolloClient, ApolloQueryResult } from "apollo-client";
+import { ApolloClient } from "apollo-client";
 import { NormalizedCacheObject } from "apollo-cache-inmemory";
 import gql from "graphql-tag";
 
@@ -72,28 +72,19 @@ export class Github {
     variables: any = undefined,
     retries = 1
   ): Promise<any> {
-    let response: ApolloQueryResult<{}>;
     try {
-      response = await this.client.query({ query, variables });
+      const response = await this.client.query({ query, variables });
+      if (response.errors) throw response.errors;
+
+      return response.data;
     } catch (error) {
-      console.log("Exception ", error, "for", query);
+      console.log("Exception ", error, "for", query, "retries", retries);
 
       if (retries === 0) throw error;
 
-      console.log("Retry because of error", response, "for", query);
       await delay(1);
       return this.query(query, variables, --retries);
     }
-
-    if (response.errors) {
-      if (retries === 0) throw response.errors;
-
-      console.log("Retry because of error", response, "for", query);
-      await delay(1);
-      return this.query(query, variables, --retries);
-    }
-
-    return response.data;
   }
 
   copyFor(owner: string) {
