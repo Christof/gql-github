@@ -76,4 +76,31 @@ describe("Dropdown", function() {
       expect(selected).toEqual("opt2");
     });
   });
+
+  describe("iconUrls", function() {
+    it("adds an img before each option", function() {
+      const wrapper = shallow(
+        <Dropdown
+          options={["opt1", "opt2"]}
+          iconUrls={["url1", "url2"]}
+          onSelect={() => {}}
+        />
+      );
+
+      const items = wrapper.find("WithStyles(MenuItem)");
+      expect(items).toHaveLength(3);
+      expect(
+        items
+          .at(1)
+          .find("img")
+          .prop("src")
+      ).toEqual("url1");
+      expect(
+        items
+          .at(2)
+          .find("img")
+          .prop("src")
+      ).toEqual("url2");
+    });
+  });
 });
