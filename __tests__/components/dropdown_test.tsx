@@ -58,4 +58,22 @@ describe("Dropdown", function() {
 
     expect(wrapper.find("WithStyles(Select)").prop("value")).toEqual("opt2");
   });
+
+  describe("onSelect", function() {
+    it("on selection calls onSelect", function() {
+      let selected = "";
+      const wrapper = shallow(
+        <Dropdown
+          options={["opt1", "opt2"]}
+          onSelect={value => (selected = value)}
+        />
+      );
+
+      wrapper.find("WithStyles(Select)").prop("onChange")({
+        target: { value: "opt2" }
+      } as any);
+
+      expect(selected).toEqual("opt2");
+    });
+  });
 });
