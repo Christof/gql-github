@@ -4,16 +4,36 @@ import { shallow } from "enzyme";
 import { Grid } from "material-ui";
 
 describe("Dropdown", function() {
-  it("renders a disabled option with value none", function() {
-    const wrapper = shallow(
-      <Dropdown options={[]} label="label" onSelect={() => {}} />
-    );
+  describe("with label", function() {
+    it("adds an InputLabel", function() {
+      const wrapper = shallow(
+        <Dropdown options={[]} label="label" onSelect={() => {}} />
+      );
 
-    const item = wrapper.find("WithStyles(MenuItem)");
-    expect(item).toHaveLength(1);
-    expect(item.prop("children")).toEqual(["Select ", "label"]);
-    expect(item.prop("disabled")).toEqual(true);
-    expect(item.prop("value")).toEqual("none");
+      const label = wrapper.find("WithStyles(InputLabel)");
+      expect(label.prop("children")).toEqual("label");
+      expect(label.prop("htmlFor")).toEqual("label");
+    });
+
+    it("sets the id to the label", function() {
+      const wrapper = shallow(
+        <Dropdown options={[]} label="label" onSelect={() => {}} />
+      );
+
+      expect(wrapper.find("WithStyles(Select)").prop("id")).toEqual("label");
+    });
+
+    it("renders a disabled option with value none", function() {
+      const wrapper = shallow(
+        <Dropdown options={[]} label="label" onSelect={() => {}} />
+      );
+
+      const item = wrapper.find("WithStyles(MenuItem)");
+      expect(item).toHaveLength(1);
+      expect(item.prop("children")).toEqual(["Select ", "label"]);
+      expect(item.prop("disabled")).toEqual(true);
+      expect(item.prop("value")).toEqual("none");
+    });
   });
 
   it("renders a Select with given options", function() {
@@ -25,5 +45,17 @@ describe("Dropdown", function() {
     expect(items).toHaveLength(3);
     expect(items.at(1).prop("children")).toEqual([null, "opt1"]);
     expect(items.at(2).prop("children")).toEqual([null, "opt2"]);
+  });
+
+  describe("initialSelection", function() {
+    const wrapper = shallow(
+      <Dropdown
+        options={["opt1", "opt2"]}
+        initialSelection="opt2"
+        onSelect={() => {}}
+      />
+    );
+
+    expect(wrapper.find("WithStyles(Select)").prop("value")).toEqual("opt2");
   });
 });

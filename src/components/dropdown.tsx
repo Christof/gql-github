@@ -48,9 +48,10 @@ export class Dropdown extends React.Component<Props, { selected: string }> {
     return (
       <FormControl style={{ marginRight: 8, ...this.props.style }}>
         {this.props.label && (
-          <InputLabel htmlFor="age-simple">{this.props.label}</InputLabel>
+          <InputLabel htmlFor={this.props.label}>{this.props.label}</InputLabel>
         )}
         <Select
+          id={this.props.label}
           autoWidth={true}
           onChange={event => this.onChange(event.target.value)}
           value={this.state.selected}
