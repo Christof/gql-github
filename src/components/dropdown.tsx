@@ -28,13 +28,30 @@ export class Dropdown extends React.Component<Props, { selected: string }> {
     this.props.onSelect(selected);
   }
 
+  private renderMenuItem(option: string, index: number) {
+    return (
+      <MenuItem key={option} value={option}>
+        {this.props.iconUrls ? (
+          <img
+            width="14px"
+            height="14px"
+            style={{ marginRight: 8, marginLeft: 4 }}
+            src={this.props.iconUrls[index]}
+          />
+        ) : null}
+        {option}
+      </MenuItem>
+    );
+  }
+
   render() {
     return (
       <FormControl style={{ marginRight: 8, ...this.props.style }}>
         {this.props.label && (
-          <InputLabel htmlFor="age-simple">{this.props.label}</InputLabel>
+          <InputLabel htmlFor={this.props.label}>{this.props.label}</InputLabel>
         )}
         <Select
+          id={this.props.label}
           autoWidth={true}
           onChange={event => this.onChange(event.target.value)}
           value={this.state.selected}
@@ -42,19 +59,9 @@ export class Dropdown extends React.Component<Props, { selected: string }> {
           <MenuItem disabled value="none">
             Select {this.props.label}
           </MenuItem>
-          {this.props.options.map((option, index) => (
-            <MenuItem key={option} value={option}>
-              {this.props.iconUrls ? (
-                <img
-                  width="14px"
-                  height="14px"
-                  style={{ marginRight: 8, marginLeft: 4 }}
-                  src={this.props.iconUrls[index]}
-                />
-              ) : null}
-              {option}
-            </MenuItem>
-          ))}
+          {this.props.options.map((option, index) =>
+            this.renderMenuItem(option, index)
+          )}
         </Select>
       </FormControl>
     );
