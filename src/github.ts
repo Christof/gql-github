@@ -52,6 +52,12 @@ function windowFetch(input: RequestInfo, init?: RequestInit) {
   return fetch(input, init);
 }
 
+function delay(timeInSeconds: number) {
+  return new Promise(resolve => {
+    setTimeout(resolve, timeInSeconds * 1000);
+  });
+}
+
 export class Github {
   public owner: string;
 
@@ -75,22 +81,16 @@ export class Github {
       if (retries === 0) throw error;
 
       console.log("Retry because of error", response, "for", query);
-      return new Promise(resolve => {
-        setTimeout(() => {
-          resolve(this.query(query, variables, --retries));
-        }, 1000);
-      });
+      await delay(1);
+      return this.query(query, variables, --retries);
     }
 
     if (response.errors) {
       if (retries === 0) throw response.errors;
 
       console.log("Retry because of error", response, "for", query);
-      return new Promise(resolve => {
-        setTimeout(() => {
-          resolve(this.query(query, variables, --retries));
-        }, 1000);
-      });
+      await delay(1);
+      return this.query(query, variables, --retries);
     }
 
     return response.data;
