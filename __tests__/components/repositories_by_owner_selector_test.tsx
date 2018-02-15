@@ -31,4 +31,24 @@ describe("RepositoriesByOwnerSelector", function() {
       expect(setData.owner).toBeUndefined();
     });
   });
+
+  describe("click load after selecting owner and checking includeForks", function() {
+    it("calls onLoad with selected owner and includeForks true", function() {
+      const owner = "selectedOwner";
+
+      wrapper.find("OwnerDropdown").prop("onSelect")(owner as any);
+      const checkboxWrapper = shallow(
+        wrapper.find("WithStyles(FormControlLabel)").prop("control")
+      );
+      (checkboxWrapper.find("Checkbox").prop("onChange") as any)(
+        undefined,
+        true
+      );
+
+      clickLoad();
+
+      expect(setData.includeForks).toBe(true);
+      expect(setData.owner).toEqual(owner);
+    });
+  });
 });
