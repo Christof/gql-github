@@ -13,6 +13,7 @@ interface Props {
 interface Stats {
   repositoryNames: string[];
 }
+
 export class RepositorySelector extends React.Component<Props, Stats> {
   constructor(props: Props) {
     super(props);
