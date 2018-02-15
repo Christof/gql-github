@@ -16,9 +16,11 @@ interface State {
   includeForks: boolean;
 }
 
+export interface LoadData extends State {}
+
 interface Props {
   github: Github;
-  onLoad: (data: State) => void;
+  onLoad: (data: LoadData) => void;
 }
 
 export class RepositoriesByOwnerSelector extends React.Component<Props, State> {
