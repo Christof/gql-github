@@ -190,7 +190,7 @@ export class Github {
       { org: this.owner, isFork: options.includeForks ? null : false }
     );
     return responseData.organization.repositories.edges.map(
-      (node: any) => node.name
+      (edge: any) => edge.node.name
     );
   }
 

@@ -160,7 +160,7 @@ describe("Github", () => {
         data: {
           organization: {
             repositories: {
-              edges: [{ name: "repo1" }, { name: "repo2" }]
+              edges: [{ node: { name: "repo1" } }, { node: { name: "repo2" } }]
             }
           }
         }
