@@ -104,6 +104,24 @@ export class Github {
     return this.fetch(`https://api.github.com/${path}`, params);
   }
 
+  async fetchQuery(query: string, variables?: any) {
+    const params: RequestInit = {
+      method: "POST",
+      mode: "cors",
+      headers: [["Authorization", `token ${this.token}`]],
+      body: JSON.stringify({
+        query: query,
+        variables
+      })
+    };
+
+    const response = await this.fetch(`https://api.github.com/graphql`, params);
+    if (!response.ok) throw new Error(response.toString());
+
+    const responseData = await response.json();
+    return responseData.data;
+  }
+
   async getUser(): Promise<GithubUser> {
     const responseData = await this.query(
       gql(`
