@@ -3,14 +3,14 @@ import { OwnerDropdown } from "../../src/components/owner_dropdown";
 import { shallow, ShallowWrapper } from "enzyme";
 
 describe("OwnerSelector", function() {
-  it("calls onSelect owner selection", function() {
+  it("calls onSelect owner selection", function(done) {
     const owner = "owner2";
 
     const github = {
       getOwnersWithAvatar() {
         return Promise.resolve([
-          { login: "owner1", iconUrls: "icon1" },
-          { login: owner, iconUrls: "icon2" }
+          { login: "owner1", avatarUrl: "icon1" },
+          { login: owner, avatarUrl: "icon2" }
         ]);
       }
     } as any;
@@ -28,5 +28,11 @@ describe("OwnerSelector", function() {
     dropdown.prop("onSelect")(owner as any);
 
     expect(selectedOwner).toEqual(owner);
+
+    setTimeout(() => {
+      expect(wrapper.state().owners).toEqual(["owner1", owner]);
+      expect(wrapper.state().iconUrls).toEqual(["icon1", "icon2"]);
+      done();
+    }, 0);
   });
 });
