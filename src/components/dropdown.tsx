@@ -56,7 +56,7 @@ export class Dropdown extends React.Component<Props, { selected: string }> {
           onChange={event => this.onChange(event.target.value)}
           value={this.state.selected}
         >
-          <MenuItem disabled value="none">
+          <MenuItem disabled value="none" key="none">
             Select {this.props.label}
           </MenuItem>
           {this.props.options.map((option, index) =>
