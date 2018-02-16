@@ -191,8 +191,8 @@ export class Github {
   async getOrgRepositories(options: {
     includeForks: boolean;
   }): Promise<string[]> {
-    const responseData = await this.query(
-      gql(`
+    const responseData = await this.fetchQuery(
+      `
         query getOrgRepositories($org: String!, $isFork: Boolean) {
           organization(login: $org) {
             repositories(first: 100, isFork: $isFork) {
@@ -204,7 +204,7 @@ export class Github {
             }
           }
         }
-      `),
+      `,
       { org: this.owner, isFork: options.includeForks ? null : false }
     );
     return responseData.organization.repositories.edges.map(
