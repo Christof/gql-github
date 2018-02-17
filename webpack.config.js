@@ -1,16 +1,25 @@
 const path = require("path");
+const webpack = require("webpack");
 const DashboardPlugin = require("webpack-dashboard/plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
   entry: "./src/index.tsx",
   output: {
-    filename: "bundle.js",
+    filename: "[name].js",
     path: __dirname + "/dist"
   },
   plugins: [
     new DashboardPlugin(),
-    new HtmlWebpackPlugin({ title: "Stats", template: "./src/index.html" })
+    new HtmlWebpackPlugin({ title: "Stats", template: "./src/index.html" }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: "vendor",
+      minChunks: module =>
+        module.context && module.context.indexOf("node_modules") !== -1
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: "manifest"
+    })
   ],
 
   // Enable sourcemaps for debugging webpack's output.
@@ -18,7 +27,8 @@ module.exports = {
 
   resolve: {
     // Add '.ts' and '.tsx' as resolvable extensions.
-    extensions: [".ts", ".tsx", ".js", ".json"]
+    extensions: [".ts", ".tsx", ".js", ".json"],
+    modules: ["src", "node_modules"]
   },
 
   module: {
