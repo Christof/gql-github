@@ -53,6 +53,7 @@
     "tslint": "^5.8.0",
     "typescript": "^2.6.1",
     "webpack": "^3.10.0",
+    "webpack-dashboard": "^1.1.1",
     "webpack-dev-server": "^2.9.7"
   },
   "dependencies": {

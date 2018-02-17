@@ -1,4 +1,5 @@
 const path = require("path");
+const DashboardPlugin = require("webpack-dashboard/plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
@@ -8,6 +9,7 @@ module.exports = {
     path: __dirname + "/dist"
   },
   plugins: [
+    new DashboardPlugin(),
     new HtmlWebpackPlugin({ title: "Stats", template: "./src/index.html" })
   ],
 
