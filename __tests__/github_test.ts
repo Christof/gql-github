@@ -156,13 +156,21 @@ describe("Github", () => {
     });
 
     it("requests repositories from organization named org1", async () => {
-      clientQueryMock.mockReturnValueOnce({
-        data: {
-          organization: {
-            repositories: {
-              edges: [{ node: { name: "repo1" } }, { node: { name: "repo2" } }]
+      fetchMock.mockReturnValueOnce({
+        ok: true,
+        json() {
+          return {
+            data: {
+              organization: {
+                repositories: {
+                  edges: [
+                    { node: { name: "repo1" } },
+                    { node: { name: "repo2" } }
+                  ]
+                }
+              }
             }
-          }
+          };
         }
       });
 
@@ -172,7 +180,8 @@ describe("Github", () => {
         includeForks: false
       });
 
-      expect(clientQueryMock).toHaveBeenCalledTimes(2);
+      expect(clientQueryMock).toHaveBeenCalledTimes(1);
+      expect(fetchMock).toHaveBeenCalledTimes(1);
       expect(repositories).toEqual(["repo1", "repo2"]);
     });
 
