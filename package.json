@@ -8,6 +8,8 @@
     "tsc-watch": "./node_modules/typescript/bin/tsc -w",
     "webpack": "./node_modules/webpack/bin/webpack.js",
     "start":
+      "webpack-dashboard -- node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js -w --host=0.0.0.0",
+    "start-dev-server":
       "./node_modules/webpack-dev-server/bin/webpack-dev-server.js -w --host=0.0.0.0"
   },
   "jest": {
