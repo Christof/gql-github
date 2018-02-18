@@ -1,5 +1,5 @@
 import { PullRequest, ChangeCategory } from "../pull_request";
-import { PullRequestChangeCategorySelector } from "./pull_request";
+import { PullRequestChangeCategorySelector } from "./pull_request_change_category_selector";
 import { Dropdown } from "./dropdown";
 import { Section } from "./section";
 import { RepositorySelector } from "./repository_selector";
