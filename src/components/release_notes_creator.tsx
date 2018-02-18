@@ -1,8 +1,5 @@
-import {
-  PullRequest,
-  PullRequestComponent,
-  ChangeCategory
-} from "./pull_request";
+import { PullRequest, ChangeCategory } from "../pull_request";
+import { PullRequestComponent } from "./pull_request";
 import { Dropdown } from "./dropdown";
 import { Section } from "./section";
 import { RepositorySelector } from "./repository_selector";
