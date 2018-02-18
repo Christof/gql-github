@@ -1,5 +1,5 @@
 import * as React from "react";
-import { PullRequestComponent } from "../../src/components/pull_request";
+import { PullRequestChangeCategorySelector } from "../../src/components/pull_request";
 import { shallow } from "enzyme";
 import { PullRequest, ChangeCategory } from "../../src/pull_request";
 
@@ -12,7 +12,10 @@ describe("PullRequestComponent", function() {
 
   it("renders PullRequest text", function() {
     const wrapper = shallow(
-      <PullRequestComponent pullRequest={pullRequest} onChange={() => {}} />
+      <PullRequestChangeCategorySelector
+        pullRequest={pullRequest}
+        onChange={() => {}}
+      />
     );
 
     expect(wrapper.find("WithStyles(Typography)").prop("children")).toEqual(
@@ -24,7 +27,7 @@ describe("PullRequestComponent", function() {
     let changedPullRequest: PullRequest;
 
     const wrapper = shallow(
-      <PullRequestComponent
+      <PullRequestChangeCategorySelector
         pullRequest={pullRequest}
         onChange={pullRequest => {
           changedPullRequest = pullRequest;

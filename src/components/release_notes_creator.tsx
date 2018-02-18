@@ -1,5 +1,5 @@
 import { PullRequest, ChangeCategory } from "../pull_request";
-import { PullRequestComponent } from "./pull_request";
+import { PullRequestChangeCategorySelector } from "./pull_request";
 import { Dropdown } from "./dropdown";
 import { Section } from "./section";
 import { RepositorySelector } from "./repository_selector";
@@ -151,7 +151,7 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
           Adjust Categories
         </Typography>
         {this.state.pullRequests.map((pullRequest, index) => (
-          <PullRequestComponent
+          <PullRequestChangeCategorySelector
             key={pullRequest.id}
             pullRequest={pullRequest}
             onChange={updatedPullRequest =>

@@ -12,7 +12,10 @@ interface State {
   changeCategory: ChangeCategory;
 }
 
-export class PullRequestComponent extends React.Component<Props, State> {
+export class PullRequestChangeCategorySelector extends React.Component<
+  Props,
+  State
+> {
   selectChangeCategory(categoryName: string) {
     const changeCategory =
       ChangeCategory[categoryName as keyof typeof ChangeCategory];
