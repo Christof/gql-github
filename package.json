@@ -20,6 +20,7 @@
     "testMatch": ["**/__tests__/**.(ts|tsx|js)"],
     "collectCoverageFrom": ["src/**/*.{ts,js,tsx}"],
     "testURL": "http://test.com/unknown",
+    "testEnvironment": "jest-environment-jsdom-global",
     "mapCoverage": true
   },
   "author": "Christof Sirk",
@@ -43,6 +44,8 @@
     "graphql-tools": "^2.19.0",
     "html-webpack-plugin": "^2.30.1",
     "jest": "^22.1.1",
+    "jest-environment-jsdom": "^22.4.0",
+    "jest-environment-jsdom-global": "^1.0.3",
     "react-test-renderer": "^16.2.0",
     "source-map-loader": "^0.2.3",
     "ts-jest": "^22.0.3",
