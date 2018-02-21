@@ -9,6 +9,7 @@ interface Props {
   className: string;
   onChangeToken: (token: string) => void;
   github?: Github;
+  authenticator?: any; // just for testing
 }
 
 interface State {
@@ -16,6 +17,10 @@ interface State {
 }
 
 export class GithubButton extends React.Component<Props, State> {
+  static defaultProps: Partial<Props> = {
+    authenticator: new netlify.default({})
+  };
+
   readonly githubMarkUrl = "https://cdnjs.cloudflare.com/ajax/libs/octicons/4.4.0/svg/mark-github.svg";
   readonly scope = "repo,user,read:org";
 
@@ -70,8 +75,7 @@ export class GithubButton extends React.Component<Props, State> {
   }
 
   loginWithNetlify() {
-    const authenticator = new netlify.default({});
-    authenticator.authenticate(
+    this.props.authenticator.authenticate(
       { provider: "github", scope: this.scope },
       (error: any, data: { token: string }) => {
         if (error) {
