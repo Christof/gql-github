@@ -66,7 +66,7 @@ export class GithubButton extends React.Component<Props, State> {
         scope: this.scope,
         state: githubState
       });
-    window.location.href = githubLoginUrl;
+    window.location.assign(githubLoginUrl);
   }
 
   loginWithNetlify() {

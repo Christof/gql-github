@@ -9,6 +9,7 @@ describe("GithubButton", function() {
     describe("localhost", function() {
       it("changes window location to github login page", function() {
         jsdom.reconfigure({ url: "http://localhost:3000" });
+        window.location.assign = jest.fn();
 
         const wrapper = shallow(
           <GithubButton className="some-class" onChangeToken={() => {}} />
@@ -19,9 +20,9 @@ describe("GithubButton", function() {
         expect(loginButton.prop("children")[0]).toContain("Login");
         loginButton.prop("onClick")({} as any);
 
-        expect(window.location.href).toContain(
-          "https://github.com/login/oauth"
-        );
+        expect(window.location.assign).toHaveBeenCalled();
+        const newUrl = (window.location.assign as any).mock.calls[0][0];
+        expect(newUrl).toContain("https://github.com/login/oauth");
       });
     });
   });
