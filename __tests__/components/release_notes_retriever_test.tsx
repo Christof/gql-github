@@ -1,15 +1,10 @@
 import * as React from "react";
 import { ReleaseNotesRetriever } from "../../src/components/release_notes_retriever";
 import { shallow } from "enzyme";
+import { waitImmediate } from "../helper";
 import { Github } from "../../src/github";
 
 jest.mock("../../src/github");
-
-function waitImmediate() {
-  return new Promise(resolve => {
-    setImmediate(resolve);
-  });
-}
 
 describe("ReleaseNotesRetriever", function() {
   it("shows selected release note", async function() {
