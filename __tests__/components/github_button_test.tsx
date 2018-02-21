@@ -116,5 +116,26 @@ describe("GithubButton", function() {
       expect(window.localStorage.clear).toHaveBeenCalled();
       expect(changedToken).toBeUndefined();
     });
+
+    it("does not reload avatar on update if github instance is the same", async function() {
+      const avatarUrl = "url-to-avatar";
+      const github = new Github("token", {} as any);
+      github.getUser = jest.fn(() => Promise.resolve({ avatarUrl }));
+
+      const wrapper = shallow(
+        <GithubButton
+          className="some-class"
+          github={github}
+          onChangeToken={() => {}}
+        />
+      );
+
+      wrapper.setProps({ github });
+
+      await waitImmediate();
+      wrapper.update();
+
+      expect(github.getUser).toHaveBeenCalledTimes(1);
+    });
   });
 });
