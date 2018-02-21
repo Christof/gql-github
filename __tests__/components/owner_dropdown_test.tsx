@@ -1,9 +1,10 @@
 import * as React from "react";
 import { OwnerDropdown } from "../../src/components/owner_dropdown";
 import { shallow, ShallowWrapper } from "enzyme";
+import { waitImmediate } from "../helper";
 
 describe("OwnerSelector", function() {
-  it("calls onSelect owner selection", function(done) {
+  it("calls onSelect owner selection", async function() {
     const owner = "owner2";
 
     const github = {
@@ -29,10 +30,9 @@ describe("OwnerSelector", function() {
 
     expect(selectedOwner).toEqual(owner);
 
-    setTimeout(() => {
-      expect(wrapper.state().owners).toEqual(["owner1", owner]);
-      expect(wrapper.state().iconUrls).toEqual(["icon1", "icon2"]);
-      done();
-    }, 0);
+    await waitImmediate();
+
+    expect(wrapper.state().owners).toEqual(["owner1", owner]);
+    expect(wrapper.state().iconUrls).toEqual(["icon1", "icon2"]);
   });
 });
