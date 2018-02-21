@@ -15,7 +15,7 @@
     "transform": {
       "^.+\\.(ts|tsx)$": "ts-jest"
     },
-    "setupFiles": ["<rootDir>/config/shim.js"],
+    "setupFiles": ["<rootDir>/config/shim.js", "jest-localstorage-mock"],
     "setupTestFrameworkScriptFile": "<rootDir>/config/preprocessor_test.js",
     "testMatch": ["**/__tests__/**.(ts|tsx|js)"],
     "collectCoverageFrom": ["src/**/*.{ts,js,tsx}"],
@@ -46,6 +46,7 @@
     "jest": "^22.1.1",
     "jest-environment-jsdom": "^22.4.0",
     "jest-environment-jsdom-global": "^1.0.3",
+    "jest-localstorage-mock": "^2.2.0",
     "react-test-renderer": "^16.2.0",
     "source-map-loader": "^0.2.3",
     "ts-jest": "^22.0.3",
