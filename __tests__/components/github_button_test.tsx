@@ -2,6 +2,7 @@ import * as React from "react";
 import { GithubButton } from "../../src/components/github_button";
 import { Github } from "../../src/github";
 import { shallow } from "enzyme";
+import { waitImmediate } from "../helper";
 
 declare const jsdom: any;
 
@@ -58,6 +59,36 @@ describe("GithubButton", function() {
         expect(authenticator.authenticate).toHaveBeenCalled();
         expect(changedToken).toEqual(token);
       });
+    });
+
+    it("shows github mark in login button", function() {
+      const wrapper = shallow(
+        <GithubButton className="some-class" onChangeToken={() => {}} />
+      );
+
+      const loginButton = wrapper.find("WithStyles(Button)");
+      expect(loginButton.prop("children")[0]).toContain("Login");
+      const img = shallow(loginButton.prop("children")[1]);
+      expect(img.prop("src")).toContain("mark");
+    });
+
+    it("loads avatar image after logged in", async function() {
+      const wrapper = shallow(
+        <GithubButton className="some-class" onChangeToken={() => {}} />
+      );
+
+      const avatarUrl = "url-to-avatar";
+      const github = new Github("token", {} as any);
+      github.getUser = jest.fn(() => Promise.resolve({ avatarUrl }));
+      wrapper.setProps({ github });
+
+      await waitImmediate();
+      wrapper.update();
+
+      const loginButton = wrapper.find("WithStyles(Button)");
+      expect(loginButton.prop("children")[0]).toContain("Logout");
+      const img = shallow(loginButton.prop("children")[1]);
+      expect(img.prop("src")).toContain(avatarUrl);
     });
   });
 
