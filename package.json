@@ -8,8 +8,9 @@
     "tsc-watch": "./node_modules/typescript/bin/tsc -w",
     "webpack": "./node_modules/webpack/bin/webpack.js",
     "build-dashboard":
-      "webpack-dashboard -- node ./node_modules/webpack/bin/webpack.js --env.build",
-    "build": "./node_modules/webpack/bin/webpack.js --env.build",
+      "webpack-dashboard -- node ./node_modules/webpack/bin/webpack.js --env.build --mode=production",
+    "build":
+      "./node_modules/webpack/bin/webpack.js --env.build --mode=production",
     "start":
       "webpack-dashboard -- node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js -w --host=0.0.0.0 --mode=development",
     "start-dev-server":
