@@ -11,9 +11,9 @@
       "webpack-dashboard -- node ./node_modules/webpack/bin/webpack.js --env.build",
     "build": "./node_modules/webpack/bin/webpack.js --env.build",
     "start":
-      "webpack-dashboard -- node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js -w --host=0.0.0.0",
+      "webpack-dashboard -- node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js -w --host=0.0.0.0 --mode=development",
     "start-dev-server":
-      "./node_modules/webpack-dev-server/bin/webpack-dev-server.js -w --host=0.0.0.0"
+      "./node_modules/webpack-dev-server/bin/webpack-dev-server.js -w --host=0.0.0.0 --mode=development"
   },
   "jest": {
     "moduleFileExtensions": ["ts", "tsx", "js"],
