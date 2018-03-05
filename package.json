@@ -6,7 +6,6 @@
   "scripts": {
     "test": "jest",
     "tsc-watch": "./node_modules/typescript/bin/tsc -w",
-    "webpack": "./node_modules/webpack/bin/webpack.js",
     "build-dashboard":
       "webpack-dashboard -- node ./node_modules/webpack/bin/webpack.js --env.build --mode=production",
     "build":
