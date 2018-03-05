@@ -16,7 +16,8 @@ module.exports = function(env = {}) {
     },
     plugins: [
       new DashboardPlugin(),
-      new HtmlWebpackPlugin({ title: "Stats", template: "./src/index.html" }),
+      new HtmlWebpackPlugin({ title: "Stats", template: "./src/index.html" })
+      /*
       new webpack.optimize.CommonsChunkPlugin({
         name: "vendor",
         minChunks: module =>
@@ -25,7 +26,10 @@ module.exports = function(env = {}) {
       new webpack.optimize.CommonsChunkPlugin({
         name: "manifest"
       })
+      */
     ],
+
+    optimization: { splitChunks: { chunks: "all" } },
 
     // Enable sourcemaps for debugging webpack's output.
     devtool: "source-map",
