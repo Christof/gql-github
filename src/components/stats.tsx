@@ -1,7 +1,7 @@
 import { OverallPlot } from "./overall_plot";
 import * as React from "react";
 import { getCommitsPerAuthorInDateRange } from "../stats_helper";
-import * as Plotly from "plotly.js";
+import { Layout } from "plotly.js";
 import PlotlyChart from "react-plotlyjs-ts";
 import { CommitsOverTimePlot } from "./commits_over_time_plot";
 import { GithubData, GithubAuthorData, Github } from "../github";
@@ -64,10 +64,7 @@ export class Stats extends React.Component<Props, State> {
     );
   }
 
-  private getYearGraphLayout(
-    title: string,
-    data: GithubData
-  ): Partial<Plotly.Layout> {
+  private getYearGraphLayout(title: string, data: GithubData): Partial<Layout> {
     const overallCommitCount = sum(data.map(authorData => authorData.total));
 
     return {
