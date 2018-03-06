@@ -2,7 +2,6 @@ import * as React from "react";
 import { BrowserRouter, Route } from "react-router-dom";
 
 import { MenuButton } from "./menu_button";
-import { Stats } from "./stats";
 import { PersonalStats } from "./personal_stats";
 import { OrgStats } from "./org_stats";
 import { GithubButton } from "./github_button";
@@ -34,6 +33,35 @@ const styles = (_theme: Theme): StyleRules => ({
 interface State {
   github?: Github;
 }
+
+class DynamicImport<Component> extends React.Component<
+  { load: () => Promise<any> },
+  { component: Component }
+> {
+  state = {
+    component: null as any
+  };
+
+  componentWillMount() {
+    this.props.load().then(module =>
+      this.setState(() => ({
+        component: module.default
+      }))
+    );
+  }
+
+  render() {
+    return (this.props.children as any)(this.state.component);
+  }
+}
+
+const Stats = (props: any) => (
+  <DynamicImport load={() => import("./stats")}>
+    {(Component: any) =>
+      Component === null ? <h1>Loading!</h1> : <Component {...props} />
+    }
+  </DynamicImport>
+);
 
 class App extends React.Component<{} & WithStyles, State> {
   constructor(props: any) {
@@ -146,7 +174,7 @@ class App extends React.Component<{} & WithStyles, State> {
             />
           )}
         />
-        {this.renderRoute("/stats", Stats)}
+        {this.renderRoute("/stats", Stats as any)}
         {this.renderRoute("/personal-stats", PersonalStats)}
         {this.renderRoute("/org-stats", OrgStats)}
         {this.renderRoute("/retrieve-release-notes", ReleaseNotesRetriever)}

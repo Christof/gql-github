@@ -26,7 +26,7 @@ function sum(array: number[]) {
   return array.reduce((sum, value) => sum + value, 0);
 }
 
-export class Stats extends React.Component<Props, State> {
+export default class Stats extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
