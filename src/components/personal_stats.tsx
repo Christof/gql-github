@@ -46,7 +46,7 @@ export function runningAverage(data: number[], neighbours: number) {
   });
 }
 
-export class PersonalStats extends React.Component<Props, State> {
+export default class PersonalStats extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 

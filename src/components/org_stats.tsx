@@ -18,7 +18,7 @@ interface State {
   traces?: Partial<ScatterData>[];
 }
 
-export class OrgStats extends React.Component<Props, State> {
+export default class OrgStats extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {

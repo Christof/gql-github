@@ -2,8 +2,6 @@ import * as React from "react";
 import { BrowserRouter, Route } from "react-router-dom";
 
 import { MenuButton } from "./menu_button";
-import { PersonalStats } from "./personal_stats";
-import { OrgStats } from "./org_stats";
 import { GithubButton } from "./github_button";
 import { GithubCallback } from "./github_callback";
 import { ReleaseNotesRetriever } from "./release_notes_retriever";
@@ -57,6 +55,22 @@ class DynamicImport<Component> extends React.Component<
 
 const Stats = (props: any) => (
   <DynamicImport load={() => import("./stats")}>
+    {(Component: any) =>
+      Component === null ? <h1>Loading!</h1> : <Component {...props} />
+    }
+  </DynamicImport>
+);
+
+const PersonalStats = (props: any) => (
+  <DynamicImport load={() => import("./personal_stats")}>
+    {(Component: any) =>
+      Component === null ? <h1>Loading!</h1> : <Component {...props} />
+    }
+  </DynamicImport>
+);
+
+const OrgStats = (props: any) => (
+  <DynamicImport load={() => import("./org_stats")}>
     {(Component: any) =>
       Component === null ? <h1>Loading!</h1> : <Component {...props} />
     }
@@ -175,8 +189,8 @@ class App extends React.Component<{} & WithStyles, State> {
           )}
         />
         {this.renderRoute("/stats", Stats as any)}
-        {this.renderRoute("/personal-stats", PersonalStats)}
-        {this.renderRoute("/org-stats", OrgStats)}
+        {this.renderRoute("/personal-stats", PersonalStats as any)}
+        {this.renderRoute("/org-stats", OrgStats as any)}
         {this.renderRoute("/retrieve-release-notes", ReleaseNotesRetriever)}
         {this.renderRoute("/create-release-notes", ReleaseNotesCreator)}
       </div>
