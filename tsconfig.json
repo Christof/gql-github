@@ -2,7 +2,8 @@
   "include": ["./src/**/*"],
   "compilerOptions": {
     "target": "es2017",
-    "module": "commonjs",
+    "module": "esnext",
+    "moduleResolution": "node",
     "skipLibCheck": true,
     "jsx": "react",
     "sourceMap": true,

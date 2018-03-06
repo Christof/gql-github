@@ -12,6 +12,7 @@ module.exports = function(env = {}) {
     entry: "./src/index.tsx",
     output: {
       filename: "[name].js",
+      chunkFilename: "[name].chunk.js",
       path: __dirname + "/dist"
     },
     plugins: [
