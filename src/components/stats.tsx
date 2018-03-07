@@ -20,6 +20,8 @@ interface State {
   repositoryNames: string[];
   data: GithubData[];
   startedLoading: boolean;
+  PlotlyChart?: typeof PlotlyChart;
+  CommitsOverTimePlot?: typeof CommitsOverTimePlot;
 }
 
 function sum(array: number[]) {
@@ -35,6 +37,14 @@ export default class Stats extends React.Component<Props, State> {
       data: [],
       startedLoading: false
     };
+
+    import("react-plotlyjs-ts").then(module =>
+      this.setState({ PlotlyChart: module.default })
+    );
+
+    import("./commits_over_time_plot").then(module =>
+      this.setState({ CommitsOverTimePlot: module.CommitsOverTimePlot })
+    );
   }
 
   renderGraph(title: string, data: GithubData) {
@@ -45,7 +55,12 @@ export default class Stats extends React.Component<Props, State> {
 
     const authorTimeLine = data.map(author => this.traceForAuthor(author));
 
-    return <CommitsOverTimePlot title={title} data={authorTimeLine as any} />;
+    return (
+      <this.state.CommitsOverTimePlot
+        title={title}
+        data={authorTimeLine as any}
+      />
+    );
   }
 
   private getYearsArray() {
@@ -103,7 +118,7 @@ export default class Stats extends React.Component<Props, State> {
     });
 
     const layout = this.getYearGraphLayout(title, data);
-    return <PlotlyChart data={traces} layout={layout} />;
+    return <this.state.PlotlyChart data={traces} layout={layout} />;
   }
 
   private traceForAuthor(statsForAuthor: GithubAuthorData) {
@@ -161,7 +176,11 @@ export default class Stats extends React.Component<Props, State> {
   renderStatsSection() {
     if (!this.state.startedLoading) return null;
 
-    if (this.state.data.length === 0)
+    if (
+      this.state.data.length === 0 ||
+      this.state.PlotlyChart === undefined ||
+      this.state.CommitsOverTimePlot === undefined
+    )
       return (
         <Section>
           <Typography type="headline" paragraph>
