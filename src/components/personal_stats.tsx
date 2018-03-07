@@ -23,6 +23,7 @@ interface State {
   author: string;
   data: Repo[];
   startedLoading: boolean;
+  OverallPlot?: typeof OverallPlot;
   CommitsOverTimePlot?: typeof CommitsOverTimePlot;
 }
 
@@ -59,6 +60,9 @@ export default class PersonalStats extends React.Component<Props, State> {
 
     import("./commits_over_time_plot").then(module =>
       this.setState({ CommitsOverTimePlot: module.CommitsOverTimePlot })
+    );
+    import("./overall_plot").then(module =>
+      this.setState({ OverallPlot: module.OverallPlot })
     );
   }
 
@@ -155,7 +159,7 @@ export default class PersonalStats extends React.Component<Props, State> {
   renderRepositorySums() {
     const names = this.state.data.map(repo => repo.name);
     return (
-      <OverallPlot
+      <this.state.OverallPlot
         reposData={this.state.data.map(repo => [repo.data])}
         repositoryNames={names}
       />
@@ -165,7 +169,8 @@ export default class PersonalStats extends React.Component<Props, State> {
   renderStats() {
     if (
       this.state.data.length === 0 ||
-      this.state.CommitsOverTimePlot === undefined
+      this.state.CommitsOverTimePlot === undefined ||
+      this.state.OverallPlot === undefined
     )
       return <LinearProgress />;
 
