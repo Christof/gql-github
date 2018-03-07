@@ -23,6 +23,7 @@ interface State {
   author: string;
   data: Repo[];
   startedLoading: boolean;
+  CommitsOverTimePlot?: typeof CommitsOverTimePlot;
 }
 
 export function runningAverage(data: number[], neighbours: number) {
@@ -55,6 +56,10 @@ export default class PersonalStats extends React.Component<Props, State> {
     this.props.github
       .getUser()
       .then(user => this.setState({ author: user.login }));
+
+    import("./commits_over_time_plot").then(module =>
+      this.setState({ CommitsOverTimePlot: module.CommitsOverTimePlot })
+    );
   }
 
   async loadData(repositoriesPerOwner: RepositoriesPerOwner) {
@@ -142,7 +147,9 @@ export default class PersonalStats extends React.Component<Props, State> {
 
     const title = "Commits in Repositories";
 
-    return <CommitsOverTimePlot title={title} data={repositoryTimeline} />;
+    return (
+      <this.state.CommitsOverTimePlot title={title} data={repositoryTimeline} />
+    );
   }
 
   renderRepositorySums() {
@@ -156,7 +163,11 @@ export default class PersonalStats extends React.Component<Props, State> {
   }
 
   renderStats() {
-    if (this.state.data.length === 0) return <LinearProgress />;
+    if (
+      this.state.data.length === 0 ||
+      this.state.CommitsOverTimePlot === undefined
+    )
+      return <LinearProgress />;
 
     const total = this.state.data.reduce(
       (sum, repo) => sum + repo.data.total,
