@@ -17,10 +17,12 @@ class DynamicImport<Component> extends React.Component<
   }
 }
 
-export function createDynamicImport(load: () => Promise<any>) {
-  return (props: any) => (
+export function createDynamicImport<P, T extends React.Component>(
+  load: () => Promise<{ new (props: P): T }>
+): React.StatelessComponent<P> {
+  return (props: P) => (
     <DynamicImport load={load}>
-      {(Component: any) =>
+      {(Component: typeof React.Component) =>
         Component === null ? <h1>Loading!</h1> : <Component {...props} />
       }
     </DynamicImport>

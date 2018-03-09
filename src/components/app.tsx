@@ -121,11 +121,10 @@ class App extends React.Component<{} & WithStyles, State> {
     this.setState({ github: token ? this.createGithub(token) : undefined });
   }
 
-  renderRoute<
-    P,
-    T extends React.Component<P, React.ComponentState>,
-    C extends React.ComponentClass<P>
-  >(path: string, component: React.ClassType<P, T, C>) {
+  renderRoute<P>(
+    path: string,
+    component: React.StatelessComponent<P> | React.ComponentClass<P>
+  ) {
     return (
       <Route
         path={path}
@@ -153,9 +152,9 @@ class App extends React.Component<{} & WithStyles, State> {
             />
           )}
         />
-        {this.renderRoute("/stats", Stats as any)}
-        {this.renderRoute("/personal-stats", PersonalStats as any)}
-        {this.renderRoute("/org-stats", OrgStats as any)}
+        {this.renderRoute("/stats", Stats)}
+        {this.renderRoute("/personal-stats", PersonalStats)}
+        {this.renderRoute("/org-stats", OrgStats)}
         {this.renderRoute("/retrieve-release-notes", ReleaseNotesRetriever)}
         {this.renderRoute("/create-release-notes", ReleaseNotesCreator)}
       </div>
