@@ -60,13 +60,13 @@ function createDynamicImport(load: () => Promise<any>) {
 }
 
 const Stats = createDynamicImport(() =>
-  import("./stats").then(module => module.default)
+  import("./stats").then(module => module.Stats)
 );
 const PersonalStats = createDynamicImport(() =>
-  import("./personal_stats").then(module => module.default)
+  import("./personal_stats").then(module => module.PersonalStats)
 );
 const OrgStats = createDynamicImport(() =>
-  import("./org_stats").then(module => module.default)
+  import("./org_stats").then(module => module.OrgStats)
 );
 
 class App extends React.Component<{} & WithStyles, State> {
