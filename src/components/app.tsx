@@ -1,6 +1,5 @@
 import * as React from "react";
 import { BrowserRouter, Route } from "react-router-dom";
-
 import { MenuButton } from "./menu_button";
 import { GithubButton } from "./github_button";
 import { GithubCallback } from "./github_callback";
@@ -14,6 +13,7 @@ import { createHttpLink } from "apollo-link-http";
 import { setContext } from "apollo-link-context";
 import { ApolloClient } from "apollo-client";
 import { InMemoryCache } from "apollo-cache-inmemory";
+import { createDynamicImport } from "./dynamic_import";
 
 const styles = (_theme: Theme): StyleRules => ({
   root: {
@@ -30,33 +30,6 @@ const styles = (_theme: Theme): StyleRules => ({
 
 interface State {
   github?: Github;
-}
-
-class DynamicImport<Component> extends React.Component<
-  { load: () => Promise<Component> },
-  { component: Component }
-> {
-  state = {
-    component: null as any
-  };
-
-  componentWillMount() {
-    this.props.load().then(component => this.setState(() => ({ component })));
-  }
-
-  render() {
-    return (this.props.children as any)(this.state.component);
-  }
-}
-
-function createDynamicImport(load: () => Promise<any>) {
-  return (props: any) => (
-    <DynamicImport load={load}>
-      {(Component: any) =>
-        Component === null ? <h1>Loading!</h1> : <Component {...props} />
-      }
-    </DynamicImport>
-  );
 }
 
 const Stats = createDynamicImport(() =>
