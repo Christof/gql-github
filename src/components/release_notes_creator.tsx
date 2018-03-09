@@ -23,6 +23,7 @@ interface State {
   pullRequests: PullRequest[];
   releaseNote: string;
   releaseCreated: boolean;
+  Markdown?: typeof Markdown;
 }
 
 interface Props {
@@ -38,6 +39,10 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
       releaseNote: "",
       releaseCreated: false
     };
+
+    import("./markdown").then(module =>
+      this.setState({ Markdown: module.Markdown })
+    );
   }
 
   async getCommits() {
@@ -164,14 +169,18 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
   }
 
   renderReleaseNoteSection() {
-    if (this.state.releaseNote.length === 0) return <section />;
+    if (
+      this.state.releaseNote.length === 0 ||
+      this.state.Markdown === undefined
+    )
+      return <section />;
 
     return (
       <Section>
         <Typography type="headline" paragraph>
           Release Note
         </Typography>
-        <Markdown source={this.state.releaseNote} />
+        <this.state.Markdown source={this.state.releaseNote} />
         <Button raised onClick={() => this.postRelease()}>
           Create Release
         </Button>
