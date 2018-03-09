@@ -66,34 +66,33 @@ export class PersonalStats extends React.Component<Props, State> {
     );
   }
 
+  async getAuthorData(github: Github, repo: string) {
+    const stats = await github.getStats(repo);
+    if (stats === undefined || stats.length === 0 || stats.find === undefined) {
+      console.error("No stats found for", repo, stats);
+      return undefined;
+    }
+
+    const authorData = stats.find(
+      authorData => authorData.author.login === this.state.author
+    );
+
+    return { name: repo, data: authorData };
+  }
+
   async loadData(repositoriesPerOwner: RepositoriesPerOwner) {
     this.setState({ startedLoading: true });
 
     const data = [] as Repo[];
     for (let [owner, repositories] of repositoriesPerOwner.entries()) {
       const github = this.props.github.copyFor(owner);
-      await Promise.all(
-        repositories.map(async repo => {
-          const stats = await github.getStats(repo);
-          if (
-            stats === undefined ||
-            stats.length === 0 ||
-            stats.find === undefined
-          ) {
-            console.error("No stats found for", repo, stats);
-            return;
-          }
-          const authorData = stats.find(
-            authorData => authorData.author.login === this.state.author
-          );
-
-          if (authorData !== undefined)
-            data.push({ name: repo, data: authorData });
-        })
+      const authorDataForRepository = await Promise.all(
+        repositories.map(async repo => await this.getAuthorData(github, repo))
       );
+      data.push(...authorDataForRepository);
     }
 
-    this.setState({ data });
+    this.setState({ data: data.filter(item => item !== undefined) });
   }
 
   private traceForRepo(name: string, data: GithubAuthorData) {
