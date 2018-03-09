@@ -75,8 +75,12 @@ export class PersonalStats extends React.Component<Props, State> {
       await Promise.all(
         repositories.map(async repo => {
           const stats = await github.getStats(repo);
-          if (stats === undefined || stats.length === 0) {
-            console.error("No stats found for", repo);
+          if (
+            stats === undefined ||
+            stats.length === 0 ||
+            stats.find === undefined
+          ) {
+            console.error("No stats found for", repo, stats);
             return;
           }
           const authorData = stats.find(
