@@ -33,7 +33,7 @@ interface State {
 }
 
 class DynamicImport<Component> extends React.Component<
-  { load: () => Promise<any> },
+  { load: () => Promise<Component> },
   { component: Component }
 > {
   state = {
@@ -41,11 +41,7 @@ class DynamicImport<Component> extends React.Component<
   };
 
   componentWillMount() {
-    this.props.load().then(module =>
-      this.setState(() => ({
-        component: module.default
-      }))
-    );
+    this.props.load().then(component => this.setState(() => ({ component })));
   }
 
   render() {
@@ -53,28 +49,24 @@ class DynamicImport<Component> extends React.Component<
   }
 }
 
-const Stats = (props: any) => (
-  <DynamicImport load={() => import("./stats")}>
-    {(Component: any) =>
-      Component === null ? <h1>Loading!</h1> : <Component {...props} />
-    }
-  </DynamicImport>
-);
+function createDynamicImport(load: () => Promise<any>) {
+  return (props: any) => (
+    <DynamicImport load={load}>
+      {(Component: any) =>
+        Component === null ? <h1>Loading!</h1> : <Component {...props} />
+      }
+    </DynamicImport>
+  );
+}
 
-const PersonalStats = (props: any) => (
-  <DynamicImport load={() => import("./personal_stats")}>
-    {(Component: any) =>
-      Component === null ? <h1>Loading!</h1> : <Component {...props} />
-    }
-  </DynamicImport>
+const Stats = createDynamicImport(() =>
+  import("./stats").then(module => module.default)
 );
-
-const OrgStats = (props: any) => (
-  <DynamicImport load={() => import("./org_stats")}>
-    {(Component: any) =>
-      Component === null ? <h1>Loading!</h1> : <Component {...props} />
-    }
-  </DynamicImport>
+const PersonalStats = createDynamicImport(() =>
+  import("./personal_stats").then(module => module.default)
+);
+const OrgStats = createDynamicImport(() =>
+  import("./org_stats").then(module => module.default)
 );
 
 class App extends React.Component<{} & WithStyles, State> {
