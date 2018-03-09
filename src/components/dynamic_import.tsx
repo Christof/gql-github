@@ -23,7 +23,7 @@ export function createDynamicImport<P, T extends React.Component>(
   return (props: P) => (
     <DynamicImport load={load}>
       {(Component: typeof React.Component) =>
-        Component === null ? <h1>Loading!</h1> : <Component {...props} />
+        Component ? <Component {...props} /> : <h1>Loading!</h1>
       }
     </DynamicImport>
   );
