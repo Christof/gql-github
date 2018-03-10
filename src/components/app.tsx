@@ -142,7 +142,7 @@ class App extends React.Component<{} & WithStyles, State> {
 
   renderContent() {
     return (
-      <div style={{ margin: 16 }}>
+      <div id="content" style={{ margin: 16 }}>
         <Route
           path="/auth-callback"
           render={props => (

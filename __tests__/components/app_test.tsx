@@ -21,4 +21,12 @@ describe("App", function() {
       expect(appBar.find("GithubButton")).toHaveLength(1);
     });
   });
+
+  describe("Content", function() {
+    it("is an empty div if no route is selected", function() {
+      const wrapper = mount(<App />);
+
+      expect(wrapper.find("#content")).toHaveLength(1);
+    });
+  });
 });
