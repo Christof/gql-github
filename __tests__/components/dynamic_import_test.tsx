@@ -22,4 +22,23 @@ describe("createDynamicImport", function() {
       expect(wrapper.find("h1").text()).toEqual("Loading!");
     });
   });
+
+  describe("after load is finished", function() {
+    it("shows content of TestComponent", async function() {
+      const Component = createDynamicImport<{ n: number }, TestComponent>(
+        () =>
+          new Promise<typeof TestComponent>(resolve => {
+            resolve(TestComponent);
+          })
+      );
+
+      const wrapper = mount(<Component n={1} />);
+
+      await waitImmediate();
+      wrapper.update();
+
+      expect(wrapper.find("div")).toHaveLength(1);
+      expect(wrapper.find("div").text()).toEqual("Number: 1");
+    });
+  });
 });
