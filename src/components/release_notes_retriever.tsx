@@ -13,6 +13,7 @@ interface State {
   releases?: GithubRelease[];
   release?: GithubRelease;
   releaseDescription?: string;
+  Markdown?: typeof Markdown;
 }
 
 interface Props {
@@ -23,6 +24,10 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {};
+
+    import("./markdown").then(module =>
+      this.setState({ Markdown: module.Markdown })
+    );
   }
 
   async selectRepository(repo: string) {
@@ -57,14 +62,15 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
   }
 
   renderReleaseSection() {
-    if (!this.state.releaseDescription) return <section />;
+    if (!this.state.releaseDescription || this.state.Markdown === undefined)
+      return <section />;
 
     return (
       <Section>
         <Typography type="headline" paragraph>
           {this.state.release.tagName}
         </Typography>
-        <Markdown source={this.state.releaseDescription} />
+        <this.state.Markdown source={this.state.releaseDescription} />
         <CopyToClipboard text={this.state.releaseDescription} />
       </Section>
     );

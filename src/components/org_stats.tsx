@@ -16,6 +16,7 @@ interface State {
   data: GithubData[];
   startedLoading: boolean;
   traces?: Partial<ScatterData>[];
+  CommitsOverTimePlot?: typeof CommitsOverTimePlot;
 }
 
 export class OrgStats extends React.Component<Props, State> {
@@ -25,6 +26,10 @@ export class OrgStats extends React.Component<Props, State> {
       data: [],
       startedLoading: false
     };
+
+    import("./commits_over_time_plot").then(module =>
+      this.setState({ CommitsOverTimePlot: module.CommitsOverTimePlot })
+    );
   }
 
   private calculateWeeklyCommits(
@@ -101,7 +106,11 @@ export class OrgStats extends React.Component<Props, State> {
   }
 
   renderStatsSection() {
-    if (!this.state.startedLoading) return null;
+    if (
+      !this.state.startedLoading ||
+      this.state.CommitsOverTimePlot === undefined
+    )
+      return null;
 
     return (
       <Section>
@@ -111,7 +120,7 @@ export class OrgStats extends React.Component<Props, State> {
         {this.state.data.length === 0 ? (
           <LinearProgress />
         ) : (
-          <CommitsOverTimePlot
+          <this.state.CommitsOverTimePlot
             title="Commits per Author"
             data={this.state.traces}
           />

@@ -1,10 +1,6 @@
 import * as React from "react";
 import { BrowserRouter, Route } from "react-router-dom";
-
 import { MenuButton } from "./menu_button";
-import { Stats } from "./stats";
-import { PersonalStats } from "./personal_stats";
-import { OrgStats } from "./org_stats";
 import { GithubButton } from "./github_button";
 import { GithubCallback } from "./github_callback";
 import { ReleaseNotesRetriever } from "./release_notes_retriever";
@@ -17,6 +13,7 @@ import { createHttpLink } from "apollo-link-http";
 import { setContext } from "apollo-link-context";
 import { ApolloClient } from "apollo-client";
 import { InMemoryCache } from "apollo-cache-inmemory";
+import { createDynamicImport } from "./dynamic_import";
 
 const styles = (_theme: Theme): StyleRules => ({
   root: {
@@ -35,7 +32,17 @@ interface State {
   github?: Github;
 }
 
-class App extends React.Component<{} & WithStyles, State> {
+const Stats = createDynamicImport(() =>
+  import("./stats").then(module => module.Stats)
+);
+const PersonalStats = createDynamicImport(() =>
+  import("./personal_stats").then(module => module.PersonalStats)
+);
+const OrgStats = createDynamicImport(() =>
+  import("./org_stats").then(module => module.OrgStats)
+);
+
+export class RawApp extends React.Component<{} & WithStyles, State> {
   constructor(props: any) {
     super(props);
 
@@ -52,7 +59,7 @@ class App extends React.Component<{} & WithStyles, State> {
       return {
         headers: {
           ...headers,
-          authorization: token ? `Bearer ${token}` : null
+          authorization: `Bearer ${token}`
         }
       };
     });
@@ -111,14 +118,14 @@ class App extends React.Component<{} & WithStyles, State> {
 
   onChangeToken(token: string) {
     window.localStorage.githubToken = token;
+
     this.setState({ github: token ? this.createGithub(token) : undefined });
   }
 
-  renderRoute<
-    P,
-    T extends React.Component<P, React.ComponentState>,
-    C extends React.ComponentClass<P>
-  >(path: string, component: React.ClassType<P, T, C>) {
+  renderRoute<P>(
+    path: string,
+    component: React.StatelessComponent<P> | React.ComponentClass<P>
+  ) {
     return (
       <Route
         path={path}
@@ -136,7 +143,7 @@ class App extends React.Component<{} & WithStyles, State> {
 
   renderContent() {
     return (
-      <div style={{ margin: 16 }}>
+      <div id="content" style={{ margin: 16 }}>
         <Route
           path="/auth-callback"
           render={props => (
@@ -170,5 +177,4 @@ class App extends React.Component<{} & WithStyles, State> {
   }
 }
 
-const AppStyles = withStyles(styles)<{}>(App);
-export { AppStyles as App };
+export const App = withStyles(styles)<{}>(RawApp);
