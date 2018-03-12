@@ -5,6 +5,7 @@ import { waitImmediate } from "../helper";
 import { MemoryRouter, Route } from "react-router";
 
 import * as ReactRouterDom from "react-router-dom";
+import { GithubCallback } from "../../src/components/github_callback";
 
 describe("App", function() {
   describe("AppBar", function() {
@@ -117,7 +118,7 @@ describe("App", function() {
           window.localStorage.githubToken = "token";
 
           const wrapper = mount(
-            <MemoryRouter initialEntries={[entry.route]} initialIndex={0}>
+            <MemoryRouter initialEntries={[entry.route]}>
               <App />
             </MemoryRouter>
           );
@@ -132,7 +133,7 @@ describe("App", function() {
 
         it(`shows nothing if route is active but not logged in`, async function() {
           const wrapper = mount(
-            <MemoryRouter initialEntries={[entry.route]} initialIndex={0}>
+            <MemoryRouter initialEntries={[entry.route]}>
               <App />
             </MemoryRouter>
           );
@@ -142,6 +143,53 @@ describe("App", function() {
 
           expect(wrapper.find(entry.component)).toHaveLength(0);
         });
+      });
+    });
+  });
+
+  describe("GithubCallback", function() {
+    const originalBrowserRouter = ReactRouterDom.BrowserRouter;
+    beforeAll(function() {
+      // Redefine BrowserRouter to only render its children
+      // otherwise MemoryRouter won't work
+      (ReactRouterDom.BrowserRouter as any) = ({ children }) => (
+        <div>{children}</div>
+      );
+    });
+
+    afterAll(function() {
+      (ReactRouterDom.BrowserRouter as any) = originalBrowserRouter;
+    });
+
+    it("renders GithubCallback for /auth-callback route", function() {
+      const wrapper = mount(
+        <MemoryRouter initialEntries={["/auth-callback"]}>
+          <App />
+        </MemoryRouter>
+      );
+
+      const githubCallback = wrapper.find("GithubCallback");
+      expect(githubCallback).toHaveLength(1);
+    });
+
+    describe("onChangeToken", function() {
+      afterEach(function() {
+        window.localStorage.clear();
+      });
+
+      it("calls App.onChangeToken and sets local storage", function() {
+        window.localStorage.githubToken = "my-token";
+        const wrapper = mount(
+          <MemoryRouter initialEntries={["/auth-callback"]}>
+            <App />
+          </MemoryRouter>
+        );
+
+        const newToken = undefined;
+        const githubCallback = wrapper.find(GithubCallback);
+        githubCallback.prop("onChangeToken")(newToken);
+
+        expect(window.localStorage.githubToken).toEqual(newToken);
       });
     });
   });
