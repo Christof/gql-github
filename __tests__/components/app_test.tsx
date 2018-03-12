@@ -51,5 +51,24 @@ describe("App", function() {
 
       expect(rawAppWrapper.state()).toHaveProperty("github");
     });
+
+    describe("token in localStorage", function() {
+      it("creates a Github instance in constructor", function() {
+        window.localStorage.githubToken = "token";
+        (global as any).fetch = function() {
+          return new Promise(resolve =>
+            resolve({ text: () => new Promise(() => {}) })
+          );
+        };
+
+        const wrapper = shallow(<App />);
+
+        const rawApp = wrapper.find("RawApp");
+        expect(rawApp).toHaveLength(1);
+
+        const rawAppWrapper = rawApp.dive();
+        expect(rawAppWrapper.state()).toHaveProperty("github");
+      });
+    });
   });
 });
