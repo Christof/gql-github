@@ -56,6 +56,8 @@ describe("App", function() {
     });
 
     describe("token in localStorage", function() {
+      afterEach(() => window.localStorage.clear());
+
       it("creates a Github instance in constructor", function() {
         window.localStorage.githubToken = "token";
         (global as any).fetch = function() {
@@ -106,7 +108,14 @@ describe("App", function() {
           (ReactRouterDom.BrowserRouter as any) = originalBrowserRouter;
         });
 
+        afterEach(function() {
+          window.localStorage.clear();
+        });
+
         it(`shows ${entry.component} if route is active`, async function() {
+          // ensure that we are logged in
+          window.localStorage.githubToken = "token";
+
           const wrapper = mount(
             <MemoryRouter initialEntries={[entry.route]} initialIndex={0}>
               <App />
@@ -119,6 +128,19 @@ describe("App", function() {
           wrapper.update();
 
           expect(wrapper.find(entry.component)).toHaveLength(1);
+        });
+
+        it(`shows nothing if route is active but not logged in`, async function() {
+          const wrapper = mount(
+            <MemoryRouter initialEntries={[entry.route]} initialIndex={0}>
+              <App />
+            </MemoryRouter>
+          );
+
+          await waitImmediate();
+          wrapper.update();
+
+          expect(wrapper.find(entry.component)).toHaveLength(0);
         });
       });
     });
