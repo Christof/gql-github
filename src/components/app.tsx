@@ -42,7 +42,7 @@ const OrgStats = createDynamicImport(() =>
   import("./org_stats").then(module => module.OrgStats)
 );
 
-class App extends React.Component<{} & WithStyles, State> {
+export class RawApp extends React.Component<{} & WithStyles, State> {
   constructor(props: any) {
     super(props);
 
@@ -176,5 +176,4 @@ class App extends React.Component<{} & WithStyles, State> {
   }
 }
 
-const AppStyles = withStyles(styles)<{}>(App);
-export { AppStyles as App };
+export const App = withStyles(styles)<{}>(RawApp);
