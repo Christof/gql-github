@@ -2,6 +2,9 @@ import * as React from "react";
 import { App, RawApp } from "../../src/components/app";
 import { shallow, mount } from "enzyme";
 import { waitImmediate } from "../helper";
+import { MemoryRouter, Route } from "react-router";
+
+import * as ReactRouterDom from "react-router-dom";
 
 describe("App", function() {
   describe("AppBar", function() {
@@ -31,7 +34,7 @@ describe("App", function() {
   });
 
   describe("GithubButton", function() {
-    it("onChangeToken sets the token and creates Github instance", async function() {
+    it("onChangeToken sets the token and creates Github instance", function() {
       (global as any).fetch = function() {
         return new Promise(resolve =>
           resolve({ text: () => new Promise(() => {}) })
@@ -68,6 +71,31 @@ describe("App", function() {
 
         const rawAppWrapper = rawApp.dive();
         expect(rawAppWrapper.state()).toHaveProperty("github");
+      });
+    });
+  });
+
+  ["Stats" /*"PersonalStats", "OrgStats" */].forEach(stat => {
+    describe(stat, function() {
+      it("shows the component if the route is active", async function() {
+        // Redefine BrowserRouter to only render its children
+        // otherwise MemoryRouter won't work
+        (ReactRouterDom.BrowserRouter as any) = ({ children }) => (
+          <div>{children}</div>
+        );
+
+        const wrapper = mount(
+          <MemoryRouter initialEntries={["/stats"]} initialIndex={0}>
+            <App />
+          </MemoryRouter>
+        );
+
+        expect(wrapper.find(<h1>Loading!</h1>));
+
+        await waitImmediate();
+        wrapper.update();
+
+        expect(wrapper.find("Stats")).toHaveLength(1);
       });
     });
   });
