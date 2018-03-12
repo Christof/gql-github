@@ -1,5 +1,5 @@
 import * as React from "react";
-import { App } from "../../src/components/app";
+import { App, RawApp } from "../../src/components/app";
 import { shallow, mount } from "enzyme";
 import { waitImmediate } from "../helper";
 
@@ -27,6 +27,29 @@ describe("App", function() {
       const wrapper = mount(<App />);
 
       expect(wrapper.find("#content")).toHaveLength(1);
+    });
+  });
+
+  describe("GithubButton", function() {
+    it("onChangeToken sets the token and creates Github instance", async function() {
+      (global as any).fetch = function() {
+        return new Promise(resolve =>
+          resolve({ text: () => new Promise(() => {}) })
+        );
+      };
+      const wrapper = shallow(<App />);
+      const rawApp = wrapper.find("RawApp");
+      expect(rawApp).toHaveLength(1);
+      const rawAppWrapper = rawApp.dive();
+
+      const githubButton = rawAppWrapper.find("GithubButton");
+      expect(githubButton).toHaveLength(1);
+      expect(rawAppWrapper.state("github")).toBeUndefined();
+
+      const token = "token";
+      (githubButton.prop("onChangeToken") as any)(token);
+
+      expect(rawAppWrapper.state()).toHaveProperty("github");
     });
   });
 });

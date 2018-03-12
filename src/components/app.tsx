@@ -118,6 +118,7 @@ export class RawApp extends React.Component<{} & WithStyles, State> {
 
   onChangeToken(token: string) {
     window.localStorage.githubToken = token;
+
     this.setState({ github: token ? this.createGithub(token) : undefined });
   }
 
