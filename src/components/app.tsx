@@ -59,7 +59,7 @@ export class RawApp extends React.Component<{} & WithStyles, State> {
       return {
         headers: {
           ...headers,
-          authorization: token ? `Bearer ${token}` : null
+          authorization: `Bearer ${token}`
         }
       };
     });
