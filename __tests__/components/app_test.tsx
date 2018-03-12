@@ -75,27 +75,51 @@ describe("App", function() {
     });
   });
 
-  ["Stats" /*"PersonalStats", "OrgStats" */].forEach(stat => {
-    describe(stat, function() {
-      it("shows the component if the route is active", async function() {
-        // Redefine BrowserRouter to only render its children
-        // otherwise MemoryRouter won't work
-        (ReactRouterDom.BrowserRouter as any) = ({ children }) => (
-          <div>{children}</div>
-        );
+  [
+    { component: "Stats", route: "/stats" },
+    { component: "PersonalStats", route: "/personal-stats" },
+    { component: "OrgStats", route: "/org-stats" }
+  ].forEach(entry => {
+    describe(entry.component, function() {
+      it(`shows a MenuButton to route ${entry.route}`, function() {
+        const wrapper = mount(<App />);
+        const appBar = wrapper.find("WithStyles(AppBar)");
+        expect(appBar).toHaveLength(1);
 
-        const wrapper = mount(
-          <MemoryRouter initialEntries={["/stats"]} initialIndex={0}>
-            <App />
-          </MemoryRouter>
-        );
+        const button = appBar
+          .find("MenuButton")
+          .filterWhere(b => b.prop("to") === entry.route);
+        expect(button).toHaveLength(1);
+      });
 
-        expect(wrapper.find(<h1>Loading!</h1>));
+      describe("with faked BrowserRouter", function() {
+        const originalBrowserRouter = ReactRouterDom.BrowserRouter;
+        beforeAll(function() {
+          // Redefine BrowserRouter to only render its children
+          // otherwise MemoryRouter won't work
+          (ReactRouterDom.BrowserRouter as any) = ({ children }) => (
+            <div>{children}</div>
+          );
+        });
 
-        await waitImmediate();
-        wrapper.update();
+        afterAll(function() {
+          (ReactRouterDom.BrowserRouter as any) = originalBrowserRouter;
+        });
 
-        expect(wrapper.find("Stats")).toHaveLength(1);
+        it(`shows ${entry.component} if route is active`, async function() {
+          const wrapper = mount(
+            <MemoryRouter initialEntries={[entry.route]} initialIndex={0}>
+              <App />
+            </MemoryRouter>
+          );
+
+          expect(wrapper.find(<h1>Loading!</h1>));
+
+          await waitImmediate();
+          wrapper.update();
+
+          expect(wrapper.find(entry.component)).toHaveLength(1);
+        });
       });
     });
   });
