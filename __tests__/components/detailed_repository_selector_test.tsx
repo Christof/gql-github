@@ -66,6 +66,20 @@ describe("DetailedRepositorySelector", function() {
       (owner1CheckboxWrapper.prop("onChange") as any)(event, checked);
     }
 
+    function getCheckboxForRepository(repoName: string) {
+      const repo1FormControlLabel = wrapper
+        .find("WithStyles(FormControlLabel)")
+        .findWhere(f => f.prop("label") === repoName);
+      expect(repo1FormControlLabel).toHaveLength(1);
+      return shallow(repo1FormControlLabel.prop("control"));
+    }
+
+    function clickAcceptButton() {
+      const acceptButton = wrapper.find("WithStyles(Button)");
+      expect(acceptButton).toHaveLength(1);
+      (acceptButton.prop("onClick") as any)();
+    }
+
     it("shows checkboxes for all owners ", async function() {
       expect(wrapper.find("WithStyles(LinearProgress)")).toHaveLength(0);
 
@@ -93,9 +107,7 @@ describe("DetailedRepositorySelector", function() {
       await waitImmediate();
       wrapper.update();
 
-      const acceptButton = wrapper.find("WithStyles(Button)");
-      expect(acceptButton).toHaveLength(1);
-      (acceptButton.prop("onClick") as any)();
+      clickAcceptButton();
 
       const expected = new Map<string, string[]>();
       expected.set(owner1, ["repo1", "repo2"]);
@@ -108,16 +120,10 @@ describe("DetailedRepositorySelector", function() {
       await waitImmediate();
       wrapper.update();
 
-      const repo1FormControlLabel = wrapper
-        .find("WithStyles(FormControlLabel)")
-        .findWhere(f => f.prop("label") === "repo1");
-      expect(repo1FormControlLabel).toHaveLength(1);
-      const checkbox = shallow(repo1FormControlLabel.prop("control"));
+      const checkbox = getCheckboxForRepository("repo1");
       (checkbox.prop("onChange") as any)(null, false);
 
-      const acceptButton = wrapper.find("WithStyles(Button)");
-      expect(acceptButton).toHaveLength(1);
-      (acceptButton.prop("onClick") as any)();
+      clickAcceptButton();
 
       const expected = new Map<string, string[]>();
       expected.set(owner1, ["repo2"]);
