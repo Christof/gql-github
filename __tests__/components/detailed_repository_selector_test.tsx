@@ -3,7 +3,7 @@ import {
   DetailedRepositorySelector,
   RepositoriesPerOwner
 } from "../../src/components/detailed_repository_selector";
-import { shallow, mount } from "enzyme";
+import { shallow, mount, ShallowWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
 import { Github } from "../../src/github";
 
@@ -27,8 +27,10 @@ describe("DetailedRepositorySelector", function() {
     let github: Github;
     const owner1 = "owner1";
     const owner2 = "owner2";
+    let wrapper: ShallowWrapper<any, any>;
+    let repositoresPerOwner: RepositoriesPerOwner;
 
-    beforeEach(function() {
+    beforeEach(async function() {
       github = new Github("token", {} as any);
       github.getOwners = jest.fn(() => Promise.resolve([owner1, owner2]));
       (github.copyFor as jest.Mock<Github>).mockReturnValue(github);
@@ -39,16 +41,19 @@ describe("DetailedRepositorySelector", function() {
       (github.getRepositoryNames as jest.Mock<string[]>).mockReturnValueOnce([
         "repo3"
       ]);
-    });
 
-    it("shows checkboxes for all owners ", async function() {
-      const wrapper = shallow(
-        <DetailedRepositorySelector github={github} onChange={() => {}} />
+      wrapper = shallow(
+        <DetailedRepositorySelector
+          github={github}
+          onChange={data => (repositoresPerOwner = data)}
+        />
       );
 
       await waitImmediate();
       wrapper.update();
+    });
 
+    it("shows checkboxes for all owners ", async function() {
       expect(wrapper.find("WithStyles(LinearProgress)")).toHaveLength(0);
 
       const labels = wrapper.find("WithStyles(FormControlLabel)");
@@ -58,17 +63,6 @@ describe("DetailedRepositorySelector", function() {
     });
 
     it("shows checkboxes for all repositories if owner is checked", async function() {
-      let repositoresPerOwner: RepositoriesPerOwner;
-      const wrapper = shallow(
-        <DetailedRepositorySelector
-          github={github}
-          onChange={data => (repositoresPerOwner = data)}
-        />
-      );
-
-      await waitImmediate();
-      wrapper.update();
-
       expect(wrapper.find("WithStyles(LinearProgress)")).toHaveLength(0);
 
       const owner1CheckboxWrapper = shallow(
