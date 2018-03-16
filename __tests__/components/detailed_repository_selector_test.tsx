@@ -129,5 +129,28 @@ describe("DetailedRepositorySelector", function() {
       expected.set(owner1, ["repo2"]);
       expect(repositoresPerOwner).toEqual(expected);
     });
+
+    it("allows deselecting and reselecting repositories", async function() {
+      checkOwner1();
+
+      await waitImmediate();
+      wrapper.update();
+
+      let checkbox = getCheckboxForRepository("repo2");
+      (checkbox.prop("onChange") as any)(null, false);
+
+      wrapper.update();
+
+      checkbox = getCheckboxForRepository("repo2");
+      expect(checkbox.prop("checked")).toBe(false);
+
+      (checkbox.prop("onChange") as any)(null, true);
+
+      clickAcceptButton();
+
+      const expected = new Map<string, string[]>();
+      expected.set(owner1, ["repo1", "repo2"]);
+      expect(repositoresPerOwner).toEqual(expected);
+    });
   });
 });
