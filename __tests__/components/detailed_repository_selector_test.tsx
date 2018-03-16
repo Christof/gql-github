@@ -101,5 +101,27 @@ describe("DetailedRepositorySelector", function() {
       expected.set(owner1, ["repo1", "repo2"]);
       expect(repositoresPerOwner).toEqual(expected);
     });
+
+    it("allows deselecting repositories", async function() {
+      checkOwner1();
+
+      await waitImmediate();
+      wrapper.update();
+
+      const repo1FormControlLabel = wrapper
+        .find("WithStyles(FormControlLabel)")
+        .findWhere(f => f.prop("label") === "repo1");
+      expect(repo1FormControlLabel).toHaveLength(1);
+      const checkbox = shallow(repo1FormControlLabel.prop("control"));
+      (checkbox.prop("onChange") as any)(null, false);
+
+      const acceptButton = wrapper.find("WithStyles(Button)");
+      expect(acceptButton).toHaveLength(1);
+      (acceptButton.prop("onClick") as any)();
+
+      const expected = new Map<string, string[]>();
+      expected.set(owner1, ["repo2"]);
+      expect(repositoresPerOwner).toEqual(expected);
+    });
   });
 });
