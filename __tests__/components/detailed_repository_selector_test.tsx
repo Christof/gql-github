@@ -53,6 +53,19 @@ describe("DetailedRepositorySelector", function() {
       wrapper.update();
     });
 
+    function checkOwner1() {
+      const owner1CheckboxWrapper = shallow(
+        wrapper
+          .find("WithStyles(FormControlLabel)")
+          .at(0)
+          .prop("control")
+      );
+
+      const event = null;
+      const checked = true;
+      (owner1CheckboxWrapper.prop("onChange") as any)(event, checked);
+    }
+
     it("shows checkboxes for all owners ", async function() {
       expect(wrapper.find("WithStyles(LinearProgress)")).toHaveLength(0);
 
@@ -65,22 +78,20 @@ describe("DetailedRepositorySelector", function() {
     it("shows checkboxes for all repositories if owner is checked", async function() {
       expect(wrapper.find("WithStyles(LinearProgress)")).toHaveLength(0);
 
-      const owner1CheckboxWrapper = shallow(
-        wrapper
-          .find("WithStyles(FormControlLabel)")
-          .at(0)
-          .prop("control")
-      );
-
-      const event = null;
-      const checked = true;
-      (owner1CheckboxWrapper.prop("onChange") as any)(event, checked);
+      checkOwner1();
 
       await waitImmediate();
       wrapper.update();
 
       const labels = wrapper.find("WithStyles(FormControlLabel)");
       expect(labels).toHaveLength(4);
+    });
+
+    it("passes selected repositories per owner to callback on button click", async function() {
+      checkOwner1();
+
+      await waitImmediate();
+      wrapper.update();
 
       const acceptButton = wrapper.find("WithStyles(Button)");
       expect(acceptButton).toHaveLength(1);
