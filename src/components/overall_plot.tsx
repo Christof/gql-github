@@ -2,6 +2,7 @@ import * as React from "react";
 import { GithubData } from "../github";
 import PlotlyChart from "react-plotlyjs-ts";
 import { ScatterData, Layout } from "plotly.js";
+import { unique, flatten } from "../array_helper";
 
 interface Props {
   reposData: GithubData[];
@@ -11,14 +12,6 @@ interface Props {
 interface State {
   data: Partial<ScatterData>[];
   layout: Partial<Layout>;
-}
-
-function flatten<T>(arrayOfArrays: T[][]): T[] {
-  return [].concat.apply([], arrayOfArrays);
-}
-
-function unique<T>(arrayWithDuplicates: T[]): T[] {
-  return [...new Set(arrayWithDuplicates)];
 }
 
 export class OverallPlot extends React.Component<Props, State> {
