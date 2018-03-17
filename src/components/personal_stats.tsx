@@ -97,8 +97,8 @@ export class PersonalStats extends React.Component<Props, State> {
 
   private traceForRepo(name: string, data: GithubAuthorData) {
     return {
-      type: "scatter",
-      mode: "lines",
+      type: "scatter" as any, // any to prevent type error with ScatterData
+      mode: "lines" as any, // any to prevent type error with ScatterData
       name,
       x: data.weeks.map((week: any) => new Date(week.w * 1000)),
       y: data.weeks.map((week: any) => week.c)

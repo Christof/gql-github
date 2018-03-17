@@ -1,9 +1,10 @@
 import * as React from "react";
 import PlotlyChart from "react-plotlyjs-ts";
+import { ScatterData } from "plotly.js";
 
 interface Props {
   title: string;
-  data: any;
+  data: Partial<ScatterData>[];
 }
 
 export class CommitsOverTimePlot extends React.Component<Props, {}> {
