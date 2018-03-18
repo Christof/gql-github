@@ -53,5 +53,43 @@ describe("ReleaseNotesCreator", function() {
       expect(dropdowns.at(0).prop("options")).toEqual(tagNames);
       expect(dropdowns.at(1).prop("options")).toEqual(tagNames);
     });
+
+    describe("after selecting a range", function() {
+      const commits = [
+        {
+          author: { login: "author1" },
+          commit: { message: "commit message 1" }
+        },
+        {
+          author: { login: "author1" },
+          commit: {
+            message:
+              "Merge pull request #8 from Christof/build\n\nUpdate webpack."
+          }
+        }
+      ];
+
+      beforeEach(async function() {
+        (github.compare as jest.Mock).mockReturnValue({ commits });
+        (wrapper.find("WithStyles(Button)").prop("onClick") as any)();
+
+        await waitImmediate();
+        wrapper.update();
+      });
+
+      it("shows the Adjust Categories section", function() {
+        expect(wrapper.find("WithStyles(Typography)")).toHaveLength(3);
+        expect(
+          wrapper
+            .find("WithStyles(Typography)")
+            .at(1)
+            .prop("children")
+        ).toEqual("Adjust Categories");
+
+        expect(wrapper.find("PullRequestChangeCategorySelector")).toHaveLength(
+          1
+        );
+      });
+    });
   });
 });
