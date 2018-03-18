@@ -78,7 +78,7 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
   renderTagsSection() {
     if (!this.state.repo || !this.state.tags) return <section />;
 
-    const releaseNames = this.state.tags.map(release => release.name);
+    const tagNames = this.state.tags.map(tag => tag.name);
     return (
       <Section>
         <Typography type="headline" paragraph>
@@ -86,12 +86,12 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
         </Typography>
         <Dropdown
           label="Start Tag"
-          options={releaseNames}
+          options={tagNames}
           onSelect={tagName => this.setState({ startTag: tagName })}
         />
         <Dropdown
           label="End Tag"
-          options={releaseNames}
+          options={tagNames}
           onSelect={tagName => this.setState({ releaseTag: tagName })}
         />
         <Button raised onClick={() => this.getCommits()}>
