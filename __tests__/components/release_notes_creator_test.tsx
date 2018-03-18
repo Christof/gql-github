@@ -70,11 +70,23 @@ describe("ReleaseNotesCreator", function() {
       ];
 
       beforeEach(async function() {
+        const dropdowns = wrapper.find("Dropdown");
+        (dropdowns.at(0).prop("onSelect") as any)("v0.0.1");
+        (dropdowns.at(1).prop("onSelect") as any)("v0.0.2");
+
         (github.compare as jest.Mock).mockReturnValue({ commits });
         (wrapper.find("WithStyles(Button)").prop("onClick") as any)();
 
         await waitImmediate();
         wrapper.update();
+      });
+
+      it("calls github.compare with repository, start and end tag", function() {
+        expect(github.compare).toHaveBeenCalledWith(
+          "repo1",
+          "v0.0.1",
+          "v0.0.2"
+        );
       });
 
       it("shows the Adjust Categories section", function() {
