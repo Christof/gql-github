@@ -1,5 +1,8 @@
 import * as React from "react";
-import { ReleaseNotesCreator } from "../../src/components/release_notes_creator";
+import {
+  ReleaseNotesCreator,
+  TransitionLeft
+} from "../../src/components/release_notes_creator";
 import { shallow, ShallowWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
 import { Github } from "../../src/github";
@@ -189,5 +192,15 @@ describe("ReleaseNotesCreator", function() {
         expect(snackbar.prop("open")).toBe(false);
       });
     });
+  });
+});
+
+describe("TransitionLeft", function() {
+  it("is a Slide with direction left", function() {
+    const props: any = {};
+    const wrapper = shallow(<TransitionLeft {...props} />);
+
+    expect(wrapper.find("WithTheme(Slide)")).toHaveLength(1);
+    expect(wrapper.prop("direction")).toEqual("left");
   });
 });

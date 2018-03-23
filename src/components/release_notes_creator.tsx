@@ -10,7 +10,7 @@ import { Button, Snackbar, Slide, Typography } from "material-ui";
 import { SlideProps } from "material-ui/transitions";
 import { DefaultGrid } from "./default_grid";
 
-function TransitionLeft(props: SlideProps) {
+export function TransitionLeft(props: SlideProps) {
   return <Slide direction="left" {...props} />;
 }
 
