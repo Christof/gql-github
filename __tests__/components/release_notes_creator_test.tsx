@@ -174,6 +174,20 @@ describe("ReleaseNotesCreator", function() {
 
         expect(wrapper.find("WithStyles(Snackbar)").prop("open")).toBe(false);
       });
+
+      it("doesn't open a snackbar after unsuccessful release creation", async function() {
+        (github.postRelease as jest.Mock).mockReturnValue({ ok: false });
+
+        const buttons = wrapper.find("WithStyles(Button)");
+        (buttons.at(1).prop("onClick") as any)();
+
+        await waitImmediate();
+        wrapper.update();
+
+        const snackbar = wrapper.find("WithStyles(Snackbar)");
+        expect(snackbar).toHaveLength(1);
+        expect(snackbar.prop("open")).toBe(false);
+      });
     });
   });
 });
