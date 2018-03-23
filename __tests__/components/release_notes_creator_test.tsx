@@ -98,8 +98,24 @@ describe("ReleaseNotesCreator", function() {
             .prop("children")
         ).toEqual("Adjust Categories");
 
-        expect(wrapper.find("PullRequestChangeCategorySelector")).toHaveLength(
-          1
+        const selector = wrapper.find("PullRequestChangeCategorySelector");
+        expect(selector).toHaveLength(1);
+      });
+
+      it("shows the release note section", function() {
+        expect(
+          wrapper
+            .find("WithStyles(Typography)")
+            .at(2)
+            .prop("children")
+        ).toEqual("Release Note");
+      });
+
+      it("shows the release note as markdown", function() {
+        const markdown = wrapper.find("Markdown");
+        expect(markdown).toHaveLength(1);
+        expect(markdown.prop("source")).toEqual(
+          "**Basic Changes:**\n\n- Update webpack. (#8)\n\n"
         );
       });
     });
