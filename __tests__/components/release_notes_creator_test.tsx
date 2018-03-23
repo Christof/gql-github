@@ -3,6 +3,7 @@ import { ReleaseNotesCreator } from "../../src/components/release_notes_creator"
 import { shallow, ShallowWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
 import { Github } from "../../src/github";
+import { PullRequest, ChangeCategory } from "../../src/pull_request";
 
 jest.mock("../../src/github");
 
@@ -116,6 +117,21 @@ describe("ReleaseNotesCreator", function() {
         expect(markdown).toHaveLength(1);
         expect(markdown.prop("source")).toEqual(
           "**Basic Changes:**\n\n- Update webpack. (#8)\n\n"
+        );
+      });
+
+      it("adapts release notes on category changes", async function() {
+        const selector = wrapper.find("PullRequestChangeCategorySelector");
+        const pullRequest = selector.prop("pullRequest") as PullRequest;
+        pullRequest.changeCategory = ChangeCategory.Breaking;
+        (selector.prop("onChange") as any)(pullRequest);
+
+        await waitImmediate();
+        wrapper.update();
+
+        const markdown = wrapper.find("Markdown");
+        expect(markdown.prop("source")).toEqual(
+          "**Breaking Changes:**\n\n- Update webpack. (#8)\n\n"
         );
       });
     });
