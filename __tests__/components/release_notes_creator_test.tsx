@@ -134,6 +134,25 @@ describe("ReleaseNotesCreator", function() {
           "**Breaking Changes:**\n\n- Update webpack. (#8)\n\n"
         );
       });
+
+      it("posts the release note on github on pressing a button", function() {
+        (github.postRelease as jest.Mock).mockReturnValue({ ok: true });
+        const buttons = wrapper.find("WithStyles(Button)");
+
+        expect(buttons).toHaveLength(2);
+        const releaseButton = buttons.at(1);
+        expect(releaseButton.prop("children")).toEqual("Create Release");
+
+        (releaseButton.prop("onClick") as any)();
+        expect(github.postRelease).toHaveBeenCalledWith("repo1", {
+          tag_name: "v0.0.2",
+          target_commitish: "master",
+          name: "v0.0.2",
+          body: "**Basic Changes:**\n\n- Update webpack. (#8)\n\n",
+          draft: false,
+          prerelease: false
+        });
+      });
     });
   });
 });
