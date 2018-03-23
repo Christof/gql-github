@@ -153,6 +153,27 @@ describe("ReleaseNotesCreator", function() {
           prerelease: false
         });
       });
+
+      it("opens a snackbar after a successful release creation", async function() {
+        (github.postRelease as jest.Mock).mockReturnValue({ ok: true });
+
+        const buttons = wrapper.find("WithStyles(Button)");
+        (buttons.at(1).prop("onClick") as any)();
+
+        await waitImmediate();
+        wrapper.update();
+
+        const snackbar = wrapper.find("WithStyles(Snackbar)");
+        expect(snackbar).toHaveLength(1);
+        expect(snackbar.prop("open")).toBe(true);
+
+        (snackbar.prop("onClose") as any)();
+
+        await waitImmediate();
+        wrapper.update();
+
+        expect(wrapper.find("WithStyles(Snackbar)").prop("open")).toBe(false);
+      });
     });
   });
 });
