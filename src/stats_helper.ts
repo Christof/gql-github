@@ -23,7 +23,7 @@ export function getCommitsPerAuthorInDateRange(
 /**
  * Calculates sum of commits per week.
  *
- * @returns Array of [week, commitsInWeek]
+ * @returns Map<week, commitsInWeek>
  */
 export function calculateWeeklyCommitsForAuthor(data: GithubAuthorData[]) {
   const accumulator = new Map<number, number>();

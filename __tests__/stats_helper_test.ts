@@ -1,8 +1,9 @@
 import {
   getCommitsPerAuthorInDateRange,
-  calculateWeeklyCommits
+  calculateWeeklyCommits,
+  calculateWeeklyCommitsForAuthor
 } from "../src/stats_helper";
-import { GithubData } from "../src/github";
+import { GithubData, GithubAuthorData } from "../src/github";
 
 describe("getCommitsPerAuthorInDateRange", function() {
   const data: GithubData = [
@@ -42,6 +43,34 @@ describe("getCommitsPerAuthorInDateRange", function() {
       author1: 60,
       author2: 30
     });
+  });
+});
+
+describe("calculateWeeklyCommitsForAuthor", function() {
+  it("returns the weekly commits for an author", function() {
+    const week1 = new Date(1969, 2, 1).getTime() / 1000;
+    const week2 = new Date(1970, 2, 1).getTime() / 1000;
+    const week3 = new Date(1971, 2, 1).getTime() / 1000;
+    const data: GithubAuthorData[] = [
+      {
+        author: { login: "author1" },
+        total: 1000,
+        weeks: [
+          { w: week1, a: 0, d: 0, c: 10 },
+          { w: week2, a: 0, d: 0, c: 20 }
+        ]
+      },
+      {
+        author: { login: "author1" },
+        total: 1000,
+        weeks: [{ w: week2, a: 0, d: 0, c: 40 }]
+      }
+    ];
+
+    const expected = new Map<number, number>();
+    expected.set(week1, 10);
+    expected.set(week2, 60);
+    expect(calculateWeeklyCommitsForAuthor(data)).toEqual(expected);
   });
 });
 
