@@ -3,9 +3,11 @@ import { OverallPlot } from "../../src/components/overall_plot";
 import { shallow, ShallowWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
 import { Github } from "../../src/github";
+import { Layout } from "plotly.js";
 
 describe("OverallPlot", function() {
-  it("shows a PlotlyChart", function() {
+  let wrapper: ShallowWrapper<any, any>;
+  beforeEach(function() {
     const reposData = [
       [
         {
@@ -45,10 +47,17 @@ describe("OverallPlot", function() {
 
     const repoNames = ["repo1", "repo2"];
 
-    const wrapper = shallow(
+    wrapper = shallow(
       <OverallPlot reposData={reposData} repositoryNames={repoNames} />
     );
+  });
 
-    expect(wrapper.find("PlotlyChart")).toHaveLength(1);
+  it("shows a PlotlyChart", function() {
+    const chart = wrapper.find("PlotlyChart");
+    expect(chart).toHaveLength(1);
+
+    const layout = chart.prop("layout") as Partial<Layout>;
+    expect(layout.title).toEqual("Overall");
+    expect((layout as any).barmode).toEqual("stack");
   });
 });
