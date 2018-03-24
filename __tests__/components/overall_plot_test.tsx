@@ -13,34 +13,24 @@ describe("OverallPlot", function() {
         {
           author: { login: "author1" },
           total: 1000,
-          weeks: [
-            { w: new Date(1969, 2, 1).getTime() / 1000, a: 0, d: 0, c: 10 },
-            { w: new Date(1969, 2, 1).getTime() / 1000, a: 0, d: 0, c: 20 },
-            { w: new Date(1970, 2, 1).getTime() / 1000, a: 0, d: 0, c: 30 }
-          ]
+          weeks: []
         },
         {
           author: { login: "author2" },
-          total: 1000,
-          weeks: [
-            { w: new Date(1970, 2, 1).getTime() / 1000, a: 0, d: 0, c: 30 }
-          ]
+          total: 2000,
+          weeks: []
         }
       ],
       [
         {
           author: { login: "author2" },
-          total: 1000,
-          weeks: [
-            { w: new Date(1971, 2, 1).getTime() / 1000, a: 0, d: 0, c: 40 }
-          ]
+          total: 3000,
+          weeks: []
         },
         {
           author: { login: "author3" },
-          total: 1000,
-          weeks: [
-            { w: new Date(1972, 2, 1).getTime() / 1000, a: 0, d: 0, c: 50 }
-          ]
+          total: 4000,
+          weeks: []
         }
       ]
     ];
@@ -59,5 +49,21 @@ describe("OverallPlot", function() {
     const layout = chart.prop("layout") as Partial<Layout>;
     expect(layout.title).toEqual("Overall");
     expect((layout as any).barmode).toEqual("stack");
+  });
+
+  it("shows one trace per author with commits per repository", function() {
+    const chart = wrapper.find("PlotlyChart");
+
+    const data = chart.prop("data") as any;
+    expect(data).toHaveLength(3);
+
+    expect(data[0].name).toEqual("author1");
+    expect(data[0].x).toEqual([1000, 0]);
+
+    expect(data[1].name).toEqual("author2");
+    expect(data[1].x).toEqual([2000, 3000]);
+
+    expect(data[2].name).toEqual("author3");
+    expect(data[2].x).toEqual([0, 4000]);
   });
 });
