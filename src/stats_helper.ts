@@ -19,3 +19,33 @@ export function getCommitsPerAuthorInDateRange(
     {} as { [author: string]: number }
   );
 }
+
+export function calculateWeeklyCommits(
+  githubData: GithubAuthorData[][]
+): Map<string, number[][]> {
+  const collector = new Map<string, Map<number, number>>();
+  for (const repoData of githubData) {
+    for (const authorData of repoData) {
+      const authorResult =
+        collector.get(authorData.author.login) || new Map<number, number>();
+      authorData.weeks.forEach(week => {
+        const commits = authorResult.get(week.w);
+        const sum = week.c + (commits === undefined ? 0 : commits);
+        authorResult.set(week.w, sum);
+      });
+
+      collector.set(authorData.author.login, authorResult);
+    }
+  }
+
+  const result = new Map<string, number[][]>();
+  for (const authorResult of collector.entries()) {
+    const author = authorResult[0];
+    const sortedEntries = Array.from(authorResult[1].entries()).sort(
+      (a, b) => a[0] - b[0]
+    );
+    result.set(author, sortedEntries);
+  }
+
+  return result;
+}
