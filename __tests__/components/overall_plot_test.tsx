@@ -6,7 +6,9 @@ import { Github } from "../../src/github";
 import { Layout } from "plotly.js";
 
 describe("OverallPlot", function() {
+  const repoNames = ["repo1", "repo2"];
   let wrapper: ShallowWrapper<any, any>;
+
   beforeEach(function() {
     const reposData = [
       [
@@ -35,8 +37,6 @@ describe("OverallPlot", function() {
       ]
     ];
 
-    const repoNames = ["repo1", "repo2"];
-
     wrapper = shallow(
       <OverallPlot reposData={reposData} repositoryNames={repoNames} />
     );
@@ -59,11 +59,14 @@ describe("OverallPlot", function() {
 
     expect(data[0].name).toEqual("author1");
     expect(data[0].x).toEqual([1000, 0]);
+    expect(data[0].y).toEqual(repoNames);
 
     expect(data[1].name).toEqual("author2");
     expect(data[1].x).toEqual([2000, 3000]);
+    expect(data[1].y).toEqual(repoNames);
 
     expect(data[2].name).toEqual("author3");
     expect(data[2].x).toEqual([0, 4000]);
+    expect(data[2].y).toEqual(repoNames);
   });
 });
