@@ -9,6 +9,7 @@ import { Typography, Grid, LinearProgress } from "material-ui";
 import { OverallPlot } from "./overall_plot";
 import { CommitsOverTimePlot } from "./commits_over_time_plot";
 import { runningAverage } from "../array_helper";
+import { calculateWeeklyCommitsForAuthor } from "../stats_helper";
 
 interface Props {
   github: Github;
@@ -91,14 +92,9 @@ export class PersonalStats extends React.Component<Props, State> {
    * @returns Array of [week, commitsInWeek]
    */
   private calculateWeeklyCommits(): number[][] {
-    const data = new Map<number, number>();
-    for (const repoData of this.state.data) {
-      repoData.data.weeks.forEach(week => {
-        const commits = data.get(week.w);
-        const sum = week.c + (commits === undefined ? 0 : commits);
-        data.set(week.w, sum);
-      });
-    }
+    const data = calculateWeeklyCommitsForAuthor(
+      this.state.data.map(x => x.data)
+    );
 
     return Array.from(data.entries()).sort((a, b) => a[0] - b[0]);
   }
