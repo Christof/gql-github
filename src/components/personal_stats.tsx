@@ -8,6 +8,7 @@ import { Section } from "./section";
 import { Typography, Grid, LinearProgress } from "material-ui";
 import { OverallPlot } from "./overall_plot";
 import { CommitsOverTimePlot } from "./commits_over_time_plot";
+import { runningAverage } from "../array_helper";
 
 interface Props {
   github: Github;
@@ -25,27 +26,6 @@ interface State {
   startedLoading: boolean;
   OverallPlot?: typeof OverallPlot;
   CommitsOverTimePlot?: typeof CommitsOverTimePlot;
-}
-
-export function runningAverage(data: number[], neighbours: number) {
-  return data.map((entry, index) => {
-    const group = [entry];
-    for (let offset = 1; offset <= neighbours; ++offset) {
-      group.push(data[index + offset]);
-      group.push(data[index - offset]);
-    }
-
-    let count = 0;
-    let sum = 0;
-    for (let value of group) {
-      if (value === undefined) continue;
-
-      ++count;
-      sum += value;
-    }
-
-    return sum / count;
-  });
 }
 
 export class PersonalStats extends React.Component<Props, State> {

@@ -5,7 +5,7 @@ import { Section } from "./section";
 import { RepositoriesByOwnerSelector } from "./repositories_by_owner_selector";
 import { ScatterData } from "plotly.js";
 import { CommitsOverTimePlot } from "./commits_over_time_plot";
-import { runningAverage } from "./personal_stats";
+import { runningAverage } from "../array_helper";
 import { DefaultGrid } from "./default_grid";
 
 interface Props {
