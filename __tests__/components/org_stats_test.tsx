@@ -77,5 +77,15 @@ describe("OrgStats", function() {
       expect(plotData[3].x).toEqual([week2]);
       expect(plotData[3].y).toEqual([60]);
     });
+
+    it("doesn't load anything on undefined owner selection", function() {
+      const selector = wrapper.find("RepositoriesByOwnerSelector");
+      (selector.prop("onLoad") as any)({
+        owner: undefined,
+        includeForks: false
+      });
+
+      expect(github.getRepositoryNames as jest.Mock).toHaveBeenCalledTimes(0);
+    });
   });
 });
