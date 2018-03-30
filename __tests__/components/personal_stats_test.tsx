@@ -60,24 +60,24 @@ describe("PersonalStats", function() {
       const week1 = new Date(1969, 2, 1);
       const week2 = new Date(1970, 2, 1);
       const week3 = new Date(1971, 2, 1);
-      beforeEach(async function() {
-        const data: GithubData = [
-          {
-            author: { login: "user" },
-            total: 1000,
-            weeks: [
-              { w: week1.getTime() / 1000, a: 0, d: 0, c: 10 },
-              { w: week2.getTime() / 1000, a: 0, d: 0, c: 20 },
-              { w: week3.getTime() / 1000, a: 0, d: 0, c: 30 }
-            ]
-          },
-          {
-            author: { login: "user2" },
-            total: 1000,
-            weeks: [{ w: week2.getTime() / 1000, a: 0, d: 0, c: 30 }]
-          }
-        ];
+      const data: GithubData = [
+        {
+          author: { login: "user" },
+          total: 1000,
+          weeks: [
+            { w: week1.getTime() / 1000, a: 0, d: 0, c: 10 },
+            { w: week2.getTime() / 1000, a: 0, d: 0, c: 20 },
+            { w: week3.getTime() / 1000, a: 0, d: 0, c: 30 }
+          ]
+        },
+        {
+          author: { login: "user2" },
+          total: 1000,
+          weeks: [{ w: week2.getTime() / 1000, a: 0, d: 0, c: 30 }]
+        }
+      ];
 
+      beforeEach(async function() {
         resolveForGetStats(data);
 
         await waitImmediate();
@@ -113,6 +113,23 @@ describe("PersonalStats", function() {
           expect(plotData[index].type).toEqual("scatter");
           expect(plotData[index].mode).toEqual("lines");
         }
+      });
+
+      it("renders OverallPlot with sums", function() {
+        const overallPlot = wrapper.find("OverallPlot");
+
+        expect(overallPlot).toHaveLength(1);
+        expect(overallPlot.prop("repositoryNames")).toEqual([
+          "repo1",
+          "repo2",
+          "repo3"
+        ]);
+
+        const reposData = overallPlot.prop("reposData");
+        expect(reposData).toHaveLength(3);
+        expect(reposData[0]).toEqual([data[0]]);
+        expect(reposData[1]).toEqual([data[0]]);
+        expect(reposData[2]).toEqual([data[0]]);
       });
     });
   });
