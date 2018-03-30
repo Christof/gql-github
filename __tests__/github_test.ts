@@ -85,6 +85,14 @@ describe("Github", () => {
       expect(clientQueryMock).toHaveBeenCalledTimes(2);
       expect(user).toEqual(expectedUser);
     });
+
+    it("fails if retry also fails", async () => {
+      github.retryWaitSeconds = 0.001;
+      clientQueryMock.mockReturnValue({ errors: ["some error"] });
+      await expect(github.getUser()).rejects.toEqual(["some error"]);
+
+      expect(clientQueryMock).toHaveBeenCalledTimes(2);
+    });
   });
 
   describe("getOrganization", () => {
