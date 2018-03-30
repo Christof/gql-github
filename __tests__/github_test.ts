@@ -72,6 +72,7 @@ describe("Github", () => {
 
   describe("retry", function() {
     it("retries once if gql query fails", async () => {
+      github.retryWaitSeconds = 0.001;
       const expectedUser = { login: "username", avatarUrl: "uavatar url" };
       clientQueryMock.mockReturnValueOnce({ errors: ["some error"] });
       clientQueryMock.mockReturnValueOnce({

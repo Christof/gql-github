@@ -60,6 +60,7 @@ function delay(timeInSeconds: number) {
 
 export class Github {
   public owner: string;
+  public retryWaitSeconds = 1;
 
   constructor(
     private token: string,
@@ -82,7 +83,7 @@ export class Github {
 
       if (retries === 0) throw error;
 
-      await delay(1);
+      await delay(this.retryWaitSeconds);
       return this.query(query, variables, --retries);
     }
   }
