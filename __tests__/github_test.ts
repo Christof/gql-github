@@ -218,6 +218,29 @@ describe("Github", () => {
     });
   });
 
+  describe("getOwnedRepositores with forks", function() {
+    it("calls to client.query passing null as isFork variable", function() {
+      github.getOwnedRepositories({ includeForks: true });
+
+      expect(clientQueryMock).toHaveBeenCalled();
+      expect(clientQueryMock.mock.calls[0][0]).toHaveProperty("variables", {
+        isFork: null
+      });
+    });
+  });
+
+  describe("getOrgRepositores with forks", function() {
+    it("calls to client.query passing null as isFork variable", function() {
+      github.getOrgRepositories({ includeForks: true });
+
+      expect(clientQueryMock).toHaveBeenCalled();
+      expect(clientQueryMock.mock.calls[0][0]).toHaveProperty("variables", {
+        isFork: null,
+        org: "owner"
+      });
+    });
+  });
+
   describe("compare", function() {
     it("returns compare result", async function() {
       fetchMock.mockReturnValue({
