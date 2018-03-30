@@ -70,6 +70,22 @@ describe("Github", () => {
     });
   });
 
+  describe("retry", function() {
+    it("retries once if gql query fails", async () => {
+      const expectedUser = { login: "username", avatarUrl: "uavatar url" };
+      clientQueryMock.mockReturnValueOnce({ errors: ["some error"] });
+      clientQueryMock.mockReturnValueOnce({
+        data: {
+          viewer: expectedUser
+        }
+      });
+      const user = await github.getUser();
+
+      expect(clientQueryMock).toHaveBeenCalledTimes(2);
+      expect(user).toEqual(expectedUser);
+    });
+  });
+
   describe("getOrganization", () => {
     it("returns organization that are accessible for the user", async () => {
       const expectedOrgs = [
