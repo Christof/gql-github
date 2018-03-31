@@ -54,13 +54,13 @@ describe("Stats", function() {
     });
 
     describe("after loading data", function() {
-      const week1 = new Date(1969, 2, 1);
-      const week2 = new Date(1970, 2, 1);
-      const week3 = new Date(1971, 2, 1);
+      const week1 = new Date(2014, 2, 1);
+      const week2 = new Date(2015, 2, 1);
+      const week3 = new Date(2017, 2, 1);
       const data: GithubData = [
         {
           author: { login: "user" },
-          total: 1000,
+          total: 60,
           weeks: [
             { w: week1.getTime() / 1000, a: 0, d: 0, c: 10 },
             { w: week2.getTime() / 1000, a: 0, d: 0, c: 20 },
@@ -69,7 +69,7 @@ describe("Stats", function() {
         },
         {
           author: { login: "user2" },
-          total: 1000,
+          total: 30,
           weeks: [{ w: week2.getTime() / 1000, a: 0, d: 0, c: 30 }]
         }
       ];
@@ -115,6 +115,47 @@ describe("Stats", function() {
 
         const data1 = commitsOverTimePlot.at(1).prop("data") as any;
         checkDataForCommitsOverTimePlot(data1);
+      });
+
+      function checkDataForYearPlot(data: any) {
+        expect(data).toHaveLength(2);
+        expect(data[0].x).toEqual([
+          "2013 (0)",
+          "2014 (10)",
+          "2015 (50)",
+          "2016 (0)",
+          "2017 (30)"
+        ]);
+        expect(data[0].y).toEqual([0, 10, 20, 0, 30]);
+
+        expect(data[1].x).toEqual([
+          "2013 (0)",
+          "2014 (10)",
+          "2015 (50)",
+          "2016 (0)",
+          "2017 (30)"
+        ]);
+        expect(data[1].y).toEqual([0, 0, 30, 0, 0]);
+      }
+
+      it("shows a year graph for each repository", function() {
+        const yearPlot = wrapper.find("PlotlyChart");
+
+        expect(yearPlot).toHaveLength(2);
+
+        const data0 = yearPlot.at(0).prop("data") as any;
+        checkDataForYearPlot(data0);
+        const layout0 = yearPlot.at(0).prop("layout") as any;
+        expect(layout0.title).toEqual("Yearly commits in repo1 90");
+        expect(layout0.xaxis.title).toEqual("time");
+        expect(layout0.yaxis.title).toEqual("commit count");
+
+        const data1 = yearPlot.at(0).prop("data") as any;
+        checkDataForYearPlot(data1);
+        const layout1 = yearPlot.at(1).prop("layout") as any;
+        expect(layout1.title).toEqual("Yearly commits in repo2 90");
+        expect(layout1.xaxis.title).toEqual("time");
+        expect(layout1.yaxis.title).toEqual("commit count");
       });
     });
   });
