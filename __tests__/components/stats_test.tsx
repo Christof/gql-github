@@ -20,15 +20,19 @@ describe("Stats", function() {
   });
 
   describe("repository selection", function() {
+    const repositoryNames = ["repo1", "repo2"];
     let repositoriesByOwner: Map<string, string[]>;
-    let resolveForGetRepositoryNames: Function;
+    let resolveForGetStats: Function;
 
     beforeEach(async function() {
       const repositorySelector = wrapper.find("RepositoriesByOwnerSelector");
 
       (github.getRepositoryNames as jest.Mock).mockReturnValue(
+        Promise.resolve(repositoryNames)
+      );
+      (github.getStats as jest.Mock).mockReturnValue(
         new Promise(resolve => {
-          resolveForGetRepositoryNames = resolve;
+          resolveForGetStats = resolve;
         })
       );
 
@@ -47,6 +51,43 @@ describe("Stats", function() {
       expect(heading.prop("children")).toEqual("Stats");
 
       expect(wrapper.find("WithStyles(LinearProgress)")).toHaveLength(1);
+    });
+
+    describe("after loading data", function() {
+      const week1 = new Date(1969, 2, 1);
+      const week2 = new Date(1970, 2, 1);
+      const week3 = new Date(1971, 2, 1);
+      const data: GithubData = [
+        {
+          author: { login: "user" },
+          total: 1000,
+          weeks: [
+            { w: week1.getTime() / 1000, a: 0, d: 0, c: 10 },
+            { w: week2.getTime() / 1000, a: 0, d: 0, c: 20 },
+            { w: week3.getTime() / 1000, a: 0, d: 0, c: 30 }
+          ]
+        },
+        {
+          author: { login: "user2" },
+          total: 1000,
+          weeks: [{ w: week2.getTime() / 1000, a: 0, d: 0, c: 30 }]
+        }
+      ];
+
+      beforeEach(async function() {
+        resolveForGetStats(data);
+
+        await waitImmediate();
+        wrapper.update();
+      });
+
+      it("shows an OverallPlot", function() {
+        const overallPlot = wrapper.find("OverallPlot");
+
+        expect(overallPlot).toHaveLength(1);
+        expect(overallPlot.prop("repositoryNames")).toEqual(repositoryNames);
+        expect(overallPlot.prop("reposData")).toEqual([data, data]);
+      });
     });
   });
 });
