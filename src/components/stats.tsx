@@ -10,6 +10,7 @@ import { Section } from "./section";
 import LinearProgress from "material-ui/Progress/LinearProgress";
 import { RepositoriesByOwnerSelector } from "./repositories_by_owner_selector";
 import { DefaultGrid } from "./default_grid";
+import { sum } from "../array_helper";
 
 interface Props {
   github: Github;
@@ -22,10 +23,6 @@ interface State {
   startedLoading: boolean;
   PlotlyChart?: typeof PlotlyChart;
   CommitsOverTimePlot?: typeof CommitsOverTimePlot;
-}
-
-function sum(array: number[]) {
-  return array.reduce((sum, value) => sum + value, 0);
 }
 
 export class Stats extends React.Component<Props, State> {

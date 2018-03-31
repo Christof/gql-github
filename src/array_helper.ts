@@ -6,6 +6,10 @@ export function unique<T>(arrayWithDuplicates: T[]): T[] {
   return [...new Set(arrayWithDuplicates)];
 }
 
+export function sum(array: number[]) {
+  return array.reduce((sum, value) => sum + value, 0);
+}
+
 export function runningAverage(data: number[], neighbours: number) {
   return data.map((entry, index) => {
     const group = [entry];
