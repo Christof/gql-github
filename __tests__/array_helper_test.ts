@@ -1,4 +1,4 @@
-import { flatten, unique, runningAverage } from "../src/array_helper";
+import { flatten, unique, runningAverage, sum } from "../src/array_helper";
 
 describe("flatten", function() {
   it("flattens nested arrays", function() {
@@ -9,6 +9,12 @@ describe("flatten", function() {
 describe("unique", function() {
   it("removes duplicates in array", function() {
     expect(unique([1, 1, 2, 4, 3, 3])).toEqual([1, 2, 4, 3]);
+  });
+});
+
+describe("sum", function() {
+  it("sums up all elements", function() {
+    expect(sum([1, 2, 3, 4, 5])).toEqual(15);
   });
 });
 
