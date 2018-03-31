@@ -145,7 +145,7 @@ export class Stats extends React.Component<Props, State> {
     this.setState({ data, repositoryNames });
   }
 
-  renderRepoGraph(repo: string, index: number) {
+  renderRepoGraphs(repo: string, index: number) {
     const data = this.state.data[index];
 
     if (!data) return null;
@@ -199,7 +199,7 @@ export class Stats extends React.Component<Props, State> {
           />
         </Section>
         {this.state.repositoryNames.map((item, index) =>
-          this.renderRepoGraph(item, index)
+          this.renderRepoGraphs(item, index)
         )}
       </div>
     );
