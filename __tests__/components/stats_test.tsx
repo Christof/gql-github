@@ -88,6 +88,34 @@ describe("Stats", function() {
         expect(overallPlot.prop("repositoryNames")).toEqual(repositoryNames);
         expect(overallPlot.prop("reposData")).toEqual([data, data]);
       });
+
+      function checkDataForCommitsOverTimePlot(data: any) {
+        expect(data).toHaveLength(2);
+        expect(data[0].name).toEqual("user");
+        expect(data[0].mode).toEqual("lines");
+        expect(data[0].x).toEqual([week1, week2, week3]);
+        expect(data[0].y).toEqual([10, 20, 30]);
+
+        expect(data[1].name).toEqual("user2");
+        expect(data[1].mode).toEqual("lines");
+        expect(data[1].x).toEqual([week2]);
+        expect(data[1].y).toEqual([30]);
+      }
+
+      it("shows CommitsOverTimePlots for each repository", function() {
+        const commitsOverTimePlot = wrapper.find("CommitsOverTimePlot");
+
+        expect(commitsOverTimePlot).toHaveLength(2);
+        expect(commitsOverTimePlot.at(0).prop("title")).toEqual("repo1");
+
+        const data0 = commitsOverTimePlot.at(0).prop("data") as any;
+        checkDataForCommitsOverTimePlot(data0);
+
+        expect(commitsOverTimePlot.at(1).prop("title")).toEqual("repo2");
+
+        const data1 = commitsOverTimePlot.at(1).prop("data") as any;
+        checkDataForCommitsOverTimePlot(data1);
+      });
     });
   });
 });
