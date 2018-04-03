@@ -267,7 +267,12 @@ export class Github {
       response = await this.getRequest(path);
     }
 
-    return response.json();
+    try {
+      return response.json();
+    } catch (error) {
+      console.error(`Error in Github.getStats for ${repository}: `, error);
+      return undefined;
+    }
   }
 
   postRelease(repository: string, release: GithubPostRelease) {

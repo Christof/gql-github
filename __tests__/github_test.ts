@@ -349,6 +349,20 @@ describe("Github", () => {
       );
       expect(stats).toEqual(expectedStats);
     });
+
+    it("returns undefined if json() throws an error", async function() {
+      fetchMock.mockReturnValue({
+        status: 200,
+        json() {
+          throw new Error("simulated error during response.json()");
+        }
+      });
+
+      const stats = await github.getStats("repoName");
+
+      expect(fetchMock).toHaveBeenCalled();
+      expect(stats).toBeUndefined();
+    });
   });
 
   describe("postRelease", function() {
