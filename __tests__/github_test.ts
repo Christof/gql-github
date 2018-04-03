@@ -363,6 +363,20 @@ describe("Github", () => {
       expect(fetchMock).toHaveBeenCalled();
       expect(stats).toBeUndefined();
     });
+
+    it("returns undefined if status is 204 (no content)", async function() {
+      fetchMock.mockReturnValue({
+        status: 204,
+        json() {
+          return "some value that should never be read";
+        }
+      });
+
+      const stats = await github.getStats("repoName");
+
+      expect(fetchMock).toHaveBeenCalled();
+      expect(stats).toBeUndefined();
+    });
   });
 
   describe("postRelease", function() {

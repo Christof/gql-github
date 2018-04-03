@@ -267,6 +267,10 @@ export class Github {
       response = await this.getRequest(path);
     }
 
+    if (response.status === 204) {
+      return undefined;
+    }
+
     try {
       return response.json();
     } catch (error) {
