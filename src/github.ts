@@ -259,9 +259,13 @@ export class Github {
   }
 
   async getStats(repository: string): Promise<GithubData> {
-    const response = await this.getRequest(
-      `repos/${this.owner}/${repository}/stats/contributors`
-    );
+    const path = `repos/${this.owner}/${repository}/stats/contributors`;
+    let response = await this.getRequest(path);
+
+    if (response.status === 202) {
+      await delay(this.retryWaitSeconds);
+      response = await this.getRequest(path);
+    }
 
     return response.json();
   }

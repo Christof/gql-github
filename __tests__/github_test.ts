@@ -321,6 +321,34 @@ describe("Github", () => {
       );
       expect(stats).toEqual(expectedStats);
     });
+
+    it("retries after receiving a 202 response", async function() {
+      github.retryWaitSeconds = 0.001;
+      const expectedStats: GithubData = [
+        {
+          author: { login: "author name" },
+          total: 2,
+          weeks: [{ w: 51, a: 1, d: 1, c: 2 }]
+        }
+      ];
+
+      fetchMock.mockReturnValueOnce({
+        status: 202
+      });
+      fetchMock.mockReturnValueOnce({
+        status: 200,
+        json() {
+          return expectedStats;
+        }
+      });
+      const stats = await github.getStats("repoName");
+
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+      expect(fetchMock.mock.calls[0][0]).toBe(
+        "https://api.github.com/repos/owner/repoName/stats/contributors"
+      );
+      expect(stats).toEqual(expectedStats);
+    });
   });
 
   describe("postRelease", function() {
