@@ -50,6 +50,8 @@ export function calculateWeeklyCommits(
 ): Map<string, number[][]> {
   const collector = new Map<string, Map<number, number>>();
   for (const repoData of githubData) {
+    if (repoData === undefined) continue;
+
     for (const authorData of repoData) {
       const authorResult =
         collector.get(authorData.author.login) || new Map<number, number>();

@@ -48,7 +48,8 @@ describe("OrgStats", function() {
           weeks: [{ w: week2.getTime() / 1000, a: 0, d: 0, c: 30 }]
         }
       ];
-      (github.getStats as jest.Mock).mockReturnValue(data);
+      (github.getStats as jest.Mock).mockReturnValueOnce(data);
+      (github.getStats as jest.Mock).mockReturnValueOnce(undefined);
 
       const selector = wrapper.find("RepositoriesByOwnerSelector");
       (selector.prop("onLoad") as any)({ owner, includeForks });
@@ -63,19 +64,19 @@ describe("OrgStats", function() {
 
       expect(plotData[0].name).toEqual("author1");
       expect(plotData[0].x).toEqual([week1, week2]);
-      expect(plotData[0].y).toEqual([60, 60]);
+      expect(plotData[0].y).toEqual([30, 30]);
 
       expect(plotData[1].name).toEqual("author1 Avg");
       expect(plotData[1].x).toEqual([week1, week2]);
-      expect(plotData[1].y).toEqual([60, 60]);
+      expect(plotData[1].y).toEqual([30, 30]);
 
       expect(plotData[2].name).toEqual("author2");
       expect(plotData[2].x).toEqual([week2]);
-      expect(plotData[2].y).toEqual([60]);
+      expect(plotData[2].y).toEqual([30]);
 
       expect(plotData[3].name).toEqual("author2 Avg");
       expect(plotData[3].x).toEqual([week2]);
-      expect(plotData[3].y).toEqual([60]);
+      expect(plotData[3].y).toEqual([30]);
     });
 
     it("doesn't load anything on undefined owner selection", function() {

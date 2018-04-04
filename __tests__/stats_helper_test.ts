@@ -106,7 +106,8 @@ describe("calculateWeeklyCommits", function() {
           total: 1000,
           weeks: [{ w: week2, a: 0, d: 0, c: 50 }]
         }
-      ]
+      ],
+      undefined
     ];
 
     const expected = new Map<string, number[][]>();
