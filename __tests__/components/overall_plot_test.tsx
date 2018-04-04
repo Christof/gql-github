@@ -31,7 +31,8 @@ describe("OverallPlot", function() {
         total: 4000,
         weeks: []
       }
-    ]
+    ],
+    undefined
   ];
   let wrapper: ShallowWrapper<any, any>;
 
@@ -57,15 +58,15 @@ describe("OverallPlot", function() {
     expect(data).toHaveLength(3);
 
     expect(data[0].name).toEqual("author1");
-    expect(data[0].x).toEqual([1000, 0]);
+    expect(data[0].x).toEqual([1000, 0, 0]);
     expect(data[0].y).toEqual(repoNames);
 
     expect(data[1].name).toEqual("author2");
-    expect(data[1].x).toEqual([2000, 3000]);
+    expect(data[1].x).toEqual([2000, 3000, 0]);
     expect(data[1].y).toEqual(repoNames);
 
     expect(data[2].name).toEqual("author3");
-    expect(data[2].x).toEqual([0, 4000]);
+    expect(data[2].x).toEqual([0, 4000, 0]);
     expect(data[2].y).toEqual(repoNames);
   });
 
@@ -103,19 +104,19 @@ describe("OverallPlot", function() {
       expect(data).toHaveLength(4);
 
       expect(data[0].name).toEqual("author1");
-      expect(data[0].x).toEqual([1000, 0, 0]);
+      expect(data[0].x).toEqual([1000, 0, 0, 0]);
       expect(data[0].y).toEqual(repositoryNames);
 
       expect(data[1].name).toEqual("author2");
-      expect(data[1].x).toEqual([2000, 3000, 0]);
+      expect(data[1].x).toEqual([2000, 3000, 0, 0]);
       expect(data[1].y).toEqual(repositoryNames);
 
       expect(data[2].name).toEqual("author3");
-      expect(data[2].x).toEqual([0, 4000, 0]);
+      expect(data[2].x).toEqual([0, 4000, 0, 0]);
       expect(data[2].y).toEqual(repositoryNames);
 
       expect(data[3].name).toEqual("author4");
-      expect(data[3].x).toEqual([0, 0, 5000]);
+      expect(data[3].x).toEqual([0, 0, 0, 5000]);
       expect(data[3].y).toEqual(repositoryNames);
     });
   });

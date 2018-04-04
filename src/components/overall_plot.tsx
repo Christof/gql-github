@@ -2,7 +2,7 @@ import * as React from "react";
 import { GithubData } from "../github";
 import PlotlyChart from "react-plotlyjs-ts";
 import { ScatterData, Layout } from "plotly.js";
-import { unique, flatten } from "../array_helper";
+import { unique, flatten, sum } from "../array_helper";
 
 interface Props {
   reposData: GithubData[];
@@ -44,14 +44,20 @@ export class OverallPlot extends React.Component<Props, State> {
     return { data, layout };
   }
   private getAuthors() {
-    const authorsForRepos = this.props.reposData.map(repoData =>
-      repoData.map(authorData => authorData.author.login)
+    const authorsForRepos = this.props.reposData.map(
+      repoData =>
+        repoData !== undefined
+          ? repoData.map(authorData => authorData.author.login)
+          : []
     );
+
     return unique(flatten(authorsForRepos));
   }
 
   private getCommitsPerRepoFor(author: string) {
     return this.props.reposData.map(repo => {
+      if (repo === undefined) return 0;
+
       const dataForAuthor = repo.find(
         authorData => authorData.author.login === author
       );
@@ -71,10 +77,11 @@ export class OverallPlot extends React.Component<Props, State> {
 
   private getTotalCommitCountAnnotations() {
     return this.props.reposData.map((repositoryData, index) => {
-      const totalCommits = repositoryData.reduce(
-        (sum, authorData) => sum + authorData.total,
-        0
-      );
+      const totalCommits =
+        repositoryData !== undefined
+          ? sum(repositoryData.map(authorData => authorData.total))
+          : 0;
+
       return {
         x: totalCommits,
         y: this.props.repositoryNames[index],
