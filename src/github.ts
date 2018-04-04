@@ -1,46 +1,15 @@
 import { ApolloClient } from "apollo-client";
 import { NormalizedCacheObject } from "apollo-cache-inmemory";
 import gql from "graphql-tag";
-
-export interface GithubUser {
-  login: string;
-  avatarUrl: string;
-}
-
-export interface GithubAuthorData {
-  author: { login: string };
-  total: number;
-  weeks: { w: number; a: number; d: number; c: number }[];
-}
-
-export type GithubData = GithubAuthorData[];
-
-export interface GithubCompareResult {
-  commits: GithubCommit[];
-}
-
-export interface GithubCommit {
-  author: { login: string };
-  commit: { message: string };
-}
-
-export interface GithubTag {
-  name: string;
-}
-
-export interface GithubRelease {
-  tagName: string;
-  description: string;
-}
-
-export interface GithubPostRelease {
-  tag_name: string;
-  target_commitish: string;
-  name: string;
-  body: string;
-  draft: boolean;
-  prerelease: boolean;
-}
+import {
+  GithubUser,
+  GithubCompareResult,
+  GithubTag,
+  GithubRelease,
+  GithubData,
+  GithubPostRelease
+} from "./github_types";
+export * from "./github_types";
 
 /**
  * Wrapper for fetch.
