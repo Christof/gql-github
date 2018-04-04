@@ -58,6 +58,10 @@ export class PersonalStats extends React.Component<Props, State> {
       authorData => authorData.author.login === this.state.author
     );
 
+    if (authorData === undefined) {
+      return undefined;
+    }
+
     return { name: repo, data: authorData };
   }
 
