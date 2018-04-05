@@ -45,6 +45,19 @@ export function calculateWeeklyCommitsForAuthor(data: GithubAuthorData[]) {
   return accumulator;
 }
 
+function sortByWeek(weeklyCommits: Map<string, Map<number, number>>) {
+  const result = new Map<string, number[][]>();
+  for (const authorResult of weeklyCommits.entries()) {
+    const author = authorResult[0];
+    const sortedEntries = Array.from(authorResult[1].entries()).sort(
+      (a, b) => a[0] - b[0]
+    );
+    result.set(author, sortedEntries);
+  }
+
+  return result;
+}
+
 export function calculateWeeklyCommits(
   githubData: GithubAuthorData[][]
 ): Map<string, number[][]> {
@@ -61,14 +74,5 @@ export function calculateWeeklyCommits(
     }
   }
 
-  const result = new Map<string, number[][]>();
-  for (const authorResult of collector.entries()) {
-    const author = authorResult[0];
-    const sortedEntries = Array.from(authorResult[1].entries()).sort(
-      (a, b) => a[0] - b[0]
-    );
-    result.set(author, sortedEntries);
-  }
-
-  return result;
+  return sortByWeek(collector);
 }
