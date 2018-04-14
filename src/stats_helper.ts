@@ -1,4 +1,5 @@
 import { GithubAuthorData } from "./github";
+import { flatten } from "./array_helper";
 
 export function getCommitsPerAuthorInDateRange(
   data: GithubAuthorData[],
@@ -58,20 +59,20 @@ function sortByWeek(weeklyCommits: Map<string, Map<number, number>>) {
   return result;
 }
 
+function getAuthorData(githubData: GithubAuthorData[][]) {
+  return flatten(githubData.filter(data => data !== undefined));
+}
+
 export function calculateWeeklyCommits(
   githubData: GithubAuthorData[][]
 ): Map<string, number[][]> {
   const collector = new Map<string, Map<number, number>>();
-  for (const repoData of githubData) {
-    if (repoData === undefined) continue;
+  for (const authorData of getAuthorData(githubData)) {
+    const authorResult =
+      collector.get(authorData.author.login) || new Map<number, number>();
+    accumulateWeeklyCommits(authorData, authorResult);
 
-    for (const authorData of repoData) {
-      const authorResult =
-        collector.get(authorData.author.login) || new Map<number, number>();
-      accumulateWeeklyCommits(authorData, authorResult);
-
-      collector.set(authorData.author.login, authorResult);
-    }
+    collector.set(authorData.author.login, authorResult);
   }
 
   return sortByWeek(collector);
