@@ -29,7 +29,9 @@ export class GithubCallback extends React.Component<Props, {}> {
 
     const githubState = queryPrams.state;
     if (githubState !== window.localStorage.githubState) {
-      throw new Error("Retrieved state not same sent one. Possible CSRF!");
+      throw new Error(
+        "Retrieved state is not equal to sent one. Possible CSRF!"
+      );
     }
     const state = window.localStorage.githubState;
     delete window.localStorage.githubState;
