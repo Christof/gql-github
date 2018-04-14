@@ -138,8 +138,8 @@ export class Stats extends React.Component<Props, State> {
       includeForks: options.includeForks
     });
 
-    const data = await Promise.all(
-      repositoryNames.map(repo => this.props.github.getStats(repo))
+    const data = await this.props.github.getStatsForRepositories(
+      repositoryNames
     );
 
     this.setState({ data, repositoryNames });

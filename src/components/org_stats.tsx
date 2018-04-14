@@ -67,8 +67,8 @@ export class OrgStats extends React.Component<Props, State> {
     this.props.github.owner = options.owner;
     const repositoryNames = await this.props.github.getRepositoryNames(options);
 
-    const data = await Promise.all(
-      repositoryNames.map(repo => this.props.github.getStats(repo))
+    const data = await this.props.github.getStatsForRepositories(
+      repositoryNames
     );
 
     const traces = this.createTraces(data);

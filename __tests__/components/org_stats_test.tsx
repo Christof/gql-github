@@ -48,8 +48,10 @@ describe("OrgStats", function() {
           weeks: [{ w: week2.getTime() / 1000, a: 0, d: 0, c: 30 }]
         }
       ];
-      (github.getStats as jest.Mock).mockReturnValueOnce(data);
-      (github.getStats as jest.Mock).mockReturnValueOnce(undefined);
+      (github.getStatsForRepositories as jest.Mock).mockReturnValueOnce([
+        data,
+        undefined
+      ]);
 
       const selector = wrapper.find("RepositoriesByOwnerSelector");
       (selector.prop("onLoad") as any)({ owner, includeForks });

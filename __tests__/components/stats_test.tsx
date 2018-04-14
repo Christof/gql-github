@@ -30,15 +30,16 @@ describe("Stats", function() {
       (github.getRepositoryNames as jest.Mock).mockReturnValue(
         Promise.resolve(repositoryNames)
       );
-      (github.getStats as jest.Mock).mockReturnValue(
+      (github.getStatsForRepositories as jest.Mock).mockReturnValue(
         new Promise(resolve => {
           resolveForGetStats = resolve;
         })
       );
 
-      (repositorySelector.prop(
-        "onLoad"
-      ) as any)({ owner: "owner", includeForks: true });
+      (repositorySelector.prop("onLoad") as any)({
+        owner: "owner",
+        includeForks: true
+      });
 
       await waitImmediate();
       wrapper.update();
@@ -75,7 +76,7 @@ describe("Stats", function() {
       ];
 
       beforeEach(async function() {
-        resolveForGetStats(data);
+        resolveForGetStats([data, data]);
 
         await waitImmediate();
         wrapper.update();
