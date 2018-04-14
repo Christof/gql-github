@@ -379,6 +379,34 @@ describe("Github", () => {
     });
   });
 
+  describe("getStatsForRepositories", function() {
+    it("gets stats for multiple repositories", async function() {
+      const expectedStats: GithubData = [
+        {
+          author: { login: "author name" },
+          total: 2,
+          weeks: [{ w: 51, a: 1, d: 1, c: 2 }]
+        }
+      ];
+      fetchMock.mockReturnValue({
+        status: 200,
+        json() {
+          return expectedStats;
+        }
+      });
+      const stats = await github.getStatsForRepositories(["repo1", "repo2"]);
+
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+      expect(fetchMock.mock.calls[0][0]).toBe(
+        "https://api.github.com/repos/owner/repo1/stats/contributors"
+      );
+      expect(fetchMock.mock.calls[1][0]).toBe(
+        "https://api.github.com/repos/owner/repo2/stats/contributors"
+      );
+      expect(stats).toEqual([expectedStats, expectedStats]);
+    });
+  });
+
   describe("postRelease", function() {
     it("sends post request", async function() {
       const release = {

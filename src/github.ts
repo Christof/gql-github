@@ -248,6 +248,10 @@ export class Github {
     }
   }
 
+  async getStatsForRepositories(repositoryNames: string[]) {
+    return await Promise.all(repositoryNames.map(repo => this.getStats(repo)));
+  }
+
   postRelease(repository: string, release: GithubPostRelease) {
     const params: RequestInit = {
       method: "POST",
