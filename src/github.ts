@@ -17,7 +17,7 @@ export * from "./github_types";
  * Direct assignment as default parameter in constructor below
  * doesn't work.
  */
-function windowFetch(input: RequestInfo, init?: RequestInit) {
+export function windowFetch(input: RequestInfo, init?: RequestInit) {
   return fetch(input, init);
 }
 

@@ -1,12 +1,18 @@
 import * as React from "react";
 import * as qs from "qs";
 import { RouteComponentProps } from "react-router";
+import { windowFetch } from "../github";
 
 interface Props extends RouteComponentProps<{}> {
   onChangeToken: (token: string) => void;
+  fetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>;
 }
 
 export class GithubCallback extends React.Component<Props, {}> {
+  static defaultProps: Partial<Props> = {
+    fetch: windowFetch
+  };
+
   async retrieveAccessToken(code: string, state: string) {
     const params: RequestInit = {
       method: "GET"
@@ -18,7 +24,7 @@ export class GithubCallback extends React.Component<Props, {}> {
         code,
         state
       });
-    const response = await fetch(githubAuthUrl, params);
+    const response = await this.props.fetch(githubAuthUrl, params);
     const retrievedParams = await response.json();
     this.props.onChangeToken(retrievedParams.access_token);
     this.props.history.push("/stats");
