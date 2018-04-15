@@ -57,7 +57,7 @@
     "source-map-loader": "^0.2.3",
     "ts-jest": "^22.0.3",
     "tslint": "^5.8.0",
-    "typescript": "^2.6.1",
+    "typescript": "^2.8.1",
     "webpack": "^4.1.0",
     "webpack-cli": "^2.0.10",
     "webpack-dashboard": "^1.1.1",
