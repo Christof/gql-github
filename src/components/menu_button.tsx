@@ -16,7 +16,7 @@ export class MenuButton extends React.Component<Props, {}> {
     return (
       <Button
         component={props => <Link to={to} {...props} />}
-        raised
+        variant="raised"
         color={isActive ? "secondary" : "primary"}
         {...rest}
       >

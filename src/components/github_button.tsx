@@ -96,7 +96,11 @@ export class GithubButton extends React.Component<Props, State> {
   render() {
     if (this.props.github !== undefined) {
       return (
-        <Button raised className={this.props.className} onClick={this.signout}>
+        <Button
+          variant="raised"
+          className={this.props.className}
+          onClick={this.signout}
+        >
           Logout &nbsp;
           <img
             width="16px"
@@ -108,7 +112,11 @@ export class GithubButton extends React.Component<Props, State> {
       );
     }
     return (
-      <Button raised className={this.props.className} onClick={this.login}>
+      <Button
+        variant="raised"
+        className={this.props.className}
+        onClick={this.login}
+      >
         Login &nbsp;
         <img src={this.githubMarkUrl} />
       </Button>

@@ -85,7 +85,7 @@ export class OrgStats extends React.Component<Props, State> {
 
     return (
       <Section>
-        <Typography type="headline" paragraph>
+        <Typography variant="headline" paragraph>
           Stats
         </Typography>
         {this.state.data.length === 0 ? (

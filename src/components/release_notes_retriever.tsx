@@ -49,7 +49,7 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
 
     return (
       <Section>
-        <Typography type="headline" paragraph>
+        <Typography variant="headline" paragraph>
           Release Note
         </Typography>
         <Dropdown
@@ -67,7 +67,7 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
 
     return (
       <Section>
-        <Typography type="headline" paragraph>
+        <Typography variant="headline" paragraph>
           {this.state.release.tagName}
         </Typography>
         <this.state.Markdown source={this.state.releaseDescription} />

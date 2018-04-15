@@ -181,7 +181,7 @@ export class PersonalStats extends React.Component<Props, State> {
 
     return (
       <Section>
-        <Typography type="headline" paragraph>
+        <Typography variant="headline" paragraph>
           Stats
         </Typography>
 
