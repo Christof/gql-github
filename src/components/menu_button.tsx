@@ -15,7 +15,7 @@ export class MenuButton extends React.Component<Props, {}> {
     const isActive = window.location.pathname === to;
     return (
       <Button
-        component={props => <Link to={to} {...props} />}
+        component={props => <Link to={to} {...props} innerRef={undefined} />}
         variant="raised"
         color={isActive ? "secondary" : "primary"}
         {...rest}
