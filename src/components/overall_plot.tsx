@@ -1,7 +1,7 @@
 import * as React from "react";
 import { GithubData } from "../github";
 import PlotlyChart from "react-plotlyjs-ts";
-import { ScatterData, Layout } from "plotly.js";
+import { ScatterData, Layout, Annotations } from "plotly.js";
 import { unique, flatten, sum } from "../array_helper";
 
 interface Props {
@@ -75,21 +75,23 @@ export class OverallPlot extends React.Component<Props, State> {
     } as Partial<ScatterData>;
   }
 
-  private getTotalCommitCountAnnotations() {
+  private getTotalCommitCountAnnotations(): Partial<Annotations>[] {
     return this.props.reposData.map((repositoryData, index) => {
       const totalCommits =
         repositoryData !== undefined
           ? sum(repositoryData.map(authorData => authorData.total))
           : 0;
 
-      return {
+      const annotation: Partial<Annotations> = {
         x: totalCommits,
         y: this.props.repositoryNames[index],
-        text: totalCommits,
+        text: totalCommits.toString(),
         xanchor: "left",
-        yanchor: "center",
+        yanchor: "middle",
         showarrow: false
       };
+
+      return annotation;
     });
   }
 
