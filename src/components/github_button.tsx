@@ -93,24 +93,25 @@ export class GithubButton extends React.Component<Props, State> {
     this.loadAvatarUrl();
   }
 
-  render() {
-    if (this.props.github !== undefined) {
-      return (
-        <Button
-          variant="raised"
-          className={this.props.className}
-          onClick={this.signout}
-        >
-          Logout &nbsp;
-          <img
-            width="16px"
-            height="16px"
-            style={{ borderRadius: "50%" }}
-            src={this.state.avatar_url}
-          />
-        </Button>
-      );
-    }
+  renderLogoutButton() {
+    return (
+      <Button
+        variant="raised"
+        className={this.props.className}
+        onClick={this.signout}
+      >
+        Logout &nbsp;
+        <img
+          width="16px"
+          height="16px"
+          style={{ borderRadius: "50%" }}
+          src={this.state.avatar_url}
+        />
+      </Button>
+    );
+  }
+
+  renderLoginButton() {
     return (
       <Button
         variant="raised"
@@ -121,5 +122,13 @@ export class GithubButton extends React.Component<Props, State> {
         <img src={this.githubMarkUrl} />
       </Button>
     );
+  }
+
+  render() {
+    if (this.props.github !== undefined) {
+      return this.renderLogoutButton();
+    }
+
+    return this.renderLoginButton();
   }
 }
