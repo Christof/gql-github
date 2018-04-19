@@ -11,6 +11,7 @@ import LinearProgress from "material-ui/Progress/LinearProgress";
 import { RepositoriesByOwnerSelector } from "./repositories_by_owner_selector";
 import { DefaultGrid } from "./default_grid";
 import { sum } from "../array_helper";
+import { min, reduce } from "ramda";
 
 interface Props {
   github: Github;
@@ -60,8 +61,12 @@ export class Stats extends React.Component<Props, State> {
     );
   }
 
-  private getYearsArray() {
-    const startYear = 2013;
+  private getYearsArray(data: GithubData) {
+    const startYear = reduce(
+      min,
+      new Date(),
+      data.map(d => new Date(d.weeks[0].w * 1000))
+    ).getFullYear();
     const endYear = new Date().getFullYear();
     return Array.from(
       new Array(endYear - startYear + 1),
@@ -94,7 +99,7 @@ export class Stats extends React.Component<Props, State> {
   }
 
   renderYearGraph(title: string, data: GithubData) {
-    const years = this.getYearsArray();
+    const years = this.getYearsArray(data);
     const statsPerYear = this.getStatsPerYear(years, data);
 
     const x = years.map((year, index) => {
