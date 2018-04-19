@@ -121,22 +121,20 @@ describe("Stats", function() {
       function checkDataForYearPlot(data: any) {
         expect(data).toHaveLength(2);
         expect(data[0].x).toEqual([
-          "2013 (0)",
           "2014 (10)",
           "2015 (50)",
           "2016 (0)",
           "2017 (30)"
         ]);
-        expect(data[0].y).toEqual([0, 10, 20, 0, 30]);
+        expect(data[0].y).toEqual([10, 20, 0, 30]);
 
         expect(data[1].x).toEqual([
-          "2013 (0)",
           "2014 (10)",
           "2015 (50)",
           "2016 (0)",
           "2017 (30)"
         ]);
-        expect(data[1].y).toEqual([0, 0, 30, 0, 0]);
+        expect(data[1].y).toEqual([0, 30, 0, 0]);
       }
 
       it("shows a year graph for each repository", function() {
