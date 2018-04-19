@@ -63,7 +63,10 @@ export class Stats extends React.Component<Props, State> {
   private getYearsArray() {
     const startYear = 2013;
     const endYear = new Date().getFullYear();
-    return Array.from(new Array(endYear - startYear), (_, i) => i + startYear);
+    return Array.from(
+      new Array(endYear - startYear + 1),
+      (_, i) => i + startYear
+    );
   }
 
   private getStatsPerYear(years: number[], data: GithubData) {
