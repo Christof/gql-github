@@ -11,7 +11,7 @@ import LinearProgress from "material-ui/Progress/LinearProgress";
 import { RepositoriesByOwnerSelector } from "./repositories_by_owner_selector";
 import { DefaultGrid } from "./default_grid";
 import { sum } from "../array_helper";
-import { min, reduce } from "ramda";
+import { min, reduce, max, findLast } from "ramda";
 
 interface Props {
   github: Github;
@@ -62,12 +62,15 @@ export class Stats extends React.Component<Props, State> {
   }
 
   private getYearsArray(data: GithubData) {
-    const startYear = reduce(
-      min,
-      new Date(),
-      data.map(d => new Date(d.weeks[0].w * 1000))
-    ).getFullYear();
-    const endYear = new Date().getFullYear();
+    const startWeeks = data.map(d => new Date(d.weeks[0].w * 1000));
+    const endWeeks = data.map(
+      d => new Date(findLast<any>(w => w.c !== 0)(d.weeks).w * 1000)
+    );
+
+    const startYear = reduce(min, new Date(), startWeeks).getFullYear();
+    const endYear = reduce(max, new Date(2000, 0), endWeeks).getFullYear();
+    if (startYear > endYear) return [];
+
     return Array.from(
       new Array(endYear - startYear + 1),
       (_, i) => i + startYear
@@ -107,7 +110,7 @@ export class Stats extends React.Component<Props, State> {
       return `${year} (${commitsInYear})`;
     });
 
-    const authors = Object.keys(statsPerYear[0]);
+    const authors = years.length > 0 ? Object.keys(statsPerYear[0]) : [];
     const traces = authors.map((author: string) => {
       const yValues = statsPerYear.map(year => year[author]);
       const authorSum = data.find(d => d.author.login === author).total;
