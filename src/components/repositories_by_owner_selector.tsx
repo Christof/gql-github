@@ -55,7 +55,10 @@ export class RepositoriesByOwnerSelector extends React.Component<Props, State> {
         />
         {this.renderIncludeForksCheckbox()}
         <FormControl>
-          <Button raised onClick={() => this.props.onLoad(this.state)}>
+          <Button
+            variant="raised"
+            onClick={() => this.props.onLoad(this.state)}
+          >
             Load
           </Button>
         </FormControl>
@@ -66,7 +69,7 @@ export class RepositoriesByOwnerSelector extends React.Component<Props, State> {
   render() {
     return (
       <Section>
-        <Typography type="headline" paragraph>
+        <Typography variant="headline" paragraph>
           Repository
         </Typography>
         {this.renderControls()}

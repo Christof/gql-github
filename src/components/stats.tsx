@@ -152,7 +152,7 @@ export class Stats extends React.Component<Props, State> {
 
     return (
       <Section key={repo}>
-        <Typography type="headline" paragraph>
+        <Typography variant="headline" paragraph>
           {repo}
         </Typography>
         {this.renderGraph(repo, data)}
@@ -180,7 +180,7 @@ export class Stats extends React.Component<Props, State> {
     )
       return (
         <Section>
-          <Typography type="headline" paragraph>
+          <Typography variant="headline" paragraph>
             Stats
           </Typography>
           <LinearProgress />
@@ -190,7 +190,7 @@ export class Stats extends React.Component<Props, State> {
     return (
       <div>
         <Section>
-          <Typography type="headline" paragraph>
+          <Typography variant="headline" paragraph>
             Overall
           </Typography>
           <OverallPlot

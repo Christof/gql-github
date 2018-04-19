@@ -5,7 +5,7 @@ import { GithubButton } from "./github_button";
 import { GithubCallback } from "./github_callback";
 import { ReleaseNotesRetriever } from "./release_notes_retriever";
 import { ReleaseNotesCreator } from "./release_notes_creator";
-import { AppBar, Typography, Toolbar, Reboot } from "material-ui";
+import { AppBar, Typography, Toolbar, CssBaseline } from "material-ui";
 import { withStyles, Theme, StyleRules } from "material-ui/styles";
 import { WithStyles } from "material-ui/styles/withStyles";
 import { Github } from "../github";
@@ -86,7 +86,7 @@ export class RawApp extends React.Component<{} & WithStyles, State> {
     return (
       <AppBar position="static">
         <Toolbar>
-          <Typography type="title" color="inherit" className={classes.flex}>
+          <Typography variant="title" color="inherit" className={classes.flex}>
             Github Stats & Releases
           </Typography>
           <MenuButton to="/stats" text="Stats" {...props} />
@@ -165,7 +165,7 @@ export class RawApp extends React.Component<{} & WithStyles, State> {
   render() {
     return (
       <div>
-        <Reboot />
+        <CssBaseline />
         <BrowserRouter>
           <div>
             {this.renderAppBar()}

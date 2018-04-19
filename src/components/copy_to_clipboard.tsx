@@ -26,7 +26,7 @@ export class CopyToClipboard extends React.Component<{ text: string }, {}> {
         >
           {this.props.text}
         </span>
-        <Button raised onClick={() => this.copyToClipboard()}>
+        <Button variant="raised" onClick={() => this.copyToClipboard()}>
           Copy
         </Button>
       </div>

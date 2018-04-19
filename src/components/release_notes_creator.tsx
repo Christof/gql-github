@@ -81,7 +81,7 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
     const tagNames = this.state.tags.map(tag => tag.name);
     return (
       <Section>
-        <Typography type="headline" paragraph>
+        <Typography variant="headline" paragraph>
           Range
         </Typography>
         <Dropdown
@@ -94,7 +94,7 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
           options={tagNames}
           onSelect={tagName => this.setState({ releaseTag: tagName })}
         />
-        <Button raised onClick={() => this.getCommits()}>
+        <Button variant="raised" onClick={() => this.getCommits()}>
           Get merged PRs in range
         </Button>
       </Section>
@@ -152,7 +152,7 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
 
     return (
       <Section>
-        <Typography type="headline" paragraph>
+        <Typography variant="headline" paragraph>
           Adjust Categories
         </Typography>
         {this.state.pullRequests.map((pullRequest, index) => (
@@ -177,11 +177,11 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
 
     return (
       <Section>
-        <Typography type="headline" paragraph>
+        <Typography variant="headline" paragraph>
           Release Note
         </Typography>
         <this.state.Markdown source={this.state.releaseNote} />
-        <Button raised onClick={() => this.postRelease()}>
+        <Button variant="raised" onClick={() => this.postRelease()}>
           Create Release
         </Button>
         <Snackbar
