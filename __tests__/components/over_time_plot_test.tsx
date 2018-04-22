@@ -1,5 +1,5 @@
 import * as React from "react";
-import { OverTimePlot } from "../../src/components/commits_over_time_plot";
+import { OverTimePlot } from "../../src/components/over_time_plot";
 import { shallow } from "enzyme";
 
 describe("OverTimePlot", function() {

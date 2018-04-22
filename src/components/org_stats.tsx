@@ -9,7 +9,7 @@ import { Typography, LinearProgress } from "material-ui";
 import { Section } from "./section";
 import { RepositoriesByOwnerSelector } from "./repositories_by_owner_selector";
 import { ScatterData } from "plotly.js";
-import { OverTimePlot } from "./commits_over_time_plot";
+import { OverTimePlot } from "./over_time_plot";
 import { runningAverage } from "../array_helper";
 import { DefaultGrid } from "./default_grid";
 import { calculateWeeklyCommits } from "../stats_helper";
@@ -35,7 +35,7 @@ export class OrgStats extends React.Component<Props, State> {
       startedLoading: false
     };
 
-    import("./commits_over_time_plot").then(module =>
+    import("./over_time_plot").then(module =>
       this.setState({ OverTimePlot: module.OverTimePlot })
     );
   }

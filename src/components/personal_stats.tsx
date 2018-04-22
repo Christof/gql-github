@@ -7,7 +7,7 @@ import { Github, GithubAuthorData } from "../github";
 import { Section } from "./section";
 import { Typography, Grid, LinearProgress } from "material-ui";
 import { OverallPlot } from "./overall_plot";
-import { OverTimePlot } from "./commits_over_time_plot";
+import { OverTimePlot } from "./over_time_plot";
 import { runningAverage } from "../array_helper";
 import { calculateWeeklyCommitsForAuthor } from "../stats_helper";
 
@@ -39,7 +39,7 @@ export class PersonalStats extends React.Component<Props, State> {
       .getUser()
       .then(user => this.setState({ author: user.login }));
 
-    import("./commits_over_time_plot").then(module =>
+    import("./over_time_plot").then(module =>
       this.setState({ OverTimePlot: module.OverTimePlot })
     );
     import("./overall_plot").then(module =>

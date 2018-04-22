@@ -3,7 +3,7 @@ import * as React from "react";
 import { getCommitsPerAuthorInDateRange } from "../stats_helper";
 import { Layout } from "plotly.js";
 import PlotlyChart from "react-plotlyjs-ts";
-import { OverTimePlot } from "./commits_over_time_plot";
+import { OverTimePlot } from "./over_time_plot";
 import { GithubData, GithubAuthorData, Github } from "../github";
 import { Typography } from "material-ui";
 import { Section } from "./section";
@@ -40,7 +40,7 @@ export class Stats extends React.Component<Props, State> {
       this.setState({ PlotlyChart: module.default })
     );
 
-    import("./commits_over_time_plot").then(module =>
+    import("./over_time_plot").then(module =>
       this.setState({ OverTimePlot: module.OverTimePlot })
     );
   }
