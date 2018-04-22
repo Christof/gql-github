@@ -249,6 +249,10 @@ export class Github {
     }
   }
 
+  async getStatsForRepositories(repositoryNames: string[]) {
+    return await Promise.all(repositoryNames.map(repo => this.getStats(repo)));
+  }
+
   async getPullRequestsWithReviews(
     repository: string
   ): Promise<GithubPulRequest[]> {
@@ -278,10 +282,6 @@ export class Github {
         }))
       };
     });
-  }
-
-  async getStatsForRepositories(repositoryNames: string[]) {
-    return await Promise.all(repositoryNames.map(repo => this.getStats(repo)));
   }
 
   postRelease(repository: string, release: GithubPostRelease) {
