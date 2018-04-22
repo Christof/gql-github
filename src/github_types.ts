@@ -15,7 +15,7 @@ export interface GithubCompareResult {
   commits: GithubCommit[];
 }
 
-export interface GithubPulRequest {
+export interface GithubPullRequest {
   author: string;
   createdAt: Date;
   reviews: { author: string; createdAt: Date }[];

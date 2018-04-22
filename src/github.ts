@@ -8,7 +8,7 @@ import {
   GithubRelease,
   GithubData,
   GithubPostRelease,
-  GithubPulRequest
+  GithubPullRequest
 } from "./github_types";
 export * from "./github_types";
 
@@ -255,7 +255,7 @@ export class Github {
 
   async getPullRequestsWithReviews(
     repository: string
-  ): Promise<GithubPulRequest[]> {
+  ): Promise<GithubPullRequest[]> {
     const responseData = await this.query(
       gql(`
       query getPullRequestsWithReviews($owner: String!, $repository: String!) {
