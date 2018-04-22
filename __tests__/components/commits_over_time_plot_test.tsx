@@ -1,8 +1,8 @@
 import * as React from "react";
-import { CommitsOverTimePlot } from "../../src/components/commits_over_time_plot";
+import { OverTimePlot } from "../../src/components/commits_over_time_plot";
 import { shallow } from "enzyme";
 
-describe("CommitsOverTimePlot", function() {
+describe("OverTimePlot", function() {
   it("renders plots with time as x axis", function() {
     const title = "my plot";
     const data = [
@@ -11,7 +11,7 @@ describe("CommitsOverTimePlot", function() {
         y: [1, 2, 3]
       }
     ];
-    const wrapper = shallow(<CommitsOverTimePlot title={title} data={data} />);
+    const wrapper = shallow(<OverTimePlot title={title} data={data} />);
 
     const layout = (wrapper.instance() as any).layout;
     expect(layout.title).toEqual(title);
@@ -31,11 +31,7 @@ describe("CommitsOverTimePlot", function() {
       }
     ];
     const wrapper = shallow(
-      <CommitsOverTimePlot
-        title={title}
-        data={data}
-        yaxisTitle="custom title"
-      />
+      <OverTimePlot title={title} data={data} yaxisTitle="custom title" />
     );
 
     const layout = (wrapper.instance() as any).layout;

@@ -21,7 +21,7 @@ describe("OrgStats", function() {
   });
 
   describe("after owner selection", function() {
-    it("shows a CommitsOverTimePlot", async function() {
+    it("shows a OverTimePlot", async function() {
       const owner = "owner";
       const includeForks = true;
 
@@ -59,7 +59,7 @@ describe("OrgStats", function() {
       await waitImmediate();
       wrapper.update();
 
-      const plot = wrapper.find("CommitsOverTimePlot");
+      const plot = wrapper.find("OverTimePlot");
       expect(plot).toHaveLength(1);
       const plotData = plot.prop("data") as any;
       expect(plotData).toHaveLength(4);

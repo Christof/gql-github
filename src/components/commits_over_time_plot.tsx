@@ -8,7 +8,7 @@ interface Props {
   data: Partial<ScatterData>[];
 }
 
-export class CommitsOverTimePlot extends React.Component<Props, {}> {
+export class OverTimePlot extends React.Component<Props, {}> {
   readonly layout: Partial<Plotly.Layout>;
   constructor(props: Props) {
     super(props);

@@ -92,14 +92,12 @@ describe("PersonalStats", function() {
       wrapper.update();
     });
 
-    it("renders CommitsOverTimePlot", function() {
-      const commitsOverTimePlot = wrapper.find("CommitsOverTimePlot");
+    it("renders OverTimePlot", function() {
+      const overTimePlot = wrapper.find("OverTimePlot");
 
-      expect(commitsOverTimePlot).toHaveLength(1);
-      expect(commitsOverTimePlot.prop("title")).toEqual(
-        "Commits in Repositories"
-      );
-      const plotData = commitsOverTimePlot.prop("data") as any;
+      expect(overTimePlot).toHaveLength(1);
+      expect(overTimePlot.prop("title")).toEqual("Commits in Repositories");
+      const plotData = overTimePlot.prop("data") as any;
       expect(plotData).toHaveLength(4);
       expect(plotData[0].name).toEqual("repo1");
       expect(plotData[0].y).toEqual([10, 20, 30]);

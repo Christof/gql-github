@@ -9,7 +9,7 @@ import { Typography, LinearProgress } from "material-ui";
 import { Section } from "./section";
 import { RepositoriesByOwnerSelector } from "./repositories_by_owner_selector";
 import { ScatterData } from "plotly.js";
-import { CommitsOverTimePlot } from "./commits_over_time_plot";
+import { OverTimePlot } from "./commits_over_time_plot";
 import { runningAverage } from "../array_helper";
 import { DefaultGrid } from "./default_grid";
 import { calculateWeeklyCommits } from "../stats_helper";
@@ -24,7 +24,7 @@ interface State {
   startedLoading: boolean;
   traces?: Partial<ScatterData>[];
   pullRequestsTraces?: Partial<ScatterData>[];
-  CommitsOverTimePlot?: typeof CommitsOverTimePlot;
+  OverTimePlot?: typeof OverTimePlot;
 }
 
 export class OrgStats extends React.Component<Props, State> {
@@ -36,7 +36,7 @@ export class OrgStats extends React.Component<Props, State> {
     };
 
     import("./commits_over_time_plot").then(module =>
-      this.setState({ CommitsOverTimePlot: module.CommitsOverTimePlot })
+      this.setState({ OverTimePlot: module.OverTimePlot })
     );
   }
 
@@ -108,10 +108,7 @@ export class OrgStats extends React.Component<Props, State> {
   }
 
   renderStatsSection() {
-    if (
-      !this.state.startedLoading ||
-      this.state.CommitsOverTimePlot === undefined
-    )
+    if (!this.state.startedLoading || this.state.OverTimePlot === undefined)
       return null;
 
     return (
@@ -123,11 +120,11 @@ export class OrgStats extends React.Component<Props, State> {
           <LinearProgress />
         ) : (
           <div>
-            <this.state.CommitsOverTimePlot
+            <this.state.OverTimePlot
               title="Commits per Author"
               data={this.state.traces}
             />
-            <this.state.CommitsOverTimePlot
+            <this.state.OverTimePlot
               title="Pull Requests per Author"
               yaxisTitle="review count"
               data={this.state.pullRequestsTraces}

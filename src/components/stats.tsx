@@ -3,7 +3,7 @@ import * as React from "react";
 import { getCommitsPerAuthorInDateRange } from "../stats_helper";
 import { Layout } from "plotly.js";
 import PlotlyChart from "react-plotlyjs-ts";
-import { CommitsOverTimePlot } from "./commits_over_time_plot";
+import { OverTimePlot } from "./commits_over_time_plot";
 import { GithubData, GithubAuthorData, Github } from "../github";
 import { Typography } from "material-ui";
 import { Section } from "./section";
@@ -23,7 +23,7 @@ interface State {
   data: GithubData[];
   startedLoading: boolean;
   PlotlyChart?: typeof PlotlyChart;
-  CommitsOverTimePlot?: typeof CommitsOverTimePlot;
+  OverTimePlot?: typeof OverTimePlot;
 }
 
 export class Stats extends React.Component<Props, State> {
@@ -41,7 +41,7 @@ export class Stats extends React.Component<Props, State> {
     );
 
     import("./commits_over_time_plot").then(module =>
-      this.setState({ CommitsOverTimePlot: module.CommitsOverTimePlot })
+      this.setState({ OverTimePlot: module.OverTimePlot })
     );
   }
 
@@ -54,10 +54,7 @@ export class Stats extends React.Component<Props, State> {
     const authorTimeLine = data.map(author => this.traceForAuthor(author));
 
     return (
-      <this.state.CommitsOverTimePlot
-        title={title}
-        data={authorTimeLine as any}
-      />
+      <this.state.OverTimePlot title={title} data={authorTimeLine as any} />
     );
   }
 
@@ -187,7 +184,7 @@ export class Stats extends React.Component<Props, State> {
     if (
       this.state.data.length === 0 ||
       this.state.PlotlyChart === undefined ||
-      this.state.CommitsOverTimePlot === undefined
+      this.state.OverTimePlot === undefined
     )
       return (
         <Section>
