@@ -7,7 +7,8 @@ import {
   GithubTag,
   GithubRelease,
   GithubData,
-  GithubPostRelease
+  GithubPostRelease,
+  GithubPulRequest
 } from "./github_types";
 export * from "./github_types";
 
@@ -246,6 +247,37 @@ export class Github {
       console.error(`Error in Github.getStats for ${repository}: `, error);
       return undefined;
     }
+  }
+
+  async getPullRequestsWithReviews(
+    repository: string
+  ): Promise<GithubPulRequest[]> {
+    const responseData = await this.query(
+      gql(`
+      query getPullRequestsWithReviews($owner: String!, $repository: String!) {
+        repository(owner: $owner, name: $repository) {
+          pullRequests(first: 100, orderBy: {field: CREATED_AT, direction: DESC}) {
+            nodes {
+              author { login }
+              createdAt
+              reviews(first: 20) { nodes {author {login} createdAt}}
+            }
+          }
+        }
+      }
+    `),
+      { owner: this.owner, repository }
+    );
+    return responseData.repository.pullRequests.nodes.map((node: any) => {
+      return {
+        author: node.author.login,
+        createdAt: node.createdAt,
+        reviews: node.reviews.nodes.map((review: any) => ({
+          author: review.author.login,
+          createdAt: review.createdAt
+        }))
+      };
+    });
   }
 
   async getStatsForRepositories(repositoryNames: string[]) {
