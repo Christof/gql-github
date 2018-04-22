@@ -129,6 +129,7 @@ export class OrgStats extends React.Component<Props, State> {
             />
             <this.state.CommitsOverTimePlot
               title="Pull Requests per Author"
+              yaxisTitle="review count"
               data={this.state.pullRequestsTraces}
             />
           </div>
