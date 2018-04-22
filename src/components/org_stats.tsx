@@ -1,5 +1,10 @@
 import * as React from "react";
-import { Github, GithubData, GithubAuthorData } from "../github";
+import {
+  Github,
+  GithubData,
+  GithubAuthorData,
+  GithubPullRequest
+} from "../github";
 import { Typography, LinearProgress } from "material-ui";
 import { Section } from "./section";
 import { RepositoriesByOwnerSelector } from "./repositories_by_owner_selector";
@@ -8,6 +13,7 @@ import { CommitsOverTimePlot } from "./commits_over_time_plot";
 import { runningAverage } from "../array_helper";
 import { DefaultGrid } from "./default_grid";
 import { calculateWeeklyCommits } from "../stats_helper";
+import { flatten, groupBy, values, mapObjIndexed } from "ramda";
 
 interface Props {
   github: Github;
@@ -70,10 +76,34 @@ export class OrgStats extends React.Component<Props, State> {
     const data = await this.props.github.getStatsForRepositories(
       repositoryNames
     );
+    const pullRequests = flatten<GithubPullRequest>(
+      await Promise.all(
+        repositoryNames.map(repo =>
+          this.props.github.getPullRequestsWithReviews(repo)
+        )
+      )
+    );
+    const pullRequestsByAuthor = groupBy(
+      pullRequest => pullRequest.author,
+      pullRequests
+    );
+
+    const pullRequestTraces = values(
+      mapObjIndexed(
+        (pullRequests: GithubPullRequest[], author: string) => ({
+          type: "scatter" as any,
+          mode: "marker" as any,
+          name: author + " PRs",
+          x: pullRequests.map(pullRequest => new Date(pullRequest.createdAt)),
+          y: pullRequests.map(pullRequest => pullRequest.reviews.length)
+        }),
+        pullRequestsByAuthor
+      )
+    );
 
     const traces = this.createTraces(data);
 
-    this.setState({ data, traces });
+    this.setState({ data, traces: [...traces, ...pullRequestTraces] });
   }
 
   renderStatsSection() {
