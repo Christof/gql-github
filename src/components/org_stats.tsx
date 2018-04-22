@@ -23,6 +23,7 @@ interface State {
   data: GithubData[];
   startedLoading: boolean;
   traces?: Partial<ScatterData>[];
+  pullRequestsTraces?: Partial<ScatterData>[];
   CommitsOverTimePlot?: typeof CommitsOverTimePlot;
 }
 
@@ -88,11 +89,11 @@ export class OrgStats extends React.Component<Props, State> {
       pullRequests
     );
 
-    const pullRequestTraces = values(
+    const pullRequestsTraces = values(
       mapObjIndexed(
         (pullRequests: GithubPullRequest[], author: string) => ({
           type: "scatter" as any,
-          mode: "marker" as any,
+          mode: "markers" as any,
           name: author + " PRs",
           x: pullRequests.map(pullRequest => new Date(pullRequest.createdAt)),
           y: pullRequests.map(pullRequest => pullRequest.reviews.length)
@@ -103,7 +104,7 @@ export class OrgStats extends React.Component<Props, State> {
 
     const traces = this.createTraces(data);
 
-    this.setState({ data, traces: [...traces, ...pullRequestTraces] });
+    this.setState({ data, traces, pullRequestsTraces });
   }
 
   renderStatsSection() {
@@ -121,10 +122,16 @@ export class OrgStats extends React.Component<Props, State> {
         {this.state.data.length === 0 ? (
           <LinearProgress />
         ) : (
-          <this.state.CommitsOverTimePlot
-            title="Commits per Author"
-            data={this.state.traces}
-          />
+          <div>
+            <this.state.CommitsOverTimePlot
+              title="Commits per Author"
+              data={this.state.traces}
+            />
+            <this.state.CommitsOverTimePlot
+              title="Pull Requests per Author"
+              data={this.state.pullRequestsTraces}
+            />
+          </div>
         )}
       </Section>
     );
