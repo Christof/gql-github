@@ -66,6 +66,33 @@ export class OrgStats extends React.Component<Props, State> {
     return traces;
   }
 
+  async getPullRequestsByAuthor(repositoryNames: string[]) {
+    const pullRequests = flatten<GithubPullRequest>(
+      await Promise.all(
+        repositoryNames.map(repo =>
+          this.props.github.getPullRequestsWithReviews(repo)
+        )
+      )
+    );
+
+    return groupBy(pullRequest => pullRequest.author, pullRequests);
+  }
+
+  async createPullRequestTraces(repositoryNames: string[]) {
+    return values(
+      mapObjIndexed(
+        (pullRequests: GithubPullRequest[], author: string) => ({
+          type: "scatter" as any,
+          mode: "markers" as any,
+          name: author + " PRs",
+          x: pullRequests.map(pullRequest => new Date(pullRequest.createdAt)),
+          y: pullRequests.map(pullRequest => pullRequest.reviews.length)
+        }),
+        await this.getPullRequestsByAuthor(repositoryNames)
+      )
+    );
+  }
+
   async selectOwner(options: { owner?: string; includeForks: boolean }) {
     if (options.owner === undefined) return;
 
@@ -77,29 +104,9 @@ export class OrgStats extends React.Component<Props, State> {
     const data = await this.props.github.getStatsForRepositories(
       repositoryNames
     );
-    const pullRequests = flatten<GithubPullRequest>(
-      await Promise.all(
-        repositoryNames.map(repo =>
-          this.props.github.getPullRequestsWithReviews(repo)
-        )
-      )
-    );
-    const pullRequestsByAuthor = groupBy(
-      pullRequest => pullRequest.author,
-      pullRequests
-    );
 
-    const pullRequestsTraces = values(
-      mapObjIndexed(
-        (pullRequests: GithubPullRequest[], author: string) => ({
-          type: "scatter" as any,
-          mode: "markers" as any,
-          name: author + " PRs",
-          x: pullRequests.map(pullRequest => new Date(pullRequest.createdAt)),
-          y: pullRequests.map(pullRequest => pullRequest.reviews.length)
-        }),
-        pullRequestsByAuthor
-      )
+    const pullRequestsTraces = await this.createPullRequestTraces(
+      repositoryNames
     );
 
     const traces = this.createTraces(data);
