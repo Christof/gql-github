@@ -30,6 +30,8 @@ describe("OrgStats", function() {
         "repo"
       ]);
 
+      (github.getPullRequestsWithReviews as jest.Mock).mockReturnValue([]);
+
       const week1 = new Date(1969, 2, 1);
       const week2 = new Date(1970, 2, 1);
       const data: GithubData = [
@@ -60,8 +62,8 @@ describe("OrgStats", function() {
       wrapper.update();
 
       const plot = wrapper.find("OverTimePlot");
-      expect(plot).toHaveLength(1);
-      const plotData = plot.prop("data") as any;
+      expect(plot).toHaveLength(2);
+      const plotData = plot.at(0).prop("data") as any;
       expect(plotData).toHaveLength(4);
 
       expect(plotData[0].name).toEqual("author1");
