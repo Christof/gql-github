@@ -272,16 +272,20 @@ export class Github {
     `),
       { owner: this.owner, repository }
     );
-    return responseData.repository.pullRequests.nodes.map((node: any) => {
-      return {
-        author: node.author.login,
-        createdAt: node.createdAt,
-        reviews: node.reviews.nodes.map((review: any) => ({
-          author: review.author.login,
-          createdAt: review.createdAt
-        }))
-      };
-    });
+    return responseData.repository.pullRequests.nodes.map((node: any) =>
+      this.convertPullRequestNode(node)
+    );
+  }
+
+  private convertPullRequestNode(node: any): GithubPullRequest {
+    return {
+      author: node.author.login,
+      createdAt: node.createdAt,
+      reviews: node.reviews.nodes.map((review: any) => ({
+        author: review.author.login,
+        createdAt: review.createdAt
+      }))
+    };
   }
 
   postRelease(repository: string, release: GithubPostRelease) {
