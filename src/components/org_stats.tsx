@@ -3,7 +3,8 @@ import {
   Github,
   GithubData,
   GithubAuthorData,
-  GithubPullRequest
+  GithubPullRequest,
+  GithubReview
 } from "../github";
 import { Typography, LinearProgress } from "material-ui";
 import { Section } from "./section";
@@ -98,10 +99,10 @@ export class OrgStats extends React.Component<Props, State> {
   }
 
   createReviewTraces(pullRequests: GithubPullRequest[]) {
-    const reviews = flatten(
+    const reviews = flatten<GithubReview>(
       map(pullRequest => pullRequest.reviews, pullRequests)
     );
-    const reviewsByAuthor = groupBy((review: any) => review.author, reviews);
+    const reviewsByAuthor = groupBy(review => review.author, reviews);
 
     return values(
       mapObjIndexed(
