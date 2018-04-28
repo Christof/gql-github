@@ -14,7 +14,7 @@ import { OverTimePlot } from "./over_time_plot";
 import { runningAverage } from "../array_helper";
 import { DefaultGrid } from "./default_grid";
 import { calculateWeeklyCommits } from "../stats_helper";
-import { flatten, groupBy, values, mapObjIndexed, map } from "ramda";
+import { flatten, groupBy, values, mapObjIndexed, map, keys } from "ramda";
 
 interface Props {
   github: Github;
@@ -113,16 +113,19 @@ export class OrgStats extends React.Component<Props, State> {
     const reviewsByAuthor = groupBy(review => review.author, reviewsPerDay);
 
     return values(
-      mapObjIndexed(
-        (reviews: any[], author: string) => ({
+      mapObjIndexed((reviews: GithubReview[], author: string) => {
+        const groupedByDate = groupBy(
+          review => review.createdAt.valueOf().toString(),
+          reviews
+        );
+        return {
           type: "scatter" as any,
           mode: "markers" as any,
           name: author + " PRs",
-          x: reviews.map(review => new Date(review.createdAt)),
-          y: reviews.map(_review => 1)
-        }),
-        reviewsByAuthor
-      )
+          x: map(dateString => parseFloat(dateString), keys(groupedByDate)),
+          y: map(reviews => reviews.length, values(groupedByDate))
+        };
+      }, reviewsByAuthor)
     );
   }
 
