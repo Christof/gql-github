@@ -15,10 +15,15 @@ export interface GithubCompareResult {
   commits: GithubCommit[];
 }
 
+export interface GithubReview {
+  author: string;
+  createdAt: Date;
+}
+
 export interface GithubPullRequest {
   author: string;
   createdAt: Date;
-  reviews: { author: string; createdAt: Date }[];
+  reviews: GithubReview[];
 }
 
 export interface GithubCommit {
