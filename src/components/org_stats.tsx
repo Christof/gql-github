@@ -66,19 +66,22 @@ export class OrgStats extends React.Component<Props, State> {
     return traces;
   }
 
-  async getPullRequestsByAuthor(repositoryNames: string[]) {
-    const pullRequests = flatten<GithubPullRequest>(
+  async getPullRequests(repositoryNames: string[]) {
+    return flatten<GithubPullRequest>(
       await Promise.all(
         repositoryNames.map(repo =>
           this.props.github.getPullRequestsWithReviews(repo)
         )
       )
     );
-
-    return groupBy(pullRequest => pullRequest.author, pullRequests);
   }
 
-  async createPullRequestTraces(repositoryNames: string[]) {
+  createPullRequestTraces(pullRequests: GithubPullRequest[]) {
+    const pullRequestsByAuthor = groupBy(
+      pullRequest => pullRequest.author,
+      pullRequests
+    );
+
     return values(
       mapObjIndexed(
         (pullRequests: GithubPullRequest[], author: string) => ({
@@ -88,7 +91,7 @@ export class OrgStats extends React.Component<Props, State> {
           x: pullRequests.map(pullRequest => new Date(pullRequest.createdAt)),
           y: pullRequests.map(pullRequest => pullRequest.reviews.length)
         }),
-        await this.getPullRequestsByAuthor(repositoryNames)
+        pullRequestsByAuthor
       )
     );
   }
@@ -105,9 +108,8 @@ export class OrgStats extends React.Component<Props, State> {
       repositoryNames
     );
 
-    const pullRequestsTraces = await this.createPullRequestTraces(
-      repositoryNames
-    );
+    const pullRequests = await this.getPullRequests(repositoryNames);
+    const pullRequestsTraces = await this.createPullRequestTraces(pullRequests);
 
     const traces = this.createTraces(data);
 
