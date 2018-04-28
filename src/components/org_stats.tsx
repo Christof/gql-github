@@ -102,7 +102,15 @@ export class OrgStats extends React.Component<Props, State> {
     const reviews = flatten<GithubReview>(
       map(pullRequest => pullRequest.reviews, pullRequests)
     );
-    const reviewsByAuthor = groupBy(review => review.author, reviews);
+    const reviewsPerDay = map(review => {
+      const createdAt = new Date(review.createdAt);
+      createdAt.setMilliseconds(0);
+      createdAt.setSeconds(0);
+      createdAt.setMinutes(0);
+      createdAt.setHours(0);
+      return { ...review, createdAt };
+    }, reviews);
+    const reviewsByAuthor = groupBy(review => review.author, reviewsPerDay);
 
     return values(
       mapObjIndexed(
