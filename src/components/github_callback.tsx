@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as qs from "qs";
 import { RouteComponentProps } from "react-router";
-import { windowFetch } from "../github";
+import { windowFetch } from "../utils";
 
 interface Props extends RouteComponentProps<{}> {
   onChangeToken: (token: string) => void;
