@@ -1,6 +1,7 @@
 import { ApolloClient } from "apollo-client";
 import { NormalizedCacheObject } from "apollo-cache-inmemory";
 import gql from "graphql-tag";
+import { windowFetch, delay } from "./utils";
 import {
   GithubUser,
   GithubCompareResult,
@@ -11,22 +12,6 @@ import {
   GithubPullRequest
 } from "./github_types";
 export * from "./github_types";
-
-/**
- * Wrapper for fetch.
- *
- * Direct assignment as default parameter in constructor below
- * doesn't work.
- */
-export function windowFetch(input: RequestInfo, init?: RequestInit) {
-  return fetch(input, init);
-}
-
-function delay(timeInSeconds: number) {
-  return new Promise(resolve => {
-    setTimeout(resolve, timeInSeconds * 1000);
-  });
-}
 
 export class Github {
   public owner: string;
