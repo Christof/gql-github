@@ -105,11 +105,11 @@ describe("OrgStats", function() {
       const plotData = plot.at(1).prop("data") as any;
       expect(plotData).toHaveLength(2);
 
-      expect(plotData[0].name).toEqual("author1 PRs");
+      expect(plotData[0].name).toEqual("author1 PRs (2)");
       expect(plotData[0].x).toEqual([week1, week1]);
       expect(plotData[0].y).toEqual([0, 0]);
 
-      expect(plotData[1].name).toEqual("author2 PRs");
+      expect(plotData[1].name).toEqual("author2 PRs (2)");
       expect(plotData[1].x).toEqual([week1, week1]);
       expect(plotData[1].y).toEqual([2, 2]);
     });
@@ -120,11 +120,11 @@ describe("OrgStats", function() {
       const plotData = plot.at(2).prop("data") as any;
       expect(plotData).toHaveLength(2);
 
-      expect(plotData[0].name).toEqual("author3 Reviews");
+      expect(plotData[0].name).toEqual("author3 Reviews (2)");
       expect(plotData[0].x).toEqual([week2.valueOf()]);
       expect(plotData[0].y).toEqual([2]);
 
-      expect(plotData[1].name).toEqual("author1 Reviews");
+      expect(plotData[1].name).toEqual("author1 Reviews (2)");
       expect(plotData[1].x).toEqual([week2.valueOf()]);
       expect(plotData[1].y).toEqual([2]);
     });
