@@ -10,10 +10,29 @@ describe("GraphQLFacade", function() {
           avatarUrl
         }
       }`;
+  const variables = undefined;
+  const retries = 1;
+  const retryWaitSeconds = 0.001;
 
   beforeEach(function() {
     clientQueryMock.mockReset();
     facade = new GraphQLFacade({ query: clientQueryMock } as any);
+  });
+
+  it("returns data member of response", async () => {
+    clientQueryMock.mockReturnValueOnce({
+      data: "some data"
+    });
+
+    const user = await facade.query(
+      query,
+      variables,
+      retries,
+      retryWaitSeconds
+    );
+
+    expect(clientQueryMock).toHaveBeenCalledTimes(1);
+    expect(user).toEqual("some data");
   });
 
   describe("retry", function() {
@@ -22,9 +41,7 @@ describe("GraphQLFacade", function() {
       clientQueryMock.mockReturnValueOnce({
         data: "some data"
       });
-      const variables = undefined;
-      const retries = 1;
-      const retryWaitSeconds = 0.001;
+
       const user = await facade.query(
         query,
         variables,
@@ -38,9 +55,7 @@ describe("GraphQLFacade", function() {
 
     it("fails if retry also fails", async () => {
       clientQueryMock.mockReturnValue({ errors: ["some error"] });
-      const variables = undefined;
-      const retries = 1;
-      const retryWaitSeconds = 0.001;
+
       await expect(
         facade.query(query, variables, retries, retryWaitSeconds)
       ).rejects.toEqual(["some error"]);
