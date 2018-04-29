@@ -14,6 +14,7 @@ import { setContext } from "apollo-link-context";
 import { ApolloClient } from "apollo-client";
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { createDynamicImport } from "./dynamic_import";
+import { GraphQLFacade } from "../graphql_facade";
 
 const styles = (_theme: Theme): StyleRules => ({
   root: {
@@ -74,7 +75,7 @@ export class RawApp extends React.Component<{} & WithStyles, State> {
       cache: new InMemoryCache()
     });
 
-    return new Github(token, client);
+    return new Github(token, new GraphQLFacade(client));
   }
 
   renderAppBar() {
