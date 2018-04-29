@@ -125,7 +125,7 @@ export class OrgStats extends React.Component<Props, State> {
         return {
           type: "scatter" as any,
           mode: "markers" as any,
-          name: author + " Reviews",
+          name: `${author} Reviews (${reviews.length})`,
           x: map(dateString => parseFloat(dateString), keys(groupedByDate)),
           y: map(reviews => reviews.length, values(groupedByDate))
         };
