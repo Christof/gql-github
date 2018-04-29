@@ -15,6 +15,7 @@ import { runningAverage } from "../array_helper";
 import { DefaultGrid } from "./default_grid";
 import { calculateWeeklyCommits } from "../stats_helper";
 import { flatten, groupBy, values, mapObjIndexed, map, keys } from "ramda";
+import { discardTimeFromDate } from "../utils";
 
 interface Props {
   github: Github;
@@ -102,14 +103,13 @@ export class OrgStats extends React.Component<Props, State> {
     const reviews = flatten<GithubReview>(
       map(pullRequest => pullRequest.reviews, pullRequests)
     );
-    const reviewsPerDay = map(review => {
-      const createdAt = new Date(review.createdAt);
-      createdAt.setMilliseconds(0);
-      createdAt.setSeconds(0);
-      createdAt.setMinutes(0);
-      createdAt.setHours(0);
-      return { ...review, createdAt };
-    }, reviews);
+    const reviewsPerDay = map(
+      review => ({
+        ...review,
+        createdAt: discardTimeFromDate(review.createdAt)
+      }),
+      reviews
+    );
     const reviewsByAuthor = groupBy(review => review.author, reviewsPerDay);
 
     return values(

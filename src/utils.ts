@@ -13,3 +13,14 @@ export function delay(timeInSeconds: number) {
     setTimeout(resolve, timeInSeconds * 1000);
   });
 }
+
+export function discardTimeFromDate(date: Date) {
+  const result = new Date(date);
+
+  result.setMilliseconds(0);
+  result.setSeconds(0);
+  result.setMinutes(0);
+  result.setHours(0);
+
+  return result;
+}
