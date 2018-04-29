@@ -68,29 +68,6 @@ describe("Github", () => {
     });
   });
 
-  describe.skip("retry", function() {
-    it("retries once if gql query fails", async () => {
-      github.retryWaitSeconds = 0.001;
-      const expectedUser = { login: "username", avatarUrl: "uavatar url" };
-      clientQueryMock.mockReturnValueOnce({ errors: ["some error"] });
-      clientQueryMock.mockReturnValueOnce({
-        viewer: expectedUser
-      });
-      const user = await github.getUser();
-
-      expect(clientQueryMock).toHaveBeenCalledTimes(2);
-      expect(user).toEqual(expectedUser);
-    });
-
-    it("fails if retry also fails", async () => {
-      github.retryWaitSeconds = 0.001;
-      clientQueryMock.mockReturnValue({ errors: ["some error"] });
-      await expect(github.getUser()).rejects.toEqual(["some error"]);
-
-      expect(clientQueryMock).toHaveBeenCalledTimes(2);
-    });
-  });
-
   describe("getOrganization", () => {
     it("returns organization that are accessible for the user", async () => {
       const expectedOrgs = [
