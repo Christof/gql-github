@@ -44,7 +44,10 @@ describe("OrgStats", function() {
       {
         author: "author2",
         createdAt: week1,
-        reviews: [{ author: "author3", createdAt: week2 }]
+        reviews: [
+          { author: "author3", createdAt: week2 },
+          { author: "author1", createdAt: week2 }
+        ]
       }
     ];
 
@@ -108,7 +111,22 @@ describe("OrgStats", function() {
 
       expect(plotData[1].name).toEqual("author2 PRs");
       expect(plotData[1].x).toEqual([week1, week1]);
-      expect(plotData[1].y).toEqual([1, 1]);
+      expect(plotData[1].y).toEqual([2, 2]);
+    });
+
+    it("shows an OverTimePlot for Reviews", function() {
+      const plot = wrapper.find("OverTimePlot");
+      expect(plot).toHaveLength(3);
+      const plotData = plot.at(2).prop("data") as any;
+      expect(plotData).toHaveLength(2);
+
+      expect(plotData[0].name).toEqual("author3 Reviews");
+      expect(plotData[0].x).toEqual([week2.valueOf()]);
+      expect(plotData[0].y).toEqual([2]);
+
+      expect(plotData[1].name).toEqual("author1 Reviews");
+      expect(plotData[1].x).toEqual([week2.valueOf()]);
+      expect(plotData[1].y).toEqual([2]);
     });
   });
 
