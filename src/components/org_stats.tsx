@@ -154,6 +154,27 @@ export class OrgStats extends React.Component<Props, State> {
     this.setState({ data, traces, pullRequestsTraces, reviewsTraces });
   }
 
+  private renderPlots() {
+    return (
+      <div>
+        <this.state.OverTimePlot
+          title="Commits per Author"
+          data={this.state.traces}
+        />
+        <this.state.OverTimePlot
+          title="Pull Requests per Author"
+          yaxisTitle="review count"
+          data={this.state.pullRequestsTraces}
+        />
+        <this.state.OverTimePlot
+          title="Reviews per Author"
+          yaxisTitle="review count"
+          data={this.state.reviewsTraces}
+        />
+      </div>
+    );
+  }
+
   renderStatsSection() {
     if (!this.state.startedLoading || this.state.OverTimePlot === undefined)
       return null;
@@ -163,26 +184,7 @@ export class OrgStats extends React.Component<Props, State> {
         <Typography variant="headline" paragraph>
           Stats
         </Typography>
-        {this.state.data.length === 0 ? (
-          <LinearProgress />
-        ) : (
-          <div>
-            <this.state.OverTimePlot
-              title="Commits per Author"
-              data={this.state.traces}
-            />
-            <this.state.OverTimePlot
-              title="Pull Requests per Author"
-              yaxisTitle="review count"
-              data={this.state.pullRequestsTraces}
-            />
-            <this.state.OverTimePlot
-              title="Reviews per Author"
-              yaxisTitle="review count"
-              data={this.state.reviewsTraces}
-            />
-          </div>
-        )}
+        {this.state.data.length === 0 ? <LinearProgress /> : this.renderPlots()}
       </Section>
     );
   }
