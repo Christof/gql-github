@@ -90,7 +90,7 @@ export class OrgStats extends React.Component<Props, State> {
         (pullRequests: GithubPullRequest[], author: string) => ({
           type: "scatter" as any,
           mode: "markers" as any,
-          name: author + " PRs",
+          name: `${author} PRs (${pullRequests.length})`,
           x: pullRequests.map(pullRequest => new Date(pullRequest.createdAt)),
           y: pullRequests.map(pullRequest => pullRequest.reviews.length)
         }),
