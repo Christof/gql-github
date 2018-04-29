@@ -75,7 +75,7 @@ describe("OrgStats", function() {
 
     it("shows an OverTimePlot for commits", async function() {
       const plot = wrapper.find("OverTimePlot");
-      expect(plot).toHaveLength(2);
+      expect(plot).toHaveLength(3);
       const plotData = plot.at(0).prop("data") as any;
       expect(plotData).toHaveLength(4);
 
@@ -96,9 +96,9 @@ describe("OrgStats", function() {
       expect(plotData[3].y).toEqual([30]);
     });
 
-    it("shows an OverTimePlot for Reviews", function() {
+    it("shows an OverTimePlot for PullRequests", function() {
       const plot = wrapper.find("OverTimePlot");
-      expect(plot).toHaveLength(2);
+      expect(plot).toHaveLength(3);
       const plotData = plot.at(1).prop("data") as any;
       expect(plotData).toHaveLength(2);
 
