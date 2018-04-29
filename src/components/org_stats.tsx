@@ -99,10 +99,11 @@ export class OrgStats extends React.Component<Props, State> {
     );
   }
 
-  createReviewTraces(pullRequests: GithubPullRequest[]) {
+  private getReviewsByAuthorPerDay(pullRequests: GithubPullRequest[]) {
     const reviews = flatten<GithubReview>(
       map(pullRequest => pullRequest.reviews, pullRequests)
     );
+
     const reviewsPerDay = map(
       review => ({
         ...review,
@@ -110,8 +111,11 @@ export class OrgStats extends React.Component<Props, State> {
       }),
       reviews
     );
-    const reviewsByAuthor = groupBy(review => review.author, reviewsPerDay);
 
+    return groupBy(review => review.author, reviewsPerDay);
+  }
+
+  createReviewTraces(pullRequests: GithubPullRequest[]) {
     return values(
       mapObjIndexed((reviews: GithubReview[], author: string) => {
         const groupedByDate = groupBy(
@@ -125,7 +129,7 @@ export class OrgStats extends React.Component<Props, State> {
           x: map(dateString => parseFloat(dateString), keys(groupedByDate)),
           y: map(reviews => reviews.length, values(groupedByDate))
         };
-      }, reviewsByAuthor)
+      }, this.getReviewsByAuthorPerDay(pullRequests))
     );
   }
 
