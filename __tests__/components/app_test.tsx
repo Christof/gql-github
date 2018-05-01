@@ -8,9 +8,25 @@ import * as ReactRouterDom from "react-router-dom";
 import { GithubCallback } from "../../src/components/github_callback";
 
 describe("App", function() {
+  let fetch: jest.Mock;
+
+  beforeEach(function() {
+    fetch = jest.fn();
+    fetch.mockReturnValue(
+      Promise.resolve({
+        json() {
+          return Promise.resolve([]);
+        },
+        text() {
+          return Promise.resolve("[]");
+        }
+      })
+    );
+  });
+
   describe("AppBar", function() {
     it("renders the tilte, MenuButtons and GithubButton", function() {
-      const wrapper = mount(<App />);
+      const wrapper = mount(<App fetch={fetch} />);
 
       const appBar = wrapper.find("WithStyles(AppBar)");
       expect(appBar).toHaveLength(1);
@@ -28,7 +44,7 @@ describe("App", function() {
 
   describe("Content", function() {
     it("is an empty div if no route is selected", function() {
-      const wrapper = mount(<App />);
+      const wrapper = mount(<App fetch={fetch} />);
 
       expect(wrapper.find("#content")).toHaveLength(1);
     });
@@ -41,7 +57,7 @@ describe("App", function() {
           resolve({ text: () => new Promise(() => {}) })
         );
       };
-      const wrapper = shallow(<App />);
+      const wrapper = shallow(<App fetch={fetch} />);
       const rawApp = wrapper.find("RawApp");
       expect(rawApp).toHaveLength(1);
       const rawAppWrapper = rawApp.dive();
@@ -67,7 +83,7 @@ describe("App", function() {
           );
         };
 
-        const wrapper = shallow(<App />);
+        const wrapper = shallow(<App fetch={fetch} />);
 
         const rawApp = wrapper.find("RawApp");
         expect(rawApp).toHaveLength(1);
@@ -85,7 +101,7 @@ describe("App", function() {
   ].forEach(entry => {
     describe(entry.component, function() {
       it(`shows a MenuButton to route ${entry.route}`, function() {
-        const wrapper = mount(<App />);
+        const wrapper = mount(<App fetch={fetch} />);
         const appBar = wrapper.find("WithStyles(AppBar)");
         expect(appBar).toHaveLength(1);
 
@@ -119,7 +135,7 @@ describe("App", function() {
 
           const wrapper = mount(
             <MemoryRouter initialEntries={[entry.route]}>
-              <App />
+              <App fetch={fetch} />
             </MemoryRouter>
           );
 
@@ -134,7 +150,7 @@ describe("App", function() {
         it(`shows nothing if route is active but not logged in`, async function() {
           const wrapper = mount(
             <MemoryRouter initialEntries={[entry.route]}>
-              <App />
+              <App fetch={fetch} />
             </MemoryRouter>
           );
 
@@ -164,7 +180,7 @@ describe("App", function() {
     it("renders GithubCallback for /auth-callback route", function() {
       const wrapper = mount(
         <MemoryRouter initialEntries={["/auth-callback"]}>
-          <App />
+          <App fetch={fetch} />
         </MemoryRouter>
       );
 
@@ -181,7 +197,7 @@ describe("App", function() {
         window.localStorage.githubToken = "my-token";
         const wrapper = mount(
           <MemoryRouter initialEntries={["/auth-callback"]}>
-            <App />
+            <App fetch={fetch} />
           </MemoryRouter>
         );
 
