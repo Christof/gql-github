@@ -43,8 +43,12 @@ const OrgStats = createDynamicImport(() =>
   import("./org_stats").then(module => module.OrgStats)
 );
 
-export class RawApp extends React.Component<{} & WithStyles, State> {
-  constructor(props: any) {
+interface Props {
+  fetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>;
+}
+
+export class RawApp extends React.Component<Props & WithStyles, State> {
+  constructor(props: Props & WithStyles) {
     super(props);
 
     const token = window.localStorage.githubToken
@@ -67,7 +71,7 @@ export class RawApp extends React.Component<{} & WithStyles, State> {
 
     const httpLink = createHttpLink({
       uri: "https://api.github.com/graphql",
-      fetch: fetch as any
+      fetch: this.props.fetch
     });
 
     const client = new ApolloClient({
@@ -75,7 +79,7 @@ export class RawApp extends React.Component<{} & WithStyles, State> {
       cache: new InMemoryCache()
     });
 
-    return new Github(token, new GraphQLFacade(client));
+    return new Github(token, new GraphQLFacade(client), this.props.fetch);
   }
 
   renderAppBar() {
@@ -178,4 +182,4 @@ export class RawApp extends React.Component<{} & WithStyles, State> {
   }
 }
 
-export const App = withStyles(styles)<{}>(RawApp);
+export const App = withStyles(styles)<Props>(RawApp);
