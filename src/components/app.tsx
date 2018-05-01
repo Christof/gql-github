@@ -155,6 +155,7 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
             <GithubCallback
               {...props}
               onChangeToken={token => this.onChangeToken(token)}
+              fetch={this.props.fetch}
             />
           )}
         />
