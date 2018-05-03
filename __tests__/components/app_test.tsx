@@ -11,17 +11,51 @@ describe("App", function() {
   let fetch: jest.Mock;
 
   beforeEach(function() {
+    window.localStorage.clear();
+
     fetch = jest.fn();
-    fetch.mockReturnValue(
-      Promise.resolve({
+    const data = {
+      data: {
+        viewer: {
+          login: "user",
+          avatarUrl: "url-to-avatar",
+          __typename: "User"
+        }
+      }
+    };
+    const organizations = {
+      data: {
+        viewer: {
+          organizations: {
+            nodes: [
+              {
+                login: "org",
+                avatarUrl: "url-to-avatar",
+                __typename: "User"
+              }
+            ]
+          }
+        }
+      }
+    };
+    fetch.mockImplementation((_input, init: any) => {
+      const responseData =
+        init &&
+        typeof init.body === "string" &&
+        init.body.contains("organizations")
+          ? organizations
+          : data;
+
+      return Promise.resolve({
+        statusCode: 404,
         json() {
-          return Promise.resolve([]);
+          return responseData;
         },
         text() {
-          return Promise.resolve("[]");
+          return Promise.resolve(JSON.stringify(responseData));
         }
-      })
-    );
+      });
+    });
   });
 
   describe("AppBar", function() {
@@ -52,11 +86,6 @@ describe("App", function() {
 
   describe("GithubButton", function() {
     it("onChangeToken sets the token and creates Github instance", function() {
-      (global as any).fetch = function() {
-        return new Promise(resolve =>
-          resolve({ text: () => new Promise(() => {}) })
-        );
-      };
       const wrapper = shallow(<App fetch={fetch} />);
       const rawApp = wrapper.find("RawApp");
       expect(rawApp).toHaveLength(1);
@@ -77,11 +106,6 @@ describe("App", function() {
 
       it("creates a Github instance in constructor", function() {
         window.localStorage.githubToken = "token";
-        (global as any).fetch = function() {
-          return new Promise(resolve =>
-            resolve({ text: () => new Promise(() => {}) })
-          );
-        };
 
         const wrapper = shallow(<App fetch={fetch} />);
 
@@ -175,6 +199,30 @@ describe("App", function() {
 
     afterAll(function() {
       (ReactRouterDom.BrowserRouter as any) = originalBrowserRouter;
+    });
+
+    beforeEach(function() {
+      const result = {
+        data: {
+          viewer: {
+            login: "user",
+            avatarUrl: "url-to-avatar",
+            __typename: "User"
+          }
+        }
+      };
+      fetch.mockReset();
+      fetch.mockReturnValue(
+        Promise.resolve({
+          statusCode: 200,
+          json() {
+            return result;
+          },
+          text() {
+            return Promise.resolve(JSON.stringify(result));
+          }
+        })
+      );
     });
 
     it("renders GithubCallback for /auth-callback route", function() {
