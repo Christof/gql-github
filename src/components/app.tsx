@@ -59,6 +59,10 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
     };
   }
 
+  componentDidCatch(error: any, info: any) {
+    console.log(error, info);
+  }
+
   createGithub(token: string) {
     const authLink = setContext((_, { headers }) => {
       return {
