@@ -60,7 +60,7 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
   }
 
   componentDidCatch(error: any, info: any) {
-    console.log(error, info);
+    console.error(error, info);
   }
 
   createGithub(token: string) {

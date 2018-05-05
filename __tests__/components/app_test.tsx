@@ -123,6 +123,25 @@ describe("App", function() {
     });
   });
 
+  describe("error boundary", function() {
+    it("is implemented", function() {
+      const wrapper = mount(<App fetch={fetch} />);
+      const instance = wrapper
+        .find("RawApp")
+        .at(0)
+        .instance() as any;
+
+      expect(instance.componentDidCatch).toBeDefined();
+
+      const spy = jest.spyOn(global.console, "error");
+      instance.componentDidCatch("some error text", "some info");
+
+      expect(spy).toHaveBeenCalledWith("some error text", "some info");
+
+      spy.mockClear();
+    });
+  });
+
   describe("GithubButton", function() {
     it("onChangeToken sets the token and creates Github instance", function() {
       const wrapper = shallow(<App fetch={fetch} />);
