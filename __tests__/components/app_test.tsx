@@ -42,6 +42,7 @@ describe("App", function() {
       const responseData =
         init &&
         typeof init.body === "string" &&
+        init.body.contains &&
         init.body.contains("organizations")
           ? organizations
           : data;
