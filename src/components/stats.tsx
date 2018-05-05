@@ -46,11 +46,6 @@ export class Stats extends React.Component<Props, State> {
   }
 
   renderGraph(title: string, data: GithubData) {
-    if (data === undefined || data.map === undefined) {
-      console.error("No data for", title, data);
-      return <div>{`No data returned for ${title} (${data})`}</div>;
-    }
-
     const authorTimeLine = data.map(author => this.traceForAuthor(author));
 
     return (
