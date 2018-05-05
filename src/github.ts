@@ -1,4 +1,4 @@
-import { windowFetch, delay } from "./utils";
+import { delay } from "./utils";
 import {
   GithubUser,
   GithubCompareResult,
@@ -18,7 +18,7 @@ export class Github {
   constructor(
     private token: string,
     private client: GraphQLFacade,
-    private fetch = windowFetch
+    private fetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>
   ) {}
 
   copyFor(owner: string) {
