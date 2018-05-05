@@ -39,6 +39,7 @@ describe("App", function() {
       }
     };
     fetch.mockImplementation((_input, init: any) => {
+      console.warn(init);
       const responseData =
         init &&
         typeof init.body === "string" &&
