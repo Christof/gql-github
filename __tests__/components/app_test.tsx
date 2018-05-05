@@ -31,22 +31,59 @@ describe("App", function() {
               {
                 login: "org",
                 avatarUrl: "url-to-avatar",
-                __typename: "User"
+                __typename: "Organization"
               }
-            ]
-          }
+            ],
+            __typename: "OrganizationConnection"
+          },
+          __typename: "User"
         }
       }
     };
+    const repositories = {
+      data: {
+        viewer: {
+          repositories: {
+            nodes: [{ name: "reponame", __typename: "Repository" }],
+            __typename: "RepositoryConnection"
+          },
+          __typename: "User"
+        }
+      }
+    };
+
+    const orgRepositories = {
+      data: {
+        organization: {
+          repositories: {
+            edges: [
+              {
+                node: {
+                  name: "repo",
+                  __typename: "Repository"
+                },
+                __typename: "RepositoryEdge"
+              }
+            ],
+            __typename: "RepositoryConnection"
+          },
+          __typename: "Organization"
+        }
+      }
+    };
+
+    function getData(body: string) {
+      if (body.includes("organizations")) return organizations;
+
+      if (body.includes("getRepos")) return repositories;
+
+      if (body.includes("getOrgRepositories")) return orgRepositories;
+
+      return data;
+    }
+
     fetch.mockImplementation((_input, init: any) => {
-      console.warn(init);
-      const responseData =
-        init &&
-        typeof init.body === "string" &&
-        init.body.contains &&
-        init.body.contains("organizations")
-          ? organizations
-          : data;
+      const responseData = getData(init.body);
 
       return Promise.resolve({
         statusCode: 404,
