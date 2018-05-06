@@ -62,6 +62,8 @@ describe("ReleaseNotesCreator", function() {
 
       expect(dropdowns.at(0).prop("options")).toEqual(tagNames);
       expect(dropdowns.at(1).prop("options")).toEqual(tagNames);
+
+      expect(dropdowns.at(0).prop("initialSelection")).toEqual("v0.0.2");
     });
 
     describe("after selecting a range", function() {
