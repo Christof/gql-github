@@ -3,6 +3,7 @@ import Select from "material-ui/Select";
 import { MenuItem } from "material-ui/Menu";
 import FormControl from "material-ui/Form/FormControl";
 import { InputLabel } from "material-ui";
+import { equals } from "ramda";
 
 export interface Props {
   label?: string;
@@ -25,6 +26,15 @@ export class Dropdown extends React.Component<Props, State> {
       selected:
         props.initialSelection !== undefined ? props.initialSelection : "none"
     };
+  }
+
+  componentDidUpdate(prevProps: Readonly<Props>, _prevState: Readonly<State>) {
+    if (
+      this.props.initialSelection !== undefined &&
+      !equals(this.props.options, prevProps.options)
+    ) {
+      this.setState({ selected: this.props.initialSelection });
+    }
   }
 
   onChange(selected: string) {
