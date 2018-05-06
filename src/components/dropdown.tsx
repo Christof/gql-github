@@ -13,7 +13,11 @@ export interface Props {
   style?: React.CSSProperties;
 }
 
-export class Dropdown extends React.Component<Props, { selected: string }> {
+interface State {
+  selected: string;
+}
+
+export class Dropdown extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
