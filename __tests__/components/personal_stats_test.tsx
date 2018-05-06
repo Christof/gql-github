@@ -19,7 +19,7 @@ describe("PersonalStats", function() {
     wrapper = shallow(<PersonalStats github={github} />);
   });
 
-  it("shows a DetailedRepositorySelector", function() {
+  it("shows a DetailedRepositorySelector", async function() {
     expect(wrapper.find("DetailedRepositorySelector")).toHaveLength(1);
   });
 
@@ -42,7 +42,7 @@ describe("PersonalStats", function() {
       wrapper.update();
     });
 
-    it("shows a heading and progress bar", function() {
+    it("shows a heading and progress bar", async function() {
       const heading = wrapper.find("WithStyles(Typography)");
 
       expect(heading).toHaveLength(1);
@@ -92,14 +92,12 @@ describe("PersonalStats", function() {
       wrapper.update();
     });
 
-    it("renders CommitsOverTimePlot", function() {
-      const commitsOverTimePlot = wrapper.find("CommitsOverTimePlot");
+    it("renders OverTimePlot", async function() {
+      const overTimePlot = wrapper.find("OverTimePlot");
 
-      expect(commitsOverTimePlot).toHaveLength(1);
-      expect(commitsOverTimePlot.prop("title")).toEqual(
-        "Commits in Repositories"
-      );
-      const plotData = commitsOverTimePlot.prop("data") as any;
+      expect(overTimePlot).toHaveLength(1);
+      expect(overTimePlot.prop("title")).toEqual("Commits in Repositories");
+      const plotData = overTimePlot.prop("data") as any;
       expect(plotData).toHaveLength(4);
       expect(plotData[0].name).toEqual("repo1");
       expect(plotData[0].y).toEqual([10, 20, 30]);
@@ -120,7 +118,7 @@ describe("PersonalStats", function() {
       }
     });
 
-    it("renders OverallPlot with sums", function() {
+    it("renders OverallPlot with sums", async function() {
       const overallPlot = wrapper.find("OverallPlot");
 
       expect(overallPlot).toHaveLength(1);

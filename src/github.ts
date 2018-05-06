@@ -1,31 +1,15 @@
-import { ApolloClient } from "apollo-client";
-import { NormalizedCacheObject } from "apollo-cache-inmemory";
-import gql from "graphql-tag";
+import { delay } from "./utils";
 import {
   GithubUser,
   GithubCompareResult,
   GithubTag,
   GithubRelease,
   GithubData,
-  GithubPostRelease
+  GithubPostRelease,
+  GithubPullRequest
 } from "./github_types";
+import { GraphQLFacade } from "./graphql_facade";
 export * from "./github_types";
-
-/**
- * Wrapper for fetch.
- *
- * Direct assignment as default parameter in constructor below
- * doesn't work.
- */
-export function windowFetch(input: RequestInfo, init?: RequestInit) {
-  return fetch(input, init);
-}
-
-function delay(timeInSeconds: number) {
-  return new Promise(resolve => {
-    setTimeout(resolve, timeInSeconds * 1000);
-  });
-}
 
 export class Github {
   public owner: string;
@@ -33,29 +17,9 @@ export class Github {
 
   constructor(
     private token: string,
-    private client: ApolloClient<NormalizedCacheObject>,
-    private fetch = windowFetch
+    private client: GraphQLFacade,
+    private fetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>
   ) {}
-
-  private async query(
-    query: any,
-    variables: any = undefined,
-    retries = 1
-  ): Promise<any> {
-    try {
-      const response = await this.client.query({ query, variables });
-      if (response.errors) throw response.errors;
-
-      return response.data;
-    } catch (error) {
-      console.log("Exception ", error, "for", query, "retries", retries);
-
-      if (retries === 0) throw error;
-
-      await delay(this.retryWaitSeconds);
-      return this.query(query, variables, --retries);
-    }
-  }
 
   copyFor(owner: string) {
     const copy = new Github(this.token, this.client, this.fetch);
@@ -75,22 +39,21 @@ export class Github {
   }
 
   async getUser(): Promise<GithubUser> {
-    const responseData = await this.query(
-      gql(`
+    const responseData = await this.client.query(
+      `
       query {
         viewer {
           login
           avatarUrl
         }
-      }`)
+      }`
     );
     return responseData.viewer;
   }
 
   async getOrganizations(): Promise<GithubUser[]> {
-    const responseData = await this.query(
-      gql(
-        `
+    const responseData = await this.client.query(
+      `
       query {
         viewer {
           organizations(last: 100) {
@@ -101,7 +64,6 @@ export class Github {
           }
         }
       }`
-      )
     );
     return responseData.viewer.organizations.nodes;
   }
@@ -121,8 +83,8 @@ export class Github {
   async getOwnedRepositories(options: {
     includeForks: boolean;
   }): Promise<string[]> {
-    const responseData = await this.query(
-      gql(`
+    const responseData = await this.client.query(
+      `
       query getRepos($isFork: Boolean) {
         viewer {
           repositories(affiliations: OWNER, first: 100, isFork: $isFork) {
@@ -131,8 +93,7 @@ export class Github {
             }
           }
         }
-      }
-      `),
+      }`,
       {
         isFork: options.includeForks ? null : false
       }
@@ -143,20 +104,19 @@ export class Github {
   async getOrgRepositories(options: {
     includeForks: boolean;
   }): Promise<string[]> {
-    const responseData = await this.query(
-      gql(`
-        query getOrgRepositories($org: String!, $isFork: Boolean) {
-          organization(login: $org) {
-            repositories(first: 100, isFork: $isFork) {
-              edges {
-                node {
-                  name
-                }
+    const responseData = await this.client.query(
+      `
+      query getOrgRepositories($org: String!, $isFork: Boolean) {
+        organization(login: $org) {
+          repositories(first: 100, isFork: $isFork) {
+            edges {
+              node {
+                name
               }
             }
           }
         }
-      `),
+      }`,
       { org: this.owner, isFork: options.includeForks ? null : false }
     );
     return responseData.organization.repositories.edges.map(
@@ -183,9 +143,8 @@ export class Github {
   }
 
   async getTags(repository: string): Promise<GithubTag[]> {
-    const responseData = await this.query(
-      gql(
-        `
+    const responseData = await this.client.query(
+      `
       query getTags($owner: String!, $repository: String!) {
         repository(owner: $owner, name: $repository) {
           refs(refPrefix: "refs/tags/", first: 20, orderBy: {field: TAG_COMMIT_DATE, direction: DESC}) {
@@ -194,8 +153,7 @@ export class Github {
             }
           }
         }
-      }`
-      ),
+      }`,
       {
         owner: this.owner,
         repository
@@ -205,21 +163,20 @@ export class Github {
   }
 
   async getReleases(repository: string): Promise<GithubRelease[]> {
-    const responseData = await this.query(
-      gql(`
-    query getReleases($owner: String!, $repository: String!) {
-      repository(owner: $owner, name: $repository) {
-        releases(first: 20, orderBy: {field: CREATED_AT, direction: DESC}) {
-          nodes {
-            tag {
-              name
+    const responseData = await this.client.query(
+      `
+      query getReleases($owner: String!, $repository: String!) {
+        repository(owner: $owner, name: $repository) {
+          releases(first: 20, orderBy: {field: CREATED_AT, direction: DESC}) {
+            nodes {
+              tag {
+                name
+              }
+              description
             }
-            description
           }
         }
-      }
-    }
-    `),
+      }`,
       { owner: this.owner, repository }
     );
     return responseData.repository.releases.nodes.map((node: any) => {
@@ -250,6 +207,40 @@ export class Github {
 
   async getStatsForRepositories(repositoryNames: string[]) {
     return await Promise.all(repositoryNames.map(repo => this.getStats(repo)));
+  }
+
+  async getPullRequestsWithReviews(
+    repository: string
+  ): Promise<GithubPullRequest[]> {
+    const responseData = await this.client.query(
+      `
+      query getPullRequestsWithReviews($owner: String!, $repository: String!) {
+        repository(owner: $owner, name: $repository) {
+          pullRequests(first: 100, orderBy: {field: CREATED_AT, direction: DESC}) {
+            nodes {
+              author { login }
+              createdAt
+              reviews(first: 20) { nodes {author {login} createdAt}}
+            }
+          }
+        }
+      }`,
+      { owner: this.owner, repository }
+    );
+    return responseData.repository.pullRequests.nodes.map((node: any) =>
+      this.convertPullRequestNode(node)
+    );
+  }
+
+  private convertPullRequestNode(node: any): GithubPullRequest {
+    return {
+      author: node.author.login,
+      createdAt: node.createdAt,
+      reviews: node.reviews.nodes.map((review: any) => ({
+        author: review.author.login,
+        createdAt: review.createdAt
+      }))
+    };
   }
 
   postRelease(repository: string, release: GithubPostRelease) {

@@ -8,9 +8,98 @@ import * as ReactRouterDom from "react-router-dom";
 import { GithubCallback } from "../../src/components/github_callback";
 
 describe("App", function() {
+  let fetch: jest.Mock;
+
+  beforeEach(function() {
+    window.localStorage.clear();
+
+    fetch = jest.fn();
+    const data = {
+      data: {
+        viewer: {
+          login: "user",
+          avatarUrl: "url-to-avatar",
+          __typename: "User"
+        }
+      }
+    };
+    const organizations = {
+      data: {
+        viewer: {
+          organizations: {
+            nodes: [
+              {
+                login: "org",
+                avatarUrl: "url-to-avatar",
+                __typename: "Organization"
+              }
+            ],
+            __typename: "OrganizationConnection"
+          },
+          __typename: "User"
+        }
+      }
+    };
+    const repositories = {
+      data: {
+        viewer: {
+          repositories: {
+            nodes: [{ name: "reponame", __typename: "Repository" }],
+            __typename: "RepositoryConnection"
+          },
+          __typename: "User"
+        }
+      }
+    };
+
+    const orgRepositories = {
+      data: {
+        organization: {
+          repositories: {
+            edges: [
+              {
+                node: {
+                  name: "repo",
+                  __typename: "Repository"
+                },
+                __typename: "RepositoryEdge"
+              }
+            ],
+            __typename: "RepositoryConnection"
+          },
+          __typename: "Organization"
+        }
+      }
+    };
+
+    function getData(body: string) {
+      if (body.includes("organizations")) return organizations;
+
+      if (body.includes("getRepos")) return repositories;
+
+      if (body.includes("getOrgRepositories")) return orgRepositories;
+
+      return data;
+    }
+
+    fetch.mockImplementation((_input, init: any) => {
+      const responseData = getData(init.body);
+
+      return Promise.resolve({
+        statusCode: 404,
+        json() {
+          return responseData;
+        },
+        text() {
+          return Promise.resolve(JSON.stringify(responseData));
+        }
+      });
+    });
+  });
+
   describe("AppBar", function() {
     it("renders the tilte, MenuButtons and GithubButton", function() {
-      const wrapper = mount(<App />);
+      const wrapper = mount(<App fetch={fetch} />);
 
       const appBar = wrapper.find("WithStyles(AppBar)");
       expect(appBar).toHaveLength(1);
@@ -28,20 +117,34 @@ describe("App", function() {
 
   describe("Content", function() {
     it("is an empty div if no route is selected", function() {
-      const wrapper = mount(<App />);
+      const wrapper = mount(<App fetch={fetch} />);
 
       expect(wrapper.find("#content")).toHaveLength(1);
     });
   });
 
+  describe("error boundary", function() {
+    it("is implemented", function() {
+      const wrapper = mount(<App fetch={fetch} />);
+      const instance = wrapper
+        .find("RawApp")
+        .at(0)
+        .instance() as any;
+
+      expect(instance.componentDidCatch).toBeDefined();
+
+      const spy = jest.spyOn(global.console, "error");
+      instance.componentDidCatch("some error text", "some info");
+
+      expect(spy).toHaveBeenCalledWith("some error text", "some info");
+
+      spy.mockClear();
+    });
+  });
+
   describe("GithubButton", function() {
     it("onChangeToken sets the token and creates Github instance", function() {
-      (global as any).fetch = function() {
-        return new Promise(resolve =>
-          resolve({ text: () => new Promise(() => {}) })
-        );
-      };
-      const wrapper = shallow(<App />);
+      const wrapper = shallow(<App fetch={fetch} />);
       const rawApp = wrapper.find("RawApp");
       expect(rawApp).toHaveLength(1);
       const rawAppWrapper = rawApp.dive();
@@ -61,13 +164,8 @@ describe("App", function() {
 
       it("creates a Github instance in constructor", function() {
         window.localStorage.githubToken = "token";
-        (global as any).fetch = function() {
-          return new Promise(resolve =>
-            resolve({ text: () => new Promise(() => {}) })
-          );
-        };
 
-        const wrapper = shallow(<App />);
+        const wrapper = shallow(<App fetch={fetch} />);
 
         const rawApp = wrapper.find("RawApp");
         expect(rawApp).toHaveLength(1);
@@ -85,7 +183,7 @@ describe("App", function() {
   ].forEach(entry => {
     describe(entry.component, function() {
       it(`shows a MenuButton to route ${entry.route}`, function() {
-        const wrapper = mount(<App />);
+        const wrapper = mount(<App fetch={fetch} />);
         const appBar = wrapper.find("WithStyles(AppBar)");
         expect(appBar).toHaveLength(1);
 
@@ -119,7 +217,7 @@ describe("App", function() {
 
           const wrapper = mount(
             <MemoryRouter initialEntries={[entry.route]}>
-              <App />
+              <App fetch={fetch} />
             </MemoryRouter>
           );
 
@@ -134,7 +232,7 @@ describe("App", function() {
         it(`shows nothing if route is active but not logged in`, async function() {
           const wrapper = mount(
             <MemoryRouter initialEntries={[entry.route]}>
-              <App />
+              <App fetch={fetch} />
             </MemoryRouter>
           );
 
@@ -161,10 +259,34 @@ describe("App", function() {
       (ReactRouterDom.BrowserRouter as any) = originalBrowserRouter;
     });
 
+    beforeEach(function() {
+      const result = {
+        data: {
+          viewer: {
+            login: "user",
+            avatarUrl: "url-to-avatar",
+            __typename: "User"
+          }
+        }
+      };
+      fetch.mockReset();
+      fetch.mockReturnValue(
+        Promise.resolve({
+          statusCode: 200,
+          json() {
+            return result;
+          },
+          text() {
+            return Promise.resolve(JSON.stringify(result));
+          }
+        })
+      );
+    });
+
     it("renders GithubCallback for /auth-callback route", function() {
       const wrapper = mount(
         <MemoryRouter initialEntries={["/auth-callback"]}>
-          <App />
+          <App fetch={fetch} />
         </MemoryRouter>
       );
 
@@ -181,7 +303,7 @@ describe("App", function() {
         window.localStorage.githubToken = "my-token";
         const wrapper = mount(
           <MemoryRouter initialEntries={["/auth-callback"]}>
-            <App />
+            <App fetch={fetch} />
           </MemoryRouter>
         );
 

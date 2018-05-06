@@ -90,7 +90,7 @@ describe("Stats", function() {
         expect(overallPlot.prop("reposData")).toEqual([data, data]);
       });
 
-      function checkDataForCommitsOverTimePlot(data: any) {
+      function checkDataForOverTimePlot(data: any) {
         expect(data).toHaveLength(2);
         expect(data[0].name).toEqual("user");
         expect(data[0].mode).toEqual("lines");
@@ -103,19 +103,19 @@ describe("Stats", function() {
         expect(data[1].y).toEqual([30]);
       }
 
-      it("shows CommitsOverTimePlots for each repository", function() {
-        const commitsOverTimePlot = wrapper.find("CommitsOverTimePlot");
+      it("shows OverTimePlots for each repository", function() {
+        const overTimePlot = wrapper.find("OverTimePlot");
 
-        expect(commitsOverTimePlot).toHaveLength(2);
-        expect(commitsOverTimePlot.at(0).prop("title")).toEqual("repo1");
+        expect(overTimePlot).toHaveLength(2);
+        expect(overTimePlot.at(0).prop("title")).toEqual("repo1");
 
-        const data0 = commitsOverTimePlot.at(0).prop("data") as any;
-        checkDataForCommitsOverTimePlot(data0);
+        const data0 = overTimePlot.at(0).prop("data") as any;
+        checkDataForOverTimePlot(data0);
 
-        expect(commitsOverTimePlot.at(1).prop("title")).toEqual("repo2");
+        expect(overTimePlot.at(1).prop("title")).toEqual("repo2");
 
-        const data1 = commitsOverTimePlot.at(1).prop("data") as any;
-        checkDataForCommitsOverTimePlot(data1);
+        const data1 = overTimePlot.at(1).prop("data") as any;
+        checkDataForOverTimePlot(data1);
       });
 
       function checkDataForYearPlot(data: any) {

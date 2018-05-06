@@ -4,11 +4,30 @@ import { ScatterData } from "plotly.js";
 
 interface Props {
   title: string;
+  yaxisTitle?: string;
   data: Partial<ScatterData>[];
 }
 
-export class CommitsOverTimePlot extends React.Component<Props, {}> {
+export class OverTimePlot extends React.Component<Props, {}> {
   readonly layout: Partial<Plotly.Layout>;
+  readonly rangeselector: Partial<Plotly.RangeSelector> = {
+    buttons: [
+      {
+        count: 6,
+        label: "6m",
+        step: "month",
+        stepmode: "backward"
+      },
+      {
+        count: 1,
+        label: "1y",
+        step: "year",
+        stepmode: "backward"
+      },
+      { step: "all" }
+    ]
+  };
+
   constructor(props: Props) {
     super(props);
 
@@ -17,33 +36,18 @@ export class CommitsOverTimePlot extends React.Component<Props, {}> {
       xaxis: {
         title: "time",
         autorange: true,
-        rangeselector: {
-          buttons: [
-            {
-              count: 6,
-              label: "6m",
-              step: "month",
-              stepmode: "backward"
-            },
-            {
-              count: 1,
-              label: "1y",
-              step: "year",
-              stepmode: "backward"
-            },
-            { step: "all" }
-          ]
-        },
+        rangeselector: this.rangeselector,
         type: "date",
         rangeslider: { visible: true }
       },
       yaxis: {
-        title: "commit count",
+        title: this.props.yaxisTitle || "commit count",
         autorange: true,
         type: "linear"
       }
     };
   }
+
   render() {
     return <PlotlyChart data={this.props.data} layout={this.layout} />;
   }

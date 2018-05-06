@@ -7,7 +7,7 @@ import { Github, GithubAuthorData } from "../github";
 import { Section } from "./section";
 import { Typography, Grid, LinearProgress } from "material-ui";
 import { OverallPlot } from "./overall_plot";
-import { CommitsOverTimePlot } from "./commits_over_time_plot";
+import { OverTimePlot } from "./over_time_plot";
 import { runningAverage } from "../array_helper";
 import { calculateWeeklyCommitsForAuthor } from "../stats_helper";
 
@@ -26,7 +26,7 @@ interface State {
   data: Repo[];
   startedLoading: boolean;
   OverallPlot?: typeof OverallPlot;
-  CommitsOverTimePlot?: typeof CommitsOverTimePlot;
+  OverTimePlot?: typeof OverTimePlot;
 }
 
 export class PersonalStats extends React.Component<Props, State> {
@@ -39,8 +39,8 @@ export class PersonalStats extends React.Component<Props, State> {
       .getUser()
       .then(user => this.setState({ author: user.login }));
 
-    import("./commits_over_time_plot").then(module =>
-      this.setState({ CommitsOverTimePlot: module.CommitsOverTimePlot })
+    import("./over_time_plot").then(module =>
+      this.setState({ OverTimePlot: module.OverTimePlot })
     );
     import("./overall_plot").then(module =>
       this.setState({ OverallPlot: module.OverallPlot })
@@ -134,9 +134,7 @@ export class PersonalStats extends React.Component<Props, State> {
 
     const title = "Commits in Repositories";
 
-    return (
-      <this.state.CommitsOverTimePlot title={title} data={repositoryTimeline} />
-    );
+    return <this.state.OverTimePlot title={title} data={repositoryTimeline} />;
   }
 
   renderRepositorySums() {
@@ -152,7 +150,7 @@ export class PersonalStats extends React.Component<Props, State> {
   renderStats() {
     if (
       this.state.data.length === 0 ||
-      this.state.CommitsOverTimePlot === undefined ||
+      this.state.OverTimePlot === undefined ||
       this.state.OverallPlot === undefined
     )
       return <LinearProgress />;

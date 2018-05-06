@@ -14,6 +14,7 @@ import { setContext } from "apollo-link-context";
 import { ApolloClient } from "apollo-client";
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { createDynamicImport } from "./dynamic_import";
+import { GraphQLFacade } from "../graphql_facade";
 
 const styles = (_theme: Theme): StyleRules => ({
   root: {
@@ -42,8 +43,12 @@ const OrgStats = createDynamicImport(() =>
   import("./org_stats").then(module => module.OrgStats)
 );
 
-export class RawApp extends React.Component<{} & WithStyles, State> {
-  constructor(props: any) {
+interface Props {
+  fetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>;
+}
+
+export class RawApp extends React.Component<Props & WithStyles, State> {
+  constructor(props: Props & WithStyles) {
     super(props);
 
     const token = window.localStorage.githubToken
@@ -52,6 +57,10 @@ export class RawApp extends React.Component<{} & WithStyles, State> {
     this.state = {
       github: token ? this.createGithub(token) : undefined
     };
+  }
+
+  componentDidCatch(error: any, info: any) {
+    console.error(error, info);
   }
 
   createGithub(token: string) {
@@ -66,7 +75,7 @@ export class RawApp extends React.Component<{} & WithStyles, State> {
 
     const httpLink = createHttpLink({
       uri: "https://api.github.com/graphql",
-      fetch: fetch as any
+      fetch: this.props.fetch
     });
 
     const client = new ApolloClient({
@@ -74,7 +83,7 @@ export class RawApp extends React.Component<{} & WithStyles, State> {
       cache: new InMemoryCache()
     });
 
-    return new Github(token, client);
+    return new Github(token, new GraphQLFacade(client), this.props.fetch);
   }
 
   renderAppBar() {
@@ -150,6 +159,7 @@ export class RawApp extends React.Component<{} & WithStyles, State> {
             <GithubCallback
               {...props}
               onChangeToken={token => this.onChangeToken(token)}
+              fetch={this.props.fetch}
             />
           )}
         />
@@ -177,4 +187,4 @@ export class RawApp extends React.Component<{} & WithStyles, State> {
   }
 }
 
-export const App = withStyles(styles)<{}>(RawApp);
+export const App = withStyles(styles)<Props>(RawApp);
