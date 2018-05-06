@@ -81,7 +81,14 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
   }
 
   selectRepository(repo: string) {
-    this.setState({ repo: repo });
+    this.setState({
+      repo: repo,
+      defaultStartTag: undefined,
+      startTag: undefined,
+      releaseTag: undefined,
+      pullRequests: [],
+      releaseNote: ""
+    });
     return this.loadTags(repo);
   }
 
