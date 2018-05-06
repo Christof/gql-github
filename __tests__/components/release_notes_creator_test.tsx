@@ -66,6 +66,20 @@ describe("ReleaseNotesCreator", function() {
       expect(dropdowns.at(0).prop("initialSelection")).toEqual("v0.0.2");
     });
 
+    it("doesn't preselected start tag if none can be found", async function() {
+      (github.getReleases as jest.Mock).mockReset();
+      (github.getReleases as jest.Mock).mockReturnValue([]);
+
+      (wrapper.find("RepositorySelector").prop("onRepositorySelect") as any)(
+        "repo1"
+      );
+      await waitImmediate();
+      wrapper.update();
+
+      const dropdowns = wrapper.find("Dropdown");
+      expect(dropdowns.at(0).prop("initialSelection")).toBeUndefined();
+    });
+
     describe("after selecting a range", function() {
       const commits = [
         {
