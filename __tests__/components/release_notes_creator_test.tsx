@@ -33,10 +33,15 @@ describe("ReleaseNotesCreator", function() {
   });
 
   describe("after selecting a repository", function() {
-    const tags = [{ name: "v0.0.1" }, { name: "v0.0.2" }];
+    const tags = [{ name: "v0.0.1" }, { name: "v0.0.2" }, { name: "v0.0.3" }];
+    const releases = [
+      { tagName: "v0.0.0_test_release", description: "" },
+      { tagName: "v0.0.2", description: "" }
+    ];
 
     beforeEach(async function() {
       (github.getTags as jest.Mock).mockReturnValue(tags);
+      (github.getReleases as jest.Mock).mockReturnValue(releases);
       (wrapper.find("RepositorySelector").prop("onRepositorySelect") as any)(
         "repo1"
       );
@@ -45,7 +50,7 @@ describe("ReleaseNotesCreator", function() {
       wrapper.update();
     });
 
-    it("shows the range section", function() {
+    it("shows the range section with preselected start tag", function() {
       expect(wrapper.find("WithStyles(Typography)")).toHaveLength(1);
       expect(wrapper.find("WithStyles(Typography)").prop("children")).toEqual(
         "Range"
@@ -53,7 +58,7 @@ describe("ReleaseNotesCreator", function() {
 
       const dropdowns = wrapper.find("Dropdown");
       expect(dropdowns).toHaveLength(2);
-      const tagNames = [tags[0].name, tags[1].name];
+      const tagNames = tags.map(tag => tag.name);
 
       expect(dropdowns.at(0).prop("options")).toEqual(tagNames);
       expect(dropdowns.at(1).prop("options")).toEqual(tagNames);
