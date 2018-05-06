@@ -15,7 +15,8 @@ describe("ReleaseNotesCreator", function() {
   let wrapper: ShallowWrapper<any, any>;
 
   beforeEach(function() {
-    github = new Github("token", {} as any);
+    const fetch = undefined;
+    github = new Github("token", {} as any, fetch);
     wrapper = shallow(<ReleaseNotesCreator github={github} />);
   });
 
@@ -36,9 +37,9 @@ describe("ReleaseNotesCreator", function() {
 
     beforeEach(async function() {
       (github.getTags as jest.Mock).mockReturnValue(tags);
-      (wrapper
-        .find("RepositorySelector")
-        .prop("onRepositorySelect") as any)("repo1");
+      (wrapper.find("RepositorySelector").prop("onRepositorySelect") as any)(
+        "repo1"
+      );
 
       await waitImmediate();
       wrapper.update();
