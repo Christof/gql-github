@@ -4,7 +4,7 @@
   "description": "Tool to talk to github via GraphQL",
   "main": "index.js",
   "scripts": {
-    "test": "jest --runInBand --forceExit",
+    "test": "jest",
     "tsc-watch": "./node_modules/typescript/bin/tsc -w",
     "build-dashboard":
       "webpack-dashboard -- node ./node_modules/webpack/bin/webpack.js --env.build --mode=production",
