@@ -213,6 +213,26 @@ describe("ReleaseNotesCreator", function() {
         expect(snackbar).toHaveLength(1);
         expect(snackbar.prop("open")).toBe(false);
       });
+
+      it("only shows range section after another repository seleciton", async function() {
+        (github.getTags as jest.Mock).mockReturnValue([{ name: "v0.0.1" }]);
+        (github.getReleases as jest.Mock).mockReturnValue([]);
+        (wrapper.find("RepositorySelector").prop("onRepositorySelect") as any)(
+          "repo1"
+        );
+        await waitImmediate();
+        wrapper.update();
+        const dropdowns = wrapper.find("Dropdown");
+        expect(dropdowns).toHaveLength(2);
+
+        expect(dropdowns.at(0).prop("options")).toEqual(["v0.0.1"]);
+        expect(dropdowns.at(1).prop("options")).toEqual(["v0.0.1"]);
+
+        expect(dropdowns.at(0).prop("initialSelection")).toBeUndefined();
+        const sectionHeadings = wrapper.find("WithStyles(Typography)");
+        expect(sectionHeadings).toHaveLength(1);
+        expect(sectionHeadings.at(0).prop("children")).toEqual("Range");
+      });
     });
   });
 });
