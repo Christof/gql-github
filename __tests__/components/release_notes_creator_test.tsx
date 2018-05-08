@@ -15,7 +15,8 @@ describe("ReleaseNotesCreator", function() {
   let wrapper: ShallowWrapper<any, any>;
 
   beforeEach(function() {
-    github = new Github("token", {} as any);
+    const fetch = undefined;
+    github = new Github("token", {} as any, fetch);
     wrapper = shallow(<ReleaseNotesCreator github={github} />);
   });
 
@@ -32,19 +33,24 @@ describe("ReleaseNotesCreator", function() {
   });
 
   describe("after selecting a repository", function() {
-    const tags = [{ name: "v0.0.1" }, { name: "v0.0.2" }];
+    const tags = [{ name: "v0.0.1" }, { name: "v0.0.2" }, { name: "v0.0.3" }];
+    const releases = [
+      { tagName: "v0.0.0_test_release", description: "" },
+      { tagName: "v0.0.2", description: "" }
+    ];
 
     beforeEach(async function() {
       (github.getTags as jest.Mock).mockReturnValue(tags);
-      (wrapper
-        .find("RepositorySelector")
-        .prop("onRepositorySelect") as any)("repo1");
+      (github.getReleases as jest.Mock).mockReturnValue(releases);
+      (wrapper.find("RepositorySelector").prop("onRepositorySelect") as any)(
+        "repo1"
+      );
 
       await waitImmediate();
       wrapper.update();
     });
 
-    it("shows the range section", function() {
+    it("shows the range section with preselected start tag", function() {
       expect(wrapper.find("WithStyles(Typography)")).toHaveLength(1);
       expect(wrapper.find("WithStyles(Typography)").prop("children")).toEqual(
         "Range"
@@ -52,10 +58,26 @@ describe("ReleaseNotesCreator", function() {
 
       const dropdowns = wrapper.find("Dropdown");
       expect(dropdowns).toHaveLength(2);
-      const tagNames = [tags[0].name, tags[1].name];
+      const tagNames = tags.map(tag => tag.name);
 
       expect(dropdowns.at(0).prop("options")).toEqual(tagNames);
       expect(dropdowns.at(1).prop("options")).toEqual(tagNames);
+
+      expect(dropdowns.at(0).prop("initialSelection")).toEqual("v0.0.2");
+    });
+
+    it("doesn't preselected start tag if none can be found", async function() {
+      (github.getReleases as jest.Mock).mockReset();
+      (github.getReleases as jest.Mock).mockReturnValue([]);
+
+      (wrapper.find("RepositorySelector").prop("onRepositorySelect") as any)(
+        "repo1"
+      );
+      await waitImmediate();
+      wrapper.update();
+
+      const dropdowns = wrapper.find("Dropdown");
+      expect(dropdowns.at(0).prop("initialSelection")).toBeUndefined();
     });
 
     describe("after selecting a range", function() {
@@ -190,6 +212,26 @@ describe("ReleaseNotesCreator", function() {
         const snackbar = wrapper.find("WithStyles(Snackbar)");
         expect(snackbar).toHaveLength(1);
         expect(snackbar.prop("open")).toBe(false);
+      });
+
+      it("only shows range section after another repository seleciton", async function() {
+        (github.getTags as jest.Mock).mockReturnValue([{ name: "v0.0.1" }]);
+        (github.getReleases as jest.Mock).mockReturnValue([]);
+        (wrapper.find("RepositorySelector").prop("onRepositorySelect") as any)(
+          "repo1"
+        );
+        await waitImmediate();
+        wrapper.update();
+        const dropdowns = wrapper.find("Dropdown");
+        expect(dropdowns).toHaveLength(2);
+
+        expect(dropdowns.at(0).prop("options")).toEqual(["v0.0.1"]);
+        expect(dropdowns.at(1).prop("options")).toEqual(["v0.0.1"]);
+
+        expect(dropdowns.at(0).prop("initialSelection")).toBeUndefined();
+        const sectionHeadings = wrapper.find("WithStyles(Typography)");
+        expect(sectionHeadings).toHaveLength(1);
+        expect(sectionHeadings.at(0).prop("children")).toEqual("Range");
       });
     });
   });

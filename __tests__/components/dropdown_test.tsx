@@ -59,6 +59,45 @@ describe("Dropdown", function() {
     expect(wrapper.find("WithStyles(Select)").prop("value")).toEqual("opt2");
   });
 
+  describe("componentDidUpdate", function() {
+    it("sets an initial selection if given and the options change", function() {
+      const wrapper = shallow(
+        <Dropdown
+          options={["opt1", "opt2"]}
+          initialSelection="opt2"
+          onSelect={() => {}}
+        />
+      );
+
+      wrapper.setProps({
+        options: ["optionA", "optionB"],
+        initialSelection: "optionA"
+      });
+
+      expect(wrapper.find("WithStyles(Select)").prop("value")).toEqual(
+        "optionA"
+      );
+    });
+
+    it("doesn't update the selection if the options are the same", function() {
+      const options = ["opt1", "opt2"];
+      const wrapper = shallow(
+        <Dropdown
+          options={options}
+          initialSelection="opt2"
+          onSelect={() => {}}
+        />
+      );
+
+      wrapper.setProps({
+        options,
+        initialSelection: "opt1"
+      });
+
+      expect(wrapper.find("WithStyles(Select)").prop("value")).toEqual("opt2");
+    });
+  });
+
   describe("onSelect", function() {
     it("on selection calls onSelect", function() {
       let selected = "";

@@ -18,6 +18,7 @@ interface State {
   repositoryNames: string[];
   repo?: string;
   tags?: GithubTag[];
+  defaultStartTag?: string;
   startTag?: string;
   releaseTag?: string;
   pullRequests: PullRequest[];
@@ -66,12 +67,28 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
 
   async loadTags(repo: string) {
     const tags = await this.props.github.getTags(repo);
+    const releases = await this.props.github.getReleases(repo);
+    const firstMasterRelease = releases.find(
+      release => !release.tagName.includes("_")
+    );
 
-    this.setState({ tags });
+    this.setState({
+      tags,
+      defaultStartTag: firstMasterRelease
+        ? firstMasterRelease.tagName
+        : undefined
+    });
   }
 
   selectRepository(repo: string) {
-    this.setState({ repo: repo });
+    this.setState({
+      repo: repo,
+      defaultStartTag: undefined,
+      startTag: undefined,
+      releaseTag: undefined,
+      pullRequests: [],
+      releaseNote: ""
+    });
     return this.loadTags(repo);
   }
 
@@ -87,6 +104,7 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
         <Dropdown
           label="Start Tag"
           options={tagNames}
+          initialSelection={this.state.defaultStartTag}
           onSelect={tagName => this.setState({ startTag: tagName })}
         />
         <Dropdown
