@@ -115,7 +115,14 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
           options={tagNames}
           onSelect={tagName => this.setState({ releaseTag: tagName })}
         />
-        <Button variant="raised" onClick={() => this.getCommits()}>
+        <Button
+          variant="raised"
+          onClick={() => this.getCommits()}
+          disabled={
+            this.state.startTag === undefined ||
+            this.state.releaseTag === undefined
+          }
+        >
           Get merged PRs in range
         </Button>
       </Section>

@@ -50,6 +50,10 @@ describe("ReleaseNotesCreator", function() {
       wrapper.update();
     });
 
+    it("shows disabled button as long as no tags are selected", function() {
+      expect(wrapper.find("WithStyles(Button)").prop("disabled")).toBe(true);
+    });
+
     it("shows the range section with preselected start tag", async function() {
       expect(wrapper.find("WithStyles(Typography)")).toHaveLength(1);
       expect(wrapper.find("WithStyles(Typography)").prop("children")).toEqual(
@@ -113,6 +117,15 @@ describe("ReleaseNotesCreator", function() {
 
         await waitImmediate();
         wrapper.update();
+      });
+
+      it("shows an enabled button", function() {
+        expect(
+          wrapper
+            .find("WithStyles(Button)")
+            .at(0)
+            .prop("disabled")
+        ).toBe(false);
       });
 
       it("calls github.compare with repository, start and end tag", function() {
