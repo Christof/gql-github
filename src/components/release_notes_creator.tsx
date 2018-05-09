@@ -72,11 +72,14 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
       release => !release.tagName.includes("_")
     );
 
+    const defaultStartTag = firstMasterRelease
+      ? firstMasterRelease.tagName
+      : undefined;
+
     this.setState({
       tags,
-      defaultStartTag: firstMasterRelease
-        ? firstMasterRelease.tagName
-        : undefined
+      defaultStartTag,
+      startTag: defaultStartTag
     });
   }
 

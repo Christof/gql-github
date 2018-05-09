@@ -50,7 +50,7 @@ describe("ReleaseNotesCreator", function() {
       wrapper.update();
     });
 
-    it("shows the range section with preselected start tag", function() {
+    it("shows the range section with preselected start tag", async function() {
       expect(wrapper.find("WithStyles(Typography)")).toHaveLength(1);
       expect(wrapper.find("WithStyles(Typography)").prop("children")).toEqual(
         "Range"
@@ -64,6 +64,14 @@ describe("ReleaseNotesCreator", function() {
       expect(dropdowns.at(1).prop("options")).toEqual(tagNames);
 
       expect(dropdowns.at(0).prop("initialSelection")).toEqual("v0.0.2");
+
+      (github.compare as jest.Mock).mockReturnValue({ commits: [] });
+      (wrapper.find("WithStyles(Button)").prop("onClick") as any)();
+
+      await waitImmediate();
+      wrapper.update();
+
+      expect(github.compare).toHaveBeenCalledWith("repo1", "v0.0.2", undefined);
     });
 
     it("doesn't preselected start tag if none can be found", async function() {
