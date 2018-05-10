@@ -7,6 +7,7 @@ import { shallow, ShallowWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
 import { Github } from "../../src/github";
 import { PullRequest, ChangeCategory } from "../../src/pull_request";
+import { SectionWithHeading } from "../../src/components/section";
 
 jest.mock("../../src/github");
 
@@ -55,10 +56,8 @@ describe("ReleaseNotesCreator", function() {
     });
 
     it("shows the range section with preselected start tag", async function() {
-      expect(wrapper.find("WithStyles(Typography)")).toHaveLength(1);
-      expect(wrapper.find("WithStyles(Typography)").prop("children")).toEqual(
-        "Range"
-      );
+      expect(wrapper.find(SectionWithHeading)).toHaveLength(1);
+      expect(wrapper.find(SectionWithHeading).prop("heading")).toEqual("Range");
 
       const dropdowns = wrapper.find("Dropdown");
       expect(dropdowns).toHaveLength(2);
@@ -137,12 +136,12 @@ describe("ReleaseNotesCreator", function() {
       });
 
       it("shows the Adjust Categories section", function() {
-        expect(wrapper.find("WithStyles(Typography)")).toHaveLength(3);
+        expect(wrapper.find(SectionWithHeading)).toHaveLength(3);
         expect(
           wrapper
-            .find("WithStyles(Typography)")
+            .find(SectionWithHeading)
             .at(1)
-            .prop("children")
+            .prop("heading")
         ).toEqual("Adjust Categories");
 
         const selector = wrapper.find("PullRequestChangeCategorySelector");
@@ -152,9 +151,9 @@ describe("ReleaseNotesCreator", function() {
       it("shows the release note section", function() {
         expect(
           wrapper
-            .find("WithStyles(Typography)")
+            .find(SectionWithHeading)
             .at(2)
-            .prop("children")
+            .prop("heading")
         ).toEqual("Release Note");
       });
 
@@ -250,9 +249,9 @@ describe("ReleaseNotesCreator", function() {
         expect(dropdowns.at(1).prop("options")).toEqual(["v0.0.1"]);
 
         expect(dropdowns.at(0).prop("initialSelection")).toBeUndefined();
-        const sectionHeadings = wrapper.find("WithStyles(Typography)");
+        const sectionHeadings = wrapper.find(SectionWithHeading);
         expect(sectionHeadings).toHaveLength(1);
-        expect(sectionHeadings.at(0).prop("children")).toEqual("Range");
+        expect(sectionHeadings.at(0).prop("heading")).toEqual("Range");
       });
     });
   });
