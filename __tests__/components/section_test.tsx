@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Section } from "../../src/components/section";
 import { shallow } from "enzyme";
-import { Paper } from "material-ui";
+import { Paper, Typography } from "material-ui";
 
 describe("Section", function() {
   it("renders the Paper components", function() {
@@ -15,6 +15,18 @@ describe("Section", function() {
       marginTop: 8,
       padding: 12,
       marginBottom: 16
+    });
+  });
+
+  describe("with set heading", function() {
+    it("renders a heading", function() {
+      const wrapper = shallow(<Section heading="my heading" />);
+
+      const typography = wrapper.find(Typography);
+      expect(typography).toHaveLength(1);
+      expect(typography.prop("children")).toEqual("my heading");
+      expect(typography.prop("variant")).toEqual("headline");
+      expect(typography.prop("paragraph")).toEqual(true);
     });
   });
 });
