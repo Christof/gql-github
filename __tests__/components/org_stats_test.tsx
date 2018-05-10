@@ -3,6 +3,8 @@ import { OrgStats } from "../../src/components/org_stats";
 import { shallow, ShallowWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
 import { Github, GithubData } from "../../src/github";
+import { RepositoriesByOwnerSelector } from "../../src/components/repositories_by_owner_selector";
+import { OverTimePlot } from "../../src/components/over_time_plot";
 
 jest.mock("../../src/github");
 
@@ -17,7 +19,7 @@ describe("OrgStats", function() {
   });
 
   it("shows a RepositoryByOwnerSelector", function() {
-    expect(wrapper.find("RepositoriesByOwnerSelector")).toHaveLength(1);
+    expect(wrapper.find(RepositoriesByOwnerSelector)).toHaveLength(1);
   });
 
   describe("after owner selection", function() {
@@ -69,7 +71,7 @@ describe("OrgStats", function() {
       const owner = "owner";
       const includeForks = true;
 
-      const selector = wrapper.find("RepositoriesByOwnerSelector");
+      const selector = wrapper.find(RepositoriesByOwnerSelector);
       (selector.prop("onLoad") as any)({ owner, includeForks });
 
       await waitImmediate();
@@ -77,7 +79,7 @@ describe("OrgStats", function() {
     });
 
     it("shows an OverTimePlot for commits", async function() {
-      const plot = wrapper.find("OverTimePlot");
+      const plot = wrapper.find(OverTimePlot);
       expect(plot).toHaveLength(3);
       const plotData = plot.at(0).prop("data") as any;
       expect(plotData).toHaveLength(4);
@@ -100,7 +102,7 @@ describe("OrgStats", function() {
     });
 
     it("shows an OverTimePlot for PullRequests", function() {
-      const plot = wrapper.find("OverTimePlot");
+      const plot = wrapper.find(OverTimePlot);
       expect(plot).toHaveLength(3);
       const plotData = plot.at(1).prop("data") as any;
       expect(plotData).toHaveLength(2);
@@ -115,7 +117,7 @@ describe("OrgStats", function() {
     });
 
     it("shows an OverTimePlot for Reviews", function() {
-      const plot = wrapper.find("OverTimePlot");
+      const plot = wrapper.find(OverTimePlot);
       expect(plot).toHaveLength(3);
       const plotData = plot.at(2).prop("data") as any;
       expect(plotData).toHaveLength(2);
@@ -131,7 +133,7 @@ describe("OrgStats", function() {
   });
 
   it("doesn't load anything on undefined owner selection", function() {
-    const selector = wrapper.find("RepositoriesByOwnerSelector");
+    const selector = wrapper.find(RepositoriesByOwnerSelector);
     (selector.prop("onLoad") as any)({
       owner: undefined,
       includeForks: false

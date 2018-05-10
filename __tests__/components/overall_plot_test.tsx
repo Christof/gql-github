@@ -4,6 +4,7 @@ import { shallow, ShallowWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
 import { Github } from "../../src/github";
 import { Layout } from "plotly.js";
+import PlotlyChart from "react-plotlyjs-ts";
 
 describe("OverallPlot", function() {
   const repoNames = ["repo1", "repo2"];
@@ -43,7 +44,7 @@ describe("OverallPlot", function() {
   });
 
   it("shows a PlotlyChart", function() {
-    const chart = wrapper.find("PlotlyChart");
+    const chart = wrapper.find(PlotlyChart);
     expect(chart).toHaveLength(1);
 
     const layout = chart.prop("layout") as Partial<Layout>;
@@ -52,7 +53,7 @@ describe("OverallPlot", function() {
   });
 
   it("shows one trace per author with commits per repository", function() {
-    const chart = wrapper.find("PlotlyChart");
+    const chart = wrapper.find(PlotlyChart);
 
     const data = chart.prop("data") as any;
     expect(data).toHaveLength(3);
@@ -74,7 +75,7 @@ describe("OverallPlot", function() {
     it("does nothing if repository names don't change", function() {
       wrapper.setProps({ repositoryNames: repoNames });
 
-      expect(wrapper.find("PlotlyChart")).toHaveLength(1);
+      expect(wrapper.find(PlotlyChart)).toHaveLength(1);
     });
 
     it("updates the plot for new data", async function() {
@@ -99,7 +100,7 @@ describe("OverallPlot", function() {
       wrapper = wrapper.update();
       await waitImmediate();
 
-      const chart = wrapper.find("PlotlyChart");
+      const chart = wrapper.find(PlotlyChart);
       const data = chart.prop("data") as any;
       expect(data).toHaveLength(4);
 

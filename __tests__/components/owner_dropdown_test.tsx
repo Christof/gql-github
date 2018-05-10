@@ -2,6 +2,7 @@ import * as React from "react";
 import { OwnerDropdown } from "../../src/components/owner_dropdown";
 import { shallow, ShallowWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
+import { Dropdown } from "../../src/components/dropdown";
 
 describe("OwnerSelector", function() {
   it("calls onSelect owner selection", async function() {
@@ -25,7 +26,7 @@ describe("OwnerSelector", function() {
       />
     );
 
-    const dropdown = wrapper.find("Dropdown");
+    const dropdown = wrapper.find(Dropdown);
     dropdown.prop("onSelect")(owner as any);
 
     expect(selectedOwner).toEqual(owner);
