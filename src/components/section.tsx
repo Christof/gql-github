@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Paper } from "material-ui";
+import { Paper, Typography } from "material-ui";
 import { PaperProps } from "material-ui/Paper";
 
 const style = {
@@ -10,4 +10,13 @@ const style = {
 
 export const Section = (props: PaperProps) => (
   <Paper {...props} style={style} />
+);
+
+export const SectionWithHeading = (props: PaperProps & { heading: string }) => (
+  <Paper {...props} style={style}>
+    <Typography variant="headline" paragraph>
+      {props.heading}
+    </Typography>
+    {props.children}
+  </Paper>
 );
