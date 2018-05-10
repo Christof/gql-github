@@ -2,6 +2,8 @@ import * as React from "react";
 import { PullRequestChangeCategorySelector } from "../../src/components/pull_request_change_category_selector";
 import { shallow } from "enzyme";
 import { PullRequest, ChangeCategory } from "../../src/pull_request";
+import { Typography } from "material-ui";
+import { Dropdown } from "../../src/components/dropdown";
 
 describe("PullRequestChangeCategorySelector", function() {
   const pullRequest = new PullRequest(
@@ -18,7 +20,7 @@ describe("PullRequestChangeCategorySelector", function() {
       />
     );
 
-    expect(wrapper.find("WithStyles(Typography)").prop("children")).toEqual(
+    expect(wrapper.find(Typography).prop("children")).toEqual(
       pullRequest.toText()
     );
   });
@@ -35,7 +37,7 @@ describe("PullRequestChangeCategorySelector", function() {
       />
     );
 
-    wrapper.find("Dropdown").prop("onSelect")("Training" as any);
+    wrapper.find(Dropdown).prop("onSelect")("Training" as any);
 
     expect(changedPullRequest).toBeDefined();
     expect(changedPullRequest.changeCategory).toEqual(ChangeCategory.Training);
