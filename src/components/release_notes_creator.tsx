@@ -99,6 +99,8 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
     if (!this.state.repo || !this.state.tags) return <section />;
 
     const tagNames = this.state.tags.map(tag => tag.name);
+    const disabledGetPRsButton =
+      this.state.startTag === undefined || this.state.releaseTag === undefined;
     return (
       <Section heading="Range">
         <Dropdown
@@ -115,10 +117,7 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
         <Button
           variant="raised"
           onClick={() => this.getCommits()}
-          disabled={
-            this.state.startTag === undefined ||
-            this.state.releaseTag === undefined
-          }
+          disabled={disabledGetPRsButton}
         >
           Get merged PRs in range
         </Button>
