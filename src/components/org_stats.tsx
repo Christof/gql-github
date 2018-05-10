@@ -6,7 +6,7 @@ import {
   GithubPullRequest,
   GithubReview
 } from "../github";
-import { Typography, LinearProgress } from "material-ui";
+import { LinearProgress } from "material-ui";
 import { Section } from "./section";
 import { RepositoriesByOwnerSelector } from "./repositories_by_owner_selector";
 import { ScatterData } from "plotly.js";
@@ -180,10 +180,7 @@ export class OrgStats extends React.Component<Props, State> {
       return null;
 
     return (
-      <Section>
-        <Typography variant="headline" paragraph>
-          Stats
-        </Typography>
+      <Section heading="Stats">
         {this.state.data.length === 0 ? <LinearProgress /> : this.renderPlots()}
       </Section>
     );
