@@ -8,15 +8,13 @@ const style = {
   padding: 12
 };
 
-export const Section = (props: PaperProps) => (
-  <Paper {...props} style={style} />
-);
-
-export const SectionWithHeading = (props: PaperProps & { heading: string }) => (
+export const Section = (props: PaperProps & { heading?: string }) => (
   <Paper {...props} style={style}>
-    <Typography variant="headline" paragraph>
-      {props.heading}
-    </Typography>
+    {props.heading ? (
+      <Typography variant="headline" paragraph>
+        {props.heading}
+      </Typography>
+    ) : null}
     {props.children}
   </Paper>
 );

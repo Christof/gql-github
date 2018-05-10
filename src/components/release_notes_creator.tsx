@@ -1,7 +1,7 @@
 import { PullRequest, ChangeCategory } from "../pull_request";
 import { PullRequestChangeCategorySelector } from "./pull_request_change_category_selector";
 import { Dropdown } from "./dropdown";
-import { SectionWithHeading } from "./section";
+import { Section } from "./section";
 import { RepositorySelector } from "./repository_selector";
 import { Markdown } from "./markdown";
 import { Github, GithubTag } from "../github";
@@ -100,7 +100,7 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
 
     const tagNames = this.state.tags.map(tag => tag.name);
     return (
-      <SectionWithHeading heading="Range">
+      <Section heading="Range">
         <Dropdown
           label="Start Tag"
           options={tagNames}
@@ -122,7 +122,7 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
         >
           Get merged PRs in range
         </Button>
-      </SectionWithHeading>
+      </Section>
     );
   }
 
@@ -176,7 +176,7 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
     if (this.state.pullRequests.length === 0) return <section />;
 
     return (
-      <SectionWithHeading heading="Adjust Categories">
+      <Section heading="Adjust Categories">
         {this.state.pullRequests.map((pullRequest, index) => (
           <PullRequestChangeCategorySelector
             key={pullRequest.id}
@@ -186,7 +186,7 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
             }
           />
         ))}
-      </SectionWithHeading>
+      </Section>
     );
   }
 
@@ -198,7 +198,7 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
       return <section />;
 
     return (
-      <SectionWithHeading heading="Release Note">
+      <Section heading="Release Note">
         <this.state.Markdown source={this.state.releaseNote} />
         <Button variant="raised" onClick={() => this.postRelease()}>
           Create Release
@@ -211,7 +211,7 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
           open={this.state.releaseCreated}
           message={<span>Release created</span>}
         />
-      </SectionWithHeading>
+      </Section>
     );
   }
 
