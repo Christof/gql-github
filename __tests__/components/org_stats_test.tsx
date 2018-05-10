@@ -11,7 +11,7 @@ describe("OrgStats", function() {
   let wrapper: ShallowWrapper<any, any>;
 
   beforeEach(function() {
-    github = new Github("token", {} as any);
+    github = new Github("token", {} as any, undefined);
 
     wrapper = shallow(<OrgStats github={github} />);
   });
