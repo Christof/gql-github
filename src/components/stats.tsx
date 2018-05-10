@@ -5,7 +5,6 @@ import { Layout } from "plotly.js";
 import PlotlyChart from "react-plotlyjs-ts";
 import { OverTimePlot } from "./over_time_plot";
 import { GithubData, GithubAuthorData, Github } from "../github";
-import { Typography } from "material-ui";
 import { Section } from "./section";
 import LinearProgress from "material-ui/Progress/LinearProgress";
 import { RepositoriesByOwnerSelector } from "./repositories_by_owner_selector";
@@ -154,10 +153,7 @@ export class Stats extends React.Component<Props, State> {
     if (!data) return null;
 
     return (
-      <Section key={repo}>
-        <Typography variant="headline" paragraph>
-          {repo}
-        </Typography>
+      <Section key={repo} heading={repo}>
         {this.renderGraph(repo, data)}
         {this.renderYearGraph(repo, data)}
       </Section>
@@ -182,20 +178,14 @@ export class Stats extends React.Component<Props, State> {
       this.state.OverTimePlot === undefined
     )
       return (
-        <Section>
-          <Typography variant="headline" paragraph>
-            Stats
-          </Typography>
+        <Section heading="Stats">
           <LinearProgress />
         </Section>
       );
 
     return (
       <div>
-        <Section>
-          <Typography variant="headline" paragraph>
-            Overall
-          </Typography>
+        <Section heading="Overall">
           <OverallPlot
             reposData={this.state.data}
             repositoryNames={this.state.repositoryNames}

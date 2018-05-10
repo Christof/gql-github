@@ -3,6 +3,7 @@ import { Stats } from "../../src/components/stats";
 import { shallow, ShallowWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
 import { Github, GithubData } from "../../src/github";
+import { Section } from "../../src/components/section";
 
 jest.mock("../../src/github");
 
@@ -11,7 +12,7 @@ describe("Stats", function() {
   let wrapper: ShallowWrapper<any, any>;
 
   beforeEach(function() {
-    github = new Github("token", {} as any);
+    github = new Github("token", {} as any, undefined);
     wrapper = shallow(<Stats github={github} />);
   });
 
@@ -46,10 +47,10 @@ describe("Stats", function() {
     });
 
     it("shows a heading and progress bar", function() {
-      const heading = wrapper.find("WithStyles(Typography)");
+      const heading = wrapper.find(Section);
 
       expect(heading).toHaveLength(1);
-      expect(heading.prop("children")).toEqual("Stats");
+      expect(heading.prop("heading")).toEqual("Stats");
 
       expect(wrapper.find("WithStyles(LinearProgress)")).toHaveLength(1);
     });
