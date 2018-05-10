@@ -11,7 +11,7 @@ describe("PersonalStats", function() {
   let wrapper: ShallowWrapper<any, any>;
 
   beforeEach(function() {
-    github = new Github("token", {} as any);
+    github = new Github("token", {} as any, undefined);
     (github.getUser as jest.Mock).mockReturnValue(
       Promise.resolve({ login: "user" })
     );
