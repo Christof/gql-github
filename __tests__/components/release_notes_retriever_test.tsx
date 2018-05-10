@@ -8,7 +8,7 @@ jest.mock("../../src/github");
 
 describe("ReleaseNotesRetriever", function() {
   it("shows selected release note", async function() {
-    const github = new Github("token", {} as any);
+    const github = new Github("token", {} as any, undefined);
     let wrapper = shallow(<ReleaseNotesRetriever github={github} />);
 
     const respositorySelector = wrapper.find("RepositorySelector");

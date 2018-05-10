@@ -4,7 +4,6 @@ import { Markdown } from "./markdown";
 import { Github, GithubRelease } from "../github";
 import { Dropdown } from "./dropdown";
 import { CopyToClipboard } from "./copy_to_clipboard";
-import { Typography } from "material-ui";
 import { Section } from "./section";
 import { DefaultGrid } from "./default_grid";
 
@@ -48,10 +47,7 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
     if (!this.state.repo || !this.state.releases) return <section />;
 
     return (
-      <Section>
-        <Typography variant="headline" paragraph>
-          Release Note
-        </Typography>
+      <Section heading="Release Note">
         <Dropdown
           label="Release"
           options={this.state.releases.map(release => release.tagName)}
@@ -66,10 +62,7 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
       return <section />;
 
     return (
-      <Section>
-        <Typography variant="headline" paragraph>
-          {this.state.release.tagName}
-        </Typography>
+      <Section heading={this.state.release.tagName}>
         <this.state.Markdown source={this.state.releaseDescription} />
         <CopyToClipboard text={this.state.releaseDescription} />
       </Section>
