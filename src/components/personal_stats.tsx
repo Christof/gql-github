@@ -177,15 +177,7 @@ export class PersonalStats extends React.Component<Props, State> {
   renderStatsSection() {
     if (!this.state.startedLoading) return null;
 
-    return (
-      <Section>
-        <Typography variant="headline" paragraph>
-          Stats
-        </Typography>
-
-        {this.renderStats()}
-      </Section>
-    );
+    return <Section heading="Stats">{this.renderStats()}</Section>;
   }
 
   render() {

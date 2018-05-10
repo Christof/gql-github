@@ -3,6 +3,7 @@ import { PersonalStats } from "../../src/components/personal_stats";
 import { shallow, ShallowWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
 import { Github, GithubData } from "../../src/github";
+import { Section } from "../../src/components/section";
 
 jest.mock("../../src/github");
 
@@ -43,10 +44,10 @@ describe("PersonalStats", function() {
     });
 
     it("shows a heading and progress bar", async function() {
-      const heading = wrapper.find("WithStyles(Typography)");
+      const heading = wrapper.find(Section);
 
       expect(heading).toHaveLength(1);
-      expect(heading.prop("children")).toEqual("Stats");
+      expect(heading.prop("heading")).toEqual("Stats");
 
       expect(wrapper.find("WithStyles(LinearProgress)")).toHaveLength(1);
     });
