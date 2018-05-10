@@ -4,6 +4,8 @@ import {
   LoadData
 } from "../../src/components/repositories_by_owner_selector";
 import { shallow, ShallowWrapper } from "enzyme";
+import { Button, FormControlLabel } from "material-ui";
+import { OwnerDropdown } from "../../src/components/owner_dropdown";
 
 describe("RepositoriesByOwnerSelector", function() {
   let setData: LoadData;
@@ -20,7 +22,7 @@ describe("RepositoriesByOwnerSelector", function() {
   });
 
   function clickLoad() {
-    wrapper.find("WithStyles(Button)").prop("onClick")({} as any);
+    wrapper.find(Button).prop("onClick")({} as any);
   }
 
   describe("click load with default values", function() {
@@ -36,10 +38,11 @@ describe("RepositoriesByOwnerSelector", function() {
     it("calls onLoad with selected owner and includeForks true", function() {
       const owner = "selectedOwner";
 
-      wrapper.find("OwnerDropdown").prop("onSelect")(owner as any);
+      wrapper.find(OwnerDropdown).prop("onSelect")(owner as any);
       const checkboxWrapper = shallow(
-        wrapper.find("WithStyles(FormControlLabel)").prop("control")
+        wrapper.find(FormControlLabel).prop("control")
       );
+      expect(checkboxWrapper.find("Checkbox")).toHaveLength(1);
       (checkboxWrapper.find("Checkbox").prop("onChange") as any)(
         undefined,
         true

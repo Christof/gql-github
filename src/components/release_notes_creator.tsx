@@ -6,7 +6,7 @@ import { RepositorySelector } from "./repository_selector";
 import { Markdown } from "./markdown";
 import { Github, GithubTag } from "../github";
 import * as React from "react";
-import { Button, Snackbar, Slide, Typography } from "material-ui";
+import { Button, Snackbar, Slide } from "material-ui";
 import { SlideProps } from "material-ui/transitions";
 import { DefaultGrid } from "./default_grid";
 
@@ -72,11 +72,14 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
       release => !release.tagName.includes("_")
     );
 
+    const defaultStartTag = firstMasterRelease
+      ? firstMasterRelease.tagName
+      : undefined;
+
     this.setState({
       tags,
-      defaultStartTag: firstMasterRelease
-        ? firstMasterRelease.tagName
-        : undefined
+      defaultStartTag,
+      startTag: defaultStartTag
     });
   }
 
@@ -96,11 +99,10 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
     if (!this.state.repo || !this.state.tags) return <section />;
 
     const tagNames = this.state.tags.map(tag => tag.name);
+    const disabledGetPRsButton =
+      this.state.startTag === undefined || this.state.releaseTag === undefined;
     return (
-      <Section>
-        <Typography variant="headline" paragraph>
-          Range
-        </Typography>
+      <Section heading="Range">
         <Dropdown
           label="Start Tag"
           options={tagNames}
@@ -112,7 +114,11 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
           options={tagNames}
           onSelect={tagName => this.setState({ releaseTag: tagName })}
         />
-        <Button variant="raised" onClick={() => this.getCommits()}>
+        <Button
+          variant="raised"
+          onClick={() => this.getCommits()}
+          disabled={disabledGetPRsButton}
+        >
           Get merged PRs in range
         </Button>
       </Section>
@@ -169,10 +175,7 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
     if (this.state.pullRequests.length === 0) return <section />;
 
     return (
-      <Section>
-        <Typography variant="headline" paragraph>
-          Adjust Categories
-        </Typography>
+      <Section heading="Adjust Categories">
         {this.state.pullRequests.map((pullRequest, index) => (
           <PullRequestChangeCategorySelector
             key={pullRequest.id}
@@ -194,10 +197,7 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
       return <section />;
 
     return (
-      <Section>
-        <Typography variant="headline" paragraph>
-          Release Note
-        </Typography>
+      <Section heading="Release Note">
         <this.state.Markdown source={this.state.releaseNote} />
         <Button variant="raised" onClick={() => this.postRelease()}>
           Create Release

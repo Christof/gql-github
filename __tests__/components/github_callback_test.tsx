@@ -17,6 +17,7 @@ describe("GithubCallback", function() {
             match={undefined}
             location={location}
             history={undefined}
+            fetch={undefined}
           />
         )
       ).toThrowError(/Retrieved state is not equal to sent one./);

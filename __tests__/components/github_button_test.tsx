@@ -3,6 +3,7 @@ import { GithubButton } from "../../src/components/github_button";
 import { Github } from "../../src/github";
 import { shallow } from "enzyme";
 import { waitImmediate } from "../helper";
+import { Button } from "material-ui";
 
 declare const jsdom: any;
 
@@ -19,7 +20,7 @@ describe("GithubButton", function() {
           <GithubButton className="some-class" onChangeToken={() => {}} />
         );
 
-        const loginButton = wrapper.find("WithStyles(Button)");
+        const loginButton = wrapper.find(Button);
         expect(loginButton).toHaveLength(1);
         expect(loginButton.prop("children")[0]).toContain("Login");
         loginButton.prop("onClick")({} as any);
@@ -51,7 +52,7 @@ describe("GithubButton", function() {
           />
         );
 
-        const loginButton = wrapper.find("WithStyles(Button)");
+        const loginButton = wrapper.find(Button);
         expect(loginButton).toHaveLength(1);
         expect(loginButton.prop("children")[0]).toContain("Login");
         loginButton.prop("onClick")({} as any);
@@ -66,7 +67,7 @@ describe("GithubButton", function() {
         <GithubButton className="some-class" onChangeToken={() => {}} />
       );
 
-      const loginButton = wrapper.find("WithStyles(Button)");
+      const loginButton = wrapper.find(Button);
       expect(loginButton.prop("children")[0]).toContain("Login");
       const img = shallow(loginButton.prop("children")[1]);
       expect(img.prop("src")).toContain("mark");
@@ -78,14 +79,14 @@ describe("GithubButton", function() {
       );
 
       const avatarUrl = "url-to-avatar";
-      const github = new Github("token", {} as any);
+      const github = new Github("token", {} as any, undefined);
       github.getUser = jest.fn(() => Promise.resolve({ avatarUrl }));
       wrapper.setProps({ github });
 
       await waitImmediate();
       wrapper.update();
 
-      const loginButton = wrapper.find("WithStyles(Button)");
+      const loginButton = wrapper.find(Button);
       expect(loginButton.prop("children")[0]).toContain("Logout");
       const img = shallow(loginButton.prop("children")[1]);
       expect(img.prop("src")).toContain(avatarUrl);
@@ -95,7 +96,7 @@ describe("GithubButton", function() {
   describe("logout", function() {
     it("clears localstorage and calls onChangeToken with undefined", function() {
       const avatarUrl = "url-to-avatar";
-      const github = new Github("token", {} as any);
+      const github = new Github("token", {} as any, undefined);
       github.getUser = jest.fn(() => Promise.resolve({ avatarUrl }));
 
       let changedToken = "";
@@ -108,7 +109,7 @@ describe("GithubButton", function() {
         />
       );
 
-      const logoutButton = wrapper.find("WithStyles(Button)");
+      const logoutButton = wrapper.find(Button);
       expect(logoutButton).toHaveLength(1);
       expect(logoutButton.prop("children")[0]).toContain("Logout");
       logoutButton.prop("onClick")({} as any);
@@ -119,7 +120,7 @@ describe("GithubButton", function() {
 
     it("does not reload avatar on update if github instance is the same", async function() {
       const avatarUrl = "url-to-avatar";
-      const github = new Github("token", {} as any);
+      const github = new Github("token", {} as any, undefined);
       github.getUser = jest.fn(() => Promise.resolve({ avatarUrl }));
 
       const wrapper = shallow(

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Dropdown } from "../../src/components/dropdown";
 import { shallow } from "enzyme";
-import { Grid } from "material-ui";
+import { Grid, InputLabel, Select, MenuItem } from "material-ui";
 
 describe("Dropdown", function() {
   describe("with label", function() {
@@ -10,7 +10,7 @@ describe("Dropdown", function() {
         <Dropdown options={[]} label="label" onSelect={() => {}} />
       );
 
-      const label = wrapper.find("WithStyles(InputLabel)");
+      const label = wrapper.find(InputLabel);
       expect(label.prop("children")).toEqual("label");
       expect(label.prop("htmlFor")).toEqual("label");
     });
@@ -20,7 +20,7 @@ describe("Dropdown", function() {
         <Dropdown options={[]} label="label" onSelect={() => {}} />
       );
 
-      expect(wrapper.find("WithStyles(Select)").prop("id")).toEqual("label");
+      expect(wrapper.find(Select).prop("id")).toEqual("label");
     });
 
     it("renders a disabled option with value none", function() {
@@ -28,7 +28,7 @@ describe("Dropdown", function() {
         <Dropdown options={[]} label="label" onSelect={() => {}} />
       );
 
-      const item = wrapper.find("WithStyles(MenuItem)");
+      const item = wrapper.find(MenuItem);
       expect(item).toHaveLength(1);
       expect(item.prop("children")).toEqual(["Select ", "label"]);
       expect(item.prop("disabled")).toEqual(true);
@@ -41,7 +41,7 @@ describe("Dropdown", function() {
       <Dropdown options={["opt1", "opt2"]} onSelect={() => {}} />
     );
 
-    const items = wrapper.find("WithStyles(MenuItem)");
+    const items = wrapper.find(MenuItem);
     expect(items).toHaveLength(3);
     expect(items.at(1).prop("children")).toEqual([null, "opt1"]);
     expect(items.at(2).prop("children")).toEqual([null, "opt2"]);
@@ -56,7 +56,7 @@ describe("Dropdown", function() {
       />
     );
 
-    expect(wrapper.find("WithStyles(Select)").prop("value")).toEqual("opt2");
+    expect(wrapper.find(Select).prop("value")).toEqual("opt2");
   });
 
   describe("componentDidUpdate", function() {
@@ -74,9 +74,7 @@ describe("Dropdown", function() {
         initialSelection: "optionA"
       });
 
-      expect(wrapper.find("WithStyles(Select)").prop("value")).toEqual(
-        "optionA"
-      );
+      expect(wrapper.find(Select).prop("value")).toEqual("optionA");
     });
 
     it("doesn't update the selection if the options are the same", function() {
@@ -94,7 +92,7 @@ describe("Dropdown", function() {
         initialSelection: "opt1"
       });
 
-      expect(wrapper.find("WithStyles(Select)").prop("value")).toEqual("opt2");
+      expect(wrapper.find(Select).prop("value")).toEqual("opt2");
     });
   });
 
@@ -108,7 +106,7 @@ describe("Dropdown", function() {
         />
       );
 
-      wrapper.find("WithStyles(Select)").prop("onChange")({
+      wrapper.find(Select).prop("onChange")({
         target: { value: "opt2" }
       } as any);
 
@@ -126,7 +124,7 @@ describe("Dropdown", function() {
         />
       );
 
-      const items = wrapper.find("WithStyles(MenuItem)");
+      const items = wrapper.find(MenuItem);
       expect(items).toHaveLength(3);
       expect(
         items

@@ -3,15 +3,19 @@ import { ReleaseNotesRetriever } from "../../src/components/release_notes_retrie
 import { shallow } from "enzyme";
 import { waitImmediate } from "../helper";
 import { Github } from "../../src/github";
+import { RepositorySelector } from "../../src/components/repository_selector";
+import { Dropdown } from "../../src/components/dropdown";
+import { Markdown } from "../../src/components/markdown";
+import { CopyToClipboard } from "../../src/components/copy_to_clipboard";
 
 jest.mock("../../src/github");
 
 describe("ReleaseNotesRetriever", function() {
   it("shows selected release note", async function() {
-    const github = new Github("token", {} as any);
+    const github = new Github("token", {} as any, undefined);
     let wrapper = shallow(<ReleaseNotesRetriever github={github} />);
 
-    const respositorySelector = wrapper.find("RepositorySelector");
+    const respositorySelector = wrapper.find(RepositorySelector);
     expect(respositorySelector).toHaveLength(1);
 
     github.getReleases = jest.fn(() => [
@@ -23,7 +27,7 @@ describe("ReleaseNotesRetriever", function() {
     await waitImmediate();
     wrapper.update();
 
-    const releasesDropdown = wrapper.find("Dropdown");
+    const releasesDropdown = wrapper.find(Dropdown);
     expect(releasesDropdown).toHaveLength(1);
     expect(releasesDropdown.prop("options")).toEqual(["v0.0.1", "v0.0.2"]);
 
@@ -34,10 +38,8 @@ describe("ReleaseNotesRetriever", function() {
 
     const expectedReleaseText = "# v0.0.1\n\ndescription 1\n";
 
-    expect(wrapper.find("Markdown").prop("source")).toEqual(
-      expectedReleaseText
-    );
-    expect(wrapper.find("CopyToClipboard").prop("text")).toEqual(
+    expect(wrapper.find(Markdown).prop("source")).toEqual(expectedReleaseText);
+    expect(wrapper.find(CopyToClipboard).prop("text")).toEqual(
       expectedReleaseText
     );
   });

@@ -1,13 +1,7 @@
 import * as React from "react";
 import { Section } from "./section";
 import { OwnerDropdown } from "./owner_dropdown";
-import {
-  Typography,
-  FormControlLabel,
-  Checkbox,
-  Button,
-  Grid
-} from "material-ui";
+import { FormControlLabel, Checkbox, Button, Grid } from "material-ui";
 import { Github } from "../github";
 import FormControl from "material-ui/Form/FormControl";
 
@@ -67,13 +61,6 @@ export class RepositoriesByOwnerSelector extends React.Component<Props, State> {
   }
 
   render() {
-    return (
-      <Section>
-        <Typography variant="headline" paragraph>
-          Repository
-        </Typography>
-        {this.renderControls()}
-      </Section>
-    );
+    return <Section heading="Repository">{this.renderControls()}</Section>;
   }
 }

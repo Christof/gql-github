@@ -6,20 +6,21 @@ import {
 import { shallow, mount, ShallowWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
 import { Github } from "../../src/github";
+import { LinearProgress, FormControlLabel, Button } from "material-ui";
 
 jest.mock("../../src/github");
 
 describe("DetailedRepositorySelector", function() {
   describe("before data loaded", function() {
     it("shows a progress bar", function() {
-      const github = new Github("token", {} as any);
+      const github = new Github("token", {} as any, undefined);
       github.getOwners = jest.fn(() => new Promise(resolve => {}));
 
       const wrapper = shallow(
         <DetailedRepositorySelector github={github} onChange={() => {}} />
       );
 
-      expect(wrapper.find("WithStyles(LinearProgress)")).toHaveLength(1);
+      expect(wrapper.find(LinearProgress)).toHaveLength(1);
     });
   });
 
@@ -31,7 +32,7 @@ describe("DetailedRepositorySelector", function() {
     let repositoresPerOwner: RepositoriesPerOwner;
 
     beforeEach(async function() {
-      github = new Github("token", {} as any);
+      github = new Github("token", {} as any, undefined);
       github.getOwners = jest.fn(() => Promise.resolve([owner1, owner2]));
       (github.copyFor as jest.Mock<Github>).mockReturnValue(github);
       (github.getRepositoryNames as jest.Mock<string[]>).mockReturnValueOnce([
@@ -56,7 +57,7 @@ describe("DetailedRepositorySelector", function() {
     function checkOwner1() {
       const owner1CheckboxWrapper = shallow(
         wrapper
-          .find("WithStyles(FormControlLabel)")
+          .find(FormControlLabel)
           .at(0)
           .prop("control")
       );
@@ -68,36 +69,36 @@ describe("DetailedRepositorySelector", function() {
 
     function getCheckboxForRepository(repoName: string) {
       const repo1FormControlLabel = wrapper
-        .find("WithStyles(FormControlLabel)")
+        .find(FormControlLabel)
         .findWhere(f => f.prop("label") === repoName);
       expect(repo1FormControlLabel).toHaveLength(1);
       return shallow(repo1FormControlLabel.prop("control"));
     }
 
     function clickAcceptButton() {
-      const acceptButton = wrapper.find("WithStyles(Button)");
+      const acceptButton = wrapper.find(Button);
       expect(acceptButton).toHaveLength(1);
       (acceptButton.prop("onClick") as any)();
     }
 
     it("shows checkboxes for all owners ", async function() {
-      expect(wrapper.find("WithStyles(LinearProgress)")).toHaveLength(0);
+      expect(wrapper.find(LinearProgress)).toHaveLength(0);
 
-      const labels = wrapper.find("WithStyles(FormControlLabel)");
+      const labels = wrapper.find(FormControlLabel);
       expect(labels).toHaveLength(2);
       expect(labels.at(0).prop("label")).toEqual(owner1);
       expect(labels.at(1).prop("label")).toEqual(owner2);
     });
 
     it("shows checkboxes for all repositories if owner is checked", async function() {
-      expect(wrapper.find("WithStyles(LinearProgress)")).toHaveLength(0);
+      expect(wrapper.find(LinearProgress)).toHaveLength(0);
 
       checkOwner1();
 
       await waitImmediate();
       wrapper.update();
 
-      const labels = wrapper.find("WithStyles(FormControlLabel)");
+      const labels = wrapper.find(FormControlLabel);
       expect(labels).toHaveLength(4);
     });
 

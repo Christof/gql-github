@@ -3,6 +3,11 @@ import { PersonalStats } from "../../src/components/personal_stats";
 import { shallow, ShallowWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
 import { Github, GithubData } from "../../src/github";
+import { Section } from "../../src/components/section";
+import { DetailedRepositorySelector } from "../../src/components/detailed_repository_selector";
+import { LinearProgress } from "material-ui";
+import { OverallPlot } from "../../src/components/overall_plot";
+import { OverTimePlot } from "../../src/components/over_time_plot";
 
 jest.mock("../../src/github");
 
@@ -11,7 +16,7 @@ describe("PersonalStats", function() {
   let wrapper: ShallowWrapper<any, any>;
 
   beforeEach(function() {
-    github = new Github("token", {} as any);
+    github = new Github("token", {} as any, undefined);
     (github.getUser as jest.Mock).mockReturnValue(
       Promise.resolve({ login: "user" })
     );
@@ -20,14 +25,14 @@ describe("PersonalStats", function() {
   });
 
   it("shows a DetailedRepositorySelector", async function() {
-    expect(wrapper.find("DetailedRepositorySelector")).toHaveLength(1);
+    expect(wrapper.find(DetailedRepositorySelector)).toHaveLength(1);
   });
 
   describe("repository selection", function() {
     let repositoriesByOwner: Map<string, string[]>;
 
     beforeEach(async function() {
-      const repositorySelector = wrapper.find("DetailedRepositorySelector");
+      const repositorySelector = wrapper.find(DetailedRepositorySelector);
 
       (github.copyFor as jest.Mock).mockReturnValue(github);
       (github.getStats as jest.Mock).mockReturnValueOnce(new Promise(() => {}));
@@ -43,12 +48,12 @@ describe("PersonalStats", function() {
     });
 
     it("shows a heading and progress bar", async function() {
-      const heading = wrapper.find("WithStyles(Typography)");
+      const heading = wrapper.find(Section);
 
       expect(heading).toHaveLength(1);
-      expect(heading.prop("children")).toEqual("Stats");
+      expect(heading.prop("heading")).toEqual("Stats");
 
-      expect(wrapper.find("WithStyles(LinearProgress)")).toHaveLength(1);
+      expect(wrapper.find(LinearProgress)).toHaveLength(1);
     });
   });
 
@@ -74,7 +79,7 @@ describe("PersonalStats", function() {
     ];
 
     beforeEach(async function() {
-      const repositorySelector = wrapper.find("DetailedRepositorySelector");
+      const repositorySelector = wrapper.find(DetailedRepositorySelector);
 
       (github.copyFor as jest.Mock).mockReturnValue(github);
       (github.getStats as jest.Mock).mockReturnValueOnce(data);
@@ -93,7 +98,7 @@ describe("PersonalStats", function() {
     });
 
     it("renders OverTimePlot", async function() {
-      const overTimePlot = wrapper.find("OverTimePlot");
+      const overTimePlot = wrapper.find(OverTimePlot);
 
       expect(overTimePlot).toHaveLength(1);
       expect(overTimePlot.prop("title")).toEqual("Commits in Repositories");
@@ -119,7 +124,7 @@ describe("PersonalStats", function() {
     });
 
     it("renders OverallPlot with sums", async function() {
-      const overallPlot = wrapper.find("OverallPlot");
+      const overallPlot = wrapper.find(OverallPlot);
 
       expect(overallPlot).toHaveLength(1);
       expect(overallPlot.prop("repositoryNames")).toEqual(["repo1", "repo4"]);

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { OverTimePlot } from "../../src/components/over_time_plot";
 import { shallow } from "enzyme";
+import PlotlyChart from "react-plotlyjs-ts";
 
 describe("OverTimePlot", function() {
   it("renders plots with time as x axis", function() {
@@ -18,8 +19,8 @@ describe("OverTimePlot", function() {
     expect(layout.xaxis.title).toEqual("time");
     expect(layout.yaxis.title).toEqual("commit count");
 
-    expect(wrapper.find("PlotlyChart")).toHaveLength(1);
-    expect(wrapper.find("PlotlyChart").prop("data")).toEqual(data);
+    expect(wrapper.find(PlotlyChart)).toHaveLength(1);
+    expect(wrapper.find(PlotlyChart).prop("data")).toEqual(data);
   });
 
   it("renders plots with custom as y axis title", function() {
@@ -39,7 +40,7 @@ describe("OverTimePlot", function() {
     expect(layout.xaxis.title).toEqual("time");
     expect(layout.yaxis.title).toEqual("custom title");
 
-    expect(wrapper.find("PlotlyChart")).toHaveLength(1);
-    expect(wrapper.find("PlotlyChart").prop("data")).toEqual(data);
+    expect(wrapper.find(PlotlyChart)).toHaveLength(1);
+    expect(wrapper.find(PlotlyChart).prop("data")).toEqual(data);
   });
 });

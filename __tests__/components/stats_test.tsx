@@ -3,6 +3,12 @@ import { Stats } from "../../src/components/stats";
 import { shallow, ShallowWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
 import { Github, GithubData } from "../../src/github";
+import { Section } from "../../src/components/section";
+import { RepositoriesByOwnerSelector } from "../../src/components/repositories_by_owner_selector";
+import { LinearProgress } from "material-ui";
+import { OverallPlot } from "../../src/components/overall_plot";
+import { OverTimePlot } from "../../src/components/over_time_plot";
+import PlotlyChart from "react-plotlyjs-ts";
 
 jest.mock("../../src/github");
 
@@ -11,12 +17,12 @@ describe("Stats", function() {
   let wrapper: ShallowWrapper<any, any>;
 
   beforeEach(function() {
-    github = new Github("token", {} as any);
+    github = new Github("token", {} as any, undefined);
     wrapper = shallow(<Stats github={github} />);
   });
 
   it("shows a RepositoriesByOwnerSelector", function() {
-    expect(wrapper.find("RepositoriesByOwnerSelector")).toHaveLength(1);
+    expect(wrapper.find(RepositoriesByOwnerSelector)).toHaveLength(1);
   });
 
   describe("repository selection", function() {
@@ -25,7 +31,7 @@ describe("Stats", function() {
     let resolveForGetStats: Function;
 
     beforeEach(async function() {
-      const repositorySelector = wrapper.find("RepositoriesByOwnerSelector");
+      const repositorySelector = wrapper.find(RepositoriesByOwnerSelector);
 
       (github.getRepositoryNames as jest.Mock).mockReturnValue(
         Promise.resolve(repositoryNames)
@@ -46,12 +52,12 @@ describe("Stats", function() {
     });
 
     it("shows a heading and progress bar", function() {
-      const heading = wrapper.find("WithStyles(Typography)");
+      const heading = wrapper.find(Section);
 
       expect(heading).toHaveLength(1);
-      expect(heading.prop("children")).toEqual("Stats");
+      expect(heading.prop("heading")).toEqual("Stats");
 
-      expect(wrapper.find("WithStyles(LinearProgress)")).toHaveLength(1);
+      expect(wrapper.find(LinearProgress)).toHaveLength(1);
     });
 
     describe("after loading data", function() {
@@ -83,7 +89,7 @@ describe("Stats", function() {
       });
 
       it("shows an OverallPlot", function() {
-        const overallPlot = wrapper.find("OverallPlot");
+        const overallPlot = wrapper.find(OverallPlot);
 
         expect(overallPlot).toHaveLength(1);
         expect(overallPlot.prop("repositoryNames")).toEqual(repositoryNames);
@@ -104,7 +110,7 @@ describe("Stats", function() {
       }
 
       it("shows OverTimePlots for each repository", function() {
-        const overTimePlot = wrapper.find("OverTimePlot");
+        const overTimePlot = wrapper.find(OverTimePlot);
 
         expect(overTimePlot).toHaveLength(2);
         expect(overTimePlot.at(0).prop("title")).toEqual("repo1");
@@ -138,7 +144,7 @@ describe("Stats", function() {
       }
 
       it("shows a year graph for each repository", function() {
-        const yearPlot = wrapper.find("PlotlyChart");
+        const yearPlot = wrapper.find(PlotlyChart);
 
         expect(yearPlot).toHaveLength(2);
 

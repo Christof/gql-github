@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Paper } from "material-ui";
+import { Paper, Typography } from "material-ui";
 import { PaperProps } from "material-ui/Paper";
 
 const style = {
@@ -8,6 +8,13 @@ const style = {
   padding: 12
 };
 
-export const Section = (props: PaperProps) => (
-  <Paper {...props} style={style} />
+export const Section = (props: PaperProps & { heading?: string }) => (
+  <Paper {...props} style={style}>
+    {props.heading ? (
+      <Typography variant="headline" paragraph>
+        {props.heading}
+      </Typography>
+    ) : null}
+    {props.children}
+  </Paper>
 );
