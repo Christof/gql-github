@@ -1,6 +1,8 @@
 import * as React from "react";
 import { RepositorySelector } from "../../src/components/repository_selector";
 import { shallow } from "enzyme";
+import { OwnerDropdown } from "../../src/components/owner_dropdown";
+import { Dropdown } from "../../src/components/dropdown";
 
 describe("RepositorySelector", function() {
   it("calls onRepositorySelect after owner and repo selecion", function() {
@@ -19,11 +21,11 @@ describe("RepositorySelector", function() {
     );
 
     const owner = "selectedOwner";
-    wrapper.find("OwnerDropdown").prop("onSelect")(owner as any);
+    wrapper.find(OwnerDropdown).prop("onSelect")(owner as any);
 
     expect(github.owner).toEqual(owner);
 
-    wrapper.find("Dropdown").prop("onSelect")("repo2" as any);
+    wrapper.find(Dropdown).prop("onSelect")("repo2" as any);
 
     expect(selectedRepository).toEqual("repo2");
   });

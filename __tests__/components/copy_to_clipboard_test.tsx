@@ -31,7 +31,7 @@ describe("CopyToClipboard", function() {
 
   describe("copy button", function() {
     it("is text of Copy", function() {
-      const button = wrapper.find("WithStyles(Button)");
+      const button = wrapper.find(Button);
       expect(button).toHaveLength(1);
       expect(button.prop("children")).toEqual("Copy");
     });
@@ -50,7 +50,7 @@ describe("CopyToClipboard", function() {
       const execCommandMock = jest.fn();
       document.execCommand = execCommandMock;
 
-      const button = wrapper.find("WithStyles(Button)");
+      const button = wrapper.find(Button);
       button.prop("onClick")(undefined);
 
       expect(createRangeMock).toHaveBeenCalled();
