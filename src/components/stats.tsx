@@ -108,16 +108,16 @@ export class Stats extends React.Component<Props, State> {
       return {
         x,
         y: yValues,
-        type: "bar",
+        type: "bar" as any,
         textposition: "outside",
-        text: yValues,
-        hoverinfo: "name",
+        text: yValues.map(value => value.toString()),
+        hoverinfo: "name" as any,
         name: `${author} ${authorSum}`
       };
     });
 
     const layout = this.getYearGraphLayout(title, data);
-    return <this.state.PlotlyChart data={traces} layout={layout} />;
+    return <this.state.PlotlyChart data={traces} layout={layout as any} />;
   }
 
   private traceForAuthor(statsForAuthor: GithubAuthorData) {

@@ -49,6 +49,6 @@ export class OverTimePlot extends React.Component<Props, {}> {
   }
 
   render() {
-    return <PlotlyChart data={this.props.data} layout={this.layout} />;
+    return <PlotlyChart data={this.props.data} layout={this.layout as any} />;
   }
 }
