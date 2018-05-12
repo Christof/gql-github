@@ -205,7 +205,7 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
         <Snackbar
           anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
           autoHideDuration={2000}
-          transition={TransitionLeft}
+          TransitionComponent={TransitionLeft}
           onClose={() => this.setState({ releaseCreated: false })}
           open={this.state.releaseCreated}
           message={<span>Release created</span>}
