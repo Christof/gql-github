@@ -109,6 +109,8 @@ export class OverallPlot extends React.Component<Props, State> {
   }
 
   render() {
-    return <PlotlyChart data={this.state.data} layout={this.state.layout} />;
+    return (
+      <PlotlyChart data={this.state.data} layout={this.state.layout as any} />
+    );
   }
 }
