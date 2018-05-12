@@ -13,6 +13,9 @@ import PlotlyChart from "react-plotlyjs-ts";
 jest.mock("../../src/github");
 
 describe("Stats", function() {
+  beforeAll(() => jest.setTimeout(10000));
+  afterAll(() => jest.setTimeout(undefined));
+
   let github: Github;
   let wrapper: ShallowWrapper<any, any>;
 
