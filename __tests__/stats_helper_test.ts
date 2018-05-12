@@ -102,9 +102,14 @@ describe("calculateWeeklyCommits", function() {
           weeks: [{ w: week3, a: 0, d: 0, c: 40 }]
         },
         {
-          author: { login: "author2" },
+          author: undefined,
           total: 1000,
           weeks: [{ w: week2, a: 0, d: 0, c: 50 }]
+        },
+        {
+          author: { login: undefined },
+          total: 1000,
+          weeks: [{ w: week2, a: 0, d: 0, c: 10 }]
         }
       ],
       undefined
@@ -112,7 +117,8 @@ describe("calculateWeeklyCommits", function() {
 
     const expected = new Map<string, number[][]>();
     expected.set("author1", [[week1, 10], [week2, 20], [week3, 40]]);
-    expected.set("author2", [[week2, 80]]);
+    expected.set("author2", [[week2, 30]]);
+    expected.set("deleted", [[week2, 60]]);
 
     expect(calculateWeeklyCommits(data)).toEqual(expected);
   });

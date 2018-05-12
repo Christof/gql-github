@@ -68,11 +68,11 @@ export function calculateWeeklyCommits(
 ): Map<string, number[][]> {
   const collector = new Map<string, Map<number, number>>();
   for (const authorData of getAuthorData(githubData)) {
-    const authorResult =
-      collector.get(authorData.author.login) || new Map<number, number>();
+    const login = (authorData.author && authorData.author.login) || "deleted";
+    const authorResult = collector.get(login) || new Map<number, number>();
     accumulateWeeklyCommits(authorData, authorResult);
 
-    collector.set(authorData.author.login, authorResult);
+    collector.set(login, authorResult);
   }
 
   return sortByWeek(collector);
