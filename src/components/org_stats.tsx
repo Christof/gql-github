@@ -16,6 +16,7 @@ import { DefaultGrid } from "./default_grid";
 import { calculateWeeklyCommits } from "../stats_helper";
 import { flatten, groupBy, values, mapObjIndexed, map, keys } from "ramda";
 import { discardTimeFromDate } from "../utils";
+import { OrgStatsPlots } from "./org_stats_plots";
 
 interface Props {
   github: Github;
@@ -154,34 +155,22 @@ export class OrgStats extends React.Component<Props, State> {
     this.setState({ data, traces, pullRequestsTraces, reviewsTraces });
   }
 
-  private renderPlots() {
-    return (
-      <div>
-        <this.state.OverTimePlot
-          title="Commits per Author"
-          data={this.state.traces}
-        />
-        <this.state.OverTimePlot
-          title="Pull Requests per Author"
-          yaxisTitle="review count"
-          data={this.state.pullRequestsTraces}
-        />
-        <this.state.OverTimePlot
-          title="Reviews per Author per Day"
-          yaxisTitle="review count"
-          data={this.state.reviewsTraces}
-        />
-      </div>
-    );
-  }
-
   renderStatsSection() {
     if (!this.state.startedLoading || this.state.OverTimePlot === undefined)
       return null;
 
     return (
       <Section heading="Stats">
-        {this.state.data.length === 0 ? <LinearProgress /> : this.renderPlots()}
+        {this.state.data.length === 0 ? (
+          <LinearProgress />
+        ) : (
+          <OrgStatsPlots
+            OverTimePlot={this.state.OverTimePlot}
+            traces={this.state.traces}
+            pullRequestsTraces={this.state.pullRequestsTraces}
+            reviewsTraces={this.state.reviewsTraces}
+          />
+        )}
       </Section>
     );
   }
