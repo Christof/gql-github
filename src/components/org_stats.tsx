@@ -22,17 +22,19 @@ interface Props {
 function triggeredAsyncSwitch<P extends object, PTriggered extends object>(
   TriggerComponent: React.ComponentType<P>,
   triggerCallbackKey: keyof P,
-  TriggeredComponent: React.ComponentType<PTriggered>,
-  loadFunction: (...params: any[]) => Promise<PTriggered>
+  TriggeredComponent: React.ComponentType<PTriggered>
 ) {
+  type Props = Partial<P> & {
+    onLoad: (...params: any[]) => Promise<PTriggered>;
+  };
   return class extends React.Component<
-    Partial<P>,
+    Props,
     {
       triggered: boolean;
       triggeredProps: PTriggered;
     }
   > {
-    constructor(props: Partial<P>) {
+    constructor(props: Props) {
       super(props);
 
       this.state = {
@@ -45,12 +47,12 @@ function triggeredAsyncSwitch<P extends object, PTriggered extends object>(
       const triggerProp = {
         [triggerCallbackKey]: (...params: any[]) => {
           this.setState({ triggered: true });
-          loadFunction(...params).then(triggeredProps => {
-            console.log("loaded", triggeredProps);
-            this.setState({ triggeredProps });
-          });
+          this.props
+            .onLoad(...params)
+            .then(triggeredProps => this.setState({ triggeredProps }));
         }
       };
+
       return (
         <div>
           <TriggerComponent {...this.props} {...triggerProp} />
@@ -195,15 +197,17 @@ export class OrgStats extends React.Component<Props, {}> {
     const Triggered = triggeredAsyncSwitch(
       RepositoriesByOwnerSelector,
       "onLoad",
-      OrgStatsPlots,
-
-      (options: { owner?: string; includeForks: boolean }) =>
-        this.loadData(options)
+      OrgStatsPlots
     );
 
     return (
       <DefaultGrid>
-        <Triggered github={this.props.github} />
+        <Triggered
+          github={this.props.github}
+          onLoad={(options: { owner?: string; includeForks: boolean }) =>
+            this.loadData(options)
+          }
+        />
       </DefaultGrid>
     );
   }
