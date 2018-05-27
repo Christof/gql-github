@@ -1,7 +1,6 @@
 import * as React from "react";
 import {
   Github,
-  GithubData,
   GithubAuthorData,
   GithubPullRequest,
   GithubReview
@@ -9,8 +8,6 @@ import {
 import { LinearProgress } from "material-ui";
 import { Section } from "./section";
 import { RepositoriesByOwnerSelector } from "./repositories_by_owner_selector";
-import { ScatterData } from "plotly.js";
-import { OverTimePlot } from "./over_time_plot";
 import { runningAverage } from "../array_helper";
 import { DefaultGrid } from "./default_grid";
 import { calculateWeeklyCommits } from "../stats_helper";
@@ -20,15 +17,6 @@ import { OrgStatsPlots } from "./org_stats_plots";
 
 interface Props {
   github: Github;
-}
-
-interface State {
-  data: GithubData[];
-  startedLoading: boolean;
-  traces?: Partial<ScatterData>[];
-  pullRequestsTraces?: Partial<ScatterData>[];
-  reviewsTraces?: Partial<ScatterData>[];
-  OverTimePlot?: typeof OverTimePlot;
 }
 
 function triggeredAsyncSwitch<P extends object, PTriggered extends object>(
@@ -81,13 +69,9 @@ function triggeredAsyncSwitch<P extends object, PTriggered extends object>(
   };
 }
 
-export class OrgStats extends React.Component<Props, State> {
+export class OrgStats extends React.Component<Props, {}> {
   constructor(props: Props) {
     super(props);
-    this.state = {
-      data: [],
-      startedLoading: false
-    };
   }
 
   createTraces(data: GithubAuthorData[][]) {
@@ -205,26 +189,6 @@ export class OrgStats extends React.Component<Props, State> {
     const OverTimePlot = await overTimePlotPromise;
 
     return { data, traces, pullRequestsTraces, reviewsTraces, OverTimePlot };
-  }
-
-  renderStatsSection() {
-    if (!this.state.startedLoading || this.state.OverTimePlot === undefined)
-      return null;
-
-    return (
-      <Section heading="Stats">
-        {this.state.data.length === 0 ? (
-          <LinearProgress />
-        ) : (
-          <OrgStatsPlots
-            OverTimePlot={this.state.OverTimePlot}
-            traces={this.state.traces}
-            pullRequestsTraces={this.state.pullRequestsTraces}
-            reviewsTraces={this.state.reviewsTraces}
-          />
-        )}
-      </Section>
-    );
   }
 
   render() {
