@@ -31,6 +31,35 @@ interface State {
   OverTimePlot?: typeof OverTimePlot;
 }
 
+function withTrigger<P extends object>(
+  TriggerComponent: React.ComponentType<P>,
+  triggerCallbackKey: keyof P
+  // TriggeredComponent: React.Component
+) {
+  return class extends React.Component<Partial<P>, { triggered: boolean }> {
+    constructor(props: Partial<P>) {
+      super(props);
+
+      this.state = { triggered: false };
+    }
+
+    render() {
+      const triggerProp = {
+        [triggerCallbackKey]: (...params: any[]) => {
+          console.log("in trigger", params);
+          this.setState({ triggered: true });
+        }
+      };
+      return (
+        <div>
+          <TriggerComponent {...this.props} {...triggerProp} />
+          {this.state.triggered && <div>Triggered Component</div>}
+        </div>
+      );
+    }
+  };
+}
+
 export class OrgStats extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -176,12 +205,10 @@ export class OrgStats extends React.Component<Props, State> {
   }
 
   render() {
+    const Triggered = withTrigger(RepositoriesByOwnerSelector, "onLoad");
     return (
       <DefaultGrid>
-        <RepositoriesByOwnerSelector
-          github={this.props.github}
-          onLoad={options => this.selectOwner(options)}
-        />
+        <Triggered github={this.props.github} />
         {this.renderStatsSection()}
       </DefaultGrid>
     );
