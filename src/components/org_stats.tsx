@@ -31,29 +31,50 @@ interface State {
   OverTimePlot?: typeof OverTimePlot;
 }
 
-function withTrigger<P extends object>(
+function triggeredAsyncSwitch<P extends object, PTriggered extends object>(
   TriggerComponent: React.ComponentType<P>,
-  triggerCallbackKey: keyof P
-  // TriggeredComponent: React.Component
+  triggerCallbackKey: keyof P,
+  TriggeredComponent: React.ComponentType<PTriggered>,
+  loadFunction: (...params: any[]) => Promise<PTriggered>
 ) {
-  return class extends React.Component<Partial<P>, { triggered: boolean }> {
+  return class extends React.Component<
+    Partial<P>,
+    {
+      triggered: boolean;
+      triggeredProps: PTriggered;
+    }
+  > {
     constructor(props: Partial<P>) {
       super(props);
 
-      this.state = { triggered: false };
+      this.state = {
+        triggered: false,
+        triggeredProps: undefined
+      };
     }
 
     render() {
       const triggerProp = {
         [triggerCallbackKey]: (...params: any[]) => {
-          console.log("in trigger", params);
           this.setState({ triggered: true });
+          loadFunction(...params).then(triggeredProps => {
+            console.log("loaded", triggeredProps);
+            this.setState({ triggeredProps });
+          });
         }
       };
       return (
         <div>
           <TriggerComponent {...this.props} {...triggerProp} />
-          {this.state.triggered && <div>Triggered Component</div>}
+          {this.state.triggered && (
+            <Section heading="Stats">
+              {this.state.triggeredProps === undefined ? (
+                <LinearProgress />
+              ) : (
+                <TriggeredComponent {...this.state.triggeredProps} />
+              )}
+            </Section>
+          )}
         </div>
       );
     }
@@ -67,10 +88,6 @@ export class OrgStats extends React.Component<Props, State> {
       data: [],
       startedLoading: false
     };
-
-    import("./over_time_plot").then(module =>
-      this.setState({ OverTimePlot: module.OverTimePlot })
-    );
   }
 
   createTraces(data: GithubAuthorData[][]) {
@@ -163,10 +180,14 @@ export class OrgStats extends React.Component<Props, State> {
     );
   }
 
-  async selectOwner(options: { owner?: string; includeForks: boolean }) {
-    if (options.owner === undefined) return;
+  async loadData(options: { owner?: string; includeForks: boolean }) {
+    // if (options.owner === undefined) return;
 
-    this.setState({ startedLoading: true });
+    const overTimePlotPromise = import("./over_time_plot").then(
+      module => module.OverTimePlot
+    );
+
+    // this.setState({ startedLoading: true });
 
     this.props.github.owner = options.owner;
     const repositoryNames = await this.props.github.getRepositoryNames(options);
@@ -181,7 +202,9 @@ export class OrgStats extends React.Component<Props, State> {
 
     const traces = this.createTraces(data);
 
-    this.setState({ data, traces, pullRequestsTraces, reviewsTraces });
+    const OverTimePlot = await overTimePlotPromise;
+
+    return { data, traces, pullRequestsTraces, reviewsTraces, OverTimePlot };
   }
 
   renderStatsSection() {
@@ -205,11 +228,18 @@ export class OrgStats extends React.Component<Props, State> {
   }
 
   render() {
-    const Triggered = withTrigger(RepositoriesByOwnerSelector, "onLoad");
+    const Triggered = triggeredAsyncSwitch(
+      RepositoriesByOwnerSelector,
+      "onLoad",
+      OrgStatsPlots,
+
+      (options: { owner?: string; includeForks: boolean }) =>
+        this.loadData(options)
+    );
+
     return (
       <DefaultGrid>
         <Triggered github={this.props.github} />
-        {this.renderStatsSection()}
       </DefaultGrid>
     );
   }
