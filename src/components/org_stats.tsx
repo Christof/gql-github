@@ -167,8 +167,6 @@ export class OrgStats extends React.Component<Props, {}> {
   }
 
   async loadData(options: { owner?: string; includeForks: boolean }) {
-    // if (options.owner === undefined) return;
-
     const overTimePlotPromise = import("./over_time_plot").then(
       module => module.OverTimePlot
     );
