@@ -43,8 +43,8 @@ function triggeredAsyncSwitch<P extends object, PTriggered extends object>(
       };
     }
 
-    render() {
-      const triggerProp = {
+    createTriggerProperty() {
+      return {
         [triggerCallbackKey]: (...params: any[]) => {
           this.setState({ triggered: true });
           this.props
@@ -52,10 +52,12 @@ function triggeredAsyncSwitch<P extends object, PTriggered extends object>(
             .then(triggeredProps => this.setState({ triggeredProps }));
         }
       };
+    }
 
+    render() {
       return (
         <div>
-          <TriggerComponent {...this.props} {...triggerProp} />
+          <TriggerComponent {...this.props} {...this.createTriggerProperty()} />
           {this.state.triggered && (
             <Section heading="Stats">
               {this.state.triggeredProps === undefined ? (
