@@ -160,15 +160,6 @@ export class Stats extends React.Component<Props, State> {
     );
   }
 
-  renderRepositorySelection() {
-    return (
-      <RepositoriesByOwnerSelector
-        github={this.props.github}
-        onLoad={options => this.selectOwner(options)}
-      />
-    );
-  }
-
   renderStatsSection() {
     if (!this.state.startedLoading) return null;
 
@@ -201,7 +192,10 @@ export class Stats extends React.Component<Props, State> {
   render() {
     return (
       <DefaultGrid>
-        {this.renderRepositorySelection()}
+        <RepositoriesByOwnerSelector
+          github={this.props.github}
+          onLoad={options => this.selectOwner(options)}
+        />
         {this.renderStatsSection()}
       </DefaultGrid>
     );
