@@ -45,14 +45,15 @@ export function triggeredAsyncSwitch<
     }
 
     render() {
+      const Container = container(
+        Section,
+        { heading: "Stats" },
+        this.ProgressToContent
+      );
       return (
         <div>
           <TriggerComponent {...this.props} {...this.createTriggerProperty()} />
-          {this.state.triggered && (
-            <Section heading="Stats">
-              <this.ProgressToContent {...this.state.triggeredProps} />
-            </Section>
-          )}
+          {this.state.triggered && <Container {...this.state.triggeredProps} />}
         </div>
       );
     }
@@ -72,4 +73,16 @@ export function progressToContentSwitch<P extends object>(
       );
     }
   };
+}
+
+export function container<PContainer extends object, PContainee extends object>(
+  Container: React.ComponentType<PContainer>,
+  containerProps: PContainer,
+  Containee: React.ComponentType<PContainee>
+) {
+  return (props: PContainee) => (
+    <Container {...containerProps}>
+      <Containee {...props} />
+    </Container>
+  );
 }
