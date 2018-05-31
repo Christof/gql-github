@@ -126,31 +126,21 @@ async function loadData(
   return { data, traces, pullRequestsTraces, reviewsTraces, OverTimePlot };
 }
 
-interface Props {
-  github: Github;
-}
+const TriggeredOrgStatsPlots = triggeredAsyncSwitch(
+  RepositoriesByOwnerSelector,
+  "onLoad",
+  OrgStatsPlots
+);
 
-export class OrgStats extends React.Component<Props, {}> {
-  constructor(props: Props) {
-    super(props);
-  }
-
-  render() {
-    const Triggered = triggeredAsyncSwitch(
-      RepositoriesByOwnerSelector,
-      "onLoad",
-      OrgStatsPlots
-    );
-
-    return (
-      <DefaultGrid>
-        <Triggered
-          github={this.props.github}
-          onLoad={(options: { owner?: string; includeForks: boolean }) =>
-            loadData(this.props.github, options)
-          }
-        />
-      </DefaultGrid>
-    );
-  }
+export function OrgStats(props: { github: Github }) {
+  return (
+    <DefaultGrid>
+      <TriggeredOrgStatsPlots
+        github={props.github}
+        onLoad={(options: { owner?: string; includeForks: boolean }) =>
+          loadData(props.github, options)
+        }
+      />
+    </DefaultGrid>
+  );
 }
