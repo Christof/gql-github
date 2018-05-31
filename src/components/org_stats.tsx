@@ -12,7 +12,8 @@ import { calculateWeeklyCommits } from "../stats_helper";
 import { flatten, groupBy, values, mapObjIndexed, map, keys } from "ramda";
 import { discardTimeFromDate } from "../utils";
 import { OrgStatsPlots } from "./org_stats_plots";
-import { triggeredAsyncSwitch } from "./triggered_async_switch";
+import { triggeredAsyncSwitch, container } from "./triggered_async_switch";
+import { Section } from "./section";
 
 function createTraces(data: GithubAuthorData[][]) {
   const weeklyCommitsPerAuthor = calculateWeeklyCommits(data);
@@ -129,7 +130,7 @@ async function loadData(
 const TriggeredOrgStatsPlots = triggeredAsyncSwitch(
   RepositoriesByOwnerSelector,
   "onLoad",
-  OrgStatsPlots
+  container(Section, { heading: "Org Stats" }, OrgStatsPlots)
 );
 
 export function OrgStats(props: { github: Github }) {

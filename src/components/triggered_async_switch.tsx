@@ -1,6 +1,5 @@
 import * as React from "react";
 import { LinearProgress } from "material-ui";
-import { Section } from "./section";
 
 export function triggeredAsyncSwitch<
   P extends object,
@@ -45,15 +44,12 @@ export function triggeredAsyncSwitch<
     }
 
     render() {
-      const Container = container(
-        Section,
-        { heading: "Stats" },
-        this.ProgressToContent
-      );
       return (
         <div>
           <TriggerComponent {...this.props} {...this.createTriggerProperty()} />
-          {this.state.triggered && <Container {...this.state.triggeredProps} />}
+          {this.state.triggered && (
+            <this.ProgressToContent {...this.state.triggeredProps} />
+          )}
         </div>
       );
     }
