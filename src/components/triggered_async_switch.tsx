@@ -13,7 +13,7 @@ export function triggeredAsyncSwitch<
   type Props = Partial<P> & {
     onLoad: (...params: any[]) => Promise<PTriggered>;
   };
-  return class extends React.Component<
+  return class TriggeredAsyncSwitch extends React.Component<
     Props,
     {
       triggered: boolean;
@@ -63,7 +63,7 @@ export function progressToContentSwitch<P extends object>(
   ContentComponent: React.ComponentType<P>,
   Progress: React.ComponentType = LinearProgress
 ) {
-  return class extends React.Component<P | {}, {}> {
+  return class ProgressToContentSwitch extends React.Component<P | {}, {}> {
     render() {
       return Object.keys(this.props).length === 0 ? (
         <Progress />
