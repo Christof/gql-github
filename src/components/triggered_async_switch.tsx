@@ -20,6 +20,7 @@ export function triggeredAsyncSwitch<
       triggeredProps: PTriggered;
     }
   > {
+    ProgressToContent: any;
     constructor(props: Props) {
       super(props);
 
@@ -27,6 +28,8 @@ export function triggeredAsyncSwitch<
         triggered: false,
         triggeredProps: undefined
       };
+
+      this.ProgressToContent = progressToContentSwitch(TriggeredComponent);
     }
 
     createTriggerProperty() {
@@ -46,14 +49,25 @@ export function triggeredAsyncSwitch<
           <TriggerComponent {...this.props} {...this.createTriggerProperty()} />
           {this.state.triggered && (
             <Section heading="Stats">
-              {this.state.triggeredProps === undefined ? (
-                <LinearProgress />
-              ) : (
-                <TriggeredComponent {...this.state.triggeredProps} />
-              )}
+              <this.ProgressToContent {...this.state.triggeredProps} />
             </Section>
           )}
         </div>
+      );
+    }
+  };
+}
+
+export function progressToContentSwitch<P extends object>(
+  ContentComponent: React.ComponentType<P>,
+  Progress: React.ComponentType = LinearProgress
+) {
+  return class extends React.Component<P | {}, {}> {
+    render() {
+      return Object.keys(this.props).length === 0 ? (
+        <Progress />
+      ) : (
+        <ContentComponent {...this.props} />
       );
     }
   };
