@@ -20,7 +20,8 @@ export function triggeredAsyncSwitch<
       triggeredProps: PTriggered;
     }
   > {
-    ProgressToContent: any;
+    private ProgressToContent: React.ComponentType<PTriggered | {}>;
+
     constructor(props: Props) {
       super(props);
 
