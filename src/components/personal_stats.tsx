@@ -24,7 +24,6 @@ interface Repo {
 
 interface State {
   repositoriesPerOwner?: RepositoriesPerOwner;
-  author: string;
   data: Repo[];
   startedLoading: boolean;
   OverallPlot?: typeof OverallPlot;
@@ -37,21 +36,10 @@ export class PersonalStats extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
-    this.state = { author: "", data: [], startedLoading: false };
-
-    this.props.github
-      .getUser()
-      .then(user => this.setState({ author: user.login }));
-
-    import("./over_time_plot").then(module =>
-      this.setState({ OverTimePlot: module.OverTimePlot })
-    );
-    import("./overall_plot").then(module =>
-      this.setState({ OverallPlot: module.OverallPlot })
-    );
+    this.state = { data: [], startedLoading: false };
   }
 
-  async getAuthorData(github: Github, repo: string) {
+  async getAuthorData(author: string, github: Github, repo: string) {
     const stats = await github.getStats(repo);
     if (stats === undefined || stats.length === 0 || stats.find === undefined) {
       console.error("No stats found for", repo, stats);
@@ -59,7 +47,7 @@ export class PersonalStats extends React.Component<Props, State> {
     }
 
     const authorData = stats.find(
-      authorData => authorData.author.login === this.state.author
+      authorData => authorData.author.login === author
     );
 
     if (authorData === undefined) {
@@ -70,13 +58,24 @@ export class PersonalStats extends React.Component<Props, State> {
   }
 
   async loadData(repositoriesPerOwner: RepositoriesPerOwner) {
+    const author = await this.props.github.getUser().then(user => user.login);
+
+    const overTimePlotPromise = import("./over_time_plot").then(
+      module => module.OverTimePlot
+    );
+    const overallPlotPromise = import("./overall_plot").then(
+      module => module.OverallPlot
+    );
+
     this.setState({ startedLoading: true });
 
     const data = [] as Repo[];
     for (let [owner, repositories] of repositoriesPerOwner.entries()) {
       const github = this.props.github.copyFor(owner);
       const authorDataForRepository = await Promise.all(
-        repositories.map(async repo => await this.getAuthorData(github, repo))
+        repositories.map(
+          async repo => await this.getAuthorData(author, github, repo)
+        )
       );
       data.push(...authorDataForRepository.filter(item => item !== undefined));
     }
@@ -91,10 +90,17 @@ export class PersonalStats extends React.Component<Props, State> {
     );
     repositoryTimeline.push(...this.traceForSum());
 
+    const [OverTimePlot, OverallPlot] = await Promise.all([
+      overTimePlotPromise,
+      overallPlotPromise
+    ]);
+
     this.setState({
       data: data.filter(item => item !== undefined),
       totalCommitCount,
-      repositoryTimeline
+      repositoryTimeline,
+      OverTimePlot,
+      OverallPlot
     });
   }
 
