@@ -149,21 +149,20 @@ export class PersonalStats extends React.Component<Props, State> {
     ];
   }
 
-  renderStats() {
-    if (
-      this.state.data.length === 0 ||
-      this.state.OverTimePlot === undefined ||
-      this.state.OverallPlot === undefined
-    )
-      return <LinearProgress />;
-
-    return <PersonalStatsPlots {...this.state as any} />;
-  }
-
   renderStatsSection() {
     if (!this.state.startedLoading) return null;
 
-    return <Section heading="Stats">{this.renderStats()}</Section>;
+    return (
+      <Section heading="Stats">
+        {this.state.data.length === 0 ||
+        this.state.OverTimePlot === undefined ||
+        this.state.OverallPlot === undefined ? (
+          <LinearProgress />
+        ) : (
+          <PersonalStatsPlots {...this.state as any} />
+        )}
+      </Section>
+    );
   }
 
   render() {
