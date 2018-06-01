@@ -151,22 +151,6 @@ export class PersonalStats extends React.Component<Props, State> {
     ];
   }
 
-  renderStatsSection() {
-    if (!this.state.startedLoading) return null;
-
-    return (
-      <Section heading="Stats">
-        {this.state.data.length === 0 ||
-        this.state.OverTimePlot === undefined ||
-        this.state.OverallPlot === undefined ? (
-          <LinearProgress />
-        ) : (
-          <PersonalStatsPlots {...this.state as any} />
-        )}
-      </Section>
-    );
-  }
-
   render() {
     return (
       <Grid container spacing={24} justify="center">
@@ -178,7 +162,17 @@ export class PersonalStats extends React.Component<Props, State> {
             }
           />
 
-          {this.renderStatsSection()}
+          {this.state.startedLoading && (
+            <Section heading="Stats">
+              {this.state.data.length === 0 ||
+              this.state.OverTimePlot === undefined ||
+              this.state.OverallPlot === undefined ? (
+                <LinearProgress />
+              ) : (
+                <PersonalStatsPlots {...this.state as any} />
+              )}
+            </Section>
+          )}
         </Grid>
       </Grid>
     );
