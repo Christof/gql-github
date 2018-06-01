@@ -5,12 +5,13 @@ import {
 } from "./detailed_repository_selector";
 import { Github, GithubAuthorData } from "../github";
 import { Section } from "./section";
-import { Typography, Grid, LinearProgress } from "material-ui";
+import { Grid, LinearProgress } from "material-ui";
 import { OverallPlot } from "./overall_plot";
 import { OverTimePlot } from "./over_time_plot";
 import { runningAverage } from "../array_helper";
 import { calculateWeeklyCommitsForAuthor } from "../stats_helper";
 import { ScatterData } from "plotly.js";
+import { PersonalStatsPlots } from "./personal_stats_plots";
 
 interface Props {
   github: Github;
@@ -150,25 +151,7 @@ export class PersonalStats extends React.Component<Props, State> {
     )
       return <LinearProgress />;
 
-    return (
-      <div>
-        <Typography paragraph>
-          {`${this.state.totalCommitCount} total commit count in ${
-            this.state.data.length
-          } repositories`}
-        </Typography>
-
-        <this.state.OverTimePlot
-          title={"Commits in Repositories"}
-          data={this.state.repositoryTimeline}
-        />
-
-        <this.state.OverallPlot
-          reposData={this.state.data.map(repo => [repo.data])}
-          repositoryNames={this.state.data.map(repo => repo.name)}
-        />
-      </div>
-    );
+    return <PersonalStatsPlots {...this.state as any} />;
   }
 
   renderStatsSection() {
