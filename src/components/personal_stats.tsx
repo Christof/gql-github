@@ -5,7 +5,7 @@ import {
 } from "./detailed_repository_selector";
 import { Github, GithubAuthorData } from "../github";
 import { Section } from "./section";
-import { Grid } from "material-ui";
+import { Grid, LinearProgress } from "material-ui";
 import { runningAverage } from "../array_helper";
 import { calculateWeeklyCommitsForAuthor } from "../stats_helper";
 import { PersonalStatsPlots } from "./personal_stats_plots";
@@ -129,7 +129,8 @@ function calculateWeeklyCommits(data: Repo[]): number[][] {
 const TriggeredPersonalStatsPlots = triggeredAsyncSwitch(
   DetailedRepositorySelector,
   "onChange",
-  container(Section, { heading: "Stats" }, PersonalStatsPlots)
+  container(Section, { heading: "Stats" }, PersonalStatsPlots),
+  container(Section, { heading: "Stats" }, LinearProgress)
 );
 
 export function PersonalStats(props: { github: Github }) {
