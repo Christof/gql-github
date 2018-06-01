@@ -1,6 +1,6 @@
 import * as React from "react";
 import { PersonalStats } from "../../src/components/personal_stats";
-import { shallow, ShallowWrapper } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
 import { Github, GithubData } from "../../src/github";
 import { Section } from "../../src/components/section";
@@ -13,15 +13,20 @@ jest.mock("../../src/github");
 
 describe("PersonalStats", function() {
   let github: Github;
-  let wrapper: ShallowWrapper<any, any>;
+  let wrapper: ReactWrapper<any, any>;
 
   beforeEach(function() {
     github = new Github("token", {} as any, undefined);
+    (github.getOwners as jest.Mock).mockReturnValue(Promise.resolve(["user"]));
+    (github.copyFor as jest.Mock).mockReturnValue(github);
+    (github.getRepositoryNames as jest.Mock).mockReturnValue(
+      Promise.resolve(["repo1", "repo2"])
+    );
     (github.getUser as jest.Mock).mockReturnValue(
       Promise.resolve({ login: "user" })
     );
 
-    wrapper = shallow(<PersonalStats github={github} />);
+    wrapper = mount(<PersonalStats github={github} />);
   });
 
   it("shows a DetailedRepositorySelector", async function() {
