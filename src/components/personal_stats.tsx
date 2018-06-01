@@ -142,15 +142,6 @@ export class PersonalStats extends React.Component<Props, State> {
     ];
   }
 
-  renderGraph() {
-    return (
-      <this.state.OverTimePlot
-        title={"Commits in Repositories"}
-        data={this.state.repositoryTimeline}
-      />
-    );
-  }
-
   renderStats() {
     if (
       this.state.data.length === 0 ||
@@ -167,7 +158,11 @@ export class PersonalStats extends React.Component<Props, State> {
           } repositories`}
         </Typography>
 
-        {this.renderGraph()}
+        <this.state.OverTimePlot
+          title={"Commits in Repositories"}
+          data={this.state.repositoryTimeline}
+        />
+
         <this.state.OverallPlot
           reposData={this.state.data.map(repo => [repo.data])}
           repositoryNames={this.state.data.map(repo => repo.name)}
