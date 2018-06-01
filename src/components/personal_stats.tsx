@@ -67,8 +67,6 @@ export class PersonalStats extends React.Component<Props, State> {
       module => module.OverallPlot
     );
 
-    this.setState({ startedLoading: true });
-
     const data = [] as Repo[];
     for (let [owner, repositories] of repositoriesPerOwner.entries()) {
       const githubForOwner = github.copyFor(owner);
@@ -95,13 +93,13 @@ export class PersonalStats extends React.Component<Props, State> {
       overallPlotPromise
     ]);
 
-    this.setState({
+    return {
       data,
       totalCommitCount,
       repositoryTimeline,
       OverTimePlot,
       OverallPlot
-    });
+    };
   }
 
   private traceForRepo(name: string, data: GithubAuthorData) {
@@ -157,9 +155,12 @@ export class PersonalStats extends React.Component<Props, State> {
         <Grid item xs={12}>
           <DetailedRepositorySelector
             github={this.props.github}
-            onChange={repositoriesPerOwner =>
-              this.loadData(this.props.github, repositoriesPerOwner)
-            }
+            onChange={repositoriesPerOwner => {
+              this.setState({ startedLoading: true });
+              this.loadData(this.props.github, repositoriesPerOwner).then(
+                loaded => this.setState(loaded)
+              );
+            }}
           />
 
           {this.state.startedLoading && (
