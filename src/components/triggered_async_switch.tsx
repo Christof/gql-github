@@ -7,7 +7,8 @@ export function triggeredAsyncSwitch<
 >(
   TriggerComponent: React.ComponentType<P>,
   triggerCallbackKey: keyof P,
-  TriggeredComponent: React.ComponentType<PTriggered>
+  TriggeredComponent: React.ComponentType<PTriggered>,
+  Progress: React.ComponentType = LinearProgress
 ) {
   type Props = Partial<P> & {
     onLoad: (...params: any[]) => Promise<PTriggered>;
@@ -29,7 +30,10 @@ export function triggeredAsyncSwitch<
         triggeredProps: undefined
       };
 
-      this.ProgressToContent = progressToContentSwitch(TriggeredComponent);
+      this.ProgressToContent = progressToContentSwitch(
+        TriggeredComponent,
+        Progress
+      );
     }
 
     createTriggerProperty() {
