@@ -5,31 +5,15 @@ import {
 } from "./detailed_repository_selector";
 import { Github, GithubAuthorData } from "../github";
 import { Section } from "./section";
-import { Grid, LinearProgress } from "material-ui";
-import { OverallPlot } from "./overall_plot";
-import { OverTimePlot } from "./over_time_plot";
+import { Grid } from "material-ui";
 import { runningAverage } from "../array_helper";
 import { calculateWeeklyCommitsForAuthor } from "../stats_helper";
-import { ScatterData } from "plotly.js";
 import { PersonalStatsPlots } from "./personal_stats_plots";
-
-interface Props {
-  github: Github;
-}
+import { triggeredAsyncSwitch, container } from "./triggered_async_switch";
 
 interface Repo {
   name: string;
   data: GithubAuthorData;
-}
-
-interface State {
-  repositoriesPerOwner?: RepositoriesPerOwner;
-  data: Repo[];
-  startedLoading: boolean;
-  OverallPlot?: typeof OverallPlot;
-  OverTimePlot?: typeof OverTimePlot;
-  totalCommitCount?: number;
-  repositoryTimeline?: Partial<ScatterData>[];
 }
 
 async function loadData(
@@ -142,40 +126,23 @@ function calculateWeeklyCommits(data: Repo[]): number[][] {
   );
 }
 
-export class PersonalStats extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
+const TriggeredPersonalStatsPlots = triggeredAsyncSwitch(
+  DetailedRepositorySelector,
+  "onChange",
+  container(Section, { heading: "Stats" }, PersonalStatsPlots)
+);
 
-    this.state = { data: [], startedLoading: false };
-  }
-
-  render() {
-    return (
-      <Grid container spacing={24} justify="center">
-        <Grid item xs={12}>
-          <DetailedRepositorySelector
-            github={this.props.github}
-            onChange={repositoriesPerOwner => {
-              this.setState({ startedLoading: true });
-              loadData(this.props.github, repositoriesPerOwner).then(loaded =>
-                this.setState(loaded)
-              );
-            }}
-          />
-
-          {this.state.startedLoading && (
-            <Section heading="Stats">
-              {this.state.data.length === 0 ||
-              this.state.OverTimePlot === undefined ||
-              this.state.OverallPlot === undefined ? (
-                <LinearProgress />
-              ) : (
-                <PersonalStatsPlots {...this.state as any} />
-              )}
-            </Section>
-          )}
-        </Grid>
+export function PersonalStats(props: { github: Github }) {
+  return (
+    <Grid container spacing={24} justify="center">
+      <Grid item xs={12}>
+        <TriggeredPersonalStatsPlots
+          github={props.github}
+          onLoad={(repositoriesByOwner: Map<string, string[]>) =>
+            loadData(props.github, repositoriesByOwner)
+          }
+        />
       </Grid>
-    );
-  }
+    </Grid>
+  );
 }
