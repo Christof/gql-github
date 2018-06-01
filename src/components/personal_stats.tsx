@@ -57,8 +57,8 @@ export class PersonalStats extends React.Component<Props, State> {
     return { name: repo, data: authorData };
   }
 
-  async loadData(repositoriesPerOwner: RepositoriesPerOwner) {
-    const author = await this.props.github.getUser().then(user => user.login);
+  async loadData(github: Github, repositoriesPerOwner: RepositoriesPerOwner) {
+    const author = await github.getUser().then(user => user.login);
 
     const overTimePlotPromise = import("./over_time_plot").then(
       module => module.OverTimePlot
@@ -71,10 +71,10 @@ export class PersonalStats extends React.Component<Props, State> {
 
     const data = [] as Repo[];
     for (let [owner, repositories] of repositoriesPerOwner.entries()) {
-      const github = this.props.github.copyFor(owner);
+      const githubForOwner = github.copyFor(owner);
       const authorDataForRepository = await Promise.all(
         repositories.map(
-          async repo => await this.getAuthorData(author, github, repo)
+          async repo => await this.getAuthorData(author, githubForOwner, repo)
         )
       );
       data.push(...authorDataForRepository.filter(item => item !== undefined));
@@ -172,7 +172,7 @@ export class PersonalStats extends React.Component<Props, State> {
           <DetailedRepositorySelector
             github={this.props.github}
             onChange={repositoriesPerOwner =>
-              this.loadData(repositoriesPerOwner)
+              this.loadData(this.props.github, repositoriesPerOwner)
             }
           />
 
