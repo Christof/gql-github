@@ -96,7 +96,7 @@ export class PersonalStats extends React.Component<Props, State> {
     ]);
 
     this.setState({
-      data: data.filter(item => item !== undefined),
+      data,
       totalCommitCount,
       repositoryTimeline,
       OverTimePlot,
