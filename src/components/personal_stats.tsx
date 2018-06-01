@@ -146,16 +146,6 @@ export class PersonalStats extends React.Component<Props, State> {
     return <this.state.OverTimePlot title={title} data={repositoryTimeline} />;
   }
 
-  renderRepositorySums() {
-    const names = this.state.data.map(repo => repo.name);
-    return (
-      <this.state.OverallPlot
-        reposData={this.state.data.map(repo => [repo.data])}
-        repositoryNames={names}
-      />
-    );
-  }
-
   renderStats() {
     if (
       this.state.data.length === 0 ||
@@ -173,7 +163,10 @@ export class PersonalStats extends React.Component<Props, State> {
         </Typography>
 
         {this.renderGraph()}
-        {this.renderRepositorySums()}
+        <this.state.OverallPlot
+          reposData={this.state.data.map(repo => [repo.data])}
+          repositoryNames={this.state.data.map(repo => repo.name)}
+        />
       </div>
     );
   }
