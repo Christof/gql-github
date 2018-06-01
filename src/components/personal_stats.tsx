@@ -85,10 +85,10 @@ export class PersonalStats extends React.Component<Props, State> {
       0
     );
 
-    const repositoryTimeline = this.state.data.map(repo =>
+    const repositoryTimeline = data.map(repo =>
       this.traceForRepo(repo.name, repo.data)
     );
-    repositoryTimeline.push(...this.traceForSum());
+    repositoryTimeline.push(...this.traceForSum(data));
 
     const [OverTimePlot, OverallPlot] = await Promise.all([
       overTimePlotPromise,
@@ -119,16 +119,18 @@ export class PersonalStats extends React.Component<Props, State> {
    *
    * @returns Array of [week, commitsInWeek]
    */
-  private calculateWeeklyCommits(): number[][] {
-    const data = calculateWeeklyCommitsForAuthor(
-      this.state.data.map(x => x.data)
+  private calculateWeeklyCommits(data: Repo[]): number[][] {
+    const weeklyCommitsForAuthor = calculateWeeklyCommitsForAuthor(
+      data.map(x => x.data)
     );
 
-    return Array.from(data.entries()).sort((a, b) => a[0] - b[0]);
+    return Array.from(weeklyCommitsForAuthor.entries()).sort(
+      (a, b) => a[0] - b[0]
+    );
   }
 
-  private traceForSum() {
-    const sortedEntries = this.calculateWeeklyCommits();
+  private traceForSum(data: Repo[]) {
+    const sortedEntries = this.calculateWeeklyCommits(data);
     const x = sortedEntries.map(entry => new Date(entry[0] * 1000));
 
     return [
