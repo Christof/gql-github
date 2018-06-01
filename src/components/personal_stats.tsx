@@ -27,6 +27,7 @@ interface State {
   startedLoading: boolean;
   OverallPlot?: typeof OverallPlot;
   OverTimePlot?: typeof OverTimePlot;
+  totalCommitCount?: number;
 }
 
 export class PersonalStats extends React.Component<Props, State> {
@@ -74,10 +75,18 @@ export class PersonalStats extends React.Component<Props, State> {
       const authorDataForRepository = await Promise.all(
         repositories.map(async repo => await this.getAuthorData(github, repo))
       );
-      data.push(...authorDataForRepository);
+      data.push(...authorDataForRepository.filter(item => item !== undefined));
     }
 
-    this.setState({ data: data.filter(item => item !== undefined) });
+    const totalCommitCount = data.reduce(
+      (sum, repo) => sum + repo.data.total,
+      0
+    );
+
+    this.setState({
+      data: data.filter(item => item !== undefined),
+      totalCommitCount
+    });
   }
 
   private traceForRepo(name: string, data: GithubAuthorData) {
@@ -155,15 +164,10 @@ export class PersonalStats extends React.Component<Props, State> {
     )
       return <LinearProgress />;
 
-    const total = this.state.data.reduce(
-      (sum, repo) => sum + repo.data.total,
-      0
-    );
-
     return (
       <div>
         <Typography paragraph>
-          {`${total} total commit count in ${
+          {`${this.state.totalCommitCount} total commit count in ${
             this.state.data.length
           } repositories`}
         </Typography>
