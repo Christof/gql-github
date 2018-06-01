@@ -10,6 +10,7 @@ import { OverallPlot } from "./overall_plot";
 import { OverTimePlot } from "./over_time_plot";
 import { runningAverage } from "../array_helper";
 import { calculateWeeklyCommitsForAuthor } from "../stats_helper";
+import { ScatterData } from "plotly.js";
 
 interface Props {
   github: Github;
@@ -28,6 +29,7 @@ interface State {
   OverallPlot?: typeof OverallPlot;
   OverTimePlot?: typeof OverTimePlot;
   totalCommitCount?: number;
+  repositoryTimeline?: Partial<ScatterData>[];
 }
 
 export class PersonalStats extends React.Component<Props, State> {
@@ -83,9 +85,15 @@ export class PersonalStats extends React.Component<Props, State> {
       0
     );
 
+    const repositoryTimeline = this.state.data.map(repo =>
+      this.traceForRepo(repo.name, repo.data)
+    );
+    repositoryTimeline.push(...this.traceForSum());
+
     this.setState({
       data: data.filter(item => item !== undefined),
-      totalCommitCount
+      totalCommitCount,
+      repositoryTimeline
     });
   }
 
@@ -135,15 +143,12 @@ export class PersonalStats extends React.Component<Props, State> {
   }
 
   renderGraph() {
-    const repositoryTimeline = this.state.data.map(repo =>
-      this.traceForRepo(repo.name, repo.data)
+    return (
+      <this.state.OverTimePlot
+        title={"Commits in Repositories"}
+        data={this.state.repositoryTimeline}
+      />
     );
-
-    repositoryTimeline.push(...this.traceForSum());
-
-    const title = "Commits in Repositories";
-
-    return <this.state.OverTimePlot title={title} data={repositoryTimeline} />;
   }
 
   renderStats() {
