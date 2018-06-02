@@ -11,17 +11,11 @@ import { RepositoriesByOwnerSelector } from "./repositories_by_owner_selector";
 import { DefaultGrid } from "./default_grid";
 import { sum } from "../array_helper";
 import { min, reduce, max, findLast } from "ramda";
-
-interface Props {
-  github: Github;
-}
-
-interface State {
-  repositoryNames: string[];
-  data: GithubData[];
-  PlotlyChart?: typeof PlotlyChart;
-  OverTimePlot?: typeof OverTimePlot;
-}
+import {
+  triggeredAsyncSwitch,
+  container,
+  progressToContentSwitch
+} from "./triggered_async_switch";
 
 interface StatsPlotsProps {
   repositoryNames: string[];
@@ -160,48 +154,48 @@ class StatsPlots extends React.Component<StatsPlotsProps, {}> {
   }
 }
 
-export class Stats extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-  }
+async function loadData(
+  github: Github,
+  options: { owner?: string; includeForks: boolean }
+) {
+  const plotlyChartPromise = import("react-plotlyjs-ts").then(module => ({
+    PlotlyChart: module.default
+  }));
 
-  async selectOwner(options: { owner?: string; includeForks: boolean }) {
-    const plotlyChartPromise = import("react-plotlyjs-ts").then(module => ({
-      PlotlyChart: module.default
-    }));
+  const overTimePlotPromise = import("./over_time_plot").then(module => ({
+    OverTimePlot: module.OverTimePlot
+  }));
 
-    const overTimePlotPromise = import("./over_time_plot").then(module => ({
-      OverTimePlot: module.OverTimePlot
-    }));
+  github.owner = options.owner;
+  const repositoryNames = await github.getRepositoryNames({
+    includeForks: options.includeForks
+  });
 
-    this.props.github.owner = options.owner;
-    const repositoryNames = await this.props.github.getRepositoryNames({
-      includeForks: options.includeForks
-    });
+  const data = await github.getStatsForRepositories(repositoryNames);
 
-    const data = await this.props.github.getStatsForRepositories(
-      repositoryNames
-    );
+  const [PlotlyChart, OverTimePlot] = await Promise.all([
+    plotlyChartPromise,
+    overTimePlotPromise
+  ]);
 
-    const [PlotlyChart, OverTimePlot] = await Promise.all([
-      plotlyChartPromise,
-      overTimePlotPromise
-    ]);
+  return { data, repositoryNames, ...PlotlyChart, ...OverTimePlot };
+}
 
-    return { data, repositoryNames, ...PlotlyChart, ...OverTimePlot };
-  }
+const TriggeredStatsPlots = triggeredAsyncSwitch(
+  RepositoriesByOwnerSelector,
+  "onLoad",
+  container(Section, { heading: "Stats" }, progressToContentSwitch(StatsPlots))
+);
 
-  render() {
-    return (
-      <DefaultGrid>
-        <RepositoriesByOwnerSelector
-          github={this.props.github}
-          onLoad={options =>
-            this.selectOwner(options).then(state => this.setState(state))
-          }
-        />
-        <StatsPlots {...this.state} />
-      </DefaultGrid>
-    );
-  }
+export function Stats(props: { github: Github }) {
+  return (
+    <DefaultGrid>
+      <TriggeredStatsPlots
+        github={props.github}
+        onLoad={(options: { owner?: string; includeForks: boolean }) =>
+          loadData(props.github, options)
+        }
+      />
+    </DefaultGrid>
+  );
 }
