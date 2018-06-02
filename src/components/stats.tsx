@@ -167,11 +167,10 @@ async function loadData(
 
   const data = github.getStatsForRepositories(repositoryNames);
 
-  return awaitAllProperties({
-    data,
-    repositoryNames: Promise.resolve(repositoryNames),
-    ...plots
-  });
+  return {
+    ...(await awaitAllProperties({ data, ...plots })),
+    repositoryNames
+  };
 }
 
 const TriggeredStatsPlots = triggeredAsyncSwitch(
