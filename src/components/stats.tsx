@@ -9,7 +9,7 @@ import { Section } from "./section";
 import { RepositoriesByOwnerSelector } from "./repositories_by_owner_selector";
 import { DefaultGrid } from "./default_grid";
 import { sum } from "../array_helper";
-import { min, reduce, max, findLast } from "ramda";
+import { min, reduce, max, findLast, zipObj } from "ramda";
 import {
   triggeredAsyncSwitch,
   container,
@@ -140,31 +140,38 @@ class StatsPlots extends React.Component<StatsPlotsProps, {}> {
   }
 }
 
+type UnpromisifiedObject<T> = { [k in keyof T]: Unpromisify<T[k]> };
+type Unpromisify<T> = T extends Promise<infer U> ? U : T;
+
+async function awaitAllProperties<T extends { [key: string]: Promise<any> }>(
+  obj: T
+): Promise<UnpromisifiedObject<T>> {
+  const results = await Promise.all(Object.values(obj));
+
+  return zipObj(Object.keys(obj), results) as UnpromisifiedObject<T>;
+}
+
 async function loadData(
   github: Github,
   options: { owner?: string; includeForks: boolean }
 ) {
-  const plotlyChartPromise = import("react-plotlyjs-ts").then(module => ({
-    PlotlyChart: module.default
-  }));
-
-  const overTimePlotPromise = import("./over_time_plot").then(module => ({
-    OverTimePlot: module.OverTimePlot
-  }));
+  const plots = {
+    PlotlyChart: import("react-plotlyjs-ts").then(module => module.default),
+    OverTimePlot: import("./over_time_plot").then(module => module.OverTimePlot)
+  };
 
   github.owner = options.owner;
   const repositoryNames = await github.getRepositoryNames({
     includeForks: options.includeForks
   });
 
-  const data = await github.getStatsForRepositories(repositoryNames);
+  const data = github.getStatsForRepositories(repositoryNames);
 
-  const [PlotlyChart, OverTimePlot] = await Promise.all([
-    plotlyChartPromise,
-    overTimePlotPromise
-  ]);
-
-  return { data, repositoryNames, ...PlotlyChart, ...OverTimePlot };
+  return awaitAllProperties({
+    data,
+    repositoryNames: Promise.resolve(repositoryNames),
+    ...plots
+  });
 }
 
 const TriggeredStatsPlots = triggeredAsyncSwitch(
