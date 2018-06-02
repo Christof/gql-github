@@ -13,6 +13,7 @@ interface StatsPlotsProps {
   repositoryNames: string[];
   PlotlyChart: typeof PlotlyChart;
   OverTimePlot: typeof OverTimePlot;
+  OverallPlot: typeof OverallPlot;
   data: GithubData[];
 }
 
@@ -21,7 +22,7 @@ export class StatsPlots extends React.Component<StatsPlotsProps, {}> {
     return (
       <div>
         <Section heading="Overall">
-          <OverallPlot
+          <this.props.OverallPlot
             reposData={this.props.data}
             repositoryNames={this.props.repositoryNames}
           />

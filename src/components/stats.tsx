@@ -28,7 +28,10 @@ async function loadData(
 ) {
   const plots = {
     PlotlyChart: import("react-plotlyjs-ts").then(module => module.default),
-    OverTimePlot: import("./over_time_plot").then(module => module.OverTimePlot)
+    OverTimePlot: import("./over_time_plot").then(
+      module => module.OverTimePlot
+    ),
+    OverallPlot: import("./overall_plot").then(module => module.OverallPlot)
   };
 
   github.owner = options.owner;
