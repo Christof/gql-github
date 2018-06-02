@@ -11,8 +11,8 @@ import { findLast, reduce, min, max } from "ramda";
 
 interface StatsPlotsProps {
   repositoryNames: string[];
-  PlotlyChart?: typeof PlotlyChart;
-  OverTimePlot?: typeof OverTimePlot;
+  PlotlyChart: typeof PlotlyChart;
+  OverTimePlot: typeof OverTimePlot;
   data: GithubData[];
 }
 
