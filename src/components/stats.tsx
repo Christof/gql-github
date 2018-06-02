@@ -17,16 +17,13 @@ interface Props {
 }
 
 interface State {
-  error: any;
   repositoryNames: string[];
   data: GithubData[];
-  startedLoading: boolean;
   PlotlyChart?: typeof PlotlyChart;
   OverTimePlot?: typeof OverTimePlot;
 }
 
 interface StatsPlotsProps {
-  startedLoading: boolean;
   repositoryNames: string[];
   PlotlyChart?: typeof PlotlyChart;
   OverTimePlot?: typeof OverTimePlot;
@@ -35,7 +32,7 @@ interface StatsPlotsProps {
 
 class StatsPlots extends React.Component<StatsPlotsProps, {}> {
   render() {
-    if (!this.props.startedLoading) return null;
+    if (Object.keys(this.props).length === 0) return null;
 
     if (
       this.props.data.length === 0 ||
@@ -166,24 +163,16 @@ class StatsPlots extends React.Component<StatsPlotsProps, {}> {
 export class Stats extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {
-      error: null,
-      repositoryNames: [],
-      data: [],
-      startedLoading: false
-    };
-
-    import("react-plotlyjs-ts").then(module =>
-      this.setState({ PlotlyChart: module.default })
-    );
-
-    import("./over_time_plot").then(module =>
-      this.setState({ OverTimePlot: module.OverTimePlot })
-    );
   }
 
   async selectOwner(options: { owner?: string; includeForks: boolean }) {
-    this.setState({ startedLoading: true });
+    const plotlyChartPromise = import("react-plotlyjs-ts").then(module => ({
+      PlotlyChart: module.default
+    }));
+
+    const overTimePlotPromise = import("./over_time_plot").then(module => ({
+      OverTimePlot: module.OverTimePlot
+    }));
 
     this.props.github.owner = options.owner;
     const repositoryNames = await this.props.github.getRepositoryNames({
@@ -194,7 +183,12 @@ export class Stats extends React.Component<Props, State> {
       repositoryNames
     );
 
-    this.setState({ data, repositoryNames });
+    const [PlotlyChart, OverTimePlot] = await Promise.all([
+      plotlyChartPromise,
+      overTimePlotPromise
+    ]);
+
+    return { data, repositoryNames, ...PlotlyChart, ...OverTimePlot };
   }
 
   render() {
@@ -202,7 +196,9 @@ export class Stats extends React.Component<Props, State> {
       <DefaultGrid>
         <RepositoriesByOwnerSelector
           github={this.props.github}
-          onLoad={options => this.selectOwner(options)}
+          onLoad={options =>
+            this.selectOwner(options).then(state => this.setState(state))
+          }
         />
         <StatsPlots {...this.state} />
       </DefaultGrid>
