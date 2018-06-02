@@ -29,16 +29,7 @@ async function loadData(
     module => module.OverallPlot
   );
 
-  const data = [] as Repo[];
-  for (let [owner, repositories] of repositoriesPerOwner.entries()) {
-    const githubForOwner = github.copyFor(owner);
-    const authorDataForRepository = await Promise.all(
-      repositories.map(
-        async repo => await getAuthorData(author, githubForOwner, repo)
-      )
-    );
-    data.push(...authorDataForRepository.filter(item => item !== undefined));
-  }
+  const data = await loadRepoData(github, repositoriesPerOwner, author);
 
   const totalCommitCount = data.reduce((sum, repo) => sum + repo.data.total, 0);
 
@@ -59,6 +50,25 @@ async function loadData(
     OverTimePlot,
     OverallPlot
   };
+}
+
+async function loadRepoData(
+  github: Github,
+  repositoriesPerOwner: RepositoriesPerOwner,
+  author: string
+) {
+  const data = [] as Repo[];
+  for (let [owner, repositories] of repositoriesPerOwner.entries()) {
+    const githubForOwner = github.copyFor(owner);
+    const authorDataForRepository = await Promise.all(
+      repositories.map(
+        async repo => await getAuthorData(author, githubForOwner, repo)
+      )
+    );
+    data.push(...authorDataForRepository.filter(item => item !== undefined));
+  }
+
+  return data;
 }
 
 async function getAuthorData(author: string, github: Github, repo: string) {
