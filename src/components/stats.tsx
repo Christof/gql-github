@@ -6,7 +6,6 @@ import PlotlyChart from "react-plotlyjs-ts";
 import { OverTimePlot } from "./over_time_plot";
 import { GithubData, GithubAuthorData, Github } from "../github";
 import { Section } from "./section";
-import LinearProgress from "material-ui/Progress/LinearProgress";
 import { RepositoriesByOwnerSelector } from "./repositories_by_owner_selector";
 import { DefaultGrid } from "./default_grid";
 import { sum } from "../array_helper";
@@ -26,19 +25,6 @@ interface StatsPlotsProps {
 
 class StatsPlots extends React.Component<StatsPlotsProps, {}> {
   render() {
-    if (Object.keys(this.props).length === 0) return null;
-
-    if (
-      this.props.data.length === 0 ||
-      this.props.PlotlyChart === undefined ||
-      this.props.OverTimePlot === undefined
-    )
-      return (
-        <Section heading="Stats">
-          <LinearProgress />
-        </Section>
-      );
-
     return (
       <div>
         <Section heading="Overall">
