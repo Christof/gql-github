@@ -183,8 +183,6 @@ export class Stats extends React.Component<Props, State> {
   }
 
   async selectOwner(options: { owner?: string; includeForks: boolean }) {
-    if (options.owner === undefined) return;
-
     this.setState({ startedLoading: true });
 
     this.props.github.owner = options.owner;
