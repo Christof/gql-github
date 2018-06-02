@@ -5,11 +5,15 @@ import {
 } from "./detailed_repository_selector";
 import { Github, GithubAuthorData } from "../github";
 import { Section } from "./section";
-import { Grid, LinearProgress } from "material-ui";
+import { Grid } from "material-ui";
 import { runningAverage } from "../array_helper";
 import { calculateWeeklyCommitsForAuthor } from "../stats_helper";
 import { PersonalStatsPlots } from "./personal_stats_plots";
-import { triggeredAsyncSwitch, container } from "./triggered_async_switch";
+import {
+  triggeredAsyncSwitch,
+  container,
+  progressToContentSwitch
+} from "./triggered_async_switch";
 
 interface Repo {
   name: string;
@@ -139,8 +143,11 @@ function calculateWeeklyCommits(data: Repo[]): number[][] {
 const TriggeredPersonalStatsPlots = triggeredAsyncSwitch(
   DetailedRepositorySelector,
   "onChange",
-  container(Section, { heading: "Stats" }, PersonalStatsPlots),
-  container(Section, { heading: "Stats" }, LinearProgress)
+  container(
+    Section,
+    { heading: "Stats" },
+    progressToContentSwitch(PersonalStatsPlots)
+  )
 );
 
 export function PersonalStats(props: { github: Github }) {
