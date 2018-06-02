@@ -12,7 +12,11 @@ import { calculateWeeklyCommits } from "../stats_helper";
 import { flatten, groupBy, values, mapObjIndexed, map, keys } from "ramda";
 import { discardTimeFromDate } from "../utils";
 import { OrgStatsPlots } from "./org_stats_plots";
-import { triggeredAsyncSwitch, container } from "./triggered_async_switch";
+import {
+  triggeredAsyncSwitch,
+  container,
+  progressToContentSwitch
+} from "./triggered_async_switch";
 import { Section } from "./section";
 
 function createTraces(data: GithubAuthorData[][]) {
@@ -130,7 +134,11 @@ async function loadData(
 const TriggeredOrgStatsPlots = triggeredAsyncSwitch(
   RepositoriesByOwnerSelector,
   "onLoad",
-  container(Section, { heading: "Org Stats" }, OrgStatsPlots)
+  container(
+    Section,
+    { heading: "Org Stats" },
+    progressToContentSwitch(OrgStatsPlots)
+  )
 );
 
 export function OrgStats(props: { github: Github }) {
