@@ -25,22 +25,54 @@ interface State {
   OverTimePlot?: typeof OverTimePlot;
 }
 
-export class Stats extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      error: null,
-      repositoryNames: [],
-      data: [],
-      startedLoading: false
-    };
+interface StatsPlotsProps {
+  startedLoading: boolean;
+  repositoryNames: string[];
+  PlotlyChart?: typeof PlotlyChart;
+  OverTimePlot?: typeof OverTimePlot;
+  data: GithubData[];
+}
 
-    import("react-plotlyjs-ts").then(module =>
-      this.setState({ PlotlyChart: module.default })
+class StatsPlots extends React.Component<StatsPlotsProps, {}> {
+  render() {
+    if (!this.props.startedLoading) return null;
+
+    if (
+      this.props.data.length === 0 ||
+      this.props.PlotlyChart === undefined ||
+      this.props.OverTimePlot === undefined
+    )
+      return (
+        <Section heading="Stats">
+          <LinearProgress />
+        </Section>
+      );
+
+    return (
+      <div>
+        <Section heading="Overall">
+          <OverallPlot
+            reposData={this.props.data}
+            repositoryNames={this.props.repositoryNames}
+          />
+        </Section>
+        {this.props.repositoryNames.map((item, index) =>
+          this.renderRepoGraphs(item, index)
+        )}
+      </div>
     );
+  }
 
-    import("./over_time_plot").then(module =>
-      this.setState({ OverTimePlot: module.OverTimePlot })
+  renderRepoGraphs(repo: string, index: number) {
+    const data = this.props.data[index];
+
+    if (!data) return null;
+
+    return (
+      <Section key={repo} heading={repo}>
+        {this.renderGraph(repo, data)}
+        {this.renderYearGraph(repo, data)}
+      </Section>
     );
   }
 
@@ -48,47 +80,17 @@ export class Stats extends React.Component<Props, State> {
     const authorTimeLine = data.map(author => this.traceForAuthor(author));
 
     return (
-      <this.state.OverTimePlot title={title} data={authorTimeLine as any} />
+      <this.props.OverTimePlot title={title} data={authorTimeLine as any} />
     );
   }
 
-  private getYearsArray(data: GithubData) {
-    const startWeeks = data.map(d => new Date(d.weeks[0].w * 1000));
-    const endWeeks = data.map(
-      d => new Date(findLast<any>(w => w.c !== 0)(d.weeks).w * 1000)
-    );
-
-    const startYear = reduce(min, new Date(), startWeeks).getFullYear();
-    const endYear = reduce(max, new Date(2000, 0), endWeeks).getFullYear();
-    if (startYear > endYear) return [];
-
-    return Array.from(
-      new Array(endYear - startYear + 1),
-      (_, i) => i + startYear
-    );
-  }
-
-  private getStatsPerYear(years: number[], data: GithubData) {
-    return years.map(year =>
-      getCommitsPerAuthorInDateRange(
-        data,
-        new Date(year, 0),
-        new Date(year + 1, 0)
-      )
-    );
-  }
-
-  private getYearGraphLayout(title: string, data: GithubData): Partial<Layout> {
-    const overallCommitCount = sum(data.map(authorData => authorData.total));
-
+  private traceForAuthor(statsForAuthor: GithubAuthorData) {
     return {
-      title: `Yearly commits in ${title} ${overallCommitCount}`,
-      xaxis: {
-        title: "time"
-      },
-      yaxis: {
-        title: "commit count"
-      }
+      type: "scatter",
+      mode: "lines",
+      name: statsForAuthor.author.login,
+      x: statsForAuthor.weeks.map((week: any) => new Date(week.w * 1000)),
+      y: statsForAuthor.weeks.map((week: any) => week.c)
     };
   }
 
@@ -117,17 +119,67 @@ export class Stats extends React.Component<Props, State> {
     });
 
     const layout = this.getYearGraphLayout(title, data);
-    return <this.state.PlotlyChart data={traces} layout={layout as any} />;
+    return <this.props.PlotlyChart data={traces} layout={layout as any} />;
   }
 
-  private traceForAuthor(statsForAuthor: GithubAuthorData) {
+  private getStatsPerYear(years: number[], data: GithubData) {
+    return years.map(year =>
+      getCommitsPerAuthorInDateRange(
+        data,
+        new Date(year, 0),
+        new Date(year + 1, 0)
+      )
+    );
+  }
+
+  private getYearGraphLayout(title: string, data: GithubData): Partial<Layout> {
+    const overallCommitCount = sum(data.map(authorData => authorData.total));
+
     return {
-      type: "scatter",
-      mode: "lines",
-      name: statsForAuthor.author.login,
-      x: statsForAuthor.weeks.map((week: any) => new Date(week.w * 1000)),
-      y: statsForAuthor.weeks.map((week: any) => week.c)
+      title: `Yearly commits in ${title} ${overallCommitCount}`,
+      xaxis: {
+        title: "time"
+      },
+      yaxis: {
+        title: "commit count"
+      }
     };
+  }
+
+  private getYearsArray(data: GithubData) {
+    const startWeeks = data.map(d => new Date(d.weeks[0].w * 1000));
+    const endWeeks = data.map(
+      d => new Date(findLast<any>(w => w.c !== 0)(d.weeks).w * 1000)
+    );
+
+    const startYear = reduce(min, new Date(), startWeeks).getFullYear();
+    const endYear = reduce(max, new Date(2000, 0), endWeeks).getFullYear();
+    if (startYear > endYear) return [];
+
+    return Array.from(
+      new Array(endYear - startYear + 1),
+      (_, i) => i + startYear
+    );
+  }
+}
+
+export class Stats extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      error: null,
+      repositoryNames: [],
+      data: [],
+      startedLoading: false
+    };
+
+    import("react-plotlyjs-ts").then(module =>
+      this.setState({ PlotlyChart: module.default })
+    );
+
+    import("./over_time_plot").then(module =>
+      this.setState({ OverTimePlot: module.OverTimePlot })
+    );
   }
 
   async selectOwner(options: { owner?: string; includeForks: boolean }) {
@@ -147,48 +199,6 @@ export class Stats extends React.Component<Props, State> {
     this.setState({ data, repositoryNames });
   }
 
-  renderRepoGraphs(repo: string, index: number) {
-    const data = this.state.data[index];
-
-    if (!data) return null;
-
-    return (
-      <Section key={repo} heading={repo}>
-        {this.renderGraph(repo, data)}
-        {this.renderYearGraph(repo, data)}
-      </Section>
-    );
-  }
-
-  renderStatsSection() {
-    if (!this.state.startedLoading) return null;
-
-    if (
-      this.state.data.length === 0 ||
-      this.state.PlotlyChart === undefined ||
-      this.state.OverTimePlot === undefined
-    )
-      return (
-        <Section heading="Stats">
-          <LinearProgress />
-        </Section>
-      );
-
-    return (
-      <div>
-        <Section heading="Overall">
-          <OverallPlot
-            reposData={this.state.data}
-            repositoryNames={this.state.repositoryNames}
-          />
-        </Section>
-        {this.state.repositoryNames.map((item, index) =>
-          this.renderRepoGraphs(item, index)
-        )}
-      </div>
-    );
-  }
-
   render() {
     return (
       <DefaultGrid>
@@ -196,7 +206,7 @@ export class Stats extends React.Component<Props, State> {
           github={this.props.github}
           onLoad={options => this.selectOwner(options)}
         />
-        {this.renderStatsSection()}
+        <StatsPlots {...this.state} />
       </DefaultGrid>
     );
   }
