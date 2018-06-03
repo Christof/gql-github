@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Stats } from "../../src/components/stats";
-import { shallow, ShallowWrapper } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
 import { Github, GithubData } from "../../src/github";
 import { Section } from "../../src/components/section";
@@ -17,11 +17,14 @@ describe("Stats", function() {
   afterAll(() => jest.setTimeout(undefined));
 
   let github: Github;
-  let wrapper: ShallowWrapper<any, any>;
+  let wrapper: ReactWrapper<any, any>;
 
   beforeEach(function() {
     github = new Github("token", {} as any, undefined);
-    wrapper = shallow(<Stats github={github} />);
+    (github.getOwnersWithAvatar as jest.Mock).mockReturnValue(
+      Promise.resolve([{ login: "user", avatarUrl: "user-url" }])
+    );
+    wrapper = mount(<Stats github={github} />);
   });
 
   it("shows a RepositoriesByOwnerSelector", function() {
