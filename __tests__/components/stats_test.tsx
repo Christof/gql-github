@@ -150,7 +150,13 @@ describe("Stats", function() {
       }
 
       it("shows a year graph for each repository", function() {
-        const yearPlot = wrapper.find(PlotlyChart);
+        const allPlots = wrapper.find(PlotlyChart);
+        expect(allPlots).toHaveLength(5);
+
+        const yearPlot = allPlots.findWhere(x => {
+          const layout = x.prop("layout");
+          return layout && layout.title.indexOf("Yearly commits") === 0;
+        });
 
         expect(yearPlot).toHaveLength(2);
 
