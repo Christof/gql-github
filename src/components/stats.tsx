@@ -14,9 +14,9 @@ import { StatsPlots } from "./stats_plots";
 type UnpromisifiedObject<T> = { [k in keyof T]: Unpromisify<T[k]> };
 type Unpromisify<T> = T extends Promise<infer U> ? U : T;
 
-async function awaitAllProperties<T extends { [key: string]: Promise<any> }>(
-  obj: T
-): Promise<UnpromisifiedObject<T>> {
+async function awaitAllProperties<
+  T extends { [key: string]: Promise<any> | any }
+>(obj: T): Promise<UnpromisifiedObject<T>> {
   const results = await Promise.all(Object.values(obj));
 
   return zipObj(Object.keys(obj), results) as UnpromisifiedObject<T>;
@@ -41,10 +41,7 @@ async function loadData(
 
   const data = github.getStatsForRepositories(repositoryNames);
 
-  return {
-    ...(await awaitAllProperties({ data, ...plots })),
-    repositoryNames
-  };
+  return await awaitAllProperties({ data, ...plots, repositoryNames });
 }
 
 const TriggeredStatsPlots = triggeredAsyncSwitch(
