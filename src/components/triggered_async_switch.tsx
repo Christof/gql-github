@@ -12,13 +12,13 @@ export function triggeredAsyncSwitch<
   type Props = Partial<P> & {
     onLoad: (...params: any[]) => Promise<PTriggered>;
   };
-  return class TriggeredAsyncSwitch extends React.Component<
-    Props,
-    {
-      triggered: boolean;
-      triggeredProps: PTriggered;
-    }
-  > {
+
+  interface Stats {
+    triggered: boolean;
+    triggeredProps: PTriggered;
+  }
+
+  return class TriggeredAsyncSwitch extends React.Component<Props, Stats> {
     constructor(props: Props) {
       super(props);
 
