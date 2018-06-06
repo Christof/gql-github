@@ -28,21 +28,20 @@ export function triggeredAsyncSwitch<
       };
     }
 
-    createTriggerProperty() {
-      return {
-        [triggerCallbackKey]: (...params: any[]) => {
-          this.setState({ triggered: true });
-          this.props
-            .onLoad(...params)
-            .then(triggeredProps => this.setState({ triggeredProps }));
-        }
-      };
+    trigger(...params: any[]) {
+      this.setState({ triggered: true });
+      this.props
+        .onLoad(...params)
+        .then(triggeredProps => this.setState({ triggeredProps }));
     }
 
     render() {
       return (
         <div>
-          <TriggerComponent {...this.props} {...this.createTriggerProperty()} />
+          <TriggerComponent
+            {...this.props}
+            {...{ [triggerCallbackKey]: this.trigger.bind(this) }}
+          />
           {this.state.triggered && (
             <TriggeredComponent {...this.state.triggeredProps} />
           )}
