@@ -14,34 +14,25 @@ export function TransitionLeft(props: SlideProps) {
   return <Slide direction="left" {...props} />;
 }
 
-class PullRequests extends React.Component<
-  {
-    pullRequests: PullRequest[];
-    update: (pullRequests: PullRequest[]) => void;
-  },
-  {}
-> {
-  setPullRequest(pullRequest: PullRequest, index: number) {
-    const pullRequests = [...this.props.pullRequests];
-    pullRequests[index] = pullRequest;
-    this.props.update(pullRequests);
-  }
-
-  render() {
-    return (
-      <div>
-        {this.props.pullRequests.map((pullRequest, index) => (
-          <PullRequestChangeCategorySelector
-            key={pullRequest.id}
-            pullRequest={pullRequest}
-            onChange={updatedPullRequest =>
-              this.setPullRequest(updatedPullRequest, index)
-            }
-          />
-        ))}
-      </div>
-    );
-  }
+function PullRequests(props: {
+  pullRequests: PullRequest[];
+  update: (pullRequests: PullRequest[]) => void;
+}) {
+  return (
+    <div>
+      {props.pullRequests.map((pullRequest, index) => (
+        <PullRequestChangeCategorySelector
+          key={pullRequest.id}
+          pullRequest={pullRequest}
+          onChange={updatedPullRequest => {
+            const pullRequests = [...props.pullRequests];
+            pullRequests[index] = updatedPullRequest;
+            props.update(pullRequests);
+          }}
+        />
+      ))}
+    </div>
+  );
 }
 
 interface ReleaseNoteProps {
