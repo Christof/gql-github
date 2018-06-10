@@ -14,6 +14,62 @@ export function TransitionLeft(props: SlideProps) {
   return <Slide direction="left" {...props} />;
 }
 
+interface ReleaseNoteProps {
+  releaseNote: string;
+  Markdown: typeof Markdown;
+  releaseTag: string;
+  repo: string;
+  github: Github;
+}
+
+class ReleaseNote extends React.Component<
+  ReleaseNoteProps,
+  { releaseCreated: boolean }
+> {
+  constructor(props: ReleaseNoteProps) {
+    super(props);
+
+    this.state = { releaseCreated: false };
+  }
+
+  async postRelease() {
+    const release = {
+      tag_name: this.props.releaseTag,
+      target_commitish: "master",
+      name: this.props.releaseTag,
+      body: this.props.releaseNote,
+      draft: false,
+      prerelease: false
+    };
+
+    const response = await this.props.github.postRelease(
+      this.props.repo,
+      release
+    );
+    if (response.ok) {
+      this.setState({ releaseCreated: true });
+    }
+  }
+  render() {
+    return (
+      <div>
+        <this.props.Markdown source={this.props.releaseNote} />
+        <Button variant="raised" onClick={() => this.postRelease()}>
+          Create Release
+        </Button>
+        <Snackbar
+          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+          autoHideDuration={2000}
+          TransitionComponent={TransitionLeft}
+          onClose={() => this.setState({ releaseCreated: false })}
+          open={this.state.releaseCreated}
+          message={<span>Release created</span>}
+        />
+      </div>
+    );
+  }
+}
+
 interface State {
   repositoryNames: string[];
   repo?: string;
@@ -152,25 +208,6 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
     this.setState({ releaseNote });
   }
 
-  async postRelease() {
-    const release = {
-      tag_name: this.state.releaseTag,
-      target_commitish: "master",
-      name: this.state.releaseTag,
-      body: this.state.releaseNote,
-      draft: false,
-      prerelease: false
-    };
-
-    const response = await this.props.github.postRelease(
-      this.state.repo,
-      release
-    );
-    if (response.ok) {
-      this.setState({ releaseCreated: true });
-    }
-  }
-
   renderPullRequestsSection() {
     if (this.state.pullRequests.length === 0) return <section />;
 
@@ -198,18 +235,7 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
 
     return (
       <Section heading="Release Note">
-        <this.state.Markdown source={this.state.releaseNote} />
-        <Button variant="raised" onClick={() => this.postRelease()}>
-          Create Release
-        </Button>
-        <Snackbar
-          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-          autoHideDuration={2000}
-          TransitionComponent={TransitionLeft}
-          onClose={() => this.setState({ releaseCreated: false })}
-          open={this.state.releaseCreated}
-          message={<span>Release created</span>}
-        />
+        <ReleaseNote {...this.props} {...this.state as any} />
       </Section>
     );
   }
