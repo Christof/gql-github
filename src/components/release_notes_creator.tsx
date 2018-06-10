@@ -22,11 +22,12 @@ function withSnackbar<P extends Object>(
   Component: React.ComponentType<P>,
   asyncTrigger: keyof P
 ) {
+  type Props = P & { snackbarMessage: JSX.Element };
   return class ComponentWithSnackbar extends React.Component<
-    P,
+    Props,
     { showSnackbar: boolean }
   > {
-    constructor(props: P) {
+    constructor(props: Props) {
       super(props);
       this.state = { showSnackbar: false };
     }
@@ -50,7 +51,7 @@ function withSnackbar<P extends Object>(
             TransitionComponent={TransitionLeft}
             onClose={() => this.setState({ showSnackbar: false })}
             open={this.state.showSnackbar}
-            message={<span>Release created</span>}
+            message={props.snackbarMessage}
           />
         </div>
       );
@@ -118,7 +119,11 @@ class ReleaseNote extends React.Component<ReleaseNoteProps, {}> {
     return (
       <div>
         <this.props.Markdown source={this.props.releaseNote} />
-        <ButtonWithSnackbar variant="raised" onClick={() => this.postRelease()}>
+        <ButtonWithSnackbar
+          variant="raised"
+          snackbarMessage={<span>Release created</span>}
+          onClick={() => this.postRelease()}
+        >
           Create Release
         </ButtonWithSnackbar>
       </div>
