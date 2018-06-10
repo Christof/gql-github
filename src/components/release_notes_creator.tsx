@@ -9,6 +9,10 @@ import * as React from "react";
 import { Button, Snackbar, Slide } from "material-ui";
 import { SlideProps } from "material-ui/transitions";
 import { DefaultGrid } from "./default_grid";
+import {
+  progressToContentSwitch,
+  triggeredAsyncSwitch
+} from "./triggered_async_switch";
 
 export function TransitionLeft(props: SlideProps) {
   return <Slide direction="left" {...props} />;
@@ -93,9 +97,6 @@ class ReleaseNote extends React.Component<
 
 interface State {
   repositoryNames: string[];
-  repo?: string;
-  tags?: GithubTag[];
-  defaultStartTag?: string;
   startTag?: string;
   releaseTag?: string;
   pullRequests: PullRequest[];
@@ -106,14 +107,19 @@ interface State {
 
 interface Props {
   github: Github;
+  repo: string;
+  repositoryNames: string[];
+  defaultStartTag?: string;
+  tags?: GithubTag[];
 }
 
-export class ReleaseNotesCreator extends React.Component<Props, State> {
+export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
       repositoryNames: [],
       pullRequests: [],
+      startTag: props.defaultStartTag,
       releaseNote: "",
       releaseCreated: false
     };
@@ -125,7 +131,7 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
 
   async getCommits() {
     const result = await this.props.github.compare(
-      this.state.repo,
+      this.props.repo,
       this.state.startTag,
       this.state.releaseTag
     );
@@ -142,40 +148,8 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
     this.updateReleaseNote();
   }
 
-  async loadTags(repo: string) {
-    const tags = await this.props.github.getTags(repo);
-    const releases = await this.props.github.getReleases(repo);
-    const firstMasterRelease = releases.find(
-      release => !release.tagName.includes("_")
-    );
-
-    const defaultStartTag = firstMasterRelease
-      ? firstMasterRelease.tagName
-      : undefined;
-
-    this.setState({
-      tags,
-      defaultStartTag,
-      startTag: defaultStartTag
-    });
-  }
-
-  selectRepository(repo: string) {
-    this.setState({
-      repo: repo,
-      defaultStartTag: undefined,
-      startTag: undefined,
-      releaseTag: undefined,
-      pullRequests: [],
-      releaseNote: ""
-    });
-    return this.loadTags(repo);
-  }
-
   renderTagsSection() {
-    if (!this.state.repo || !this.state.tags) return <section />;
-
-    const tagNames = this.state.tags.map(tag => tag.name);
+    const tagNames = this.props.tags.map(tag => tag.name);
     const disabledGetPRsButton =
       this.state.startTag === undefined || this.state.releaseTag === undefined;
     return (
@@ -183,7 +157,7 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
         <Dropdown
           label="Start Tag"
           options={tagNames}
-          initialSelection={this.state.defaultStartTag}
+          initialSelection={this.props.defaultStartTag}
           onSelect={tagName => this.setState({ startTag: tagName })}
         />
         <Dropdown
@@ -253,15 +227,47 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
 
   render() {
     return (
-      <DefaultGrid small>
-        <RepositorySelector
-          github={this.props.github}
-          onRepositorySelect={repo => this.selectRepository(repo)}
-        />
+      <div>
         {this.renderTagsSection()}
         {this.renderPullRequestsSection()}
         {this.renderReleaseNoteSection()}
-      </DefaultGrid>
+      </div>
     );
   }
+}
+
+const TriggeredReleaseNotesCreatorSections = triggeredAsyncSwitch(
+  RepositorySelector,
+  "onRepositorySelect",
+  progressToContentSwitch(ReleaseNotesCreatorSections)
+);
+
+async function loadTags(repo: string, github: Github) {
+  const tags = await github.getTags(repo);
+  const releases = await github.getReleases(repo);
+  const firstMasterRelease = releases.find(
+    release => !release.tagName.includes("_")
+  );
+
+  const defaultStartTag = firstMasterRelease
+    ? firstMasterRelease.tagName
+    : undefined;
+
+  return {
+    repo,
+    tags,
+    defaultStartTag,
+    github
+  };
+}
+
+export function ReleaseNotesCreator(props: { github: Github }) {
+  return (
+    <DefaultGrid small>
+      <TriggeredReleaseNotesCreatorSections
+        github={props.github}
+        onLoad={(repository: string) => loadTags(repository, props.github)}
+      />
+    </DefaultGrid>
+  );
 }
