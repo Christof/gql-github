@@ -14,6 +14,36 @@ export function TransitionLeft(props: SlideProps) {
   return <Slide direction="left" {...props} />;
 }
 
+class PullRequests extends React.Component<
+  {
+    pullRequests: PullRequest[];
+    update: (pullRequests: PullRequest[]) => void;
+  },
+  {}
+> {
+  setPullRequest(pullRequest: PullRequest, index: number) {
+    const pullRequests = [...this.props.pullRequests];
+    pullRequests[index] = pullRequest;
+    this.props.update(pullRequests);
+  }
+
+  render() {
+    return (
+      <div>
+        {this.props.pullRequests.map((pullRequest, index) => (
+          <PullRequestChangeCategorySelector
+            key={pullRequest.id}
+            pullRequest={pullRequest}
+            onChange={updatedPullRequest =>
+              this.setPullRequest(updatedPullRequest, index)
+            }
+          />
+        ))}
+      </div>
+    );
+  }
+}
+
 interface ReleaseNoteProps {
   releaseNote: string;
   Markdown: typeof Markdown;
@@ -180,13 +210,6 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
       </Section>
     );
   }
-
-  setPullRequest(pullRequest: PullRequest, index: number) {
-    const pullRequests = [...this.state.pullRequests];
-    pullRequests[index] = pullRequest;
-    this.setState({ pullRequests }, () => this.updateReleaseNote());
-  }
-
   appendChangeCategory(category: ChangeCategory, releaseNote = "") {
     const pullRequests = this.state.pullRequests.filter(
       pullRequest => pullRequest.changeCategory === category
@@ -213,15 +236,12 @@ export class ReleaseNotesCreator extends React.Component<Props, State> {
 
     return (
       <Section heading="Adjust Categories">
-        {this.state.pullRequests.map((pullRequest, index) => (
-          <PullRequestChangeCategorySelector
-            key={pullRequest.id}
-            pullRequest={pullRequest}
-            onChange={updatedPullRequest =>
-              this.setPullRequest(updatedPullRequest, index)
-            }
-          />
-        ))}
+        <PullRequests
+          pullRequests={this.state.pullRequests}
+          update={(pullRequests: PullRequest[]) =>
+            this.setState({ pullRequests }, () => this.updateReleaseNote())
+          }
+        />
       </Section>
     );
   }
