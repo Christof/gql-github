@@ -18,6 +18,48 @@ export function TransitionLeft(props: SlideProps) {
   return <Slide direction="left" {...props} />;
 }
 
+function withSnackbar<P extends Object>(
+  Component: React.ComponentType<P>,
+  asyncTrigger: keyof P
+) {
+  return class ComponentWithSnackbar extends React.Component<
+    P,
+    { showSnackbar: boolean }
+  > {
+    constructor(props: P) {
+      super(props);
+      this.state = { showSnackbar: false };
+    }
+
+    render() {
+      const props = Object.assign({}, this.props, {
+        [asyncTrigger]: (...params: any[]) => {
+          (this.props[asyncTrigger] as any)(params).then((result: any) => {
+            this.setState({ showSnackbar: true });
+            return result;
+          });
+        }
+      });
+
+      return (
+        <div>
+          <Component {...props} />
+          <Snackbar
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            autoHideDuration={2000}
+            TransitionComponent={TransitionLeft}
+            onClose={() => this.setState({ showSnackbar: false })}
+            open={this.state.showSnackbar}
+            message={<span>Release created</span>}
+          />
+        </div>
+      );
+    }
+  };
+}
+
+const ButtonWithSnackbar = withSnackbar(Button, "onClick");
+
 function PullRequests(props: {
   pullRequests: PullRequest[];
   update: (pullRequests: PullRequest[]) => void;
@@ -47,16 +89,7 @@ interface ReleaseNoteProps {
   github: Github;
 }
 
-class ReleaseNote extends React.Component<
-  ReleaseNoteProps,
-  { releaseCreated: boolean }
-> {
-  constructor(props: ReleaseNoteProps) {
-    super(props);
-
-    this.state = { releaseCreated: false };
-  }
-
+class ReleaseNote extends React.Component<ReleaseNoteProps, {}> {
   async postRelease() {
     const release = {
       tag_name: this.props.releaseTag,
@@ -71,25 +104,23 @@ class ReleaseNote extends React.Component<
       this.props.repo,
       release
     );
-    if (response.ok) {
-      this.setState({ releaseCreated: true });
+
+    if (!response.ok) {
+      throw Error(
+        `Release could not be posted: status code ${
+          response.status
+        }, status text ${response.statusText}`
+      );
     }
   }
+
   render() {
     return (
       <div>
         <this.props.Markdown source={this.props.releaseNote} />
-        <Button variant="raised" onClick={() => this.postRelease()}>
+        <ButtonWithSnackbar variant="raised" onClick={() => this.postRelease()}>
           Create Release
-        </Button>
-        <Snackbar
-          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-          autoHideDuration={2000}
-          TransitionComponent={TransitionLeft}
-          onClose={() => this.setState({ releaseCreated: false })}
-          open={this.state.releaseCreated}
-          message={<span>Release created</span>}
-        />
+        </ButtonWithSnackbar>
       </div>
     );
   }
