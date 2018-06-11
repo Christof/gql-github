@@ -3,7 +3,7 @@ import {
   ReleaseNotesCreator,
   TransitionLeft
 } from "../../src/components/release_notes_creator";
-import { shallow, ShallowWrapper } from "enzyme";
+import { shallow, mount, ReactWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
 import { Github } from "../../src/github";
 import { PullRequest, ChangeCategory } from "../../src/pull_request";
@@ -18,23 +18,23 @@ jest.mock("../../src/github");
 
 describe("ReleaseNotesCreator", function() {
   let github: Github;
-  let wrapper: ShallowWrapper<any, any>;
+  let wrapper: ReactWrapper<any, any>;
 
   beforeEach(function() {
     const fetch = undefined;
     github = new Github("token", {} as any, fetch);
-    wrapper = shallow(<ReleaseNotesCreator github={github} />);
+    (github.getRepositoryNames as jest.Mock).mockReturnValue(
+      Promise.resolve(["repo1"])
+    );
+    (github.getOwnersWithAvatar as jest.Mock).mockReturnValue(
+      Promise.resolve([{ login: "user", avatarUrl: "avatarUrl" }])
+    );
+    wrapper = mount(<ReleaseNotesCreator github={github} />);
   });
 
   describe("before selecting a repository", function() {
     it("shows a RepositorySelector", function() {
       expect(wrapper.find(RepositorySelector)).toHaveLength(1);
-    });
-
-    it("shows three empty sections", function() {
-      const wrapper = shallow(<ReleaseNotesCreator github={github} />);
-
-      expect(wrapper.find("section")).toHaveLength(3);
     });
   });
 
