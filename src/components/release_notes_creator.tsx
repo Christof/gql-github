@@ -133,8 +133,6 @@ class ReleaseNote extends React.Component<ReleaseNoteProps, {}> {
 
 interface State {
   repositoryNames: string[];
-  startTag?: string;
-  releaseTag?: string;
   pullRequests: PullRequest[];
   releaseNote: string;
   releaseCreated: boolean;
@@ -149,42 +147,24 @@ interface Props {
   tags?: GithubTag[];
 }
 
-export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
-  constructor(props: Props) {
+interface StartEndTagSelectionProps {
+  defaultStartTag: string;
+  tags: GithubTag[];
+  onSelect: (startTag: string, endTag: string) => void;
+}
+class StartEndTagSelection extends React.Component<
+  StartEndTagSelectionProps,
+  { startTag: string; releaseTag: string }
+> {
+  constructor(props: StartEndTagSelectionProps) {
     super(props);
+
     this.state = {
-      repositoryNames: [],
-      pullRequests: [],
       startTag: props.defaultStartTag,
-      releaseNote: "",
-      releaseCreated: false
+      releaseTag: undefined
     };
-
-    import("./markdown").then(module =>
-      this.setState({ Markdown: module.Markdown })
-    );
   }
-
-  async getCommits() {
-    const result = await this.props.github.compare(
-      this.props.repo,
-      this.state.startTag,
-      this.state.releaseTag
-    );
-
-    const pullRequestRegex = new RegExp(/Merge pull request/);
-    const pullRequestMerges = result.commits.filter(commit =>
-      commit.commit.message.match(pullRequestRegex)
-    );
-    const pullRequests = pullRequestMerges.map(commit =>
-      PullRequest.parseFrom(commit.commit.message)
-    );
-
-    this.setState({ pullRequests });
-    this.updateReleaseNote();
-  }
-
-  renderTagsSection() {
+  render() {
     const tagNames = this.props.tags.map(tag => tag.name);
     const disabledGetPRsButton =
       this.state.startTag === undefined || this.state.releaseTag === undefined;
@@ -203,7 +183,9 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
         />
         <Button
           variant="raised"
-          onClick={() => this.getCommits()}
+          onClick={() =>
+            this.props.onSelect(this.state.startTag, this.state.releaseTag)
+          }
           disabled={disabledGetPRsButton}
         >
           Get merged PRs in range
@@ -211,6 +193,42 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
       </Section>
     );
   }
+}
+
+export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      repositoryNames: [],
+      pullRequests: [],
+      releaseNote: "",
+      releaseCreated: false
+    };
+
+    import("./markdown").then(module =>
+      this.setState({ Markdown: module.Markdown })
+    );
+  }
+
+  async getCommits(startTag: string, releaseTag: string) {
+    const result = await this.props.github.compare(
+      this.props.repo,
+      startTag,
+      releaseTag
+    );
+
+    const pullRequestRegex = new RegExp(/Merge pull request/);
+    const pullRequestMerges = result.commits.filter(commit =>
+      commit.commit.message.match(pullRequestRegex)
+    );
+    const pullRequests = pullRequestMerges.map(commit =>
+      PullRequest.parseFrom(commit.commit.message)
+    );
+
+    this.setState({ pullRequests });
+    this.updateReleaseNote();
+  }
+
   appendChangeCategory(category: ChangeCategory, releaseNote = "") {
     const pullRequests = this.state.pullRequests.filter(
       pullRequest => pullRequest.changeCategory === category
@@ -264,7 +282,13 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
   render() {
     return (
       <div>
-        {this.renderTagsSection()}
+        <StartEndTagSelection
+          tags={this.props.tags}
+          defaultStartTag={this.props.defaultStartTag}
+          onSelect={(startTag: string, releaseTag: string) =>
+            this.getCommits(startTag, releaseTag)
+          }
+        />
         {this.renderPullRequestsSection()}
         {this.renderReleaseNoteSection()}
       </div>
