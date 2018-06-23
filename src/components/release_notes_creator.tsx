@@ -1,6 +1,5 @@
 import { PullRequest, ChangeCategory } from "../pull_request";
 import { PullRequestChangeCategorySelector } from "./pull_request_change_category_selector";
-import { Dropdown } from "./dropdown";
 import { Section } from "./section";
 import { RepositorySelector } from "./repository_selector";
 import { Markdown } from "./markdown";
@@ -13,6 +12,7 @@ import {
   progressToContentSwitch,
   triggeredAsyncSwitch
 } from "./triggered_async_switch";
+import { TagRangeSelector } from "./tag_range_selector";
 
 export function TransitionLeft(props: SlideProps) {
   return <Slide direction="left" {...props} />;
@@ -147,54 +147,6 @@ interface Props {
   tags?: GithubTag[];
 }
 
-interface StartEndTagSelectionProps {
-  defaultStartTag: string;
-  tags: GithubTag[];
-  onSelect: (startTag: string, endTag: string) => void;
-}
-class StartEndTagSelection extends React.Component<
-  StartEndTagSelectionProps,
-  { startTag: string; releaseTag: string }
-> {
-  constructor(props: StartEndTagSelectionProps) {
-    super(props);
-
-    this.state = {
-      startTag: props.defaultStartTag,
-      releaseTag: undefined
-    };
-  }
-  render() {
-    const tagNames = this.props.tags.map(tag => tag.name);
-    const disabledGetPRsButton =
-      this.state.startTag === undefined || this.state.releaseTag === undefined;
-    return (
-      <Section heading="Range">
-        <Dropdown
-          label="Start Tag"
-          options={tagNames}
-          initialSelection={this.props.defaultStartTag}
-          onSelect={tagName => this.setState({ startTag: tagName })}
-        />
-        <Dropdown
-          label="End Tag"
-          options={tagNames}
-          onSelect={tagName => this.setState({ releaseTag: tagName })}
-        />
-        <Button
-          variant="raised"
-          onClick={() =>
-            this.props.onSelect(this.state.startTag, this.state.releaseTag)
-          }
-          disabled={disabledGetPRsButton}
-        >
-          Get merged PRs in range
-        </Button>
-      </Section>
-    );
-  }
-}
-
 export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -282,7 +234,7 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
   render() {
     return (
       <div>
-        <StartEndTagSelection
+        <TagRangeSelector
           tags={this.props.tags}
           defaultStartTag={this.props.defaultStartTag}
           onSelect={(startTag: string, releaseTag: string) =>
