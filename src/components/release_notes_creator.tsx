@@ -134,6 +134,7 @@ class ReleaseNote extends React.Component<ReleaseNoteProps, {}> {
 interface State {
   repositoryNames: string[];
   pullRequests: PullRequest[];
+  releaseTag?: string;
   releaseNote: string;
   releaseCreated: boolean;
   Markdown?: typeof Markdown;
@@ -177,7 +178,7 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
       PullRequest.parseFrom(commit.commit.message)
     );
 
-    this.setState({ pullRequests });
+    this.setState({ pullRequests, releaseTag });
     this.updateReleaseNote();
   }
 
