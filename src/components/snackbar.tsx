@@ -21,7 +21,8 @@ export function withSnackbar<P extends Object>(
     }
 
     render() {
-      const props = Object.assign({}, this.props, {
+      const { snackbarMessage, ...otherProps } = this.props as any;
+      const props = Object.assign(otherProps, {
         [asyncTrigger]: (...params: any[]) => {
           (this.props[asyncTrigger] as any)(params).then((result: any) => {
             this.setState({ showSnackbar: true });
@@ -39,7 +40,7 @@ export function withSnackbar<P extends Object>(
             TransitionComponent={TransitionLeft}
             onClose={() => this.setState({ showSnackbar: false })}
             open={this.state.showSnackbar}
-            message={props.snackbarMessage}
+            message={snackbarMessage}
           />
         </div>
       );
