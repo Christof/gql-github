@@ -5,61 +5,13 @@ import { RepositorySelector } from "./repository_selector";
 import { Markdown } from "./markdown";
 import { Github, GithubTag } from "../github";
 import * as React from "react";
-import { Button, Snackbar, Slide } from "material-ui";
-import { SlideProps } from "material-ui/transitions";
 import { DefaultGrid } from "./default_grid";
 import {
   progressToContentSwitch,
   triggeredAsyncSwitch
 } from "./triggered_async_switch";
 import { TagRangeSelector } from "./tag_range_selector";
-
-export function TransitionLeft(props: SlideProps) {
-  return <Slide direction="left" {...props} />;
-}
-
-function withSnackbar<P extends Object>(
-  Component: React.ComponentType<P>,
-  asyncTrigger: keyof P
-) {
-  type Props = P & { snackbarMessage: JSX.Element };
-  return class ComponentWithSnackbar extends React.Component<
-    Props,
-    { showSnackbar: boolean }
-  > {
-    constructor(props: Props) {
-      super(props);
-      this.state = { showSnackbar: false };
-    }
-
-    render() {
-      const props = Object.assign({}, this.props, {
-        [asyncTrigger]: (...params: any[]) => {
-          (this.props[asyncTrigger] as any)(params).then((result: any) => {
-            this.setState({ showSnackbar: true });
-            return result;
-          });
-        }
-      });
-
-      return (
-        <div>
-          <Component {...props} />
-          <Snackbar
-            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-            autoHideDuration={2000}
-            TransitionComponent={TransitionLeft}
-            onClose={() => this.setState({ showSnackbar: false })}
-            open={this.state.showSnackbar}
-            message={props.snackbarMessage}
-          />
-        </div>
-      );
-    }
-  };
-}
-
-const ButtonWithSnackbar = withSnackbar(Button, "onClick");
+import { ReleaseNote } from "./release_note";
 
 function PullRequests(props: {
   pullRequests: PullRequest[];
@@ -80,55 +32,6 @@ function PullRequests(props: {
       ))}
     </div>
   );
-}
-
-interface ReleaseNoteProps {
-  releaseNote: string;
-  Markdown: typeof Markdown;
-  releaseTag: string;
-  repo: string;
-  github: Github;
-}
-
-class ReleaseNote extends React.Component<ReleaseNoteProps, {}> {
-  async postRelease() {
-    const release = {
-      tag_name: this.props.releaseTag,
-      target_commitish: "master",
-      name: this.props.releaseTag,
-      body: this.props.releaseNote,
-      draft: false,
-      prerelease: false
-    };
-
-    const response = await this.props.github.postRelease(
-      this.props.repo,
-      release
-    );
-
-    if (!response.ok) {
-      throw Error(
-        `Release could not be posted: status code ${
-          response.status
-        }, status text ${response.statusText}`
-      );
-    }
-  }
-
-  render() {
-    return (
-      <div>
-        <this.props.Markdown source={this.props.releaseNote} />
-        <ButtonWithSnackbar
-          variant="raised"
-          snackbarMessage={<span>Release created</span>}
-          onClick={() => this.postRelease()}
-        >
-          Create Release
-        </ButtonWithSnackbar>
-      </div>
-    );
-  }
 }
 
 interface State {
