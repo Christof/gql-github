@@ -6,7 +6,7 @@ import { withSnackbar } from "./snackbar";
 
 const ButtonWithSnackbar = withSnackbar(Button, "onClick");
 
-interface ReleaseNoteProps {
+interface Props {
   releaseNote: string;
   Markdown: typeof Markdown;
   releaseTag: string;
@@ -14,7 +14,7 @@ interface ReleaseNoteProps {
   github: Github;
 }
 
-export class ReleaseNote extends React.Component<ReleaseNoteProps, {}> {
+export class ReleaseNote extends React.Component<Props> {
   async postRelease() {
     const release = {
       tag_name: this.props.releaseTag,
