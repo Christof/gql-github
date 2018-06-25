@@ -18,7 +18,7 @@ function PullRequests(props: {
   update: (pullRequests: PullRequest[]) => void;
 }) {
   return (
-    <div>
+    <>
       {props.pullRequests.map((pullRequest, index) => (
         <PullRequestChangeCategorySelector
           key={pullRequest.id}
@@ -30,7 +30,7 @@ function PullRequests(props: {
           }}
         />
       ))}
-    </div>
+    </>
   );
 }
 
@@ -137,7 +137,7 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
 
   render() {
     return (
-      <div>
+      <>
         <TagRangeSelector
           tags={this.props.tags}
           defaultStartTag={this.props.defaultStartTag}
@@ -147,7 +147,7 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
         />
         {this.renderPullRequestsSection()}
         {this.renderReleaseNoteSection()}
-      </div>
+      </>
     );
   }
 }

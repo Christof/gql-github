@@ -37,7 +37,7 @@ export function triggeredAsyncSwitch<
 
     render() {
       return (
-        <div>
+        <>
           <TriggerComponent
             {...this.props}
             {...{ [triggerCallbackKey]: this.trigger.bind(this) }}
@@ -45,7 +45,7 @@ export function triggeredAsyncSwitch<
           {this.state.triggered && (
             <TriggeredComponent {...this.state.triggeredProps} />
           )}
-        </div>
+        </>
       );
     }
   };

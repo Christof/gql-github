@@ -32,7 +32,7 @@ export function withSnackbar<P extends Object>(
       });
 
       return (
-        <div>
+        <>
           <Component {...props} />
           <Snackbar
             anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
@@ -42,7 +42,7 @@ export function withSnackbar<P extends Object>(
             open={this.state.showSnackbar}
             message={snackbarMessage}
           />
-        </div>
+        </>
       );
     }
   };

@@ -174,15 +174,15 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
 
   render() {
     return (
-      <div>
+      <>
         <CssBaseline />
         <BrowserRouter>
-          <div>
+          <>
             {this.renderAppBar()}
             {this.renderContent()}
-          </div>
+          </>
         </BrowserRouter>
-      </div>
+      </>
     );
   }
 }

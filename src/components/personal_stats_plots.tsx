@@ -20,7 +20,7 @@ interface Props {
 
 export function PersonalStatsPlots(props: Props) {
   return (
-    <div>
+    <>
       <Typography paragraph>
         {`${props.totalCommitCount} total commit count in ${
           props.data.length
@@ -36,6 +36,6 @@ export function PersonalStatsPlots(props: Props) {
         reposData={props.data.map(repo => [repo.data])}
         repositoryNames={props.data.map(repo => repo.name)}
       />
-    </div>
+    </>
   );
 }

@@ -20,7 +20,7 @@ interface StatsPlotsProps {
 export class StatsPlots extends React.Component<StatsPlotsProps, {}> {
   render() {
     return (
-      <div>
+      <>
         <Section heading="Overall">
           <this.props.OverallPlot
             reposData={this.props.data}
@@ -30,7 +30,7 @@ export class StatsPlots extends React.Component<StatsPlotsProps, {}> {
         {this.props.repositoryNames.map((item, index) =>
           this.renderRepoGraphs(item, index)
         )}
-      </div>
+      </>
     );
   }
 

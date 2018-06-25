@@ -12,7 +12,7 @@ interface Props {
 export class OrgStatsPlots extends React.Component<Props, {}> {
   render() {
     return (
-      <div>
+      <>
         <this.props.OverTimePlot
           title="Commits per Author"
           data={this.props.traces}
@@ -27,7 +27,7 @@ export class OrgStatsPlots extends React.Component<Props, {}> {
           yaxisTitle="review count"
           data={this.props.reviewsTraces}
         />
-      </div>
+      </>
     );
   }
 }

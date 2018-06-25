@@ -41,7 +41,7 @@ export class ReleaseNote extends React.Component<Props> {
 
   render() {
     return (
-      <div>
+      <>
         <this.props.Markdown source={this.props.releaseNote} />
         <ButtonWithSnackbar
           variant="raised"
@@ -50,7 +50,7 @@ export class ReleaseNote extends React.Component<Props> {
         >
           Create Release
         </ButtonWithSnackbar>
-      </div>
+      </>
     );
   }
 }
