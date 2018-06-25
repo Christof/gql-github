@@ -12,7 +12,7 @@ class TestComponent extends React.Component<{ n: number }> {
 describe("createDynamicImport", function() {
   describe("before load is finished", function() {
     it("shows 'Loading!' in h1", function() {
-      const Component = createDynamicImport<{ n: number }, TestComponent>(
+      const Component = createDynamicImport<{ n: number }>(
         () => new Promise<typeof TestComponent>(() => {})
       );
 
@@ -25,7 +25,7 @@ describe("createDynamicImport", function() {
 
   describe("after load is finished", function() {
     it("shows content of TestComponent", async function() {
-      const Component = createDynamicImport<{ n: number }, TestComponent>(
+      const Component = createDynamicImport<{ n: number }>(
         () =>
           new Promise<typeof TestComponent>(resolve => {
             resolve(TestComponent);
