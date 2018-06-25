@@ -35,7 +35,6 @@ function PullRequests(props: {
 }
 
 interface State {
-  repositoryNames: string[];
   pullRequests: PullRequest[];
   releaseTag?: string;
   releaseNote: string;
@@ -55,7 +54,6 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      repositoryNames: [],
       pullRequests: [],
       releaseNote: "",
       releaseCreated: false
