@@ -62,10 +62,11 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
       return <section />;
 
     return (
-      <Section heading={this.state.release.tagName}>
-        <this.state.Markdown source={this.state.releaseDescription} />
-        <CopyToClipboard text={this.state.releaseDescription} />
-      </Section>
+      <ReleaseSection
+        tagName={this.state.release.tagName}
+        releaseDescription={this.state.releaseDescription}
+        Markdown={this.state.Markdown}
+      />
     );
   }
 
@@ -81,4 +82,17 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
       </DefaultGrid>
     );
   }
+}
+
+function ReleaseSection(props: {
+  releaseDescription: string;
+  tagName: string;
+  Markdown: typeof Markdown;
+}) {
+  return (
+    <Section heading={props.tagName}>
+      <props.Markdown source={props.releaseDescription} />
+      <CopyToClipboard text={props.releaseDescription} />
+    </Section>
+  );
 }
