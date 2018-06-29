@@ -6,6 +6,7 @@ import { Dropdown } from "./dropdown";
 import { CopyToClipboard } from "./copy_to_clipboard";
 import { Section } from "./section";
 import { DefaultGrid } from "./default_grid";
+import { container } from "./triggered_async_switch";
 
 interface State {
   repo?: string;
@@ -47,13 +48,11 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
     if (!this.state.repo || !this.state.releases) return <section />;
 
     return (
-      <Section heading="Release Note">
-        <Dropdown
-          label="Release"
-          options={this.state.releases.map(release => release.tagName)}
-          onSelect={tagName => this.selectRelease(tagName)}
-        />
-      </Section>
+      <ReleaseSelector
+        label="Release"
+        options={this.state.releases.map(release => release.tagName)}
+        onSelect={tagName => this.selectRelease(tagName)}
+      />
     );
   }
 
@@ -83,6 +82,12 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
     );
   }
 }
+
+const ReleaseSelector = container(
+  Section,
+  { heading: "ReleaseNote" },
+  Dropdown
+);
 
 function ReleaseSection(props: {
   releaseDescription: string;
