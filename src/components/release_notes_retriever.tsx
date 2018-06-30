@@ -6,37 +6,31 @@ import { Dropdown } from "./dropdown";
 import { CopyToClipboard } from "./copy_to_clipboard";
 import { Section } from "./section";
 import { DefaultGrid } from "./default_grid";
-import { container } from "./triggered_async_switch";
+import {
+  container,
+  triggeredAsyncSwitch,
+  awaitAllProperties
+} from "./triggered_async_switch";
 
 interface State {
-  repo?: string;
-  releases?: GithubRelease[];
   release?: GithubRelease;
   releaseDescription?: string;
-  Markdown?: typeof Markdown;
 }
 
 interface Props {
   github: Github;
+  Markdown: typeof Markdown;
+  releases: GithubRelease[];
 }
 
-export class ReleaseNotesRetriever extends React.Component<Props, State> {
+export class ReleasesSelectorAndView extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {};
-
-    import("./markdown").then(module =>
-      this.setState({ Markdown: module.Markdown })
-    );
-  }
-
-  async selectRepository(repo: string) {
-    const releases = await this.props.github.getReleases(repo);
-    this.setState({ releases, repo });
   }
 
   async selectRelease(tagName: string) {
-    const release = this.state.releases.find(x => x.tagName === tagName);
+    const release = this.props.releases.find(x => x.tagName === tagName);
 
     const releaseDescription = `# ${release.tagName}\n\n${
       release.description
@@ -45,40 +39,33 @@ export class ReleaseNotesRetriever extends React.Component<Props, State> {
   }
 
   renderReleasesSection() {
-    if (!this.state.repo || !this.state.releases) return <section />;
-
     return (
       <ReleaseSelector
         label="Release"
-        options={this.state.releases.map(release => release.tagName)}
+        options={this.props.releases.map(release => release.tagName)}
         onSelect={tagName => this.selectRelease(tagName)}
       />
     );
   }
 
   renderReleaseSection() {
-    if (!this.state.releaseDescription || this.state.Markdown === undefined)
-      return <section />;
+    if (!this.state.releaseDescription) return <section />;
 
     return (
       <ReleaseSection
         tagName={this.state.release.tagName}
         releaseDescription={this.state.releaseDescription}
-        Markdown={this.state.Markdown}
+        Markdown={this.props.Markdown}
       />
     );
   }
 
   render() {
     return (
-      <DefaultGrid small>
-        <RepositorySelector
-          github={this.props.github}
-          onRepositorySelect={repo => this.selectRepository(repo)}
-        />
+      <>
         {this.renderReleasesSection()}
         {this.renderReleaseSection()}
-      </DefaultGrid>
+      </>
     );
   }
 }
@@ -99,5 +86,31 @@ function ReleaseSection(props: {
       <props.Markdown source={props.releaseDescription} />
       <CopyToClipboard text={props.releaseDescription} />
     </Section>
+  );
+}
+
+const RepsitorySelectionToReleasesSelectorAndView = triggeredAsyncSwitch(
+  RepositorySelector,
+  "onRepositorySelect",
+  ReleasesSelectorAndView
+);
+
+function loadReleasesForRepo(github: Github, repository: string) {
+  const releases = github.getReleases(repository);
+  const Markdown = import("./markdown").then(module => module.Markdown);
+
+  return awaitAllProperties({ releases, Markdown, github });
+}
+
+export function ReleaseNotesRetriever(props: { github: Github }) {
+  return (
+    <DefaultGrid small>
+      <RepsitorySelectionToReleasesSelectorAndView
+        github={props.github}
+        onLoad={(repository: string) =>
+          loadReleasesForRepo(props.github, repository)
+        }
+      />
+    </DefaultGrid>
   );
 }
