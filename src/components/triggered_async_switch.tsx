@@ -1,5 +1,6 @@
 import * as React from "react";
 import { LinearProgress } from "material-ui";
+import { zipObj } from "ramda";
 
 export function triggeredAsyncSwitch<
   P extends object,
@@ -76,4 +77,15 @@ export function container<PContainer extends object, PContainee extends object>(
       <Containee {...props} />
     </Container>
   );
+}
+
+type UnpromisifiedObject<T> = { [k in keyof T]: Unpromisify<T[k]> };
+type Unpromisify<T> = T extends Promise<infer U> ? U : T;
+
+export async function awaitAllProperties<
+  T extends { [key: string]: Promise<any> | any }
+>(obj: T): Promise<UnpromisifiedObject<T>> {
+  const results = await Promise.all(Object.values(obj));
+
+  return zipObj(Object.keys(obj), results) as UnpromisifiedObject<T>;
 }
