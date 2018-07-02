@@ -9,7 +9,8 @@ import { DefaultGrid } from "./default_grid";
 import {
   container,
   triggeredAsyncSwitch,
-  awaitAllProperties
+  awaitAllProperties,
+  progressToContentSwitch
 } from "./triggered_async_switch";
 
 interface State {
@@ -92,7 +93,7 @@ function ReleaseSection(props: {
 const RepsitorySelectionToReleasesSelectorAndView = triggeredAsyncSwitch(
   RepositorySelector,
   "onRepositorySelect",
-  ReleasesSelectorAndView
+  progressToContentSwitch(ReleasesSelectorAndView)
 );
 
 function loadReleasesForRepo(github: Github, repository: string) {
