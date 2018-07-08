@@ -39,16 +39,6 @@ export class ReleasesSelectorAndView extends React.Component<Props, State> {
     this.setState({ releaseDescription, release });
   }
 
-  renderReleasesSection() {
-    return (
-      <ReleaseSelector
-        label="Release"
-        options={this.props.releases.map(release => release.tagName)}
-        onSelect={tagName => this.selectRelease(tagName)}
-      />
-    );
-  }
-
   renderReleaseSection() {
     if (!this.state.releaseDescription) return <section />;
 
@@ -64,7 +54,11 @@ export class ReleasesSelectorAndView extends React.Component<Props, State> {
   render() {
     return (
       <>
-        {this.renderReleasesSection()}
+        <ReleaseSelector
+          label="Release"
+          options={this.props.releases.map(release => release.tagName)}
+          onSelect={tagName => this.selectRelease(tagName)}
+        />
         {this.renderReleaseSection()}
       </>
     );
