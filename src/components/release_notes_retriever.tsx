@@ -13,54 +13,29 @@ import {
   progressToContentSwitch
 } from "./triggered_async_switch";
 
-interface State {
-  release?: GithubRelease;
-  releaseDescription?: string;
-}
-
 interface Props {
   github: Github;
   Markdown: typeof Markdown;
   releases: GithubRelease[];
 }
 
-export class ReleasesSelectorAndView extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {};
-  }
-
+export class ReleasesSelectorAndView extends React.Component<Props, {}> {
   async selectRelease(tagName: string) {
     const release = this.props.releases.find(x => x.tagName === tagName);
 
     const releaseDescription = `# ${release.tagName}\n\n${
       release.description
     }\n`;
-    this.setState({ releaseDescription, release });
-  }
-
-  renderReleaseSection() {
-    if (!this.state.releaseDescription) return <section />;
-
-    return (
-      <ReleaseSection
-        tagName={this.state.release.tagName}
-        releaseDescription={this.state.releaseDescription}
-        Markdown={this.props.Markdown}
-      />
-    );
+    return { releaseDescription, release, Markdown: this.props.Markdown };
   }
 
   render() {
     return (
-      <>
-        <ReleaseSelector
-          label="Release"
-          options={this.props.releases.map(release => release.tagName)}
-          onSelect={tagName => this.selectRelease(tagName)}
-        />
-        {this.renderReleaseSection()}
-      </>
+      <ReleasesToRelease
+        label="Release"
+        options={this.props.releases.map(release => release.tagName)}
+        onLoad={(tagName: string) => this.selectRelease(tagName)}
+      />
     );
   }
 }
@@ -83,6 +58,12 @@ function ReleaseSection(props: {
     </Section>
   );
 }
+
+const ReleasesToRelease = triggeredAsyncSwitch(
+  ReleaseSelector,
+  "onSelect",
+  progressToContentSwitch(ReleaseSection)
+);
 
 const RepsitorySelectionToReleasesSelectorAndView = triggeredAsyncSwitch(
   RepositorySelector,
