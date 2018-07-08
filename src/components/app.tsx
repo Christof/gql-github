@@ -13,6 +13,7 @@ import { createHttpLink } from "apollo-link-http";
 import { setContext } from "apollo-link-context";
 import { ApolloClient } from "apollo-client";
 import { InMemoryCache } from "apollo-cache-inmemory";
+import { persistCache } from "apollo-cache-persist";
 import { createDynamicImport } from "./dynamic_import";
 import { GraphQLFacade } from "../graphql_facade";
 
@@ -78,9 +79,15 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
       fetch: this.props.fetch
     });
 
+    const cache = new InMemoryCache();
+    persistCache({
+      cache,
+      storage: window.localStorage as any
+    });
+
     const client = new ApolloClient({
       link: authLink.concat(httpLink),
-      cache: new InMemoryCache()
+      cache
     });
 
     return new Github(token, new GraphQLFacade(client), this.props.fetch);
