@@ -30,7 +30,7 @@ export function triggeredAsyncSwitch<
     }
 
     trigger(...params: any[]) {
-      this.setState({ triggered: true });
+      this.setState({ triggered: true, triggeredProps: undefined });
       this.props
         .onLoad(...params)
         .then(triggeredProps => this.setState({ triggeredProps }));
