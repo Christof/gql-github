@@ -83,7 +83,7 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
     persistCache({
       cache,
       storage: window.localStorage as any
-    });
+    }).then(() => cache.reset());
 
     const client = new ApolloClient({
       link: authLink.concat(httpLink),
