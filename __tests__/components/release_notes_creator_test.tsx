@@ -243,17 +243,19 @@ describe("ReleaseNotesCreator", function() {
         (wrapper.find(RepositorySelector).prop("onRepositorySelect") as any)(
           "repo1"
         );
+
         await waitImmediate();
         wrapper.update();
+
         const dropdowns = wrapper.find(Dropdown);
-        expect(dropdowns).toHaveLength(5);
+        expect(dropdowns).toHaveLength(4);
 
         expect(dropdowns.at(2).prop("options")).toEqual(["v0.0.1"]);
         expect(dropdowns.at(3).prop("options")).toEqual(["v0.0.1"]);
 
         expect(dropdowns.at(2).prop("initialSelection")).toBeUndefined();
         const sectionHeadings = wrapper.find(Section);
-        expect(sectionHeadings).toHaveLength(4);
+        expect(sectionHeadings).toHaveLength(2);
         expect(sectionHeadings.at(1).prop("heading")).toEqual("Range");
       });
     });
