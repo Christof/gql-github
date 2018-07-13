@@ -40,12 +40,6 @@ export class ReleasesSelectorAndView extends React.Component<Props> {
   }
 }
 
-const ReleaseSelector = container(
-  Section,
-  { heading: "ReleaseNote" },
-  Dropdown
-);
-
 function ReleaseSection(props: {
   releaseDescription: string;
   tagName: string;
@@ -60,7 +54,7 @@ function ReleaseSection(props: {
 }
 
 const ReleasesToRelease = triggeredAsyncSwitch(
-  ReleaseSelector,
+  Dropdown,
   "onSelect",
   progressToContentSwitch(ReleaseSection)
 );
@@ -68,7 +62,11 @@ const ReleasesToRelease = triggeredAsyncSwitch(
 const RepsitorySelectionToReleasesSelectorAndView = triggeredAsyncSwitch(
   RepositorySelector,
   "onRepositorySelect",
-  progressToContentSwitch(ReleasesSelectorAndView)
+  container(
+    Section,
+    { heading: "Releases" },
+    progressToContentSwitch(ReleasesSelectorAndView)
+  )
 );
 
 function loadReleasesForRepo(github: Github, repository: string) {
