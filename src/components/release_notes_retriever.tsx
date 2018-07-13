@@ -40,23 +40,22 @@ export class ReleasesSelectorAndView extends React.Component<Props> {
   }
 }
 
-function ReleaseSection(props: {
+function Release(props: {
   releaseDescription: string;
-  tagName: string;
   Markdown: typeof Markdown;
 }) {
   return (
-    <Section heading={props.tagName}>
+    <>
       <props.Markdown source={props.releaseDescription} />
       <CopyToClipboard text={props.releaseDescription} />
-    </Section>
+    </>
   );
 }
 
 const ReleasesToRelease = triggeredAsyncSwitch(
   Dropdown,
   "onSelect",
-  progressToContentSwitch(ReleaseSection)
+  progressToContentSwitch(Release)
 );
 
 const RepsitorySelectionToReleasesSelectorAndView = triggeredAsyncSwitch(
