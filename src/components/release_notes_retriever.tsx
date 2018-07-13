@@ -19,7 +19,7 @@ interface Props {
   releases: GithubRelease[];
 }
 
-export class ReleasesSelectorAndView extends React.Component<Props, {}> {
+export class ReleasesSelectorAndView extends React.Component<Props> {
   async selectRelease(tagName: string) {
     const release = this.props.releases.find(x => x.tagName === tagName);
 
