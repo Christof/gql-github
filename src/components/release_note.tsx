@@ -40,9 +40,11 @@ export class ReleaseNote extends React.Component<Props> {
   }
 
   render() {
+    const releaseNoteWithHeader =
+      `# ${this.props.releaseTag}\n\n` + this.props.releaseNote;
     return (
       <>
-        <this.props.Markdown source={this.props.releaseNote} />
+        <this.props.Markdown source={releaseNoteWithHeader} />
         <ButtonWithSnackbar
           variant="raised"
           snackbarMessage={<span>Release created</span>}
