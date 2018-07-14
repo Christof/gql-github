@@ -85,9 +85,12 @@ export class StatsPlots extends React.Component<StatsPlotsProps, {}> {
         textposition: "outside",
         text: yValues.map(value => value.toString()),
         hoverinfo: "name" as any,
-        name: `${author} ${authorSum}`
+        name: `${author} ${authorSum}`,
+        authorSum
       };
     });
+
+    traces.sort(t => t.authorSum);
 
     const layout = this.getYearGraphLayout(title, data);
     return <this.props.PlotlyChart data={traces} layout={layout as any} />;

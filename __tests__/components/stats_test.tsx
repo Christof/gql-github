@@ -133,7 +133,7 @@ describe("Stats", function() {
           "2016 (0)",
           "2017 (30)"
         ]);
-        expect(data[0].y).toEqual([10, 20, 0, 30]);
+        expect(data[0].y).toEqual([0, 30, 0, 0]);
 
         expect(data[1].x).toEqual([
           "2014 (10)",
@@ -141,7 +141,7 @@ describe("Stats", function() {
           "2016 (0)",
           "2017 (30)"
         ]);
-        expect(data[1].y).toEqual([0, 30, 0, 0]);
+        expect(data[1].y).toEqual([10, 20, 0, 30]);
       }
 
       it("shows a year graph for each repository", function() {
