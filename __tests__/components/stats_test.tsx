@@ -57,12 +57,7 @@ describe("Stats", function() {
       wrapper.update();
     });
 
-    it("shows a heading and progress bar", function() {
-      const heading = wrapper.find(Section);
-
-      expect(heading).toHaveLength(2);
-      expect(heading.at(1).prop("heading")).toEqual("Stats");
-
+    it("shows a progress bar", function() {
       expect(wrapper.find(LinearProgress)).toHaveLength(1);
     });
 

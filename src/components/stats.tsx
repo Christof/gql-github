@@ -1,11 +1,9 @@
 import * as React from "react";
 import { Github } from "../github";
-import { Section } from "./section";
 import { RepositoriesByOwnerSelector } from "./repositories_by_owner_selector";
 import { DefaultGrid } from "./default_grid";
 import {
   triggeredAsyncSwitch,
-  container,
   progressToContentSwitch,
   awaitAllProperties
 } from "./triggered_async_switch";
@@ -36,7 +34,7 @@ async function loadData(
 const TriggeredStatsPlots = triggeredAsyncSwitch(
   RepositoriesByOwnerSelector,
   "onLoad",
-  container(Section, { heading: "Stats" }, progressToContentSwitch(StatsPlots))
+  progressToContentSwitch(StatsPlots)
 );
 
 export function Stats(props: { github: Github }) {
