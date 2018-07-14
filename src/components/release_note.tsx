@@ -3,6 +3,7 @@ import { Markdown } from "./markdown";
 import { Github } from "../github";
 import { Button } from "material-ui";
 import { withSnackbar } from "./snackbar";
+import { CopyToClipboard } from "./copy_to_clipboard";
 
 const ButtonWithSnackbar = withSnackbar(Button, "onClick");
 
@@ -52,6 +53,7 @@ export class ReleaseNote extends React.Component<Props> {
         >
           Create Release
         </ButtonWithSnackbar>
+        <CopyToClipboard text={releaseNoteWithHeader} />
       </>
     );
   }
