@@ -2,6 +2,43 @@ import * as React from "react";
 import { LinearProgress } from "material-ui";
 import { zipObj } from "ramda";
 
+interface Props<TriggeredProps> {
+  renderTrigger(
+    triggerCallback: (loadPromise: Promise<TriggeredProps>) => void
+  ): JSX.Element;
+  renderTriggered(props: TriggeredProps): JSX.Element;
+}
+interface State<TriggeredProps> {
+  triggered: boolean;
+  triggeredProps: TriggeredProps;
+}
+
+export class TriggeredAsyncSwitch<TriggeredProps> extends React.Component<
+  Props<TriggeredProps>,
+  State<TriggeredProps>
+> {
+  constructor(props: Props<TriggeredProps>) {
+    super(props);
+
+    this.state = { triggered: false, triggeredProps: undefined };
+  }
+
+  private triggerCallback = (loadPromise: Promise<any>) => {
+    this.setState({ triggered: true, triggeredProps: undefined });
+    loadPromise.then(triggeredProps => this.setState({ triggeredProps }));
+  };
+
+  render() {
+    return (
+      <>
+        {this.props.renderTrigger(this.triggerCallback)}
+        {this.state.triggered &&
+          this.props.renderTriggered(this.state.triggeredProps)}
+      </>
+    );
+  }
+}
+
 export function triggeredAsyncSwitch<
   P extends object,
   PTriggered extends object
