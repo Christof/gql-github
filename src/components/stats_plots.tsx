@@ -9,7 +9,7 @@ import { getCommitsPerAuthorInDateRange } from "../stats_helper";
 import { Layout } from "plotly.js";
 import { findLast, reduce, min, max } from "ramda";
 
-interface StatsPlotsProps {
+export interface StatsPlotsProps {
   repositoryNames: string[];
   PlotlyChart: typeof PlotlyChart;
   OverTimePlot: typeof OverTimePlot;

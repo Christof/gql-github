@@ -3,11 +3,11 @@ import { Github } from "../github";
 import { RepositoriesByOwnerSelector } from "./repositories_by_owner_selector";
 import { DefaultGrid } from "./default_grid";
 import {
-  triggeredAsyncSwitch,
-  progressToContentSwitch,
-  awaitAllProperties
+  awaitAllProperties,
+  TriggeredAsyncSwitch
 } from "./triggered_async_switch";
-import { StatsPlots } from "./stats_plots";
+import { StatsPlots, StatsPlotsProps } from "./stats_plots";
+import { LinearProgress } from "material-ui";
 
 async function loadData(
   github: Github,
@@ -31,19 +31,24 @@ async function loadData(
   return await awaitAllProperties({ data, ...plots, repositoryNames });
 }
 
-const TriggeredStatsPlots = triggeredAsyncSwitch(
-  RepositoriesByOwnerSelector,
-  "onLoad",
-  progressToContentSwitch(StatsPlots)
-);
-
 export function Stats(props: { github: Github }) {
   return (
     <DefaultGrid>
-      <TriggeredStatsPlots
-        github={props.github}
-        onLoad={(options: { owner?: string; includeForks: boolean }) =>
-          loadData(props.github, options)
+      <TriggeredAsyncSwitch
+        renderTrigger={triggerCallback => (
+          <RepositoriesByOwnerSelector
+            github={props.github}
+            onLoad={(options: { owner?: string; includeForks: boolean }) =>
+              triggerCallback(loadData(props.github, options))
+            }
+          />
+        )}
+        renderTriggered={(triggeredProps: StatsPlotsProps) =>
+          triggeredProps === undefined ? (
+            <LinearProgress />
+          ) : (
+            <StatsPlots {...triggeredProps} />
+          )
         }
       />
     </DefaultGrid>
