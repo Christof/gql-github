@@ -164,7 +164,7 @@ describe("ReleaseNotesCreator", function() {
         const markdown = wrapper.find(Markdown);
         expect(markdown).toHaveLength(1);
         expect(markdown.prop("source")).toEqual(
-          "**Basic Changes:**\n\n- Update webpack. (#8)\n\n"
+          "# v0.0.2\n\n**Basic Changes:**\n\n- Update webpack. (#8)\n\n"
         );
       });
 
@@ -179,7 +179,7 @@ describe("ReleaseNotesCreator", function() {
 
         const markdown = wrapper.find(Markdown);
         expect(markdown.prop("source")).toEqual(
-          "**Breaking Changes:**\n\n- Update webpack. (#8)\n\n"
+          "# v0.0.2\n\n**Breaking Changes:**\n\n- Update webpack. (#8)\n\n"
         );
       });
 
@@ -187,7 +187,7 @@ describe("ReleaseNotesCreator", function() {
         (github.postRelease as jest.Mock).mockReturnValue({ ok: true });
         const buttons = wrapper.find(Button);
 
-        expect(buttons).toHaveLength(2);
+        expect(buttons).toHaveLength(3);
         const releaseButton = buttons.at(1);
         expect(releaseButton.prop("children")).toEqual("Create Release");
 
