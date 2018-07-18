@@ -34,16 +34,14 @@ async function loadData(
 export function Stats(props: { github: Github }) {
   return (
     <DefaultGrid>
-      <TriggeredAsyncSwitch
+      <TriggeredAsyncSwitch<StatsPlotsProps>
         renderTrigger={triggerCallback => (
           <RepositoriesByOwnerSelector
             github={props.github}
-            onLoad={(options: { owner?: string; includeForks: boolean }) =>
-              triggerCallback(loadData(props.github, options))
-            }
+            onLoad={options => triggerCallback(loadData(props.github, options))}
           />
         )}
-        renderTriggered={(triggeredProps: StatsPlotsProps) =>
+        renderTriggered={triggeredProps =>
           triggeredProps === undefined ? (
             <LinearProgress />
           ) : (

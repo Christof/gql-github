@@ -23,7 +23,7 @@ export class TriggeredAsyncSwitch<TriggeredProps> extends React.Component<
     this.state = { triggered: false, triggeredProps: undefined };
   }
 
-  private triggerCallback = (loadPromise: Promise<any>) => {
+  private triggerCallback = (loadPromise: Promise<TriggeredProps>) => {
     this.setState({ triggered: true, triggeredProps: undefined });
     loadPromise.then(triggeredProps => this.setState({ triggeredProps }));
   };
