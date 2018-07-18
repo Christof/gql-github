@@ -11,13 +11,10 @@ import { DefaultGrid } from "./default_grid";
 import { calculateWeeklyCommits } from "../stats_helper";
 import { flatten, groupBy, values, mapObjIndexed, map, keys } from "ramda";
 import { discardTimeFromDate } from "../utils";
-import { OrgStatsPlots } from "./org_stats_plots";
-import {
-  triggeredAsyncSwitch,
-  container,
-  progressToContentSwitch
-} from "./triggered_async_switch";
+import { OrgStatsPlots, Props } from "./org_stats_plots";
+import { TriggeredAsyncSwitch } from "./triggered_async_switch";
 import { Section } from "./section";
+import { LinearProgress } from "material-ui";
 
 function createTraces(data: GithubAuthorData[][]) {
   const weeklyCommitsPerAuthor = calculateWeeklyCommits(data);
@@ -131,24 +128,25 @@ async function loadData(
   return { data, traces, pullRequestsTraces, reviewsTraces, OverTimePlot };
 }
 
-const TriggeredOrgStatsPlots = triggeredAsyncSwitch(
-  RepositoriesByOwnerSelector,
-  "onLoad",
-  container(
-    Section,
-    { heading: "Org Stats" },
-    progressToContentSwitch(OrgStatsPlots)
-  )
-);
-
 export function OrgStats(props: { github: Github }) {
   return (
     <DefaultGrid>
-      <TriggeredOrgStatsPlots
-        github={props.github}
-        onLoad={(options: { owner?: string; includeForks: boolean }) =>
-          loadData(props.github, options)
-        }
+      <TriggeredAsyncSwitch<Props>
+        renderTrigger={triggerCallback => (
+          <RepositoriesByOwnerSelector
+            github={props.github}
+            onLoad={options => triggerCallback(loadData(props.github, options))}
+          />
+        )}
+        renderTriggered={triggeredProps => (
+          <Section heading="Org Stats">
+            {triggeredProps === undefined ? (
+              <LinearProgress />
+            ) : (
+              <OrgStatsPlots {...triggeredProps} />
+            )}
+          </Section>
+        )}
       />
     </DefaultGrid>
   );

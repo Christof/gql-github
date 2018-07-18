@@ -2,7 +2,7 @@ import * as React from "react";
 import { ScatterData } from "plotly.js";
 import { OverTimePlot } from "./over_time_plot";
 
-interface Props {
+export interface Props {
   traces: Partial<ScatterData>[];
   pullRequestsTraces: Partial<ScatterData>[];
   reviewsTraces: Partial<ScatterData>[];
