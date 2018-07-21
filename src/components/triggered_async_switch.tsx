@@ -116,7 +116,7 @@ export function container<PContainer extends object, PContainee extends object>(
   );
 }
 
-type Unpromisify<T> = T extends Promise<infer U> ? U : T;
+export type Unpromisify<T> = T extends Promise<infer U> ? U : T;
 type UnpromisifiedObject<T> = { [k in keyof T]: Unpromisify<T[k]> };
 
 export async function awaitAllProperties<

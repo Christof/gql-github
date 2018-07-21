@@ -4,9 +4,10 @@ import { RepositoriesByOwnerSelector } from "./repositories_by_owner_selector";
 import { DefaultGrid } from "./default_grid";
 import {
   awaitAllProperties,
-  TriggeredAsyncSwitch
+  TriggeredAsyncSwitch,
+  Unpromisify
 } from "./triggered_async_switch";
-import { StatsPlots, StatsPlotsProps } from "./stats_plots";
+import { StatsPlots } from "./stats_plots";
 import { LinearProgress } from "material-ui";
 
 async function loadData(
@@ -34,7 +35,7 @@ async function loadData(
 export function Stats(props: { github: Github }) {
   return (
     <DefaultGrid>
-      <TriggeredAsyncSwitch<StatsPlotsProps>
+      <TriggeredAsyncSwitch<Unpromisify<ReturnType<typeof loadData>>>
         renderTrigger={triggerCallback => (
           <RepositoriesByOwnerSelector
             github={props.github}
