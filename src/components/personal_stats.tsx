@@ -9,7 +9,7 @@ import { Grid, LinearProgress } from "material-ui";
 import { runningAverage } from "../array_helper";
 import { calculateWeeklyCommitsForAuthor } from "../stats_helper";
 import { PersonalStatsPlots } from "./personal_stats_plots";
-import { TriggeredAsyncSwitch, Unpromisify } from "./triggered_async_switch";
+import { TriggeredAsyncSwitchFromLoadType } from "./triggered_async_switch";
 
 interface Repo {
   name: string;
@@ -140,7 +140,7 @@ export function PersonalStats(props: { github: Github }) {
   return (
     <Grid container spacing={24} justify="center">
       <Grid item xs={12}>
-        <TriggeredAsyncSwitch<Unpromisify<ReturnType<typeof loadData>>>
+        <TriggeredAsyncSwitchFromLoadType<typeof loadData>
           renderTrigger={triggerCallback => (
             <DetailedRepositorySelector
               github={props.github}

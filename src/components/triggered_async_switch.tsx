@@ -39,6 +39,10 @@ export class TriggeredAsyncSwitch<TriggeredProps> extends React.Component<
   }
 }
 
+export class TriggeredAsyncSwitchFromLoadType<
+  TypeOfLoad extends (...args: any[]) => any
+> extends TriggeredAsyncSwitch<Unpromisify<ReturnType<TypeOfLoad>>> {}
+
 export function triggeredAsyncSwitch<
   P extends object,
   PTriggered extends object
