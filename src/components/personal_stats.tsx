@@ -5,15 +5,11 @@ import {
 } from "./detailed_repository_selector";
 import { Github, GithubAuthorData } from "../github";
 import { Section } from "./section";
-import { Grid } from "material-ui";
+import { Grid, LinearProgress } from "material-ui";
 import { runningAverage } from "../array_helper";
 import { calculateWeeklyCommitsForAuthor } from "../stats_helper";
 import { PersonalStatsPlots } from "./personal_stats_plots";
-import {
-  triggeredAsyncSwitch,
-  container,
-  progressToContentSwitch
-} from "./triggered_async_switch";
+import { TriggeredAsyncSwitch, Unpromisify } from "./triggered_async_switch";
 
 interface Repo {
   name: string;
@@ -140,25 +136,28 @@ function calculateWeeklyCommits(data: Repo[]): number[][] {
   );
 }
 
-const TriggeredPersonalStatsPlots = triggeredAsyncSwitch(
-  DetailedRepositorySelector,
-  "onChange",
-  container(
-    Section,
-    { heading: "Stats" },
-    progressToContentSwitch(PersonalStatsPlots)
-  )
-);
-
 export function PersonalStats(props: { github: Github }) {
   return (
     <Grid container spacing={24} justify="center">
       <Grid item xs={12}>
-        <TriggeredPersonalStatsPlots
-          github={props.github}
-          onLoad={(repositoriesByOwner: Map<string, string[]>) =>
-            loadData(props.github, repositoriesByOwner)
-          }
+        <TriggeredAsyncSwitch<Unpromisify<ReturnType<typeof loadData>>>
+          renderTrigger={triggerCallback => (
+            <DetailedRepositorySelector
+              github={props.github}
+              onChange={options =>
+                triggerCallback(loadData(props.github, options))
+              }
+            />
+          )}
+          renderTriggered={triggeredProps => (
+            <Section heading={"Stats"}>
+              {triggeredProps === undefined ? (
+                <LinearProgress />
+              ) : (
+                <PersonalStatsPlots {...triggeredProps} />
+              )}
+            </Section>
+          )}
         />
       </Grid>
     </Grid>
