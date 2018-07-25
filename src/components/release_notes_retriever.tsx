@@ -7,11 +7,12 @@ import { CopyToClipboard } from "./copy_to_clipboard";
 import { Section } from "./section";
 import { DefaultGrid } from "./default_grid";
 import {
-  container,
   triggeredAsyncSwitch,
   awaitAllProperties,
-  progressToContentSwitch
+  progressToContentSwitch,
+  TriggeredAsyncSwitchFromLoadType
 } from "./triggered_async_switch";
+import { LinearProgress } from "material-ui";
 
 interface Props {
   github: Github;
@@ -58,31 +59,34 @@ const ReleasesToRelease = triggeredAsyncSwitch(
   progressToContentSwitch(Release)
 );
 
-const RepsitorySelectionToReleasesSelectorAndView = triggeredAsyncSwitch(
-  RepositorySelector,
-  "onRepositorySelect",
-  container(
-    Section,
-    { heading: "Releases" },
-    progressToContentSwitch(ReleasesSelectorAndView)
-  )
-);
-
 function loadReleasesForRepo(github: Github, repository: string) {
   const releases = github.getReleases(repository);
   const Markdown = import("./markdown").then(module => module.Markdown);
 
-  return awaitAllProperties({ releases, Markdown, github });
+  return awaitAllProperties({ releases, Markdown });
 }
 
 export function ReleaseNotesRetriever(props: { github: Github }) {
   return (
     <DefaultGrid small>
-      <RepsitorySelectionToReleasesSelectorAndView
-        github={props.github}
-        onLoad={(repository: string) =>
-          loadReleasesForRepo(props.github, repository)
-        }
+      <TriggeredAsyncSwitchFromLoadType<typeof loadReleasesForRepo>
+        renderTrigger={triggerCallback => (
+          <RepositorySelector
+            github={props.github}
+            onRepositorySelect={repository =>
+              triggerCallback(loadReleasesForRepo(props.github, repository))
+            }
+          />
+        )}
+        renderTriggered={loadedProps => (
+          <Section heading="Releases">
+            {loadedProps === undefined ? (
+              <LinearProgress />
+            ) : (
+              <ReleasesSelectorAndView github={props.github} {...loadedProps} />
+            )}
+          </Section>
+        )}
       />
     </DefaultGrid>
   );
