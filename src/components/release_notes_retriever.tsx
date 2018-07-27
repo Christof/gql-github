@@ -7,10 +7,9 @@ import { CopyToClipboard } from "./copy_to_clipboard";
 import { Section } from "./section";
 import { DefaultGrid } from "./default_grid";
 import {
-  triggeredAsyncSwitch,
   awaitAllProperties,
-  progressToContentSwitch,
-  TriggeredAsyncSwitchFromLoadType
+  TriggeredAsyncSwitchFromLoadType,
+  TriggeredAsyncSwitch
 } from "./triggered_async_switch";
 import { LinearProgress } from "material-ui";
 
@@ -32,10 +31,15 @@ export class ReleasesSelectorAndView extends React.Component<Props> {
 
   render() {
     return (
-      <ReleasesToRelease
-        label="Release"
-        options={this.props.releases.map(release => release.tagName)}
-        onLoad={(tagName: string) => this.selectRelease(tagName)}
+      <TriggeredAsyncSwitch<{ releaseDescription: string }>
+        renderTrigger={triggerCallback => (
+          <Dropdown
+            label="Release"
+            options={this.props.releases.map(release => release.tagName)}
+            onSelect={tagName => triggerCallback(this.selectRelease(tagName))}
+          />
+        )}
+        renderTriggered={props => <Release {...props} {...this.props} />}
       />
     );
   }
@@ -46,18 +50,12 @@ function Release(props: {
   Markdown: typeof Markdown;
 }) {
   return (
-    <>
+    <Section heading="Release">
       <props.Markdown source={props.releaseDescription} />
       <CopyToClipboard text={props.releaseDescription} />
-    </>
+    </Section>
   );
 }
-
-const ReleasesToRelease = triggeredAsyncSwitch(
-  Dropdown,
-  "onSelect",
-  progressToContentSwitch(Release)
-);
 
 function loadReleasesForRepo(github: Github, repository: string) {
   const releases = github.getReleases(repository);
