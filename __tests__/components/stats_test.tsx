@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Stats } from "../../src/components/stats";
-import { shallow, ShallowWrapper } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
 import { Github, GithubData } from "../../src/github";
 import { Section } from "../../src/components/section";
@@ -17,11 +17,14 @@ describe("Stats", function() {
   afterAll(() => jest.setTimeout(undefined));
 
   let github: Github;
-  let wrapper: ShallowWrapper<any, any>;
+  let wrapper: ReactWrapper<any, any>;
 
   beforeEach(function() {
     github = new Github("token", {} as any, undefined);
-    wrapper = shallow(<Stats github={github} />);
+    (github.getOwnersWithAvatar as jest.Mock).mockReturnValue(
+      Promise.resolve([{ login: "user", avatarUrl: "user-url" }])
+    );
+    wrapper = mount(<Stats github={github} />);
   });
 
   it("shows a RepositoriesByOwnerSelector", function() {
@@ -54,12 +57,7 @@ describe("Stats", function() {
       wrapper.update();
     });
 
-    it("shows a heading and progress bar", function() {
-      const heading = wrapper.find(Section);
-
-      expect(heading).toHaveLength(1);
-      expect(heading.prop("heading")).toEqual("Stats");
-
+    it("shows a progress bar", function() {
       expect(wrapper.find(LinearProgress)).toHaveLength(1);
     });
 
@@ -135,7 +133,7 @@ describe("Stats", function() {
           "2016 (0)",
           "2017 (30)"
         ]);
-        expect(data[0].y).toEqual([10, 20, 0, 30]);
+        expect(data[0].y).toEqual([0, 30, 0, 0]);
 
         expect(data[1].x).toEqual([
           "2014 (10)",
@@ -143,11 +141,17 @@ describe("Stats", function() {
           "2016 (0)",
           "2017 (30)"
         ]);
-        expect(data[1].y).toEqual([0, 30, 0, 0]);
+        expect(data[1].y).toEqual([10, 20, 0, 30]);
       }
 
       it("shows a year graph for each repository", function() {
-        const yearPlot = wrapper.find(PlotlyChart);
+        const allPlots = wrapper.find(PlotlyChart);
+        expect(allPlots).toHaveLength(5);
+
+        const yearPlot = allPlots.findWhere(x => {
+          const layout = x.prop("layout");
+          return layout && layout.title.indexOf("Yearly commits") === 0;
+        });
 
         expect(yearPlot).toHaveLength(2);
 

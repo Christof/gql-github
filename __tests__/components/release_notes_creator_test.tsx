@@ -1,9 +1,6 @@
 import * as React from "react";
-import {
-  ReleaseNotesCreator,
-  TransitionLeft
-} from "../../src/components/release_notes_creator";
-import { shallow, ShallowWrapper } from "enzyme";
+import { ReleaseNotesCreator } from "../../src/components/release_notes_creator";
+import { shallow, mount, ReactWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
 import { Github } from "../../src/github";
 import { PullRequest, ChangeCategory } from "../../src/pull_request";
@@ -18,23 +15,23 @@ jest.mock("../../src/github");
 
 describe("ReleaseNotesCreator", function() {
   let github: Github;
-  let wrapper: ShallowWrapper<any, any>;
+  let wrapper: ReactWrapper<any, any>;
 
   beforeEach(function() {
     const fetch = undefined;
     github = new Github("token", {} as any, fetch);
-    wrapper = shallow(<ReleaseNotesCreator github={github} />);
+    (github.getRepositoryNames as jest.Mock).mockReturnValue(
+      Promise.resolve(["repo1"])
+    );
+    (github.getOwnersWithAvatar as jest.Mock).mockReturnValue(
+      Promise.resolve([{ login: "user", avatarUrl: "avatarUrl" }])
+    );
+    wrapper = mount(<ReleaseNotesCreator github={github} />);
   });
 
   describe("before selecting a repository", function() {
     it("shows a RepositorySelector", function() {
       expect(wrapper.find(RepositorySelector)).toHaveLength(1);
-    });
-
-    it("shows three empty sections", function() {
-      const wrapper = shallow(<ReleaseNotesCreator github={github} />);
-
-      expect(wrapper.find("section")).toHaveLength(3);
     });
   });
 
@@ -61,17 +58,22 @@ describe("ReleaseNotesCreator", function() {
     });
 
     it("shows the range section with preselected start tag", async function() {
-      expect(wrapper.find(Section)).toHaveLength(1);
-      expect(wrapper.find(Section).prop("heading")).toEqual("Range");
+      expect(wrapper.find(Section)).toHaveLength(2);
+      expect(
+        wrapper
+          .find(Section)
+          .at(1)
+          .prop("heading")
+      ).toEqual("Range");
 
       const dropdowns = wrapper.find(Dropdown);
-      expect(dropdowns).toHaveLength(2);
+      expect(dropdowns).toHaveLength(4);
       const tagNames = tags.map(tag => tag.name);
 
-      expect(dropdowns.at(0).prop("options")).toEqual(tagNames);
-      expect(dropdowns.at(1).prop("options")).toEqual(tagNames);
+      expect(dropdowns.at(2).prop("options")).toEqual(tagNames);
+      expect(dropdowns.at(3).prop("options")).toEqual(tagNames);
 
-      expect(dropdowns.at(0).prop("initialSelection")).toEqual("v0.0.2");
+      expect(dropdowns.at(2).prop("initialSelection")).toEqual("v0.0.2");
 
       (github.compare as jest.Mock).mockReturnValue({ commits: [] });
       (wrapper.find(Button).prop("onClick") as any)();
@@ -93,7 +95,7 @@ describe("ReleaseNotesCreator", function() {
       wrapper.update();
 
       const dropdowns = wrapper.find(Dropdown);
-      expect(dropdowns.at(0).prop("initialSelection")).toBeUndefined();
+      expect(dropdowns.at(2).prop("initialSelection")).toBeUndefined();
     });
 
     describe("after selecting a range", function() {
@@ -113,8 +115,8 @@ describe("ReleaseNotesCreator", function() {
 
       beforeEach(async function() {
         const dropdowns = wrapper.find(Dropdown);
-        (dropdowns.at(0).prop("onSelect") as any)("v0.0.1");
-        (dropdowns.at(1).prop("onSelect") as any)("v0.0.2");
+        (dropdowns.at(2).prop("onSelect") as any)("v0.0.1");
+        (dropdowns.at(3).prop("onSelect") as any)("v0.0.2");
 
         (github.compare as jest.Mock).mockReturnValue({ commits });
         (wrapper.find(Button).prop("onClick") as any)();
@@ -141,13 +143,9 @@ describe("ReleaseNotesCreator", function() {
       });
 
       it("shows the Adjust Categories section", function() {
-        expect(wrapper.find(Section)).toHaveLength(3);
-        expect(
-          wrapper
-            .find(Section)
-            .at(1)
-            .prop("heading")
-        ).toEqual("Adjust Categories");
+        const sections = wrapper.find(Section);
+        expect(sections).toHaveLength(4);
+        expect(sections.at(2).prop("heading")).toEqual("Adjust Categories");
 
         const selector = wrapper.find(PullRequestChangeCategorySelector);
         expect(selector).toHaveLength(1);
@@ -157,7 +155,7 @@ describe("ReleaseNotesCreator", function() {
         expect(
           wrapper
             .find(Section)
-            .at(2)
+            .at(3)
             .prop("heading")
         ).toEqual("Release Note");
       });
@@ -166,7 +164,7 @@ describe("ReleaseNotesCreator", function() {
         const markdown = wrapper.find(Markdown);
         expect(markdown).toHaveLength(1);
         expect(markdown.prop("source")).toEqual(
-          "**Basic Changes:**\n\n- Update webpack. (#8)\n\n"
+          "# v0.0.2\n\n**Basic Changes:**\n\n- Update webpack. (#8)\n\n"
         );
       });
 
@@ -181,7 +179,7 @@ describe("ReleaseNotesCreator", function() {
 
         const markdown = wrapper.find(Markdown);
         expect(markdown.prop("source")).toEqual(
-          "**Breaking Changes:**\n\n- Update webpack. (#8)\n\n"
+          "# v0.0.2\n\n**Breaking Changes:**\n\n- Update webpack. (#8)\n\n"
         );
       });
 
@@ -189,7 +187,7 @@ describe("ReleaseNotesCreator", function() {
         (github.postRelease as jest.Mock).mockReturnValue({ ok: true });
         const buttons = wrapper.find(Button);
 
-        expect(buttons).toHaveLength(2);
+        expect(buttons).toHaveLength(3);
         const releaseButton = buttons.at(1);
         expect(releaseButton.prop("children")).toEqual("Create Release");
 
@@ -229,7 +227,7 @@ describe("ReleaseNotesCreator", function() {
         (github.postRelease as jest.Mock).mockReturnValue({ ok: false });
 
         const buttons = wrapper.find(Button);
-        (buttons.at(1).prop("onClick") as any)();
+        await expect(buttons.at(1).prop("onClick") as any);
 
         await waitImmediate();
         wrapper.update();
@@ -245,29 +243,21 @@ describe("ReleaseNotesCreator", function() {
         (wrapper.find(RepositorySelector).prop("onRepositorySelect") as any)(
           "repo1"
         );
+
         await waitImmediate();
         wrapper.update();
+
         const dropdowns = wrapper.find(Dropdown);
-        expect(dropdowns).toHaveLength(2);
+        expect(dropdowns).toHaveLength(4);
 
-        expect(dropdowns.at(0).prop("options")).toEqual(["v0.0.1"]);
-        expect(dropdowns.at(1).prop("options")).toEqual(["v0.0.1"]);
+        expect(dropdowns.at(2).prop("options")).toEqual(["v0.0.1"]);
+        expect(dropdowns.at(3).prop("options")).toEqual(["v0.0.1"]);
 
-        expect(dropdowns.at(0).prop("initialSelection")).toBeUndefined();
+        expect(dropdowns.at(2).prop("initialSelection")).toBeUndefined();
         const sectionHeadings = wrapper.find(Section);
-        expect(sectionHeadings).toHaveLength(1);
-        expect(sectionHeadings.at(0).prop("heading")).toEqual("Range");
+        expect(sectionHeadings).toHaveLength(2);
+        expect(sectionHeadings.at(1).prop("heading")).toEqual("Range");
       });
     });
-  });
-});
-
-describe("TransitionLeft", function() {
-  it("is a Slide with direction left", function() {
-    const props: any = {};
-    const wrapper = shallow(<TransitionLeft {...props} />);
-
-    expect(wrapper.find(Slide)).toHaveLength(1);
-    expect(wrapper.prop("direction")).toEqual("left");
   });
 });

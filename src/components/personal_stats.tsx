@@ -5,195 +5,161 @@ import {
 } from "./detailed_repository_selector";
 import { Github, GithubAuthorData } from "../github";
 import { Section } from "./section";
-import { Typography, Grid, LinearProgress } from "material-ui";
-import { OverallPlot } from "./overall_plot";
-import { OverTimePlot } from "./over_time_plot";
+import { Grid, LinearProgress } from "material-ui";
 import { runningAverage } from "../array_helper";
 import { calculateWeeklyCommitsForAuthor } from "../stats_helper";
-
-interface Props {
-  github: Github;
-}
+import { PersonalStatsPlots } from "./personal_stats_plots";
+import { TriggeredAsyncSwitchFromLoadType } from "./triggered_async_switch";
 
 interface Repo {
   name: string;
   data: GithubAuthorData;
 }
 
-interface State {
-  repositoriesPerOwner?: RepositoriesPerOwner;
-  author: string;
-  data: Repo[];
-  startedLoading: boolean;
-  OverallPlot?: typeof OverallPlot;
-  OverTimePlot?: typeof OverTimePlot;
+async function loadData(
+  github: Github,
+  repositoriesPerOwner: RepositoriesPerOwner
+) {
+  const author = await github.getUser().then(user => user.login);
+
+  const overTimePlotPromise = import("./over_time_plot").then(
+    module => module.OverTimePlot
+  );
+  const overallPlotPromise = import("./overall_plot").then(
+    module => module.OverallPlot
+  );
+
+  const data = await loadRepoData(github, repositoriesPerOwner, author);
+
+  const totalCommitCount = data.reduce((sum, repo) => sum + repo.data.total, 0);
+
+  const repositoryTimeline = data.map(repo =>
+    traceForRepo(repo.name, repo.data)
+  );
+  repositoryTimeline.push(...traceForSum(data));
+
+  const [OverTimePlot, OverallPlot] = await Promise.all([
+    overTimePlotPromise,
+    overallPlotPromise
+  ]);
+
+  return {
+    data,
+    totalCommitCount,
+    repositoryTimeline,
+    OverTimePlot,
+    OverallPlot
+  };
 }
 
-export class PersonalStats extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-
-    this.state = { author: "", data: [], startedLoading: false };
-
-    this.props.github
-      .getUser()
-      .then(user => this.setState({ author: user.login }));
-
-    import("./over_time_plot").then(module =>
-      this.setState({ OverTimePlot: module.OverTimePlot })
+async function loadRepoData(
+  github: Github,
+  repositoriesPerOwner: RepositoriesPerOwner,
+  author: string
+) {
+  const data = [] as Repo[];
+  for (let [owner, repositories] of repositoriesPerOwner.entries()) {
+    const githubForOwner = github.copyFor(owner);
+    const authorDataForRepository = await Promise.all(
+      repositories.map(
+        async repo => await getAuthorData(author, githubForOwner, repo)
+      )
     );
-    import("./overall_plot").then(module =>
-      this.setState({ OverallPlot: module.OverallPlot })
-    );
+    data.push(...authorDataForRepository.filter(item => item !== undefined));
   }
 
-  async getAuthorData(github: Github, repo: string) {
-    const stats = await github.getStats(repo);
-    if (stats === undefined || stats.length === 0 || stats.find === undefined) {
-      console.error("No stats found for", repo, stats);
-      return undefined;
+  return data;
+}
+
+async function getAuthorData(author: string, github: Github, repo: string) {
+  const stats = await github.getStats(repo);
+  if (stats === undefined || stats.length === 0 || stats.find === undefined) {
+    console.error("No stats found for", repo, stats);
+    return undefined;
+  }
+
+  const authorData = stats.find(
+    authorData => authorData.author.login === author
+  );
+
+  if (authorData === undefined) {
+    return undefined;
+  }
+
+  return { name: repo, data: authorData };
+}
+
+function traceForRepo(name: string, data: GithubAuthorData) {
+  return {
+    type: "scatter" as any, // any to prevent type error with ScatterData
+    mode: "lines" as any, // any to prevent type error with ScatterData
+    name,
+    x: data.weeks.map((week: any) => new Date(week.w * 1000)),
+    y: data.weeks.map((week: any) => week.c)
+  };
+}
+
+function traceForSum(data: Repo[]) {
+  const sortedEntries = calculateWeeklyCommits(data);
+  const x = sortedEntries.map(entry => new Date(entry[0] * 1000));
+
+  return [
+    {
+      type: "scatter",
+      mode: "lines",
+      name: "Sum",
+      x,
+      y: sortedEntries.map(entry => entry[1])
+    },
+    {
+      type: "scatter",
+      mode: "lines",
+      name: "Trend",
+      x,
+      y: runningAverage(sortedEntries.map(entry => entry[1]), 2)
     }
+  ];
+}
 
-    const authorData = stats.find(
-      authorData => authorData.author.login === this.state.author
-    );
+/**
+ * Calculates sum of commits per week.
+ *
+ * @returns Array of [week, commitsInWeek]
+ */
+function calculateWeeklyCommits(data: Repo[]): number[][] {
+  const weeklyCommitsForAuthor = calculateWeeklyCommitsForAuthor(
+    data.map(x => x.data)
+  );
 
-    if (authorData === undefined) {
-      return undefined;
-    }
+  return Array.from(weeklyCommitsForAuthor.entries()).sort(
+    (a, b) => a[0] - b[0]
+  );
+}
 
-    return { name: repo, data: authorData };
-  }
-
-  async loadData(repositoriesPerOwner: RepositoriesPerOwner) {
-    this.setState({ startedLoading: true });
-
-    const data = [] as Repo[];
-    for (let [owner, repositories] of repositoriesPerOwner.entries()) {
-      const github = this.props.github.copyFor(owner);
-      const authorDataForRepository = await Promise.all(
-        repositories.map(async repo => await this.getAuthorData(github, repo))
-      );
-      data.push(...authorDataForRepository);
-    }
-
-    this.setState({ data: data.filter(item => item !== undefined) });
-  }
-
-  private traceForRepo(name: string, data: GithubAuthorData) {
-    return {
-      type: "scatter" as any, // any to prevent type error with ScatterData
-      mode: "lines" as any, // any to prevent type error with ScatterData
-      name,
-      x: data.weeks.map((week: any) => new Date(week.w * 1000)),
-      y: data.weeks.map((week: any) => week.c)
-    };
-  }
-
-  /**
-   * Calculates sum of commits per week.
-   *
-   * @returns Array of [week, commitsInWeek]
-   */
-  private calculateWeeklyCommits(): number[][] {
-    const data = calculateWeeklyCommitsForAuthor(
-      this.state.data.map(x => x.data)
-    );
-
-    return Array.from(data.entries()).sort((a, b) => a[0] - b[0]);
-  }
-
-  private traceForSum() {
-    const sortedEntries = this.calculateWeeklyCommits();
-    const x = sortedEntries.map(entry => new Date(entry[0] * 1000));
-
-    return [
-      {
-        type: "scatter",
-        mode: "lines",
-        name: "Sum",
-        x,
-        y: sortedEntries.map(entry => entry[1])
-      },
-      {
-        type: "scatter",
-        mode: "lines",
-        name: "Trend",
-        x,
-        y: runningAverage(sortedEntries.map(entry => entry[1]), 2)
-      }
-    ];
-  }
-
-  renderGraph() {
-    const repositoryTimeline = this.state.data.map(repo =>
-      this.traceForRepo(repo.name, repo.data)
-    );
-
-    repositoryTimeline.push(...this.traceForSum());
-
-    const title = "Commits in Repositories";
-
-    return <this.state.OverTimePlot title={title} data={repositoryTimeline} />;
-  }
-
-  renderRepositorySums() {
-    const names = this.state.data.map(repo => repo.name);
-    return (
-      <this.state.OverallPlot
-        reposData={this.state.data.map(repo => [repo.data])}
-        repositoryNames={names}
-      />
-    );
-  }
-
-  renderStats() {
-    if (
-      this.state.data.length === 0 ||
-      this.state.OverTimePlot === undefined ||
-      this.state.OverallPlot === undefined
-    )
-      return <LinearProgress />;
-
-    const total = this.state.data.reduce(
-      (sum, repo) => sum + repo.data.total,
-      0
-    );
-
-    return (
-      <div>
-        <Typography paragraph>
-          {`${total} total commit count in ${
-            this.state.data.length
-          } repositories`}
-        </Typography>
-
-        {this.renderGraph()}
-        {this.renderRepositorySums()}
-      </div>
-    );
-  }
-
-  renderStatsSection() {
-    if (!this.state.startedLoading) return null;
-
-    return <Section heading="Stats">{this.renderStats()}</Section>;
-  }
-
-  render() {
-    return (
-      <Grid container spacing={24} justify="center">
-        <Grid item xs={12}>
-          <DetailedRepositorySelector
-            github={this.props.github}
-            onChange={repositoriesPerOwner =>
-              this.loadData(repositoriesPerOwner)
-            }
-          />
-
-          {this.renderStatsSection()}
-        </Grid>
+export function PersonalStats(props: { github: Github }) {
+  return (
+    <Grid container spacing={24} justify="center">
+      <Grid item xs={12}>
+        <TriggeredAsyncSwitchFromLoadType<typeof loadData>
+          renderTrigger={triggerCallback => (
+            <DetailedRepositorySelector
+              github={props.github}
+              onChange={options =>
+                triggerCallback(loadData(props.github, options))
+              }
+            />
+          )}
+          renderTriggered={triggeredProps => (
+            <Section heading={"Stats"}>
+              {triggeredProps === undefined ? (
+                <LinearProgress />
+              ) : (
+                <PersonalStatsPlots {...triggeredProps} />
+              )}
+            </Section>
+          )}
+        />
       </Grid>
-    );
-  }
+    </Grid>
+  );
 }

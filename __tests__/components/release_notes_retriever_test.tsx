@@ -1,6 +1,6 @@
 import * as React from "react";
 import { ReleaseNotesRetriever } from "../../src/components/release_notes_retriever";
-import { shallow } from "enzyme";
+import { mount } from "enzyme";
 import { waitImmediate } from "../helper";
 import { Github } from "../../src/github";
 import { RepositorySelector } from "../../src/components/repository_selector";
@@ -13,7 +13,10 @@ jest.mock("../../src/github");
 describe("ReleaseNotesRetriever", function() {
   it("shows selected release note", async function() {
     const github = new Github("token", {} as any, undefined);
-    let wrapper = shallow(<ReleaseNotesRetriever github={github} />);
+    (github.getOwnersWithAvatar as jest.Mock).mockReturnValue(
+      Promise.resolve([{ login: "user", avatarUrl: "avatar" }])
+    );
+    let wrapper = mount(<ReleaseNotesRetriever github={github} />);
 
     const respositorySelector = wrapper.find(RepositorySelector);
     expect(respositorySelector).toHaveLength(1);
@@ -27,8 +30,9 @@ describe("ReleaseNotesRetriever", function() {
     await waitImmediate();
     wrapper.update();
 
-    const releasesDropdown = wrapper.find(Dropdown);
-    expect(releasesDropdown).toHaveLength(1);
+    const dropdowns = wrapper.find(Dropdown);
+    expect(dropdowns).toHaveLength(3);
+    const releasesDropdown = dropdowns.at(2);
     expect(releasesDropdown.prop("options")).toEqual(["v0.0.1", "v0.0.2"]);
 
     releasesDropdown.prop("onSelect")("v0.0.1" as any);

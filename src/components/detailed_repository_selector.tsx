@@ -154,7 +154,7 @@ export class DetailedRepositorySelector extends React.Component<Props, State> {
   renderSelection() {
     const noOwnerSelected = this.state.owners.every(owner => !owner.selected);
     return (
-      <div>
+      <>
         {this.renderOwnerSection()}
 
         {noOwnerSelected || (
@@ -173,23 +173,21 @@ export class DetailedRepositorySelector extends React.Component<Props, State> {
         >
           Accept
         </Button>
-      </div>
+      </>
     );
   }
 
   render() {
     return (
       <Section>
-        <div>
-          <Typography variant="headline" paragraph>
-            Repositories
-          </Typography>
-          {this.state.owners.length === 0 ? (
-            <LinearProgress />
-          ) : (
-            this.renderSelection()
-          )}
-        </div>
+        <Typography variant="headline" paragraph>
+          Repositories
+        </Typography>
+        {this.state.owners.length === 0 ? (
+          <LinearProgress />
+        ) : (
+          this.renderSelection()
+        )}
       </Section>
     );
   }

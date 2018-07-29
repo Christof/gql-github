@@ -25,12 +25,9 @@ describe("RepositoriesByOwnerSelector", function() {
     wrapper.find(Button).prop("onClick")({} as any);
   }
 
-  describe("click load with default values", function() {
-    it("calls onLoad with undefined owner and includeForks is false", function() {
-      clickLoad();
-
-      expect(setData.includeForks).toBe(false);
-      expect(setData.owner).toBeUndefined();
+  describe("button before selection", function() {
+    it("is disabled", function() {
+      expect(wrapper.find(Button).prop("disabled")).toBe(true);
     });
   });
 

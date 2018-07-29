@@ -14,7 +14,7 @@ export class CopyToClipboard extends React.Component<{ text: string }, {}> {
 
   render() {
     return (
-      <div>
+      <>
         <span
           style={{
             userSelect: "text",
@@ -29,7 +29,7 @@ export class CopyToClipboard extends React.Component<{ text: string }, {}> {
         <Button variant="raised" onClick={() => this.copyToClipboard()}>
           Copy
         </Button>
-      </div>
+      </>
     );
   }
 }

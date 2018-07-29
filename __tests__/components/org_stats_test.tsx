@@ -1,6 +1,6 @@
 import * as React from "react";
 import { OrgStats } from "../../src/components/org_stats";
-import { shallow, ShallowWrapper } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
 import { Github, GithubData } from "../../src/github";
 import { RepositoriesByOwnerSelector } from "../../src/components/repositories_by_owner_selector";
@@ -10,12 +10,18 @@ jest.mock("../../src/github");
 
 describe("OrgStats", function() {
   let github: Github;
-  let wrapper: ShallowWrapper<any, any>;
+  let wrapper: ReactWrapper<any, any>;
 
   beforeEach(function() {
     github = new Github("token", {} as any, undefined);
+    (github.getOwnersWithAvatar as jest.Mock).mockReturnValue(
+      Promise.resolve([
+        { login: "author1", avatarUrl: "author1Url" },
+        { login: "org1", avatarUrl: "org1Url" }
+      ])
+    );
 
-    wrapper = shallow(<OrgStats github={github} />);
+    wrapper = mount(<OrgStats github={github} />);
   });
 
   it("shows a RepositoryByOwnerSelector", function() {
@@ -130,15 +136,5 @@ describe("OrgStats", function() {
       expect(plotData[1].x).toEqual([week2.valueOf()]);
       expect(plotData[1].y).toEqual([2]);
     });
-  });
-
-  it("doesn't load anything on undefined owner selection", function() {
-    const selector = wrapper.find(RepositoriesByOwnerSelector);
-    (selector.prop("onLoad") as any)({
-      owner: undefined,
-      includeForks: false
-    });
-
-    expect(github.getRepositoryNames as jest.Mock).toHaveBeenCalledTimes(0);
   });
 });

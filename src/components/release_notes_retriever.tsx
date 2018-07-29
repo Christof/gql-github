@@ -6,79 +6,88 @@ import { Dropdown } from "./dropdown";
 import { CopyToClipboard } from "./copy_to_clipboard";
 import { Section } from "./section";
 import { DefaultGrid } from "./default_grid";
-
-interface State {
-  repo?: string;
-  releases?: GithubRelease[];
-  release?: GithubRelease;
-  releaseDescription?: string;
-  Markdown?: typeof Markdown;
-}
+import {
+  awaitAllProperties,
+  TriggeredAsyncSwitchFromLoadType,
+  TriggeredAsyncSwitch
+} from "./triggered_async_switch";
+import { LinearProgress } from "material-ui";
 
 interface Props {
   github: Github;
+  Markdown: typeof Markdown;
+  releases: GithubRelease[];
 }
 
-export class ReleaseNotesRetriever extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {};
-
-    import("./markdown").then(module =>
-      this.setState({ Markdown: module.Markdown })
-    );
-  }
-
-  async selectRepository(repo: string) {
-    const releases = await this.props.github.getReleases(repo);
-    this.setState({ releases, repo });
-  }
-
+export class ReleasesSelectorAndView extends React.Component<Props> {
   async selectRelease(tagName: string) {
-    const release = this.state.releases.find(x => x.tagName === tagName);
+    const release = this.props.releases.find(x => x.tagName === tagName);
 
     const releaseDescription = `# ${release.tagName}\n\n${
       release.description
     }\n`;
-    this.setState({ releaseDescription, release });
-  }
-
-  renderReleasesSection() {
-    if (!this.state.repo || !this.state.releases) return <section />;
-
-    return (
-      <Section heading="Release Note">
-        <Dropdown
-          label="Release"
-          options={this.state.releases.map(release => release.tagName)}
-          onSelect={tagName => this.selectRelease(tagName)}
-        />
-      </Section>
-    );
-  }
-
-  renderReleaseSection() {
-    if (!this.state.releaseDescription || this.state.Markdown === undefined)
-      return <section />;
-
-    return (
-      <Section heading={this.state.release.tagName}>
-        <this.state.Markdown source={this.state.releaseDescription} />
-        <CopyToClipboard text={this.state.releaseDescription} />
-      </Section>
-    );
+    return { releaseDescription, release, Markdown: this.props.Markdown };
   }
 
   render() {
     return (
-      <DefaultGrid small>
-        <RepositorySelector
-          github={this.props.github}
-          onRepositorySelect={repo => this.selectRepository(repo)}
-        />
-        {this.renderReleasesSection()}
-        {this.renderReleaseSection()}
-      </DefaultGrid>
+      <TriggeredAsyncSwitch<{ releaseDescription: string }>
+        renderTrigger={triggerCallback => (
+          <Section heading="Releases">
+            <Dropdown
+              label="Release"
+              options={this.props.releases.map(release => release.tagName)}
+              onSelect={tagName => triggerCallback(this.selectRelease(tagName))}
+            />
+          </Section>
+        )}
+        renderTriggered={props => <Release {...props} {...this.props} />}
+      />
     );
   }
+}
+
+function Release(props: {
+  releaseDescription: string;
+  Markdown: typeof Markdown;
+}) {
+  return (
+    <Section heading="Release">
+      <props.Markdown source={props.releaseDescription} />
+      <CopyToClipboard text={props.releaseDescription} />
+    </Section>
+  );
+}
+
+function loadReleasesForRepo(github: Github, repository: string) {
+  const releases = github.getReleases(repository);
+  const Markdown = import("./markdown").then(module => module.Markdown);
+
+  return awaitAllProperties({ releases, Markdown });
+}
+
+export function ReleaseNotesRetriever(props: { github: Github }) {
+  return (
+    <DefaultGrid small>
+      <TriggeredAsyncSwitchFromLoadType<typeof loadReleasesForRepo>
+        renderTrigger={triggerCallback => (
+          <RepositorySelector
+            github={props.github}
+            onRepositorySelect={repository =>
+              triggerCallback(loadReleasesForRepo(props.github, repository))
+            }
+          />
+        )}
+        renderTriggered={loadedProps =>
+          loadedProps === undefined ? (
+            <Section heading="Releases">
+              <LinearProgress />
+            </Section>
+          ) : (
+            <ReleasesSelectorAndView github={props.github} {...loadedProps} />
+          )
+        }
+      />
+    </DefaultGrid>
+  );
 }

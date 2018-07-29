@@ -10,7 +10,10 @@ interface State {
   includeForks: boolean;
 }
 
-export interface LoadData extends State {}
+export interface LoadData {
+  owner: string;
+  includeForks: boolean;
+}
 
 interface Props {
   github: Github;
@@ -51,7 +54,13 @@ export class RepositoriesByOwnerSelector extends React.Component<Props, State> {
         <FormControl>
           <Button
             variant="raised"
-            onClick={() => this.props.onLoad(this.state)}
+            disabled={this.state.owner === undefined}
+            onClick={() =>
+              this.props.onLoad({
+                owner: this.state.owner,
+                includeForks: this.state.includeForks
+              })
+            }
           >
             Load
           </Button>
