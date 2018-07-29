@@ -6,12 +6,10 @@ import { Markdown } from "./markdown";
 import { Github, GithubTag } from "../github";
 import * as React from "react";
 import { DefaultGrid } from "./default_grid";
-import {
-  progressToContentSwitch,
-  triggeredAsyncSwitch
-} from "./triggered_async_switch";
+import { TriggeredAsyncSwitchFromLoadType } from "./triggered_async_switch";
 import { TagRangeSelector } from "./tag_range_selector";
 import { ReleaseNote } from "./release_note";
+import { LinearProgress } from "material-ui";
 
 function PullRequests(props: {
   pullRequests: PullRequest[];
@@ -45,7 +43,6 @@ interface State {
 interface Props {
   github: Github;
   repo: string;
-  repositoryNames: string[];
   defaultStartTag?: string;
   tags?: GithubTag[];
 }
@@ -150,12 +147,6 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
   }
 }
 
-const TriggeredReleaseNotesCreatorSections = triggeredAsyncSwitch(
-  RepositorySelector,
-  "onRepositorySelect",
-  progressToContentSwitch(ReleaseNotesCreatorSections)
-);
-
 async function loadTags(repo: string, github: Github) {
   const tags = await github.getTags(repo);
   const releases = await github.getReleases(repo);
@@ -178,9 +169,24 @@ async function loadTags(repo: string, github: Github) {
 export function ReleaseNotesCreator(props: { github: Github }) {
   return (
     <DefaultGrid small>
-      <TriggeredReleaseNotesCreatorSections
-        github={props.github}
-        onLoad={(repository: string) => loadTags(repository, props.github)}
+      <TriggeredAsyncSwitchFromLoadType<typeof loadTags>
+        renderTrigger={callback => (
+          <RepositorySelector
+            {...props}
+            onRepositorySelect={repository =>
+              callback(loadTags(repository, props.github))
+            }
+          />
+        )}
+        renderTriggered={triggeredProps =>
+          triggeredProps === undefined ? (
+            <Section heading="Range">
+              <LinearProgress />
+            </Section>
+          ) : (
+            <ReleaseNotesCreatorSections {...triggeredProps} />
+          )
+        }
       />
     </DefaultGrid>
   );
