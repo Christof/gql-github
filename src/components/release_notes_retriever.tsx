@@ -33,11 +33,13 @@ export class ReleasesSelectorAndView extends React.Component<Props> {
     return (
       <TriggeredAsyncSwitch<{ releaseDescription: string }>
         renderTrigger={triggerCallback => (
-          <Dropdown
-            label="Release"
-            options={this.props.releases.map(release => release.tagName)}
-            onSelect={tagName => triggerCallback(this.selectRelease(tagName))}
-          />
+          <Section heading="Releases">
+            <Dropdown
+              label="Release"
+              options={this.props.releases.map(release => release.tagName)}
+              onSelect={tagName => triggerCallback(this.selectRelease(tagName))}
+            />
+          </Section>
         )}
         renderTriggered={props => <Release {...props} {...this.props} />}
       />
@@ -76,15 +78,15 @@ export function ReleaseNotesRetriever(props: { github: Github }) {
             }
           />
         )}
-        renderTriggered={loadedProps => (
-          <Section heading="Releases">
-            {loadedProps === undefined ? (
+        renderTriggered={loadedProps =>
+          loadedProps === undefined ? (
+            <Section heading="Releases">
               <LinearProgress />
-            ) : (
-              <ReleasesSelectorAndView github={props.github} {...loadedProps} />
-            )}
-          </Section>
-        )}
+            </Section>
+          ) : (
+            <ReleasesSelectorAndView github={props.github} {...loadedProps} />
+          )
+        }
       />
     </DefaultGrid>
   );
