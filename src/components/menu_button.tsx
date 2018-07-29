@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button } from "@material-ui/core";
+import { MenuItem } from "@material-ui/core";
 import { Link } from "react-router-dom";
 
 interface Props {
@@ -11,17 +11,16 @@ interface Props {
 
 export class MenuButton extends React.Component<Props, {}> {
   render() {
-    const { text, to, ...rest } = this.props;
+    const { text, to } = this.props;
     const isActive = window.location.pathname === to;
     return (
-      <Button
-        component={props => <Link to={to} {...props} innerRef={undefined} />}
-        variant="raised"
+      <MenuItem
+        component={Link as any}
         color={isActive ? "secondary" : "primary"}
-        {...rest}
+        {...this.props}
       >
         {text}
-      </Button>
+      </MenuItem>
     );
   }
 }

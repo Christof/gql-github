@@ -5,9 +5,17 @@ import { GithubButton } from "./github_button";
 import { GithubCallback } from "./github_callback";
 import { ReleaseNotesRetriever } from "./release_notes_retriever";
 import { ReleaseNotesCreator } from "./release_notes_creator";
-import { AppBar, Typography, Toolbar, CssBaseline } from "@material-ui/core";
+import {
+  AppBar,
+  Typography,
+  Toolbar,
+  CssBaseline,
+  IconButton,
+  Menu
+} from "@material-ui/core";
 import { withStyles, Theme, StyleRules } from "@material-ui/core/styles";
 import { WithStyles } from "@material-ui/core/styles/withStyles";
+import MenuIcon from "@material-ui/icons/Menu";
 import { Github } from "../github";
 import { createHttpLink } from "apollo-link-http";
 import { setContext } from "apollo-link-context";
@@ -32,6 +40,7 @@ const styles = (_theme: Theme): StyleRules => ({
 
 interface State {
   github?: Github;
+  menuOpen: boolean;
 }
 
 const Stats = createDynamicImport(() =>
@@ -56,7 +65,8 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
       ? window.localStorage.githubToken
       : undefined;
     this.state = {
-      github: token ? this.createGithub(token) : undefined
+      github: token ? this.createGithub(token) : undefined,
+      menuOpen: false
     };
   }
 
@@ -102,22 +112,46 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
     return (
       <AppBar position="static">
         <Toolbar>
+          <IconButton
+            className={classes.menuButton}
+            color="inherit"
+            aria-label="Menu"
+            onClick={() => this.setState({ menuOpen: !this.state.menuOpen })}
+          >
+            <MenuIcon />
+            <Menu
+              open={this.state.menuOpen}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "left"
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "left"
+              }}
+            >
+              <MenuButton to="/stats" text="Stats" {...props} />
+              <MenuButton
+                to="/personal-stats"
+                text="Personal Stats"
+                {...props}
+              />
+              <MenuButton to="/org-stats" text="Org Stats" {...props} />
+              <MenuButton
+                to="/retrieve-release-notes"
+                text="Retrieve Release Notes"
+                {...props}
+              />
+              <MenuButton
+                to="/create-release-notes"
+                text="Create Release Notes"
+                {...props}
+              />
+            </Menu>
+          </IconButton>
           <Typography variant="title" color="inherit" className={classes.flex}>
             Github Stats & Releases
           </Typography>
-          <MenuButton to="/stats" text="Stats" {...props} />
-          <MenuButton to="/personal-stats" text="Personal Stats" {...props} />
-          <MenuButton to="/org-stats" text="Org Stats" {...props} />
-          <MenuButton
-            to="/retrieve-release-notes"
-            text="Retrieve Release Notes"
-            {...props}
-          />
-          <MenuButton
-            to="/create-release-notes"
-            text="Create Release Notes"
-            {...props}
-          />
           <GithubButton
             className={classes.menuButton}
             github={this.state.github}
