@@ -1,9 +1,14 @@
 import * as React from "react";
 import { Section } from "./section";
 import { OwnerDropdown } from "./owner_dropdown";
-import { FormControlLabel, Checkbox, Button, Grid } from "material-ui";
+import {
+  FormControlLabel,
+  Checkbox,
+  Button,
+  Grid,
+  FormControl
+} from "@material-ui/core";
 import { Github } from "../github";
-import FormControl from "material-ui/Form/FormControl";
 
 interface State {
   owner?: string;

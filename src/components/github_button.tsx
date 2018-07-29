@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as qs from "qs";
-import { Button } from "material-ui";
+import { Button } from "@material-ui/core";
 import * as uuid from "node-uuid";
 import { Github } from "../github";
 const netlify = require("netlify-auth-providers");

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button } from "material-ui";
+import { Button } from "@material-ui/core";
 
 export class CopyToClipboard extends React.Component<{ text: string }, {}> {
   private copyToClipboard() {

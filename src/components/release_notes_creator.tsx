@@ -9,7 +9,7 @@ import { DefaultGrid } from "./default_grid";
 import { TriggeredAsyncSwitchFromLoadType } from "./triggered_async_switch";
 import { TagRangeSelector } from "./tag_range_selector";
 import { ReleaseNote } from "./release_note";
-import { LinearProgress } from "material-ui";
+import { LinearProgress } from "@material-ui/core";
 
 function PullRequests(props: {
   pullRequests: PullRequest[];

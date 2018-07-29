@@ -1,7 +1,7 @@
 import * as React from "react";
 import { CopyToClipboard } from "../../src/components/copy_to_clipboard";
 import { shallow, ShallowWrapper } from "enzyme";
-import { Button } from "material-ui";
+import { Button } from "@material-ui/core";
 
 describe("CopyToClipboard", function() {
   let wrapper: ShallowWrapper<any, any>;

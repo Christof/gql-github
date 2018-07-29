@@ -1,7 +1,7 @@
 import * as React from "react";
 import { MenuButton } from "../../src/components/menu_button";
 import { shallow } from "enzyme";
-import { Button } from "material-ui";
+import { Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
 
 describe("MenuButton", function() {

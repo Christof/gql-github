@@ -5,7 +5,7 @@ import { waitImmediate } from "../helper";
 import { MemoryRouter, Route } from "react-router";
 import * as ReactRouterDom from "react-router-dom";
 import { GithubCallback } from "../../src/components/github_callback";
-import { AppBar, Typography } from "material-ui";
+import { AppBar, Typography } from "@material-ui/core";
 import { MenuButton } from "../../src/components/menu_button";
 import { GithubButton } from "../../src/components/github_button";
 

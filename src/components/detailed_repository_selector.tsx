@@ -8,9 +8,9 @@ import {
   Checkbox,
   FormLabel,
   Button,
-  LinearProgress
-} from "material-ui";
-import FormControl from "material-ui/Form/FormControl";
+  LinearProgress,
+  FormControl
+} from "@material-ui/core";
 
 export type RepositoriesPerOwner = Map<string, string[]>;
 

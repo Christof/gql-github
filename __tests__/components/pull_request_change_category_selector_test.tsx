@@ -2,7 +2,7 @@ import * as React from "react";
 import { PullRequestChangeCategorySelector } from "../../src/components/pull_request_change_category_selector";
 import { shallow } from "enzyme";
 import { PullRequest, ChangeCategory } from "../../src/pull_request";
-import { Typography } from "material-ui";
+import { Typography } from "@material-ui/core";
 import { Dropdown } from "../../src/components/dropdown";
 
 describe("PullRequestChangeCategorySelector", function() {

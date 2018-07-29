@@ -4,7 +4,7 @@ import {
   LoadData
 } from "../../src/components/repositories_by_owner_selector";
 import { shallow, ShallowWrapper } from "enzyme";
-import { Button, FormControlLabel } from "material-ui";
+import { Button, FormControlLabel } from "@material-ui/core";
 import { OwnerDropdown } from "../../src/components/owner_dropdown";
 
 describe("RepositoriesByOwnerSelector", function() {

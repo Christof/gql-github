@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Markdown } from "./markdown";
 import { Github } from "../github";
-import { Button } from "material-ui";
+import { Button } from "@material-ui/core";
 import { withSnackbar } from "./snackbar";
 import { CopyToClipboard } from "./copy_to_clipboard";
 

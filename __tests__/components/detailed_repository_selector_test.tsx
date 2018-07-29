@@ -6,7 +6,7 @@ import {
 import { shallow, mount, ShallowWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
 import { Github } from "../../src/github";
-import { LinearProgress, FormControlLabel, Button } from "material-ui";
+import { LinearProgress, FormControlLabel, Button } from "@material-ui/core";
 
 jest.mock("../../src/github");
 

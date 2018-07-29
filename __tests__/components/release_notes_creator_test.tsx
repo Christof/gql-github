@@ -6,7 +6,7 @@ import { Github } from "../../src/github";
 import { PullRequest, ChangeCategory } from "../../src/pull_request";
 import { Section } from "../../src/components/section";
 import { RepositorySelector } from "../../src/components/repository_selector";
-import { Button, Snackbar, Slide } from "material-ui";
+import { Button, Snackbar, Slide } from "@material-ui/core";
 import { Dropdown } from "../../src/components/dropdown";
 import { PullRequestChangeCategorySelector } from "../../src/components/pull_request_change_category_selector";
 import { Markdown } from "../../src/components/markdown";

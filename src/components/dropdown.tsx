@@ -1,8 +1,6 @@
 import * as React from "react";
-import Select from "material-ui/Select";
-import { MenuItem } from "material-ui/Menu";
-import FormControl from "material-ui/Form/FormControl";
-import { InputLabel } from "material-ui";
+import Select from "@material-ui/core/Select";
+import { InputLabel, MenuItem, FormControl } from "@material-ui/core";
 import { equals } from "ramda";
 
 export interface Props {
