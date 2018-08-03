@@ -30,6 +30,7 @@
   "author": "Christof Sirk",
   "license": "MIT",
   "devDependencies": {
+    "@types/classnames": "^2.2.6",
     "@types/commander": "^2.11.0",
     "@types/enzyme": "^3.1.9",
     "@types/jest": "^23.3.0",
@@ -72,6 +73,7 @@
     "apollo-link": "^1.2.2",
     "apollo-link-context": "^1.0.8",
     "apollo-link-http": "^1.5.4",
+    "classnames": "^2.2.6",
     "commander": "^2.15.1",
     "express": "^4.16.3",
     "graphql": "^0.13.2",
