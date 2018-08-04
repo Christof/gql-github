@@ -12,7 +12,6 @@ import {
   Toolbar,
   CssBaseline,
   IconButton,
-  Menu,
   Drawer,
   Divider
 } from "@material-ui/core";
@@ -28,22 +27,9 @@ import { persistCache } from "apollo-cache-persist";
 import { createDynamicImport } from "./dynamic_import";
 import { GraphQLFacade } from "../graphql_facade";
 
-const styles = (_theme: Theme): StyleRules => ({
-  root: {
-    width: "100%"
-  },
-  flex: {
-    flex: 1
-  },
-  menuButton: {
-    marginLeft: -12,
-    marginRight: 20
-  }
-});
-
 interface State {
   github?: Github;
-  menuOpen: boolean;
+  open: boolean;
 }
 
 const Stats = createDynamicImport(() =>
@@ -58,12 +44,15 @@ const OrgStats = createDynamicImport(() =>
 
 const drawerWidth = 240;
 
-const drawerStyles = (theme: Theme) => ({
+const drawerStyles = (theme: Theme): StyleRules => ({
   root: {
+    width: "100%",
     flexGrow: 1
   },
+  flex: {
+    flex: 1
+  },
   appFrame: {
-    height: 430,
     zIndex: 1,
     overflow: "hidden",
     position: "relative",
@@ -137,106 +126,6 @@ const drawerStyles = (theme: Theme) => ({
   }
 });
 
-export class CustomDrawer extends React.Component<
-  { classes: any; theme: Theme },
-  { open: boolean }
-> {
-  state = {
-    open: false
-  };
-
-  handleDrawerOpen = () => {
-    this.setState({ open: true });
-  };
-
-  handleDrawerClose = () => {
-    this.setState({ open: false });
-  };
-
-  render() {
-    const { classes } = this.props;
-    const props = Object.assign(
-      {
-        disabled: false, //this.state.github === undefined,
-        className: classes.menuButton
-      },
-      this.props
-    );
-    const drawer = (
-      <Drawer
-        variant="persistent"
-        anchor="left"
-        open={this.state.open}
-        classes={{
-          paper: classes.drawerPaper
-        }}
-      >
-        <div className={classes.drawerHeader}>
-          <IconButton onClick={this.handleDrawerClose}>
-            <ChevronLeft />
-          </IconButton>
-        </div>
-        <Divider />
-        <MenuButton to="/stats" text="Stats" {...props} />
-        <MenuButton to="/personal-stats" text="Personal Stats" {...props} />
-        <MenuButton to="/org-stats" text="Org Stats" {...props} />
-        <Divider />
-        <MenuButton
-          to="/retrieve-release-notes"
-          text="Retrieve Release Notes"
-          {...props}
-        />
-        <MenuButton
-          to="/create-release-notes"
-          text="Create Release Notes"
-          {...props}
-        />
-      </Drawer>
-    );
-
-    return (
-      <div className={classes.root}>
-        <div className={classes.appFrame}>
-          <AppBar
-            className={classNames(classes.appBar, {
-              [classes.appBarShift]: open,
-              [classes[`appBarShift-left`]]: open
-            })}
-          >
-            <Toolbar disableGutters={!open}>
-              <IconButton
-                color="inherit"
-                aria-label="Open drawer"
-                onClick={this.handleDrawerOpen}
-                className={classNames(classes.menuButton, open && classes.hide)}
-              >
-                <MenuIcon />
-              </IconButton>
-              <Typography variant="title" color="inherit" noWrap>
-                Persistent drawer
-              </Typography>
-            </Toolbar>
-          </AppBar>
-          {drawer}
-          <main
-            className={classNames(classes.content, classes[`content-left`], {
-              [classes.contentShift]: open,
-              [classes[`contentShift-left`]]: open
-            })}
-          >
-            <div className={classes.drawerHeader} />
-            <Typography>
-              {"You think water moves fast? You should see ice."}
-            </Typography>
-          </main>
-        </div>
-      </div>
-    );
-  }
-}
-
-const StyledDrawer = withStyles(styles, { withTheme: true })(CustomDrawer);
-
 interface Props {
   fetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>;
 }
@@ -250,7 +139,7 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
       : undefined;
     this.state = {
       github: token ? this.createGithub(token) : undefined,
-      menuOpen: false
+      open: true
     };
   }
 
@@ -287,62 +176,88 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
     return new Github(token, new GraphQLFacade(client), this.props.fetch);
   }
 
+  handleDrawerOpen = () => {
+    this.setState({ open: true });
+  };
+
+  handleDrawerClose = () => {
+    this.setState({ open: false });
+  };
+
   renderAppBar() {
     const { classes } = this.props;
     const props = {
       disabled: this.state.github === undefined,
       className: classes.menuButton
     };
-    return (
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="Menu"
-            onClick={() => this.setState({ menuOpen: !this.state.menuOpen })}
-          >
-            <MenuIcon />
-            <Menu
-              open={this.state.menuOpen}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "left"
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left"
-              }}
-            >
-              <MenuButton to="/stats" text="Stats" {...props} />
-              <MenuButton
-                to="/personal-stats"
-                text="Personal Stats"
-                {...props}
-              />
-              <MenuButton to="/org-stats" text="Org Stats" {...props} />
-              <MenuButton
-                to="/retrieve-release-notes"
-                text="Retrieve Release Notes"
-                {...props}
-              />
-              <MenuButton
-                to="/create-release-notes"
-                text="Create Release Notes"
-                {...props}
-              />
-            </Menu>
+    const drawer = (
+      <Drawer
+        variant="persistent"
+        anchor="left"
+        open={this.state.open}
+        classes={{
+          paper: classes.drawerPaper
+        }}
+      >
+        <div className={classes.drawerHeader}>
+          <IconButton onClick={this.handleDrawerClose}>
+            <ChevronLeft />
           </IconButton>
-          <Typography variant="title" color="inherit" className={classes.flex}>
-            Github Stats & Releases
-          </Typography>
-          <GithubButton
-            className={classes.menuButton}
-            github={this.state.github}
-            onChangeToken={token => this.onChangeToken(token)}
-          />
-        </Toolbar>
-      </AppBar>
+        </div>
+        <Divider />
+        <MenuButton to="/stats" text="Stats" {...props} />
+        <MenuButton to="/personal-stats" text="Personal Stats" {...props} />
+        <MenuButton to="/org-stats" text="Org Stats" {...props} />
+        <Divider />
+        <MenuButton
+          to="/retrieve-release-notes"
+          text="Retrieve Release Notes"
+          {...props}
+        />
+        <MenuButton
+          to="/create-release-notes"
+          text="Create Release Notes"
+          {...props}
+        />
+      </Drawer>
+    );
+
+    return (
+      <>
+        <AppBar
+          className={classNames(classes.appBar, {
+            [classes.appBarShift]: this.state.open,
+            [classes[`appBarShift-left`]]: this.state.open
+          })}
+        >
+          <Toolbar disableGutters={!this.state.open}>
+            <IconButton
+              color="inherit"
+              aria-label="Open drawer"
+              onClick={this.handleDrawerOpen}
+              className={classNames(
+                classes.menuButton,
+                this.state.open && classes.hide
+              )}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography
+              variant="title"
+              color="inherit"
+              className={classes.flex}
+            >
+              Github Stats & Releases
+            </Typography>
+            <GithubButton
+              className={classes.menuButton}
+              github={this.state.github}
+              onChangeToken={token => this.onChangeToken(token)}
+            />
+          </Toolbar>
+        </AppBar>
+        {drawer}
+      </>
     );
   }
 
@@ -376,24 +291,32 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
   }
 
   renderContent() {
+    const { classes } = this.props;
     return (
-      <div id="content" style={{ margin: 16 }}>
-        <Route
-          path="/auth-callback"
-          render={props => (
-            <GithubCallback
-              {...props}
-              onChangeToken={token => this.onChangeToken(token)}
-              fetch={this.props.fetch}
-            />
-          )}
-        />
-        {this.renderRoute("/stats", Stats)}
-        {this.renderRoute("/personal-stats", PersonalStats)}
-        {this.renderRoute("/org-stats", OrgStats)}
-        {this.renderRoute("/retrieve-release-notes", ReleaseNotesRetriever)}
-        {this.renderRoute("/create-release-notes", ReleaseNotesCreator)}
-      </div>
+      <main
+        className={classNames(classes.content, classes[`content-left`], {
+          [classes.contentShift]: this.state.open,
+          [classes[`contentShift-left`]]: this.state.open
+        })}
+      >
+        <div id="content" style={{ margin: 16 }}>
+          <Route
+            path="/auth-callback"
+            render={props => (
+              <GithubCallback
+                {...props}
+                onChangeToken={token => this.onChangeToken(token)}
+                fetch={this.props.fetch}
+              />
+            )}
+          />
+          {this.renderRoute("/stats", Stats)}
+          {this.renderRoute("/personal-stats", PersonalStats)}
+          {this.renderRoute("/org-stats", OrgStats)}
+          {this.renderRoute("/retrieve-release-notes", ReleaseNotesRetriever)}
+          {this.renderRoute("/create-release-notes", ReleaseNotesCreator)}
+        </div>
+      </main>
     );
   }
 
@@ -402,15 +325,16 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
       <>
         <CssBaseline />
         <BrowserRouter>
-          <>
-            {this.renderAppBar()}
-            <StyledDrawer {...this.props as any} />
-            {this.renderContent()}
-          </>
+          <div className={this.props.classes.root}>
+            <div className={this.props.classes.appFrame}>
+              {this.renderAppBar()}
+              {this.renderContent()}
+            </div>
+          </div>
         </BrowserRouter>
       </>
     );
   }
 }
 
-export const App = withStyles(styles)<Props>(RawApp);
+export const App = withStyles(drawerStyles)<Props>(RawApp);
