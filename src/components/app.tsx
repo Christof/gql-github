@@ -104,7 +104,8 @@ const drawerStyles = (theme: Theme): StyleRules => ({
     transition: theme.transitions.create("margin", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
-    })
+    }),
+    marginTop: 62
   },
   "content-left": {
     marginLeft: -drawerWidth
@@ -139,7 +140,7 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
       : undefined;
     this.state = {
       github: token ? this.createGithub(token) : undefined,
-      open: true
+      open: false
     };
   }
 
@@ -225,6 +226,7 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
     return (
       <>
         <AppBar
+          position="absolute"
           className={classNames(classes.appBar, {
             [classes.appBarShift]: this.state.open,
             [classes[`appBarShift-left`]]: this.state.open
@@ -299,7 +301,7 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
           [classes[`contentShift-left`]]: this.state.open
         })}
       >
-        <div id="content" style={{ margin: 16 }}>
+        <div id="content">
           <Route
             path="/auth-callback"
             render={props => (
