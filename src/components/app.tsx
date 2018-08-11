@@ -66,7 +66,9 @@ const drawerStyles = (theme: Theme): StyleRules => ({
       duration: theme.transitions.duration.leavingScreen
     })
   },
-  menuButton: {},
+  menuButton: {
+    marginRight: "14px"
+  },
   hide: {
     display: "none"
   },
@@ -161,8 +163,7 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
   renderAppBar() {
     const { classes } = this.props;
     const props = {
-      disabled: this.state.github === undefined,
-      className: classes.menuButton
+      disabled: this.state.github === undefined
     };
     const drawer = (
       <Drawer
@@ -214,10 +215,7 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
               color="inherit"
               aria-label="Open drawer"
               onClick={this.handleDrawerOpen}
-              className={classNames(
-                classes.menuButton,
-                this.state.open && classes.hide
-              )}
+              className={classNames(this.state.open && classes.hide)}
             >
               <MenuIcon />
             </IconButton>

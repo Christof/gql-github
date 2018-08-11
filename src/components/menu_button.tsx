@@ -6,7 +6,7 @@ interface Props {
   text: string;
   to: string;
   disabled: boolean;
-  className: string;
+  className?: string;
 }
 
 export class MenuButton extends React.Component<Props, {}> {
