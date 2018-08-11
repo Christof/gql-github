@@ -85,6 +85,9 @@ const drawerStyles = (theme: Theme): StyleRules => ({
     width: "100%",
     justifyContent: "flex-end"
   },
+  subheading: {
+    padding: "8px"
+  },
   content: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
@@ -180,20 +183,26 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
           </div>
         </div>
         <Divider />
-        <MenuButton to="/stats" text="Stats" {...props} />
-        <MenuButton to="/personal-stats" text="Personal Stats" {...props} />
-        <MenuButton to="/org-stats" text="Org Stats" {...props} />
+        <Typography
+          variant="subheading"
+          color="primary"
+          className={classes.subheading}
+        >
+          Statistics
+        </Typography>
+        <MenuButton to="/stats" text="Repository" {...props} />
+        <MenuButton to="/personal-stats" text="Personal" {...props} />
+        <MenuButton to="/org-stats" text="Organization" {...props} />
         <Divider />
-        <MenuButton
-          to="/retrieve-release-notes"
-          text="Retrieve Release Notes"
-          {...props}
-        />
-        <MenuButton
-          to="/create-release-notes"
-          text="Create Release Notes"
-          {...props}
-        />
+        <Typography
+          variant="subheading"
+          color="primary"
+          className={classes.subheading}
+        >
+          Release Notes
+        </Typography>
+        <MenuButton to="/retrieve-release-notes" text="Retrieve" {...props} />
+        <MenuButton to="/create-release-notes" text="Create" {...props} />
       </Drawer>
     );
 
