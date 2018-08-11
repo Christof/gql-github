@@ -162,6 +162,7 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
         variant="temporary"
         anchor="left"
         open={this.state.open}
+        onClose={this.handleDrawerClose}
         classes={{
           paper: classes.drawerPaper
         }}
