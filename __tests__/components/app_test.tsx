@@ -178,7 +178,9 @@ describe("App", function() {
   [
     { component: "Stats", route: "/stats" },
     { component: "PersonalStats", route: "/personal-stats" },
-    { component: "OrgStats", route: "/org-stats" }
+    { component: "OrgStats", route: "/org-stats" },
+    { component: "ReleaseNotesRetriever", route: "/retrieve-release-notes" },
+    { component: "ReleaseNotesCreator", route: "/create-release-notes" }
   ].forEach(entry => {
     describe(entry.component, function() {
       it(`shows a MenuButton to route ${entry.route}`, async function() {
