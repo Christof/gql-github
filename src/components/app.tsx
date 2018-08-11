@@ -77,9 +77,13 @@ const drawerStyles = (theme: Theme): StyleRules => ({
   drawerHeader: {
     display: "flex",
     alignItems: "center",
-    justifyContent: "flex-end",
     padding: "0 8px",
     ...theme.mixins.toolbar
+  },
+  drawerCloseIcon: {
+    display: "flex",
+    width: "100%",
+    justifyContent: "flex-end"
   },
   content: {
     flexGrow: 1,
@@ -168,9 +172,12 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
         }}
       >
         <div className={classes.drawerHeader}>
-          <IconButton onClick={this.handleDrawerClose}>
-            <ChevronLeft />
-          </IconButton>
+          <Typography>Menu</Typography>
+          <div className={classes.drawerCloseIcon}>
+            <IconButton onClick={this.handleDrawerClose}>
+              <ChevronLeft />
+            </IconButton>
+          </div>
         </div>
         <Divider />
         <MenuButton to="/stats" text="Stats" {...props} />
