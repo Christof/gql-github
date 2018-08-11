@@ -163,7 +163,8 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
   renderAppBar() {
     const { classes } = this.props;
     const props = {
-      disabled: this.state.github === undefined
+      disabled: this.state.github === undefined,
+      onClick: () => this.handleDrawerClose()
     };
     const drawer = (
       <Drawer

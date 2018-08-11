@@ -7,6 +7,7 @@ interface Props {
   to: string;
   disabled: boolean;
   className?: string;
+  onClick?: (event: React.MouseEvent<HTMLElement>) => void;
 }
 
 export class MenuButton extends React.Component<Props, {}> {
