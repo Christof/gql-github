@@ -32,7 +32,7 @@ describe("MenuButton", function() {
 
   it("creates a Link component", function() {
     const wrapper = shallow(button);
-    expect(wrapper.prop("component")()).toEqual(<Link to="/route1" />);
+    expect(wrapper.prop("component")).toEqual(Link);
   });
 
   it("passes disabled along to Button", function() {
