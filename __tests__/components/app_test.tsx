@@ -193,16 +193,23 @@ describe("App", function() {
 
         menuButton.prop("onClick")();
         await waitImmediate();
-
         wrapper = wrapper.update();
 
-        const drawer = wrapper.find(Drawer);
+        let drawer = wrapper.find(Drawer);
         expect(drawer).toHaveLength(1);
+        expect(drawer.prop("open")).toEqual(true);
 
         const button = drawer
           .find(MenuButton)
           .filterWhere(b => b.prop("to") === entry.route);
         expect(button).toHaveLength(1);
+
+        button.prop("onClick")(undefined);
+        await waitImmediate();
+        wrapper = wrapper.update();
+
+        drawer = wrapper.find(Drawer);
+        expect(drawer.prop("open")).toEqual(false);
       });
 
       describe("with faked BrowserRouter", function() {
