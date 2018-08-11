@@ -66,23 +66,7 @@ const drawerStyles = (theme: Theme): StyleRules => ({
       duration: theme.transitions.duration.leavingScreen
     })
   },
-  appBarShift: {
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(["margin", "width"], {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen
-    })
-  },
-  "appBarShift-left": {
-    marginLeft: drawerWidth
-  },
-  "appBarShift-right": {
-    marginRight: drawerWidth
-  },
-  menuButton: {
-    marginLeft: 12,
-    marginRight: 20
-  },
+  menuButton: {},
   hide: {
     display: "none"
   },
@@ -106,24 +90,6 @@ const drawerStyles = (theme: Theme): StyleRules => ({
       duration: theme.transitions.duration.leavingScreen
     }),
     marginTop: 62
-  },
-  "content-left": {
-    marginLeft: -drawerWidth
-  },
-  "content-right": {
-    marginRight: -drawerWidth
-  },
-  contentShift: {
-    transition: theme.transitions.create("margin", {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen
-    })
-  },
-  "contentShift-left": {
-    marginLeft: 0
-  },
-  "contentShift-right": {
-    marginRight: 0
   }
 });
 
@@ -193,7 +159,7 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
     };
     const drawer = (
       <Drawer
-        variant="persistent"
+        variant="temporary"
         anchor="left"
         open={this.state.open}
         classes={{
@@ -225,13 +191,7 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
 
     return (
       <>
-        <AppBar
-          position="absolute"
-          className={classNames(classes.appBar, {
-            [classes.appBarShift]: this.state.open,
-            [classes[`appBarShift-left`]]: this.state.open
-          })}
-        >
+        <AppBar position="absolute" className={classNames(classes.appBar)}>
           <Toolbar disableGutters={!this.state.open}>
             <IconButton
               color="inherit"
