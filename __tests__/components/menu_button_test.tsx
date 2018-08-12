@@ -11,18 +11,19 @@ describe("MenuButton", function() {
       to="/route1"
       disabled={false}
       className="some-class"
+      activeClassName="active-class"
     />
   );
 
-  it("renders a Button with primary color if not active", function() {
+  it("renders a Button with given className if not active", function() {
     const wrapper = shallow(button);
-    expect(wrapper.prop("color")).toEqual("primary");
+    expect(wrapper.prop("className")).toEqual("some-class");
   });
 
-  it("renders a Button with secondary color if active", function() {
+  it("renders a Button with given className and activeClassName if active", function() {
     history.pushState({}, "route 1", "/route1");
     const wrapper = shallow(button);
-    expect(wrapper.prop("color")).toEqual("secondary");
+    expect(wrapper.prop("className")).toEqual("some-class active-class");
   });
 
   it("passes text along as children", function() {
@@ -38,10 +39,5 @@ describe("MenuButton", function() {
   it("passes disabled along to Button", function() {
     const wrapper = shallow(button);
     expect(wrapper.prop("disabled")).toEqual(false);
-  });
-
-  it("passes className along to Button", function() {
-    const wrapper = shallow(button);
-    expect(wrapper.prop("className")).toEqual("some-class");
   });
 });
