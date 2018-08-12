@@ -1,6 +1,8 @@
 import * as React from "react";
 import * as qs from "qs";
 import { RouteComponentProps } from "react-router";
+import { DefaultGrid } from "./default_grid";
+import { Section } from "./section";
 
 interface Props extends RouteComponentProps<{}> {
   onChangeToken: (token: string) => void;
@@ -41,6 +43,12 @@ export class GithubCallback extends React.Component<Props, {}> {
   }
 
   render() {
-    return <div>Loading</div>;
+    return (
+      <DefaultGrid>
+        <Section heading="Loading">
+          <p>Waiting for credentials</p>
+        </Section>
+      </DefaultGrid>
+    );
   }
 }
