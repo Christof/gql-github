@@ -97,10 +97,6 @@ const drawerStyles = (theme: Theme): StyleRules => ({
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
     padding: theme.spacing.unit * 3,
-    transition: theme.transitions.create("margin", {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen
-    }),
     marginTop: 62
   }
 });
