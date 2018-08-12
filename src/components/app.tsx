@@ -44,7 +44,7 @@ const OrgStats = createDynamicImport(() =>
 
 const drawerWidth = 240;
 
-const drawerStyles = (theme: Theme): StyleRules => ({
+const styles = (theme: Theme): StyleRules => ({
   root: {
     width: "100%",
     flexGrow: 1
@@ -313,4 +313,4 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
   }
 }
 
-export const App = withStyles(drawerStyles)<Props>(RawApp);
+export const App = withStyles(styles)<Props>(RawApp);
