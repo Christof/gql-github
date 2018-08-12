@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Section } from "../../src/components/section";
 import { shallow } from "enzyme";
-import { Paper, Typography } from "material-ui";
+import { Paper, Typography } from "@material-ui/core";
 
 describe("Section", function() {
   it("renders the Paper components", function() {

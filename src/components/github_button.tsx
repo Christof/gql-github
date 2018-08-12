@@ -1,12 +1,12 @@
 import * as React from "react";
 import * as qs from "qs";
-import { Button } from "material-ui";
+import { Button } from "@material-ui/core";
 import * as uuid from "node-uuid";
 import { Github } from "../github";
 const netlify = require("netlify-auth-providers");
 
 interface Props {
-  className: string;
+  className?: string;
   onChangeToken: (token: string) => void;
   github?: Github;
   authenticator?: any; // just for testing
@@ -21,7 +21,8 @@ export class GithubButton extends React.Component<Props, State> {
     authenticator: new netlify.default({})
   };
 
-  readonly githubMarkUrl = "https://cdnjs.cloudflare.com/ajax/libs/octicons/4.4.0/svg/mark-github.svg";
+  readonly githubMarkUrl =
+    "https://cdnjs.cloudflare.com/ajax/libs/octicons/4.4.0/svg/mark-github.svg";
   readonly scope = "repo,user,read:org";
 
   constructor(props: Props) {

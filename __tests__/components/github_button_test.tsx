@@ -3,7 +3,7 @@ import { GithubButton } from "../../src/components/github_button";
 import { Github } from "../../src/github";
 import { shallow } from "enzyme";
 import { waitImmediate } from "../helper";
-import { Button } from "material-ui";
+import { Button } from "@material-ui/core";
 
 declare const jsdom: any;
 

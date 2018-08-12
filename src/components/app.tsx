@@ -1,13 +1,23 @@
 import * as React from "react";
+import classNames from "classnames";
 import { BrowserRouter, Route } from "react-router-dom";
 import { MenuButton } from "./menu_button";
 import { GithubButton } from "./github_button";
 import { GithubCallback } from "./github_callback";
 import { ReleaseNotesRetriever } from "./release_notes_retriever";
 import { ReleaseNotesCreator } from "./release_notes_creator";
-import { AppBar, Typography, Toolbar, CssBaseline } from "material-ui";
-import { withStyles, Theme, StyleRules } from "material-ui/styles";
-import { WithStyles } from "material-ui/styles/withStyles";
+import {
+  AppBar,
+  Typography,
+  Toolbar,
+  CssBaseline,
+  IconButton,
+  Drawer,
+  Divider
+} from "@material-ui/core";
+import { withStyles, Theme, StyleRules } from "@material-ui/core/styles";
+import { WithStyles } from "@material-ui/core/styles/withStyles";
+import { Menu as MenuIcon, ChevronLeft } from "@material-ui/icons";
 import { Github } from "../github";
 import { createHttpLink } from "apollo-link-http";
 import { setContext } from "apollo-link-context";
@@ -17,21 +27,9 @@ import { persistCache } from "apollo-cache-persist";
 import { createDynamicImport } from "./dynamic_import";
 import { GraphQLFacade } from "../graphql_facade";
 
-const styles = (_theme: Theme): StyleRules => ({
-  root: {
-    width: "100%"
-  },
-  flex: {
-    flex: 1
-  },
-  menuButton: {
-    marginLeft: -12,
-    marginRight: 20
-  }
-});
-
 interface State {
   github?: Github;
+  open: boolean;
 }
 
 const Stats = createDynamicImport(() =>
@@ -43,6 +41,65 @@ const PersonalStats = createDynamicImport(() =>
 const OrgStats = createDynamicImport(() =>
   import("./org_stats").then(module => module.OrgStats)
 );
+
+const drawerWidth = 240;
+
+const styles = (theme: Theme): StyleRules => ({
+  root: {
+    width: "100%",
+    flexGrow: 1
+  },
+  flex: {
+    flex: 1
+  },
+  appFrame: {
+    zIndex: 1,
+    overflow: "hidden",
+    position: "relative",
+    display: "flex",
+    width: "100%"
+  },
+  appBar: {
+    position: "absolute",
+    transition: theme.transitions.create(["margin", "width"], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen
+    })
+  },
+  appBarOpenDrawer: {
+    width: `calc(100% - ${drawerWidth}px)`
+  },
+  menuItemActive: {
+    backgroundColor: theme.palette.action.selected
+  },
+  hide: {
+    display: "none"
+  },
+  drawerPaper: {
+    position: "relative",
+    width: drawerWidth
+  },
+  drawerHeader: {
+    display: "flex",
+    alignItems: "center",
+    padding: theme.spacing.unit,
+    ...theme.mixins.toolbar
+  },
+  drawerCloseIcon: {
+    display: "flex",
+    width: "100%",
+    justifyContent: "flex-end"
+  },
+  subheading: {
+    padding: theme.spacing.unit
+  },
+  content: {
+    flexGrow: 1,
+    backgroundColor: theme.palette.background.default,
+    padding: theme.spacing.unit * 3,
+    marginTop: 62
+  }
+});
 
 interface Props {
   fetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>;
@@ -56,7 +113,8 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
       ? window.localStorage.githubToken
       : undefined;
     this.state = {
-      github: token ? this.createGithub(token) : undefined
+      github: token ? this.createGithub(token) : undefined,
+      open: false
     };
   }
 
@@ -93,38 +151,95 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
     return new Github(token, new GraphQLFacade(client), this.props.fetch);
   }
 
+  handleDrawerOpen = () => {
+    this.setState({ open: true });
+  };
+
+  handleDrawerClose = () => {
+    this.setState({ open: false });
+  };
+
   renderAppBar() {
     const { classes } = this.props;
     const props = {
       disabled: this.state.github === undefined,
-      className: classes.menuButton
+      onClick: () => this.handleDrawerClose(),
+      activeClassName: classes.menuItemActive
     };
+    const drawer = (
+      <Drawer
+        variant="temporary"
+        anchor="left"
+        open={this.state.open}
+        onClose={this.handleDrawerClose}
+        classes={{
+          paper: classes.drawerPaper
+        }}
+      >
+        <div className={classes.drawerHeader}>
+          <Typography>Menu</Typography>
+          <div className={classes.drawerCloseIcon}>
+            <IconButton onClick={this.handleDrawerClose}>
+              <ChevronLeft />
+            </IconButton>
+          </div>
+        </div>
+        <Divider />
+        <Typography
+          variant="subheading"
+          color="primary"
+          className={classes.subheading}
+        >
+          Statistics
+        </Typography>
+        <MenuButton to="/stats" text="Repository" {...props} />
+        <MenuButton to="/personal-stats" text="Personal" {...props} />
+        <MenuButton to="/org-stats" text="Organization" {...props} />
+        <Divider />
+        <Typography
+          variant="subheading"
+          color="primary"
+          className={classes.subheading}
+        >
+          Release Notes
+        </Typography>
+        <MenuButton to="/retrieve-release-notes" text="Retrieve" {...props} />
+        <MenuButton to="/create-release-notes" text="Create" {...props} />
+      </Drawer>
+    );
+
     return (
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="title" color="inherit" className={classes.flex}>
-            Github Stats & Releases
-          </Typography>
-          <MenuButton to="/stats" text="Stats" {...props} />
-          <MenuButton to="/personal-stats" text="Personal Stats" {...props} />
-          <MenuButton to="/org-stats" text="Org Stats" {...props} />
-          <MenuButton
-            to="/retrieve-release-notes"
-            text="Retrieve Release Notes"
-            {...props}
-          />
-          <MenuButton
-            to="/create-release-notes"
-            text="Create Release Notes"
-            {...props}
-          />
-          <GithubButton
-            className={classes.menuButton}
-            github={this.state.github}
-            onChangeToken={token => this.onChangeToken(token)}
-          />
-        </Toolbar>
-      </AppBar>
+      <>
+        <AppBar
+          position="absolute"
+          className={classNames(
+            classes.appBar,
+            this.state.open && classes.appBarOpenDrawer
+          )}
+        >
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="Open drawer"
+              onClick={this.handleDrawerOpen}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography
+              variant="title"
+              color="inherit"
+              className={classes.flex}
+            >
+              Github Stats & Releases
+            </Typography>
+            <GithubButton
+              github={this.state.github}
+              onChangeToken={token => this.onChangeToken(token)}
+            />
+          </Toolbar>
+        </AppBar>
+        {drawer}
+      </>
     );
   }
 
@@ -159,23 +274,25 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
 
   renderContent() {
     return (
-      <div id="content" style={{ margin: 16 }}>
-        <Route
-          path="/auth-callback"
-          render={props => (
-            <GithubCallback
-              {...props}
-              onChangeToken={token => this.onChangeToken(token)}
-              fetch={this.props.fetch}
-            />
-          )}
-        />
-        {this.renderRoute("/stats", Stats)}
-        {this.renderRoute("/personal-stats", PersonalStats)}
-        {this.renderRoute("/org-stats", OrgStats)}
-        {this.renderRoute("/retrieve-release-notes", ReleaseNotesRetriever)}
-        {this.renderRoute("/create-release-notes", ReleaseNotesCreator)}
-      </div>
+      <main className={classNames(this.props.classes.content)}>
+        <div id="content">
+          <Route
+            path="/auth-callback"
+            render={props => (
+              <GithubCallback
+                {...props}
+                onChangeToken={token => this.onChangeToken(token)}
+                fetch={this.props.fetch}
+              />
+            )}
+          />
+          {this.renderRoute("/stats", Stats)}
+          {this.renderRoute("/personal-stats", PersonalStats)}
+          {this.renderRoute("/org-stats", OrgStats)}
+          {this.renderRoute("/retrieve-release-notes", ReleaseNotesRetriever)}
+          {this.renderRoute("/create-release-notes", ReleaseNotesCreator)}
+        </div>
+      </main>
     );
   }
 
@@ -184,10 +301,12 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
       <>
         <CssBaseline />
         <BrowserRouter>
-          <>
-            {this.renderAppBar()}
-            {this.renderContent()}
-          </>
+          <div className={this.props.classes.root}>
+            <div className={this.props.classes.appFrame}>
+              {this.renderAppBar()}
+              {this.renderContent()}
+            </div>
+          </div>
         </BrowserRouter>
       </>
     );

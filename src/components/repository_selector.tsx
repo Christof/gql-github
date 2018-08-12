@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Typography } from "material-ui";
+import { Typography } from "@material-ui/core";
 import { Dropdown } from "./dropdown";
 import { OwnerDropdown } from "./owner_dropdown";
 import { Section } from "./section";

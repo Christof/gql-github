@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Typography } from "material-ui";
+import { Typography } from "@material-ui/core";
 import { OverallPlot } from "./overall_plot";
 import { OverTimePlot } from "./over_time_plot";
 import { ScatterData } from "plotly.js";

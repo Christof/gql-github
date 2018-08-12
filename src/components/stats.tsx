@@ -8,7 +8,7 @@ import {
   Unpromisify
 } from "./triggered_async_switch";
 import { StatsPlots } from "./stats_plots";
-import { LinearProgress } from "material-ui";
+import { LinearProgress } from "@material-ui/core";
 
 async function loadData(
   github: Github,

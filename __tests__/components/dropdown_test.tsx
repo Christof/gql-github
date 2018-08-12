@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Dropdown } from "../../src/components/dropdown";
 import { shallow } from "enzyme";
-import { Grid, InputLabel, Select, MenuItem } from "material-ui";
+import { Grid, InputLabel, Select, MenuItem } from "@material-ui/core";
 
 describe("Dropdown", function() {
   describe("with label", function() {

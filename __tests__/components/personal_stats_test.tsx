@@ -5,7 +5,7 @@ import { waitImmediate } from "../helper";
 import { Github, GithubData } from "../../src/github";
 import { Section } from "../../src/components/section";
 import { DetailedRepositorySelector } from "../../src/components/detailed_repository_selector";
-import { LinearProgress } from "material-ui";
+import { LinearProgress } from "@material-ui/core";
 import { OverallPlot } from "../../src/components/overall_plot";
 import { OverTimePlot } from "../../src/components/over_time_plot";
 

@@ -1,6 +1,6 @@
 import * as React from "react";
-import { Paper, Typography } from "material-ui";
-import { PaperProps } from "material-ui/Paper";
+import { Paper, Typography } from "@material-ui/core";
+import { PaperProps } from "@material-ui/core/Paper";
 
 const style = {
   marginTop: 8,

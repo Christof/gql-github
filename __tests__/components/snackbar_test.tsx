@@ -1,7 +1,7 @@
 import * as React from "react";
 import { shallow } from "enzyme";
 import { TransitionLeft } from "../../src/components/snackbar";
-import { Slide } from "material-ui";
+import { Slide } from "@material-ui/core";
 
 describe("TransitionLeft", function() {
   it("is a Slide with direction left", function() {

@@ -5,11 +5,11 @@ import {
 } from "./detailed_repository_selector";
 import { Github, GithubAuthorData } from "../github";
 import { Section } from "./section";
-import { Grid, LinearProgress } from "material-ui";
 import { runningAverage } from "../array_helper";
 import { calculateWeeklyCommitsForAuthor } from "../stats_helper";
 import { PersonalStatsPlots } from "./personal_stats_plots";
 import { TriggeredAsyncSwitchFromLoadType } from "./triggered_async_switch";
+import { Grid, LinearProgress } from "@material-ui/core";
 
 interface Repo {
   name: string;

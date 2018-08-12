@@ -1,11 +1,11 @@
 import * as React from "react";
 import { App, RawApp } from "../../src/components/app";
-import { shallow, mount } from "enzyme";
+import { shallow, mount, ReactWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
 import { MemoryRouter, Route } from "react-router";
 import * as ReactRouterDom from "react-router-dom";
 import { GithubCallback } from "../../src/components/github_callback";
-import { AppBar, Typography } from "material-ui";
+import { AppBar, Typography, IconButton, Drawer } from "@material-ui/core";
 import { MenuButton } from "../../src/components/menu_button";
 import { GithubButton } from "../../src/components/github_button";
 
@@ -100,7 +100,7 @@ describe("App", function() {
   });
 
   describe("AppBar", function() {
-    it("renders the tilte, MenuButtons and GithubButton", function() {
+    it("renders the tilte and GithubButton", function() {
       const wrapper = mount(<App fetch={fetch} />);
 
       const appBar = wrapper.find(AppBar);
@@ -109,9 +109,6 @@ describe("App", function() {
       const title = appBar.find(Typography);
       expect(title).toHaveLength(1);
       expect(title.prop("children")).toEqual("Github Stats & Releases");
-
-      const menuButtons = appBar.find(MenuButton);
-      expect(menuButtons).toHaveLength(5);
 
       expect(appBar.find(GithubButton)).toHaveLength(1);
     });
@@ -181,18 +178,53 @@ describe("App", function() {
   [
     { component: "Stats", route: "/stats" },
     { component: "PersonalStats", route: "/personal-stats" },
-    { component: "OrgStats", route: "/org-stats" }
+    { component: "OrgStats", route: "/org-stats" },
+    { component: "ReleaseNotesRetriever", route: "/retrieve-release-notes" },
+    { component: "ReleaseNotesCreator", route: "/create-release-notes" }
   ].forEach(entry => {
     describe(entry.component, function() {
-      it(`shows a MenuButton to route ${entry.route}`, function() {
-        const wrapper = mount(<App fetch={fetch} />);
-        const appBar = wrapper.find(AppBar);
-        expect(appBar).toHaveLength(1);
+      describe("with open drawer", function() {
+        let wrapper: ReactWrapper;
+        let drawer: ReactWrapper;
 
-        const button = appBar
-          .find(MenuButton)
-          .filterWhere(b => b.prop("to") === entry.route);
-        expect(button).toHaveLength(1);
+        beforeEach(async function() {
+          wrapper = mount(<App fetch={fetch} />);
+          const appBar = wrapper.find(AppBar);
+          expect(appBar).toHaveLength(1);
+
+          const menuButton = appBar.find(IconButton);
+          expect(menuButton).toHaveLength(1);
+
+          menuButton.prop("onClick")();
+          await waitImmediate();
+          wrapper = wrapper.update();
+
+          drawer = wrapper.find(Drawer);
+          expect(drawer).toHaveLength(1);
+        });
+
+        it(`shows a MenuButton to route ${entry.route}`, async function() {
+          expect(drawer.prop("open")).toEqual(true);
+
+          const button = drawer
+            .find(MenuButton)
+            .filterWhere(b => b.prop("to") === entry.route);
+          expect(button).toHaveLength(1);
+        });
+
+        it("closes the drawer after menu item click", async function() {
+          const button = drawer
+            .find(MenuButton)
+            .filterWhere(b => b.prop("to") === entry.route);
+          expect(button).toHaveLength(1);
+
+          button.prop("onClick")(undefined);
+          await waitImmediate();
+          wrapper = wrapper.update();
+
+          drawer = wrapper.find(Drawer);
+          expect(drawer.prop("open")).toEqual(false);
+        });
       });
 
       describe("with faked BrowserRouter", function() {

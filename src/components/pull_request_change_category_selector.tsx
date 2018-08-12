@@ -1,7 +1,7 @@
 import * as React from "react";
 import { PullRequest, ChangeCategory } from "../pull_request";
 import { Dropdown } from "./dropdown";
-import Typography from "material-ui/Typography/Typography";
+import Typography from "@material-ui/core/Typography/Typography";
 
 interface Props {
   pullRequest: PullRequest;
