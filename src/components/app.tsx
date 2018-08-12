@@ -220,12 +220,11 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
             this.state.open && classes.appBarOpenDrawer
           )}
         >
-          <Toolbar disableGutters={!this.state.open}>
+          <Toolbar disableGutters={true}>
             <IconButton
               color="inherit"
               aria-label="Open drawer"
               onClick={this.handleDrawerOpen}
-              className={classNames(this.state.open && classes.hide)}
             >
               <MenuIcon />
             </IconButton>
