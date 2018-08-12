@@ -273,9 +273,8 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
   }
 
   renderContent() {
-    const { classes } = this.props;
     return (
-      <main className={classNames(classes.content)}>
+      <main className={classNames(this.props.classes.content)}>
         <div id="content">
           <Route
             path="/auth-callback"
