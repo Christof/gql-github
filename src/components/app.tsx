@@ -66,6 +66,9 @@ const drawerStyles = (theme: Theme): StyleRules => ({
       duration: theme.transitions.duration.leavingScreen
     })
   },
+  appBarOpenDrawer: {
+    width: `calc(100% - ${drawerWidth}px)`
+  },
   menuButton: {
     marginRight: "14px"
   },
@@ -210,7 +213,13 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
 
     return (
       <>
-        <AppBar position="absolute" className={classNames(classes.appBar)}>
+        <AppBar
+          position="absolute"
+          className={classNames(
+            classes.appBar,
+            this.state.open && classes.appBarOpenDrawer
+          )}
+        >
           <Toolbar disableGutters={!this.state.open}>
             <IconButton
               color="inherit"
