@@ -69,9 +69,6 @@ const styles = (theme: Theme): StyleRules => ({
   appBarOpenDrawer: {
     width: `calc(100% - ${drawerWidth}px)`
   },
-  menuButton: {
-    marginRight: theme.spacing.unit * 2
-  },
   menuItemActive: {
     backgroundColor: theme.palette.action.selected
   },
@@ -220,7 +217,7 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
             this.state.open && classes.appBarOpenDrawer
           )}
         >
-          <Toolbar disableGutters={true}>
+          <Toolbar>
             <IconButton
               color="inherit"
               aria-label="Open drawer"
@@ -236,7 +233,6 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
               Github Stats & Releases
             </Typography>
             <GithubButton
-              className={classes.menuButton}
               github={this.state.github}
               onChangeToken={token => this.onChangeToken(token)}
             />
