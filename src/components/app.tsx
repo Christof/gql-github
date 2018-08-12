@@ -72,6 +72,9 @@ const styles = (theme: Theme): StyleRules => ({
   menuButton: {
     marginRight: theme.spacing.unit * 2
   },
+  menuItemActive: {
+    backgroundColor: theme.palette.action.selected
+  },
   hide: {
     display: "none"
   },
@@ -163,7 +166,8 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
     const { classes } = this.props;
     const props = {
       disabled: this.state.github === undefined,
-      onClick: () => this.handleDrawerClose()
+      onClick: () => this.handleDrawerClose(),
+      activeClassName: classes.menuItemActive
     };
     const drawer = (
       <Drawer
