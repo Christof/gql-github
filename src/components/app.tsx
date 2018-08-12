@@ -70,7 +70,7 @@ const drawerStyles = (theme: Theme): StyleRules => ({
     width: `calc(100% - ${drawerWidth}px)`
   },
   menuButton: {
-    marginRight: "14px"
+    marginRight: theme.spacing.unit * 2
   },
   hide: {
     display: "none"
@@ -82,7 +82,7 @@ const drawerStyles = (theme: Theme): StyleRules => ({
   drawerHeader: {
     display: "flex",
     alignItems: "center",
-    padding: "0 8px",
+    padding: theme.spacing.unit,
     ...theme.mixins.toolbar
   },
   drawerCloseIcon: {
@@ -91,7 +91,7 @@ const drawerStyles = (theme: Theme): StyleRules => ({
     justifyContent: "flex-end"
   },
   subheading: {
-    padding: "8px"
+    padding: theme.spacing.unit
   },
   content: {
     flexGrow: 1,
