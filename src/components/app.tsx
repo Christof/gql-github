@@ -1,23 +1,21 @@
 import * as React from "react";
 import classNames from "classnames";
 import { BrowserRouter, Route } from "react-router-dom";
-import { MenuButton } from "./menu_button";
 import { GithubButton } from "./github_button";
 import { GithubCallback } from "./github_callback";
 import { ReleaseNotesRetriever } from "./release_notes_retriever";
 import { ReleaseNotesCreator } from "./release_notes_creator";
+import { CustomDrawer } from "./custom_drawer";
 import {
   AppBar,
   Typography,
   Toolbar,
   CssBaseline,
-  IconButton,
-  Drawer,
-  Divider
+  IconButton
 } from "@material-ui/core";
 import { withStyles, Theme, StyleRules } from "@material-ui/core/styles";
 import { WithStyles } from "@material-ui/core/styles/withStyles";
-import { Menu as MenuIcon, ChevronLeft } from "@material-ui/icons";
+import { Menu as MenuIcon } from "@material-ui/icons";
 import { Github } from "../github";
 import { createHttpLink } from "apollo-link-http";
 import { setContext } from "apollo-link-context";
@@ -160,61 +158,13 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
   };
 
   renderAppBar() {
-    const { classes } = this.props;
-    const props = {
-      disabled: this.state.github === undefined,
-      onClick: () => this.handleDrawerClose(),
-      activeClassName: classes.menuItemActive
-    };
-    const drawer = (
-      <Drawer
-        variant="temporary"
-        anchor="left"
-        open={this.state.open}
-        onClose={this.handleDrawerClose}
-        classes={{
-          paper: classes.drawerPaper
-        }}
-      >
-        <div className={classes.drawerHeader}>
-          <Typography>Menu</Typography>
-          <div className={classes.drawerCloseIcon}>
-            <IconButton onClick={this.handleDrawerClose}>
-              <ChevronLeft />
-            </IconButton>
-          </div>
-        </div>
-        <Divider />
-        <Typography
-          variant="subheading"
-          color="primary"
-          className={classes.subheading}
-        >
-          Statistics
-        </Typography>
-        <MenuButton to="/stats" text="Repository" {...props} />
-        <MenuButton to="/personal-stats" text="Personal" {...props} />
-        <MenuButton to="/org-stats" text="Organization" {...props} />
-        <Divider />
-        <Typography
-          variant="subheading"
-          color="primary"
-          className={classes.subheading}
-        >
-          Release Notes
-        </Typography>
-        <MenuButton to="/retrieve-release-notes" text="Retrieve" {...props} />
-        <MenuButton to="/create-release-notes" text="Create" {...props} />
-      </Drawer>
-    );
-
     return (
       <>
         <AppBar
           position="absolute"
           className={classNames(
-            classes.appBar,
-            this.state.open && classes.appBarOpenDrawer
+            this.props.classes.appBar,
+            this.state.open && this.props.classes.appBarOpenDrawer
           )}
         >
           <Toolbar>
@@ -228,7 +178,7 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
             <Typography
               variant="title"
               color="inherit"
-              className={classes.flex}
+              className={this.props.classes.flex}
             >
               Github Stats & Releases
             </Typography>
@@ -238,7 +188,12 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
             />
           </Toolbar>
         </AppBar>
-        {drawer}
+        <CustomDrawer
+          open={this.state.open}
+          disabled={this.state.github === undefined}
+          handleDrawerClose={this.handleDrawerClose}
+          classes={this.props.classes}
+        />
       </>
     );
   }
