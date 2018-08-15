@@ -62,7 +62,7 @@ export class GithubButton extends React.Component<Props, State> {
 
   loginWithGithub() {
     const githubState = uuid.v4();
-    window.localStorage.githubState = githubState;
+    window.localStorage.setItem("githubState", githubState);
 
     const githubLoginUrl =
       "https://github.com/login/oauth/authorize?" +
