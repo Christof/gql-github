@@ -107,9 +107,7 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
   constructor(props: Props & WithStyles) {
     super(props);
 
-    const token = window.localStorage.githubToken
-      ? window.localStorage.githubToken
-      : undefined;
+    const token = window.localStorage.getItem("githubToken");
     this.state = {
       github: token ? this.createGithub(token) : undefined,
       open: false
@@ -203,7 +201,7 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
   }
 
   onChangeToken(token: string) {
-    window.localStorage.githubToken = token;
+    window.localStorage.setItem("githubToken", token);
 
     this.setState({ github: token ? this.createGithub(token) : undefined });
   }

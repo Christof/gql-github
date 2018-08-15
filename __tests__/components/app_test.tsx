@@ -162,7 +162,7 @@ describe("App", function() {
       afterEach(() => window.localStorage.clear());
 
       it("creates a Github instance in constructor", function() {
-        window.localStorage.githubToken = "token";
+        window.localStorage.setItem("githubToken", "token");
 
         const wrapper = shallow(<App fetch={fetch} />);
 
@@ -247,7 +247,7 @@ describe("App", function() {
 
         it(`shows ${entry.component} if route is active`, async function() {
           // ensure that we are logged in
-          window.localStorage.githubToken = "token";
+          window.localStorage.setItem("githubToken", "token");
 
           const wrapper = mount(
             <MemoryRouter initialEntries={[entry.route]}>
@@ -334,7 +334,7 @@ describe("App", function() {
       });
 
       it("calls App.onChangeToken and sets local storage", function() {
-        window.localStorage.githubToken = "my-token";
+        window.localStorage.setItem("githubToken", "my-token");
         const wrapper = mount(
           <MemoryRouter initialEntries={["/auth-callback"]}>
             <App fetch={fetch} />
@@ -345,7 +345,7 @@ describe("App", function() {
         const githubCallback = wrapper.find(GithubCallback);
         githubCallback.prop("onChangeToken")(newToken);
 
-        expect(window.localStorage.githubToken).toEqual(newToken);
+        expect(window.localStorage.getItem("githubToken")).toBeFalsy();
       });
     });
   });
