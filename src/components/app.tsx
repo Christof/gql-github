@@ -103,7 +103,20 @@ interface Props {
   fetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>;
 }
 
+interface Page {
+  path: string;
+  component: React.StatelessComponent<any> | React.ComponentClass<any>;
+}
+
 export class RawApp extends React.Component<Props & WithStyles, State> {
+  private pages: Page[] = [
+    { path: "/stats", component: Stats },
+    { path: "/personal-stats", component: PersonalStats },
+    { path: "/org-stats", component: OrgStats },
+    { path: "/retrieve-release-notes", component: ReleaseNotesRetriever },
+    { path: "/create-release-notes", component: ReleaseNotesCreator }
+  ];
+
   constructor(props: Props & WithStyles) {
     super(props);
 
@@ -206,19 +219,17 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
     this.setState({ github: token ? this.createGithub(token) : undefined });
   }
 
-  renderRoute<P>(
-    path: string,
-    component: React.StatelessComponent<P> | React.ComponentClass<P>
-  ) {
+  renderRoute({ path, component }: Page) {
     return (
       <Route
+        key={path}
         path={path}
         render={props =>
           this.renderOnlyIfLoggedIn(() =>
             React.createElement(component, {
               ...props,
               github: this.state.github
-            } as any)
+            })
           )
         }
       />
@@ -239,11 +250,7 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
               />
             )}
           />
-          {this.renderRoute("/stats", Stats)}
-          {this.renderRoute("/personal-stats", PersonalStats)}
-          {this.renderRoute("/org-stats", OrgStats)}
-          {this.renderRoute("/retrieve-release-notes", ReleaseNotesRetriever)}
-          {this.renderRoute("/create-release-notes", ReleaseNotesCreator)}
+          {this.pages.map(page => this.renderRoute(page))}
         </div>
       </main>
     );
