@@ -106,22 +106,40 @@ interface Props {
 interface Page {
   path: string;
   text: string;
+  group: "Statistics" | "Release Notes";
   component: React.StatelessComponent<any> | React.ComponentClass<any>;
 }
 
 export class RawApp extends React.Component<Props & WithStyles, State> {
   private pages: Page[] = [
-    { path: "/stats", text: "Repositories", component: Stats },
-    { path: "/personal-stats", text: "Personal", component: PersonalStats },
-    { path: "/org-stats", text: "Organization", component: OrgStats },
+    {
+      path: "/stats",
+      text: "Repositories",
+      group: "Statistics",
+      component: Stats
+    },
+    {
+      path: "/personal-stats",
+      text: "Personal",
+      group: "Statistics",
+      component: PersonalStats
+    },
+    {
+      path: "/org-stats",
+      text: "Organization",
+      group: "Statistics",
+      component: OrgStats
+    },
     {
       path: "/retrieve-release-notes",
       text: "Retrieve",
+      group: "Release Notes",
       component: ReleaseNotesRetriever
     },
     {
       path: "/create-release-notes",
       text: "Create",
+      group: "Release Notes",
       component: ReleaseNotesCreator
     }
   ];
