@@ -213,6 +213,7 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
           disabled={this.state.github === undefined}
           handleDrawerClose={this.handleDrawerClose}
           classes={this.props.classes}
+          pages={this.pages}
         />
       </>
     );

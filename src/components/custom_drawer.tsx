@@ -8,6 +8,7 @@ interface Props {
   disabled: boolean;
   handleDrawerClose: () => void;
   classes: Record<string, string>;
+  pages: { path: string; text: string }[];
 }
 
 export class CustomDrawer extends React.Component<Props, {}> {
@@ -44,9 +45,16 @@ export class CustomDrawer extends React.Component<Props, {}> {
         >
           Statistics
         </Typography>
-        <MenuButton to="/stats" text="Repository" {...props} />
-        <MenuButton to="/personal-stats" text="Personal" {...props} />
-        <MenuButton to="/org-stats" text="Organization" {...props} />
+        {this.props.pages
+          .filter(page => page.path.includes("stats"))
+          .map(page => (
+            <MenuButton
+              key={page.path}
+              to={page.path}
+              text={page.text}
+              {...props}
+            />
+          ))}
         <Divider />
         <Typography
           variant="subheading"
@@ -55,8 +63,16 @@ export class CustomDrawer extends React.Component<Props, {}> {
         >
           Release Notes
         </Typography>
-        <MenuButton to="/retrieve-release-notes" text="Retrieve" {...props} />
-        <MenuButton to="/create-release-notes" text="Create" {...props} />
+        {this.props.pages
+          .filter(page => page.path.includes("release-notes"))
+          .map(page => (
+            <MenuButton
+              key={page.path}
+              to={page.path}
+              text={page.text}
+              {...props}
+            />
+          ))}
       </Drawer>
     );
   }
