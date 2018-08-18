@@ -31,13 +31,15 @@ export class GithubCallback extends React.Component<Props, {}> {
     const queryPrams = qs.parse(this.props.location.search.substr(1));
 
     const githubState = queryPrams.state;
-    if (githubState !== window.localStorage.githubState) {
+    const storageState =
+      window.localStorage.getItem("githubState") || undefined;
+    if (githubState !== storageState) {
       throw new Error(
         "Retrieved state is not equal to sent one. Possible CSRF!"
       );
     }
-    const state = window.localStorage.githubState;
-    delete window.localStorage.githubState;
+    const state = window.localStorage.getItem("githubState");
+    window.localStorage.removeItem("githubState");
 
     this.retrieveAccessToken(queryPrams.code, state);
   }

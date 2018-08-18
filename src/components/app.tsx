@@ -1,23 +1,21 @@
 import * as React from "react";
 import classNames from "classnames";
 import { BrowserRouter, Route } from "react-router-dom";
-import { MenuButton } from "./menu_button";
 import { GithubButton } from "./github_button";
 import { GithubCallback } from "./github_callback";
 import { ReleaseNotesRetriever } from "./release_notes_retriever";
 import { ReleaseNotesCreator } from "./release_notes_creator";
+import { CustomDrawer } from "./custom_drawer";
 import {
   AppBar,
   Typography,
   Toolbar,
   CssBaseline,
-  IconButton,
-  Drawer,
-  Divider
+  IconButton
 } from "@material-ui/core";
 import { withStyles, Theme, StyleRules } from "@material-ui/core/styles";
 import { WithStyles } from "@material-ui/core/styles/withStyles";
-import { Menu as MenuIcon, ChevronLeft } from "@material-ui/icons";
+import { Menu as MenuIcon } from "@material-ui/icons";
 import { Github } from "../github";
 import { createHttpLink } from "apollo-link-http";
 import { setContext } from "apollo-link-context";
@@ -105,13 +103,51 @@ interface Props {
   fetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>;
 }
 
+interface Page {
+  path: string;
+  text: string;
+  group: "Statistics" | "Release Notes";
+  component: React.StatelessComponent<any> | React.ComponentClass<any>;
+}
+
 export class RawApp extends React.Component<Props & WithStyles, State> {
+  private pages: Page[] = [
+    {
+      path: "/stats",
+      text: "Repositories",
+      group: "Statistics",
+      component: Stats
+    },
+    {
+      path: "/personal-stats",
+      text: "Personal",
+      group: "Statistics",
+      component: PersonalStats
+    },
+    {
+      path: "/org-stats",
+      text: "Organization",
+      group: "Statistics",
+      component: OrgStats
+    },
+    {
+      path: "/retrieve-release-notes",
+      text: "Retrieve",
+      group: "Release Notes",
+      component: ReleaseNotesRetriever
+    },
+    {
+      path: "/create-release-notes",
+      text: "Create",
+      group: "Release Notes",
+      component: ReleaseNotesCreator
+    }
+  ];
+
   constructor(props: Props & WithStyles) {
     super(props);
 
-    const token = window.localStorage.githubToken
-      ? window.localStorage.githubToken
-      : undefined;
+    const token = window.localStorage.getItem("githubToken");
     this.state = {
       github: token ? this.createGithub(token) : undefined,
       open: false
@@ -160,61 +196,13 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
   };
 
   renderAppBar() {
-    const { classes } = this.props;
-    const props = {
-      disabled: this.state.github === undefined,
-      onClick: () => this.handleDrawerClose(),
-      activeClassName: classes.menuItemActive
-    };
-    const drawer = (
-      <Drawer
-        variant="temporary"
-        anchor="left"
-        open={this.state.open}
-        onClose={this.handleDrawerClose}
-        classes={{
-          paper: classes.drawerPaper
-        }}
-      >
-        <div className={classes.drawerHeader}>
-          <Typography>Menu</Typography>
-          <div className={classes.drawerCloseIcon}>
-            <IconButton onClick={this.handleDrawerClose}>
-              <ChevronLeft />
-            </IconButton>
-          </div>
-        </div>
-        <Divider />
-        <Typography
-          variant="subheading"
-          color="primary"
-          className={classes.subheading}
-        >
-          Statistics
-        </Typography>
-        <MenuButton to="/stats" text="Repository" {...props} />
-        <MenuButton to="/personal-stats" text="Personal" {...props} />
-        <MenuButton to="/org-stats" text="Organization" {...props} />
-        <Divider />
-        <Typography
-          variant="subheading"
-          color="primary"
-          className={classes.subheading}
-        >
-          Release Notes
-        </Typography>
-        <MenuButton to="/retrieve-release-notes" text="Retrieve" {...props} />
-        <MenuButton to="/create-release-notes" text="Create" {...props} />
-      </Drawer>
-    );
-
     return (
       <>
         <AppBar
           position="absolute"
           className={classNames(
-            classes.appBar,
-            this.state.open && classes.appBarOpenDrawer
+            this.props.classes.appBar,
+            this.state.open && this.props.classes.appBarOpenDrawer
           )}
         >
           <Toolbar>
@@ -228,7 +216,7 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
             <Typography
               variant="title"
               color="inherit"
-              className={classes.flex}
+              className={this.props.classes.flex}
             >
               Github Stats & Releases
             </Typography>
@@ -238,7 +226,13 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
             />
           </Toolbar>
         </AppBar>
-        {drawer}
+        <CustomDrawer
+          open={this.state.open}
+          disabled={this.state.github === undefined}
+          handleDrawerClose={this.handleDrawerClose}
+          classes={this.props.classes}
+          pages={this.pages}
+        />
       </>
     );
   }
@@ -248,24 +242,22 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
   }
 
   onChangeToken(token: string) {
-    window.localStorage.githubToken = token;
+    window.localStorage.setItem("githubToken", token);
 
     this.setState({ github: token ? this.createGithub(token) : undefined });
   }
 
-  renderRoute<P>(
-    path: string,
-    component: React.StatelessComponent<P> | React.ComponentClass<P>
-  ) {
+  renderRoute({ path, component }: Page) {
     return (
       <Route
+        key={path}
         path={path}
         render={props =>
           this.renderOnlyIfLoggedIn(() =>
             React.createElement(component, {
               ...props,
               github: this.state.github
-            } as any)
+            })
           )
         }
       />
@@ -286,11 +278,7 @@ export class RawApp extends React.Component<Props & WithStyles, State> {
               />
             )}
           />
-          {this.renderRoute("/stats", Stats)}
-          {this.renderRoute("/personal-stats", PersonalStats)}
-          {this.renderRoute("/org-stats", OrgStats)}
-          {this.renderRoute("/retrieve-release-notes", ReleaseNotesRetriever)}
-          {this.renderRoute("/create-release-notes", ReleaseNotesCreator)}
+          {this.pages.map(page => this.renderRoute(page))}
         </div>
       </main>
     );
