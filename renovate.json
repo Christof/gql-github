@@ -2,5 +2,6 @@
   "extends": [
     "config:base"
   ],
-  "rebaseStalePrs": true
+  "rebaseStalePrs": true,
+  "rangeStrategy": "replace"
 }
