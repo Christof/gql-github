@@ -3,5 +3,8 @@
     "config:base"
   ],
   "rebaseStalePrs": true,
-  "rangeStrategy": "replace"
+  "rangeStrategy": "replace",
+  "vulnerabilityAlerts": {
+    "labels": ["security"]
+  }
 }
