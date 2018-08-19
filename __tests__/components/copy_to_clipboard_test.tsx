@@ -3,6 +3,21 @@ import { CopyToClipboard } from "../../src/components/copy_to_clipboard";
 import { shallow, ShallowWrapper } from "enzyme";
 import { Button } from "@material-ui/core";
 
+export function setupMocksForCopy() {
+  const createRangeMock = jest.fn();
+  createRangeMock.mockReturnValue({ selectNode() {} });
+  document.createRange = createRangeMock;
+
+  const getSelectionMock = jest.fn();
+  getSelectionMock.mockReturnValue({ empty() {}, addRange() {} });
+  document.getSelection = getSelectionMock;
+
+  const execCommandMock = jest.fn();
+  document.execCommand = execCommandMock;
+
+  return { createRangeMock, getSelectionMock, execCommandMock };
+}
+
 describe("CopyToClipboard", function() {
   let wrapper: ShallowWrapper<any, any>;
 
@@ -46,26 +61,16 @@ describe("CopyToClipboard", function() {
     });
 
     it("copies span content on click", function() {
-      const createRangeMock = jest.fn();
-      createRangeMock.mockReturnValue({ selectNode() {} });
-      document.createRange = createRangeMock;
-
-      const getSelectionMock = jest.fn();
-      getSelectionMock.mockReturnValue({ empty() {}, addRange() {} });
-      document.getSelection = getSelectionMock;
-
       const getElementByIdSpy = jest.spyOn(document, "getElementById");
-
-      const execCommandMock = jest.fn();
-      document.execCommand = execCommandMock;
+      const mocks = setupMocksForCopy();
 
       const button = wrapper.find(Button);
       button.prop("onClick")(undefined);
 
-      expect(createRangeMock).toHaveBeenCalled();
-      expect(getSelectionMock).toHaveBeenCalled();
+      expect(mocks.createRangeMock).toHaveBeenCalled();
+      expect(mocks.getSelectionMock).toHaveBeenCalled();
+      expect(mocks.execCommandMock).toHaveBeenCalledWith("Copy");
       expect(getElementByIdSpy).toHaveBeenCalledWith("textToCopy");
-      expect(execCommandMock).toHaveBeenCalledWith("Copy");
     });
 
     it("calls onClick on button click", function() {
@@ -74,16 +79,7 @@ describe("CopyToClipboard", function() {
         <CopyToClipboard onClick={onClick} text="text to copy" />
       );
 
-      const createRangeMock = jest.fn();
-      createRangeMock.mockReturnValue({ selectNode() {} });
-      document.createRange = createRangeMock;
-
-      const getSelectionMock = jest.fn();
-      getSelectionMock.mockReturnValue({ empty() {}, addRange() {} });
-      document.getSelection = getSelectionMock;
-
-      const execCommandMock = jest.fn();
-      document.execCommand = execCommandMock;
+      setupMocksForCopy();
 
       const button = wrapper.find(Button);
       button.prop("onClick")(undefined);
