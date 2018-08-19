@@ -1,11 +1,10 @@
 import * as React from "react";
 import { Markdown } from "./markdown";
 import { Github } from "../github";
-import { Button } from "@material-ui/core";
 import { withSnackbar } from "./snackbar";
 import { CopyToClipboard } from "./copy_to_clipboard";
 
-const ButtonWithSnackbar = withSnackbar(Button, "onClick");
+const ButtonWithSnackbar = withSnackbar(CopyToClipboard, "onClick");
 
 interface Props {
   releaseNote: string;
@@ -47,13 +46,11 @@ export class ReleaseNote extends React.Component<Props> {
       <>
         <this.props.Markdown source={releaseNoteWithHeader} />
         <ButtonWithSnackbar
-          variant="raised"
           snackbarMessage={<span>Release created</span>}
           onClick={() => this.postRelease()}
-        >
-          Create Release
-        </ButtonWithSnackbar>
-        <CopyToClipboard text={releaseNoteWithHeader} />
+          text={releaseNoteWithHeader}
+          buttonText="Create Release"
+        />
       </>
     );
   }

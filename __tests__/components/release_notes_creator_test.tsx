@@ -10,6 +10,7 @@ import { Button, Snackbar, Slide } from "@material-ui/core";
 import { Dropdown } from "../../src/components/dropdown";
 import { PullRequestChangeCategorySelector } from "../../src/components/pull_request_change_category_selector";
 import { Markdown } from "../../src/components/markdown";
+import { setupMocksForCopy } from "./copy_to_clipboard_test";
 
 jest.mock("../../src/github");
 
@@ -113,12 +114,17 @@ describe("ReleaseNotesCreator", function() {
         }
       ];
 
+      let execCommandMock: jest.Mock;
+
       beforeEach(async function() {
         const dropdowns = wrapper.find(Dropdown);
         (dropdowns.at(2).prop("onSelect") as any)("v0.0.1");
         (dropdowns.at(3).prop("onSelect") as any)("v0.0.2");
 
         (github.compare as jest.Mock).mockReturnValue({ commits });
+
+        execCommandMock = setupMocksForCopy().execCommandMock;
+
         (wrapper.find(Button).prop("onClick") as any)();
 
         await waitImmediate();
@@ -187,7 +193,7 @@ describe("ReleaseNotesCreator", function() {
         (github.postRelease as jest.Mock).mockReturnValue({ ok: true });
         const buttons = wrapper.find(Button);
 
-        expect(buttons).toHaveLength(3);
+        expect(buttons).toHaveLength(2);
         const releaseButton = buttons.at(1);
         expect(releaseButton.prop("children")).toEqual("Create Release");
 
@@ -200,6 +206,17 @@ describe("ReleaseNotesCreator", function() {
           draft: false,
           prerelease: false
         });
+      });
+
+      it("copies the release not to the clipboard on pressing a button", function() {
+        (github.postRelease as jest.Mock).mockReturnValue({ ok: true });
+        const buttons = wrapper.find(Button);
+
+        expect(buttons).toHaveLength(2);
+        const releaseButton = buttons.at(1);
+        (releaseButton.prop("onClick") as any)();
+
+        expect(execCommandMock).toHaveBeenCalledWith("Copy");
       });
 
       it("opens a snackbar after a successful release creation", async function() {
