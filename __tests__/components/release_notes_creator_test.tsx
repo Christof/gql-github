@@ -113,6 +113,8 @@ describe("ReleaseNotesCreator", function() {
         }
       ];
 
+      let execCommandMock: jest.Mock;
+
       beforeEach(async function() {
         const dropdowns = wrapper.find(Dropdown);
         (dropdowns.at(2).prop("onSelect") as any)("v0.0.1");
@@ -128,7 +130,7 @@ describe("ReleaseNotesCreator", function() {
         getSelectionMock.mockReturnValue({ empty() {}, addRange() {} });
         document.getSelection = getSelectionMock;
 
-        const execCommandMock = jest.fn();
+        execCommandMock = jest.fn();
         document.execCommand = execCommandMock;
 
         (wrapper.find(Button).prop("onClick") as any)();
@@ -212,6 +214,17 @@ describe("ReleaseNotesCreator", function() {
           draft: false,
           prerelease: false
         });
+      });
+
+      it("copies the release not to the clipboard on pressing a button", function() {
+        (github.postRelease as jest.Mock).mockReturnValue({ ok: true });
+        const buttons = wrapper.find(Button);
+
+        expect(buttons).toHaveLength(2);
+        const releaseButton = buttons.at(1);
+        (releaseButton.prop("onClick") as any)();
+
+        expect(execCommandMock).toHaveBeenCalledWith("Copy");
       });
 
       it("opens a snackbar after a successful release creation", async function() {
