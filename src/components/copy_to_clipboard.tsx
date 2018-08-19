@@ -1,7 +1,12 @@
 import * as React from "react";
 import { Button } from "@material-ui/core";
 
-export class CopyToClipboard extends React.Component<{ text: string }, {}> {
+interface Props {
+  text: string;
+  onClick?: () => void;
+}
+
+export class CopyToClipboard extends React.Component<Props, {}> {
   private copyToClipboard() {
     const range = document.createRange();
     const selection = document.getSelection();
@@ -11,6 +16,14 @@ export class CopyToClipboard extends React.Component<{ text: string }, {}> {
     selection.addRange(range);
     document.execCommand("Copy");
   }
+
+  private onClick = () => {
+    if (this.props.onClick) {
+      this.props.onClick();
+    }
+
+    this.copyToClipboard();
+  };
 
   render() {
     return (
@@ -26,7 +39,7 @@ export class CopyToClipboard extends React.Component<{ text: string }, {}> {
         >
           {this.props.text}
         </span>
-        <Button variant="raised" onClick={() => this.copyToClipboard()}>
+        <Button variant="raised" onClick={this.onClick}>
           Copy
         </Button>
       </>
