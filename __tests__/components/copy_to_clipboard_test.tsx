@@ -67,5 +67,28 @@ describe("CopyToClipboard", function() {
       expect(getElementByIdSpy).toHaveBeenCalledWith("textToCopy");
       expect(execCommandMock).toHaveBeenCalledWith("Copy");
     });
+
+    it("calls onClick on button click", function() {
+      const onClick = jest.fn();
+      wrapper = shallow(
+        <CopyToClipboard onClick={onClick} text="text to copy" />
+      );
+
+      const createRangeMock = jest.fn();
+      createRangeMock.mockReturnValue({ selectNode() {} });
+      document.createRange = createRangeMock;
+
+      const getSelectionMock = jest.fn();
+      getSelectionMock.mockReturnValue({ empty() {}, addRange() {} });
+      document.getSelection = getSelectionMock;
+
+      const execCommandMock = jest.fn();
+      document.execCommand = execCommandMock;
+
+      const button = wrapper.find(Button);
+      button.prop("onClick")(undefined);
+
+      expect(onClick).toHaveBeenCalled();
+    });
   });
 });
