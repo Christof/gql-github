@@ -4,9 +4,12 @@ import { Button } from "@material-ui/core";
 interface Props {
   text: string;
   onClick?: () => void;
+  buttonText?: string;
 }
 
 export class CopyToClipboard extends React.Component<Props, {}> {
+  static defaultProps = { buttonText: "Copy" };
+
   private copyToClipboard() {
     const range = document.createRange();
     const selection = document.getSelection();
@@ -40,7 +43,7 @@ export class CopyToClipboard extends React.Component<Props, {}> {
           {this.props.text}
         </span>
         <Button variant="raised" onClick={this.onClick}>
-          Copy
+          {this.props.buttonText}
         </Button>
       </>
     );
