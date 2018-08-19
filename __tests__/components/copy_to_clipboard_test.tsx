@@ -30,10 +30,19 @@ describe("CopyToClipboard", function() {
   });
 
   describe("copy button", function() {
-    it("is text of Copy", function() {
+    it("has text of Copy", function() {
       const button = wrapper.find(Button);
       expect(button).toHaveLength(1);
       expect(button.prop("children")).toEqual("Copy");
+    });
+
+    it("can have custom text given by buttonText prop", function() {
+      wrapper = shallow(
+        <CopyToClipboard buttonText="Custom Button Text" text="text to copy" />
+      );
+      const button = wrapper.find(Button);
+      expect(button).toHaveLength(1);
+      expect(button.prop("children")).toEqual("Custom Button Text");
     });
 
     it("copies span content on click", function() {
