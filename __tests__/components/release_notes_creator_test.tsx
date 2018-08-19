@@ -119,6 +119,18 @@ describe("ReleaseNotesCreator", function() {
         (dropdowns.at(3).prop("onSelect") as any)("v0.0.2");
 
         (github.compare as jest.Mock).mockReturnValue({ commits });
+
+        const createRangeMock = jest.fn();
+        createRangeMock.mockReturnValue({ selectNode() {} });
+        document.createRange = createRangeMock;
+
+        const getSelectionMock = jest.fn();
+        getSelectionMock.mockReturnValue({ empty() {}, addRange() {} });
+        document.getSelection = getSelectionMock;
+
+        const execCommandMock = jest.fn();
+        document.execCommand = execCommandMock;
+
         (wrapper.find(Button).prop("onClick") as any)();
 
         await waitImmediate();
@@ -187,7 +199,7 @@ describe("ReleaseNotesCreator", function() {
         (github.postRelease as jest.Mock).mockReturnValue({ ok: true });
         const buttons = wrapper.find(Button);
 
-        expect(buttons).toHaveLength(3);
+        expect(buttons).toHaveLength(2);
         const releaseButton = buttons.at(1);
         expect(releaseButton.prop("children")).toEqual("Create Release");
 
