@@ -10,6 +10,7 @@ import { Button, Snackbar, Slide } from "@material-ui/core";
 import { Dropdown } from "../../src/components/dropdown";
 import { PullRequestChangeCategorySelector } from "../../src/components/pull_request_change_category_selector";
 import { Markdown } from "../../src/components/markdown";
+import { setupMocksForCopy } from "./copy_to_clipboard_test";
 
 jest.mock("../../src/github");
 
@@ -122,16 +123,7 @@ describe("ReleaseNotesCreator", function() {
 
         (github.compare as jest.Mock).mockReturnValue({ commits });
 
-        const createRangeMock = jest.fn();
-        createRangeMock.mockReturnValue({ selectNode() {} });
-        document.createRange = createRangeMock;
-
-        const getSelectionMock = jest.fn();
-        getSelectionMock.mockReturnValue({ empty() {}, addRange() {} });
-        document.getSelection = getSelectionMock;
-
-        execCommandMock = jest.fn();
-        document.execCommand = execCommandMock;
+        execCommandMock = setupMocksForCopy().execCommandMock;
 
         (wrapper.find(Button).prop("onClick") as any)();
 
