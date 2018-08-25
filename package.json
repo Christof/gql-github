@@ -34,7 +34,7 @@
     "@types/commander": "^2.11.0",
     "@types/enzyme": "^3.1.13",
     "@types/jest": "^23.3.1",
-    "@types/node": "^8.10.8",
+    "@types/node": "^8.10.28",
     "@types/node-uuid": "^0.0.28",
     "@types/plotly.js": "^1.36.1",
     "@types/qs": "^6.5.1",
