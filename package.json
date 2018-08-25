@@ -42,7 +42,7 @@
     "@types/react-dom": "^16.0.7",
     "@types/react-router-dom": "^4.3.0",
     "@types/request": "^2.0.8",
-    "@types/request-promise-native": "^1.0.14",
+    "@types/request-promise-native": "^1.0.15",
     "@types/webpack": "^4.4.11",
     "awesome-typescript-loader": "^5.0.0",
     "enzyme": "^3.3.0",
