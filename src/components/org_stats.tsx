@@ -97,7 +97,10 @@ function createReviewTraces(pullRequests: GithubPullRequest[]) {
         type: "scatter" as any,
         mode: "markers" as any,
         name: `${author} Reviews (${reviews.length})`,
-        x: map(dateString => parseFloat(dateString), keys(groupedByDate)),
+        x: map(
+          date => (typeof date === "number" ? date : parseFloat(date)),
+          keys(groupedByDate)
+        ),
         y: map(reviews => reviews.length, values(groupedByDate))
       };
     }, getReviewsByAuthorPerDay(pullRequests))

@@ -409,9 +409,9 @@
   version "6.5.1"
   resolved "https://registry.yarnpkg.com/@types/qs/-/qs-6.5.1.tgz#a38f69c62528d56ba7bd1f91335a8004988d72f7"
 
-"@types/ramda@^0.25.23":
-  version "0.25.28"
-  resolved "https://registry.yarnpkg.com/@types/ramda/-/ramda-0.25.28.tgz#a8c021852e3fabae23c84b80bb65516f2352279d"
+"@types/ramda@^0.25.36":
+  version "0.25.36"
+  resolved "https://registry.yarnpkg.com/@types/ramda/-/ramda-0.25.36.tgz#1ddaf3211c7cd7046fcaefe68c713469ccfc9504"
 
 "@types/react-dom@^16.0.6":
   version "16.0.7"
