@@ -32,7 +32,7 @@
   "devDependencies": {
     "@types/classnames": "^2.2.6",
     "@types/commander": "^2.11.0",
-    "@types/enzyme": "^3.1.9",
+    "@types/enzyme": "^3.1.13",
     "@types/jest": "^23.3.1",
     "@types/node": "^8.10.8",
     "@types/node-uuid": "^0.0.28",
