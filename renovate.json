@@ -1,0 +1,10 @@
+{
+  "extends": [
+    "config:base"
+  ],
+  "rebaseStalePrs": true,
+  "rangeStrategy": "bump",
+  "vulnerabilityAlerts": {
+    "labels": ["security"]
+  }
+}
