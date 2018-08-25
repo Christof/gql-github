@@ -9,7 +9,7 @@ interface Props {
   className?: string;
   onChangeToken: (token: string) => void;
   github?: Github;
-  authenticator?: any; // just for testing
+  authenticator: any; // just for testing
 }
 
 interface State {

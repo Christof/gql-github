@@ -4,7 +4,7 @@ import { Button } from "@material-ui/core";
 interface Props {
   text: string;
   onClick?: () => void;
-  buttonText?: string;
+  buttonText: string;
 }
 
 export class CopyToClipboard extends React.Component<Props, {}> {
