@@ -4,6 +4,8 @@
   ],
   "rebaseStalePrs": true,
   "rangeStrategy": "bump",
+  "prHourlyLimit": 0,
+  "prConcurrentLimit": 1,
   "vulnerabilityAlerts": {
     "labels": ["security"]
   }
