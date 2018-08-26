@@ -44,7 +44,7 @@
     "@types/request": "^2.0.8",
     "@types/request-promise-native": "^1.0.15",
     "@types/webpack": "^4.4.11",
-    "awesome-typescript-loader": "^5.0.0",
+    "awesome-typescript-loader": "^5.2.0",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
     "graphql-tools": "^3.0.0",
