@@ -9,6 +9,6 @@ before_script:
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
 script:
-  - yarn run test --runInBand --forceExit --coverage
+  - yarn run test --runInBand --forceExit --coverage --detectOpenHandles
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
