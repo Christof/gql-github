@@ -99,7 +99,7 @@ const styles = (theme: Theme): StyleRules => ({
   }
 });
 
-interface Props {
+interface Props extends WithStyles {
   fetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>;
 }
 
@@ -110,7 +110,7 @@ interface Page {
   component: React.StatelessComponent<any> | React.ComponentClass<any>;
 }
 
-export class RawApp extends React.Component<Props & WithStyles, State> {
+export class RawApp extends React.Component<Props, State> {
   private pages: Page[] = [
     {
       path: "/stats",
