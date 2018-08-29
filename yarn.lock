@@ -412,9 +412,9 @@
   version "8.10.28"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-8.10.28.tgz#03bf70dd7f1de7826251331ce57beddf7f9dd253"
 
-"@types/plotly.js@^1.38.5":
-  version "1.38.5"
-  resolved "https://registry.yarnpkg.com/@types/plotly.js/-/plotly.js-1.38.5.tgz#5c20ae4084f2bc6425585e9091a7f1d8b3a99c1d"
+"@types/plotly.js@^1.38.6":
+  version "1.38.6"
+  resolved "https://registry.yarnpkg.com/@types/plotly.js/-/plotly.js-1.38.6.tgz#171767e31cba50d29bf90b497bb40d8c1fd62a10"
   dependencies:
     "@types/d3" "*"
 
