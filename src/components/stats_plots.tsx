@@ -126,8 +126,16 @@ export class StatsPlots extends React.Component<StatsPlotsProps, {}> {
       d => new Date(findLast<any>(w => w.c !== 0)(d.weeks).w * 1000)
     );
 
-    const startYear = reduce(min, new Date(), startWeeks).getFullYear();
-    const endYear = reduce(max, new Date(2000, 0), endWeeks).getFullYear();
+    const startYear = reduce<Date, Date>(
+      min,
+      new Date(),
+      startWeeks
+    ).getFullYear();
+    const endYear = reduce<Date, Date>(
+      max,
+      new Date(2000, 0),
+      endWeeks
+    ).getFullYear();
     if (startYear > endYear) return [];
 
     return Array.from(
