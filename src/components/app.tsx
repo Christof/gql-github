@@ -196,6 +196,12 @@ export class RawApp extends React.Component<Props, State> {
   };
 
   renderAppBar() {
+    const activePage = this.pages.find(
+      page => page.path === window.location.pathname
+    );
+    const title = activePage
+      ? `${activePage.text} ${activePage.group}`
+      : "Github Stats & Releases";
     return (
       <>
         <AppBar
@@ -218,7 +224,7 @@ export class RawApp extends React.Component<Props, State> {
               color="inherit"
               className={this.props.classes.flex}
             >
-              Github Stats & Releases
+              {title}
             </Typography>
             <GithubButton
               github={this.state.github}
