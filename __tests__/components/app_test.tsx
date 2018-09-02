@@ -176,11 +176,27 @@ describe("App", function() {
   });
 
   [
-    { component: "Stats", route: "/stats" },
-    { component: "PersonalStats", route: "/personal-stats" },
-    { component: "OrgStats", route: "/org-stats" },
-    { component: "ReleaseNotesRetriever", route: "/retrieve-release-notes" },
-    { component: "ReleaseNotesCreator", route: "/create-release-notes" }
+    { component: "Stats", route: "/stats", title: "Repositories Statistics" },
+    {
+      component: "PersonalStats",
+      route: "/personal-stats",
+      title: "Personal Statistics"
+    },
+    {
+      component: "OrgStats",
+      route: "/org-stats",
+      title: "Organization Statistics"
+    },
+    {
+      component: "ReleaseNotesRetriever",
+      route: "/retrieve-release-notes",
+      title: "Retrieve Release Notes"
+    },
+    {
+      component: "ReleaseNotesCreator",
+      route: "/create-release-notes",
+      title: "Create Release Notes"
+    }
   ].forEach(entry => {
     describe(entry.component, function() {
       describe("with open drawer", function() {
@@ -248,6 +264,7 @@ describe("App", function() {
         it(`shows ${entry.component} if route is active`, async function() {
           // ensure that we are logged in
           window.localStorage.setItem("githubToken", "token");
+          history.pushState({}, entry.route, entry.route);
 
           const wrapper = mount(
             <MemoryRouter initialEntries={[entry.route]}>
@@ -261,6 +278,8 @@ describe("App", function() {
           wrapper.update();
 
           expect(wrapper.find(entry.component)).toHaveLength(1);
+          expect(wrapper.find("h2")).toHaveLength(1);
+          expect(wrapper.find("h2").prop("children")).toEqual(entry.title);
         });
 
         it(`shows nothing if route is active but not logged in`, async function() {
