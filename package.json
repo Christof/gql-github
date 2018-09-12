@@ -66,9 +66,9 @@
   "dependencies": {
     "@material-ui/core": "^3.0.3",
     "@material-ui/icons": "^3.0.1",
-    "apollo-cache-inmemory": "^1.2.9",
+    "apollo-cache-inmemory": "^1.2.10",
     "apollo-cache-persist": "^0.1.1",
-    "apollo-client": "^2.4.1",
+    "apollo-client": "^2.4.2",
     "apollo-link": "^1.2.2",
     "apollo-link-context": "^1.0.8",
     "apollo-link-http": "^1.5.4",
