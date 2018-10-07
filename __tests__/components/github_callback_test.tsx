@@ -1,6 +1,6 @@
 import * as React from "react";
 import { GithubCallback } from "../../src/components/github_callback";
-import { shallow, ShallowWrapper } from "enzyme";
+import { shallow } from "enzyme";
 import { waitImmediate } from "../helper";
 
 describe("GithubCallback", function() {
@@ -40,7 +40,7 @@ describe("GithubCallback", function() {
 
       let newToken: string;
 
-      const warpper = shallow(
+      const wrapper = shallow(
         <GithubCallback
           onChangeToken={t => {
             newToken = t;
@@ -51,6 +51,8 @@ describe("GithubCallback", function() {
           history={history}
         />
       );
+
+      expect(wrapper).toBeDefined();
 
       await waitImmediate();
 

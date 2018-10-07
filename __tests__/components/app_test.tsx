@@ -2,7 +2,7 @@ import * as React from "react";
 import { App, RawApp } from "../../src/components/app";
 import { shallow, mount, ReactWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
-import { MemoryRouter, Route } from "react-router";
+import { MemoryRouter } from "react-router";
 import * as ReactRouterDom from "react-router-dom";
 import { GithubCallback } from "../../src/components/github_callback";
 import { AppBar, Typography, IconButton, Drawer } from "@material-ui/core";
@@ -248,9 +248,9 @@ describe("App", function() {
         beforeAll(function() {
           // Redefine BrowserRouter to only render its children
           // otherwise MemoryRouter won't work
-          (ReactRouterDom.BrowserRouter as any) = ({ children }) => (
-            <div>{children}</div>
-          );
+          (ReactRouterDom.BrowserRouter as any) = (params: {
+            children: JSX.Element;
+          }) => <div>{params.children}</div>;
         });
 
         afterAll(function() {
@@ -303,9 +303,9 @@ describe("App", function() {
     beforeAll(function() {
       // Redefine BrowserRouter to only render its children
       // otherwise MemoryRouter won't work
-      (ReactRouterDom.BrowserRouter as any) = ({ children }) => (
-        <div>{children}</div>
-      );
+      (ReactRouterDom.BrowserRouter as any) = (params: {
+        children: JSX.Element;
+      }) => <div>{params.children}</div>;
     });
 
     afterAll(function() {
@@ -360,7 +360,7 @@ describe("App", function() {
           </MemoryRouter>
         );
 
-        const newToken = undefined;
+        const newToken: string = undefined;
         const githubCallback = wrapper.find(GithubCallback);
         githubCallback.prop("onChangeToken")(newToken);
 
