@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as ReactMarkdown from "react-markdown";
+import ReactMarkdown from "react-markdown";
 import { Markdown } from "../../src/components/markdown";
 import { shallow } from "enzyme";
 
