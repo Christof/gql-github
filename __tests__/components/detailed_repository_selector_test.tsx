@@ -3,7 +3,7 @@ import {
   DetailedRepositorySelector,
   RepositoriesPerOwner
 } from "../../src/components/detailed_repository_selector";
-import { shallow, mount, ShallowWrapper } from "enzyme";
+import { shallow, ShallowWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
 import { Github } from "../../src/github";
 import { LinearProgress, FormControlLabel, Button } from "@material-ui/core";
@@ -14,7 +14,7 @@ describe("DetailedRepositorySelector", function() {
   describe("before data loaded", function() {
     it("shows a progress bar", function() {
       const github = new Github("token", {} as any, undefined);
-      github.getOwners = jest.fn(() => new Promise(resolve => {}));
+      github.getOwners = jest.fn(() => new Promise(_resolve => {}));
 
       const wrapper = shallow(
         <DetailedRepositorySelector github={github} onChange={() => {}} />
@@ -62,7 +62,7 @@ describe("DetailedRepositorySelector", function() {
           .prop("control")
       );
 
-      const event = null;
+      const event: any = null;
       const checked = true;
       (owner1CheckboxWrapper.prop("onChange") as any)(event, checked);
     }

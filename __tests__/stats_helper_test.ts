@@ -50,7 +50,6 @@ describe("calculateWeeklyCommitsForAuthor", function() {
   it("returns the weekly commits for an author", function() {
     const week1 = new Date(1969, 2, 1).getTime() / 1000;
     const week2 = new Date(1970, 2, 1).getTime() / 1000;
-    const week3 = new Date(1971, 2, 1).getTime() / 1000;
     const data: GithubAuthorData[] = [
       {
         author: { login: "author1" },

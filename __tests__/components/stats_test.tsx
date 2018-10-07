@@ -3,7 +3,6 @@ import { Stats } from "../../src/components/stats";
 import { mount, ReactWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
 import { Github, GithubData } from "../../src/github";
-import { Section } from "../../src/components/section";
 import { RepositoriesByOwnerSelector } from "../../src/components/repositories_by_owner_selector";
 import { LinearProgress } from "@material-ui/core";
 import { OverallPlot } from "../../src/components/overall_plot";
@@ -33,7 +32,6 @@ describe("Stats", function() {
 
   describe("repository selection", function() {
     const repositoryNames = ["repo1", "repo2"];
-    let repositoriesByOwner: Map<string, string[]>;
     let resolveForGetStats: Function;
 
     beforeEach(async function() {

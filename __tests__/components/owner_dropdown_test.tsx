@@ -1,6 +1,6 @@
 import * as React from "react";
 import { OwnerDropdown } from "../../src/components/owner_dropdown";
-import { shallow, ShallowWrapper } from "enzyme";
+import { shallow } from "enzyme";
 import { waitImmediate } from "../helper";
 import { Dropdown } from "../../src/components/dropdown";
 
@@ -19,7 +19,7 @@ describe("OwnerSelector", function() {
 
     let selectedOwner: string;
 
-    const wrapper = shallow(
+    const wrapper = shallow<OwnerDropdown>(
       <OwnerDropdown
         github={github}
         onSelect={owner => (selectedOwner = owner)}
