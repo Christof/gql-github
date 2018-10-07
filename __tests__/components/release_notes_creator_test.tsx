@@ -1,12 +1,12 @@
 import * as React from "react";
 import { ReleaseNotesCreator } from "../../src/components/release_notes_creator";
-import { shallow, mount, ReactWrapper } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
 import { Github } from "../../src/github";
 import { PullRequest, ChangeCategory } from "../../src/pull_request";
 import { Section } from "../../src/components/section";
 import { RepositorySelector } from "../../src/components/repository_selector";
-import { Button, Snackbar, Slide } from "@material-ui/core";
+import { Button, Snackbar } from "@material-ui/core";
 import { Dropdown } from "../../src/components/dropdown";
 import { PullRequestChangeCategorySelector } from "../../src/components/pull_request_change_category_selector";
 import { Markdown } from "../../src/components/markdown";
@@ -19,7 +19,7 @@ describe("ReleaseNotesCreator", function() {
   let wrapper: ReactWrapper<any, any>;
 
   beforeEach(function() {
-    const fetch = undefined;
+    const fetch = undefined as any;
     github = new Github("token", {} as any, fetch);
     (github.getRepositoryNames as jest.Mock).mockReturnValue(
       Promise.resolve(["repo1"])

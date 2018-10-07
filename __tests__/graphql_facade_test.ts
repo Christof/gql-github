@@ -10,7 +10,7 @@ describe("GraphQLFacade", function() {
           avatarUrl
         }
       }`;
-  const variables = undefined;
+  const variables = undefined as any;
   const retries = 1;
   const retryWaitSeconds = 0.001;
 
