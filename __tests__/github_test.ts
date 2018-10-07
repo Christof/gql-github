@@ -217,7 +217,7 @@ describe("Github", () => {
       fetchMock.mockReturnValue({
         status: 200,
         json() {
-          return { commits: [] };
+          return { commits: [] as any };
         }
       });
       await github.compare("repoName", "startTag", "endTag");

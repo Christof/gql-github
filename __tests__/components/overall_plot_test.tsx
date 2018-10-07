@@ -2,13 +2,13 @@ import * as React from "react";
 import { OverallPlot } from "../../src/components/overall_plot";
 import { shallow, ShallowWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
-import { Github } from "../../src/github";
 import { Layout } from "plotly.js";
 import PlotlyChart from "react-plotlyjs-ts";
+import { GithubAuthorData } from "../../src/github";
 
 describe("OverallPlot", function() {
   const repoNames = ["repo1", "repo2"];
-  const reposData = [
+  const reposData: GithubAuthorData[][] = [
     [
       {
         author: { login: "author1" },
