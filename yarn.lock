@@ -476,10 +476,10 @@
   resolved "https://registry.yarnpkg.com/@types/qs/-/qs-6.5.1.tgz#a38f69c62528d56ba7bd1f91335a8004988d72f7"
   integrity sha512-mNhVdZHdtKHMMxbqzNK3RzkBcN1cux3AvuCYGTvjEIQT2uheH3eCAyYsbMbh2Bq8nXkeOWs1kyDiF7geWRFQ4Q==
 
-"@types/ramda@^0.25.38":
-  version "0.25.38"
-  resolved "https://registry.yarnpkg.com/@types/ramda/-/ramda-0.25.38.tgz#6c945fcc91a5fa470cc3c5a4cd4a62d7f8d03576"
-  integrity sha512-6vkbUF1cg9CIaeZiSvbk6e25rOBbXBXixiZiV4Eai4WgwrmI3wBaH/TKE0tp9JEfzQFrv3eOoI0EjdBJaUfnIQ==
+"@types/ramda@^0.25.39":
+  version "0.25.39"
+  resolved "https://registry.yarnpkg.com/@types/ramda/-/ramda-0.25.39.tgz#7f6ddc0baa6e7f99860e7752dcfbeae5655bf525"
+  integrity sha512-GJr1BOUjtdLexxQLhflMw1tCDav3csdUTC7twHx0GZUF9RTWGnJkYnUFAZE5cv1YnefgZabdfC8GvtJgVmQL7A==
 
 "@types/react-dom@^16.0.7":
   version "16.0.7"
