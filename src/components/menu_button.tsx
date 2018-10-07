@@ -1,7 +1,7 @@
 import * as React from "react";
 import { MenuItem } from "@material-ui/core";
 import { Link } from "react-router-dom";
-import * as classNames from "classnames";
+import classNames from "classnames";
 
 interface Props {
   text: string;
