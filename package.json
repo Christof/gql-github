@@ -43,7 +43,7 @@
     "@types/react-router-dom": "^4.3.1",
     "@types/request": "^2.47.1",
     "@types/request-promise-native": "^1.0.15",
-    "@types/webpack": "^4.4.14",
+    "@types/webpack": "^4.4.16",
     "awesome-typescript-loader": "^5.2.1",
     "enzyme": "^3.7.0",
     "enzyme-adapter-react-16": "^1.6.0",
