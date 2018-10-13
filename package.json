@@ -74,7 +74,7 @@
     "apollo-link-http": "^1.5.5",
     "classnames": "^2.2.6",
     "commander": "^2.19.0",
-    "express": "^4.16.3",
+    "express": "^4.16.4",
     "graphql": "^14.0.2",
     "graphql-tag": "^2.10.0",
     "netlify-auth-providers": "^1.0.0-alpha5",
