@@ -307,4 +307,4 @@ export class RawApp extends React.Component<Props, State> {
   }
 }
 
-export const App = withStyles(styles)<Props>(RawApp);
+export const App = withStyles(styles)(RawApp);
