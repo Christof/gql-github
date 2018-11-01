@@ -79,7 +79,7 @@
     "graphql-tag": "^2.10.0",
     "netlify-auth-providers": "^1.0.0-alpha5",
     "node-uuid": "^1.4.8",
-    "plotly.js": "^1.42.1",
+    "plotly.js": "^1.42.2",
     "qs": "^6.5.2",
     "ramda": "^0.25.0",
     "react": "^16.6.0",
