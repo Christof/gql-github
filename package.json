@@ -46,7 +46,7 @@
     "@types/webpack": "^4.4.18",
     "awesome-typescript-loader": "^5.2.1",
     "enzyme": "^3.7.0",
-    "enzyme-adapter-react-16": "^1.6.0",
+    "enzyme-adapter-react-16": "^1.7.0",
     "graphql-tools": "^4.0.3",
     "html-webpack-plugin": "^3.2.0",
     "jest": "^23.6.0",
