@@ -7,7 +7,7 @@ interface Props {
   onSelect: (selected: string) => void;
 }
 
-interface State {
+export interface State {
   owners: string[];
   iconUrls: string[];
 }
