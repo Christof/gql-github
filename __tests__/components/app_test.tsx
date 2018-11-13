@@ -278,8 +278,8 @@ describe("App", function() {
           wrapper.update();
 
           expect(wrapper.find(entry.component)).toHaveLength(1);
-          expect(wrapper.find("h2")).toHaveLength(1);
-          expect(wrapper.find("h2").prop("children")).toEqual(entry.title);
+          expect(wrapper.find("h5")).toHaveLength(1);
+          expect(wrapper.find("h5").prop("children")).toEqual(entry.title);
         });
 
         it(`shows nothing if route is active but not logged in`, async function() {

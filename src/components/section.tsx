@@ -11,7 +11,7 @@ const style = {
 export const Section = (props: PaperProps & { heading?: string }) => (
   <Paper {...props} style={style}>
     {props.heading ? (
-      <Typography variant="headline" paragraph>
+      <Typography variant="h5" paragraph>
         {props.heading}
       </Typography>
     ) : null}
