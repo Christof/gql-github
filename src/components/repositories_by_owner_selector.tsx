@@ -58,7 +58,7 @@ export class RepositoriesByOwnerSelector extends React.Component<Props, State> {
         {this.renderIncludeForksCheckbox()}
         <FormControl>
           <Button
-            variant="raised"
+            variant="contained"
             disabled={this.state.owner === undefined}
             onClick={() =>
               this.props.onLoad({

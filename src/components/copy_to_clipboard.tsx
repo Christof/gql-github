@@ -42,7 +42,7 @@ export class CopyToClipboard extends React.Component<Props, {}> {
         >
           {this.props.text}
         </span>
-        <Button variant="raised" onClick={this.onClick}>
+        <Button variant="contained" onClick={this.onClick}>
           {this.props.buttonText}
         </Button>
       </>

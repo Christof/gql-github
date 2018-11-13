@@ -40,7 +40,7 @@ export class TagRangeSelector extends React.Component<
           onSelect={tagName => this.setState({ releaseTag: tagName })}
         />
         <Button
-          variant="raised"
+          variant="contained"
           onClick={() =>
             this.props.onSelect(this.state.startTag, this.state.releaseTag)
           }

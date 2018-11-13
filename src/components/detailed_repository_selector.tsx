@@ -167,7 +167,7 @@ export class DetailedRepositorySelector extends React.Component<Props, State> {
         )}
 
         <Button
-          variant="raised"
+          variant="contained"
           disabled={noOwnerSelected}
           onClick={() => this.triggerOnChange()}
         >
