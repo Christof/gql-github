@@ -25,7 +25,7 @@ describe("Section", function() {
       const typography = wrapper.find(Typography);
       expect(typography).toHaveLength(1);
       expect(typography.prop("children")).toEqual("my heading");
-      expect(typography.prop("variant")).toEqual("headline");
+      expect(typography.prop("variant")).toEqual("h5");
       expect(typography.prop("paragraph")).toEqual(true);
     });
   });

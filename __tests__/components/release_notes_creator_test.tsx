@@ -46,9 +46,9 @@ describe("ReleaseNotesCreator", function() {
     beforeEach(async function() {
       (github.getTags as jest.Mock).mockReturnValue(tags);
       (github.getReleases as jest.Mock).mockReturnValue(releases);
-      (wrapper.find(RepositorySelector).prop("onRepositorySelect") as any)(
-        "repo1"
-      );
+      (wrapper
+        .find(RepositorySelector)
+        .prop("onRepositorySelect") as any)("repo1");
 
       await waitImmediate();
       wrapper.update();

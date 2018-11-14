@@ -167,7 +167,7 @@ export class DetailedRepositorySelector extends React.Component<Props, State> {
         )}
 
         <Button
-          variant="raised"
+          variant="contained"
           disabled={noOwnerSelected}
           onClick={() => this.triggerOnChange()}
         >
@@ -180,7 +180,7 @@ export class DetailedRepositorySelector extends React.Component<Props, State> {
   render() {
     return (
       <Section>
-        <Typography variant="headline" paragraph>
+        <Typography variant="h5" paragraph>
           Repositories
         </Typography>
         {this.state.owners.length === 0 ? (

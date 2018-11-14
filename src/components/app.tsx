@@ -220,7 +220,7 @@ export class RawApp extends React.Component<Props, State> {
               <MenuIcon />
             </IconButton>
             <Typography
-              variant="title"
+              variant="h5"
               color="inherit"
               className={this.props.classes.flex}
             >

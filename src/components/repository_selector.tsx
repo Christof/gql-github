@@ -31,7 +31,7 @@ export class RepositorySelector extends React.Component<Props, Stats> {
   render() {
     return (
       <Section>
-        <Typography variant="headline" paragraph>
+        <Typography variant="h5" paragraph>
           Repository
         </Typography>
         <OwnerDropdown

@@ -97,7 +97,7 @@ export class GithubButton extends React.Component<Props, State> {
   renderLogoutButton() {
     return (
       <Button
-        variant="raised"
+        variant="contained"
         className={this.props.className}
         onClick={this.signout}
       >
@@ -115,7 +115,7 @@ export class GithubButton extends React.Component<Props, State> {
   renderLoginButton() {
     return (
       <Button
-        variant="raised"
+        variant="contained"
         className={this.props.className}
         onClick={this.login}
       >

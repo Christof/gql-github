@@ -51,7 +51,7 @@ export class CustomDrawer extends React.Component<Props, {}> {
   renderHeader() {
     return (
       <div className={this.props.classes.drawerHeader}>
-        <Typography>Menu</Typography>
+        <Typography variant="h6">Menu</Typography>
         <div className={this.props.classes.drawerCloseIcon}>
           <IconButton onClick={this.props.handleDrawerClose}>
             <ChevronLeft />
