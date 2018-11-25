@@ -80,7 +80,7 @@
     "netlify-auth-providers": "^1.0.0-alpha5",
     "node-uuid": "^1.4.8",
     "plotly.js": "^1.42.5",
-    "qs": "^6.5.2",
+    "qs": "^6.6.0",
     "ramda": "^0.26.0",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
