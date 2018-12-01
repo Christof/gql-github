@@ -140,8 +140,8 @@ export class DetailedRepositorySelector extends React.Component<Props, State> {
 
   renderOwnerSection() {
     return (
-      <FormControl component="fieldset" fullWidth={true}>
-        <FormLabel component="legend">Owners</FormLabel>
+      <FormControl fullWidth={true}>
+        <FormLabel>Owners</FormLabel>
         <FormGroup row>
           {this.state.owners.map((owner, index) =>
             this.renderOwnerCheckbox(owner, index)
@@ -158,8 +158,8 @@ export class DetailedRepositorySelector extends React.Component<Props, State> {
         {this.renderOwnerSection()}
 
         {noOwnerSelected || (
-          <FormControl component="fieldset" fullWidth={true}>
-            <FormLabel component="legend">Repositories</FormLabel>
+          <FormControl fullWidth={true}>
+            <FormLabel>Repositories</FormLabel>
             {this.state.owners.map((owner, ownerIndex) =>
               this.renderOwnerRepositories(owner, ownerIndex)
             )}
