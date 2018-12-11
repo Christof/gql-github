@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as qs from "qs";
 import { Button } from "@material-ui/core";
-import * as uuid from "node-uuid";
+import { default as uuidv4 } from "uuid/v4";
 import { Github } from "../github";
 const netlify = require("netlify-auth-providers");
 
@@ -61,7 +61,7 @@ export class GithubButton extends React.Component<Props, State> {
   }
 
   loginWithGithub() {
-    const githubState = uuid.v4();
+    const githubState = uuidv4();
     window.localStorage.setItem("githubState", githubState);
 
     const githubLoginUrl =
