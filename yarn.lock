@@ -761,7 +761,7 @@ apollo-client@^2.4.7:
   optionalDependencies:
     "@types/async" "2.0.50"
 
-apollo-link-context@^1.0.10:
+apollo-link-context@^1.0.11:
   version "1.0.11"
   resolved "https://registry.yarnpkg.com/apollo-link-context/-/apollo-link-context-1.0.11.tgz#b0ba1918a7e32cf0e40004781ec267568caa2e47"
   integrity sha512-aEM7zp3O1V4jVIm7me60T7Sw7vCuuGzE9ppE0ttGiud8slUbh7dTAgxirTEg3PjdPQA5ZoLCwqnGb+DzTxu+1g==
@@ -782,7 +782,7 @@ apollo-link-http-common@^0.2.7:
   dependencies:
     apollo-link "^1.2.5"
 
-apollo-link-http@^1.5.7:
+apollo-link-http@^1.5.8:
   version "1.5.8"
   resolved "https://registry.yarnpkg.com/apollo-link-http/-/apollo-link-http-1.5.8.tgz#1be551338ca00db4082114221b409e0470fcc7e6"
   integrity sha512-wkmj9fL5B4QYjw7q7w0GyetfqQKnA0QXGoh+/UK+LXJ+jLEz6JP2eLxrwgpX7o4ID6Og7l1JfeVxJE5fV1j2bg==
@@ -790,7 +790,7 @@ apollo-link-http@^1.5.7:
     apollo-link "^1.2.5"
     apollo-link-http-common "^0.2.7"
 
-apollo-link@^1.0.0, apollo-link@^1.2.3, apollo-link@^1.2.4, apollo-link@^1.2.5:
+apollo-link@^1.0.0, apollo-link@^1.2.3, apollo-link@^1.2.5:
   version "1.2.5"
   resolved "https://registry.yarnpkg.com/apollo-link/-/apollo-link-1.2.5.tgz#f54932d6b8f1412a35e088bc199a116bce3f1f16"
   integrity sha512-GJHEE4B06oEB58mpRRwW6ISyvgX2aCqCLjpcE3M/6/4e+ZVeX7fRGpMJJDq2zZ8n7qWdrEuY315JfxzpsJmUhA==
