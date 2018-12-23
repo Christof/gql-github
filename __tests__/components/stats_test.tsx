@@ -157,15 +157,15 @@ describe("Stats", function() {
         checkDataForYearPlot(data0);
         const layout0 = yearPlot.at(0).prop("layout") as any;
         expect(layout0.title).toEqual("Yearly commits in repo1 90");
-        expect(layout0.xaxis.title).toEqual("time");
-        expect(layout0.yaxis.title).toEqual("commit count");
+        expect(layout0.xaxis.title.text).toEqual("time");
+        expect(layout0.yaxis.title.text).toEqual("commit count");
 
         const data1 = yearPlot.at(0).prop("data") as any;
         checkDataForYearPlot(data1);
         const layout1 = yearPlot.at(1).prop("layout") as any;
         expect(layout1.title).toEqual("Yearly commits in repo2 90");
-        expect(layout1.xaxis.title).toEqual("time");
-        expect(layout1.yaxis.title).toEqual("commit count");
+        expect(layout1.xaxis.title.text).toEqual("time");
+        expect(layout1.yaxis.title.text).toEqual("commit count");
       });
     });
   });

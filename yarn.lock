@@ -257,10 +257,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-8.10.39.tgz#e7e87ad00364dd7bc485c940926345b8ec1a26ca"
   integrity sha512-rE7fktr02J8ybFf6eysife+WF+L4sAHWzw09DgdCebEu+qDwMvv4zl6Bc+825ttGZP73kCKxa3dhJOoGJ8+5mA==
 
-"@types/plotly.js@^1.41.0":
-  version "1.41.0"
-  resolved "https://registry.yarnpkg.com/@types/plotly.js/-/plotly.js-1.41.0.tgz#4bdb00fd45ff4c736937b92ae89bb34e1fa86048"
-  integrity sha512-6ZEEFfCyV10rg+ByLHzVflyBJiM18KrkkDXOIsupZz8/3p4HTsVy7CtbhPik/qI+sdnwMIfBNL82DoaojBkuvA==
+"@types/plotly.js@^1.42.0":
+  version "1.42.0"
+  resolved "https://registry.yarnpkg.com/@types/plotly.js/-/plotly.js-1.42.0.tgz#dee65c6c66c9163ff72042cac851728b0d509170"
+  integrity sha512-pnJ3vHq1fG8tKquxMEZSLtt9w5Sp9KuuztBrwDwClf/zolJxLo9/RVBwmQd3dLNZCXTvoyB8bzonR5ReOXPa3A==
   dependencies:
     "@types/d3" "^3"
 
@@ -3826,7 +3826,7 @@ gl-buffer@^2.0.3, gl-buffer@^2.0.6, gl-buffer@^2.0.8, gl-buffer@^2.1.1, gl-buffe
     ndarray-ops "^1.1.0"
     typedarray-pool "^1.0.0"
 
-gl-cone3d@^1.2.0:
+gl-cone3d@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/gl-cone3d/-/gl-cone3d-1.2.1.tgz#d2ab6fe10750302c43519d2d319ffa7dd0857fa6"
   integrity sha512-6Hc/l2qHnQXtVWzE/9i3ZmCVrLaBUYO0VTTH3g46jdkBuNlbALr9bo8ZCtHMIkeZhvzfKzfNylQGLiJL7zqdxw==
@@ -3857,7 +3857,7 @@ gl-contour2d@^1.1.4:
     ndarray "^1.0.18"
     surface-nets "^1.0.2"
 
-gl-error3d@^1.0.8:
+gl-error3d@^1.0.9:
   version "1.0.10"
   resolved "https://registry.yarnpkg.com/gl-error3d/-/gl-error3d-1.0.10.tgz#8d2aa11a58ee10d8578d11aa39f301316d30e1a6"
   integrity sha512-8jBBcbhNNxyH5CIvEhLXUX/8hXPeBF/remvw4E5++M0xZY+BYWbxmc/YqZnXQinNwTmrm9jbo3EhyDQdSWuwuQ==
@@ -3897,7 +3897,7 @@ gl-heatmap2d@^1.0.4:
     iota-array "^1.0.0"
     typedarray-pool "^1.1.0"
 
-gl-line3d@^1.1.5:
+gl-line3d@^1.1.6:
   version "1.1.7"
   resolved "https://registry.yarnpkg.com/gl-line3d/-/gl-line3d-1.1.7.tgz#f90da1920026cd761765bfbf0331cdcfbba91bf8"
   integrity sha512-uKi1s4+q3Jr76xIi8ZKlORHz1PvY8IZxjD5rGz1rY+HsmC1wbNuDqqc7YXzcoIyGDiZWcJsoyFtwFeQEexDW8g==
@@ -3936,7 +3936,7 @@ gl-matrix-invert@^1.0.0:
     gl-mat3 "^1.0.0"
     gl-mat4 "^1.0.0"
 
-gl-mesh3d@^2.0.1:
+gl-mesh3d@^2.0.2:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/gl-mesh3d/-/gl-mesh3d-2.0.3.tgz#56bcd41cc67d3a2f3998f0e4d490395ec8356789"
   integrity sha512-FX1/PSd9fvdMpyx33ylmMUmrIBjD2Gb5yqy51cSZNygSQnLPlWnAbiKvqcI23Ba6MnaIOnAyvR3ppUHu0W7MNA==
@@ -3958,7 +3958,7 @@ gl-mesh3d@^2.0.1:
     simplicial-complex-contour "^1.0.0"
     typedarray-pool "^1.1.0"
 
-gl-plot2d@^1.3.1:
+gl-plot2d@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/gl-plot2d/-/gl-plot2d-1.4.0.tgz#6ffe3b39fddd9fb3fe49066065ae98a3dd472a6d"
   integrity sha512-cO1R6TSMHZKxpsxT2jSxxZ/sN6KdkPLvpzp1t5W5qB5xUs4RiTmAw1jd9s1ogdZYBqYJVIrj6ktCrua3Ligc+Q==
@@ -3971,7 +3971,7 @@ gl-plot2d@^1.3.1:
     glslify "^6.1.0"
     text-cache "^4.2.0"
 
-gl-plot3d@^1.5.10:
+gl-plot3d@^1.6.1:
   version "1.6.1"
   resolved "https://registry.yarnpkg.com/gl-plot3d/-/gl-plot3d-1.6.1.tgz#7785b02b0a20f64f2461d12efeaaa5d75cd1cd24"
   integrity sha512-w93IiAm1xM+VIRunFs6opcLIgnbrdCSg9Lfg4jLp7m3e3qHCn3LyUCrG8qT1qW2HMLje9dCWnZmZyMb7Vbx24g==
@@ -4008,7 +4008,7 @@ gl-quat@^1.0.0:
     gl-vec3 "^1.0.3"
     gl-vec4 "^1.0.0"
 
-gl-scatter3d@^1.0.14:
+gl-scatter3d@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/gl-scatter3d/-/gl-scatter3d-1.1.2.tgz#f5f6333f67a5706313cb5570ef130de799b28314"
   integrity sha512-gxLYR2Etqi9JodqH4TLBBpys+B5R6/IbRrN64uk81rR6K2TTyYM9LOaPVFSinFnRXeQzRwPtvjfcBHmf085i3A==
@@ -4073,7 +4073,7 @@ gl-state@^1.0.0:
   dependencies:
     uniq "^1.0.0"
 
-gl-streamtube3d@^1.1.0:
+gl-streamtube3d@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/gl-streamtube3d/-/gl-streamtube3d-1.1.1.tgz#6648f36754eb3562e9cff20c956f6216d79abe97"
   integrity sha512-6UKZ4C9RQVTuVFYhEE/k0vgFvXCm5G0mmw8p+s6vaR+pwAxwU+bTQXLyW6n+gOIy7/F6DiViy1vIq0pc6MZxSw==
@@ -4083,10 +4083,10 @@ gl-streamtube3d@^1.1.0:
     glsl-out-of-range "^1.0.3"
     glslify "^6.1.1"
 
-gl-surface3d@^1.3.6:
-  version "1.3.8"
-  resolved "https://registry.yarnpkg.com/gl-surface3d/-/gl-surface3d-1.3.8.tgz#d08839fa48af3deaba729e066f931a3fc9c28fee"
-  integrity sha512-pb+JlfDruCetz5bsqjouHaWzQ/iiJTmOkSH9hb7QRCsMO8BoAGHVlDEGEfAtNC/LdLW679W/RJoxEfssWLNqdA==
+gl-surface3d@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/gl-surface3d/-/gl-surface3d-1.4.0.tgz#e7a157941068bdb3c0c757739e6cf4b60ddf9f3c"
+  integrity sha512-U0LM1LlhpUxzvqIE5IF2amlwlRcyzwGr14DnpCWy0kiTFhCMMPa7YmvUch4CiAYOWATg2YH63LsFosb+I+kwyg==
   dependencies:
     binary-search-bounds "^1.0.0"
     bit-twiddle "^1.0.2"
@@ -7608,10 +7608,10 @@ planar-graph-to-polyline@^1.0.0:
     two-product "^1.0.0"
     uniq "^1.0.0"
 
-plotly.js@^1.42.5:
-  version "1.42.5"
-  resolved "https://registry.yarnpkg.com/plotly.js/-/plotly.js-1.42.5.tgz#e08db820f831db8a4bec0e24061e67e7a94b9ec5"
-  integrity sha512-8CNLc4KGOv6Vjwm4tKVTSVNbBb2P2j7wqCrkSFNtKUA7iFkharaheY63lyg+/dZH4apucHYje/Yrh6eUPlF3GA==
+plotly.js@^1.43.1:
+  version "1.43.1"
+  resolved "https://registry.yarnpkg.com/plotly.js/-/plotly.js-1.43.1.tgz#1e056eb11ecb7f0c3096c71cb7fc29cc182afa4d"
+  integrity sha512-OPktJnGcPMkYeskx/5GB+SriLRtRSJEra0wRbms9xlTRuilLt7L/jCNIjazHIuyM6/5gUUYcq2zEpAClz0DKbA==
   dependencies:
     "3d-view" "^2.0.0"
     "@plotly/d3-sankey" "^0.5.1"
@@ -7627,21 +7627,21 @@ plotly.js@^1.42.5:
     es6-promise "^3.0.2"
     fast-isnumeric "^1.1.2"
     font-atlas-sdf "^1.3.3"
-    gl-cone3d "^1.2.0"
+    gl-cone3d "^1.2.1"
     gl-contour2d "^1.1.4"
-    gl-error3d "^1.0.8"
+    gl-error3d "^1.0.9"
     gl-heatmap2d "^1.0.4"
-    gl-line3d "^1.1.5"
+    gl-line3d "^1.1.6"
     gl-mat4 "^1.2.0"
-    gl-mesh3d "^2.0.1"
-    gl-plot2d "^1.3.1"
-    gl-plot3d "^1.5.10"
+    gl-mesh3d "^2.0.2"
+    gl-plot2d "^1.4.0"
+    gl-plot3d "^1.6.1"
     gl-pointcloud2d "^1.0.1"
-    gl-scatter3d "^1.0.14"
+    gl-scatter3d "^1.1.2"
     gl-select-box "^1.0.2"
     gl-spikes2d "^1.0.1"
-    gl-streamtube3d "^1.1.0"
-    gl-surface3d "^1.3.6"
+    gl-streamtube3d "^1.1.1"
+    gl-surface3d "^1.4.0"
     gl-text "^1.1.6"
     glslify "^6.3.1"
     has-hover "^1.0.1"
@@ -7654,20 +7654,19 @@ plotly.js@^1.42.5:
     ndarray "^1.0.18"
     ndarray-fill "^1.0.2"
     ndarray-homography "^1.0.0"
-    ndarray-ops "^1.2.2"
     point-cluster "^3.1.4"
     polybooljs "^1.2.0"
-    regl "^1.3.7"
+    regl "^1.3.11"
     regl-error2d "^2.0.5"
     regl-line2d "^3.0.12"
-    regl-scatter2d "^3.0.6"
-    regl-splom "^1.0.4"
+    regl-scatter2d "^3.1.2"
+    regl-splom "^1.0.5"
     right-now "^1.0.0"
     robust-orientation "^1.1.3"
     sane-topojson "^2.0.0"
     strongly-connected-components "^1.0.1"
     superscript-text "^1.0.0"
-    svg-path-sdf "^1.1.2"
+    svg-path-sdf "^1.1.3"
     tinycolor2 "^1.3.0"
     topojson-client "^2.1.0"
     webgl-context "^2.2.0"
@@ -8363,7 +8362,7 @@ regl-line2d@^3.0.12:
     pick-by-alias "^1.1.0"
     to-float32 "^1.0.0"
 
-regl-scatter2d@^3.0.6:
+regl-scatter2d@^3.0.6, regl-scatter2d@^3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/regl-scatter2d/-/regl-scatter2d-3.1.2.tgz#7a74eab6163aff8b1d3e07a58e8236673731ba80"
   integrity sha512-tlCWkE42/suXzyRoauTTo36k4Q0KVQOrY7XVov8A28B7JducD8QXGDlapP5M1y0TsBh70etrFABUHxeMLNpVFA==
@@ -8385,7 +8384,7 @@ regl-scatter2d@^3.0.6:
     to-float32 "^1.0.0"
     update-diff "^1.1.0"
 
-regl-splom@^1.0.4:
+regl-splom@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/regl-splom/-/regl-splom-1.0.5.tgz#bc9db7be311228bfb762a3435976cf53120f29ee"
   integrity sha512-DBn0a7+1f9apdWzCPpQG+2xaOwqqWxzoPapq+VRq7XnryWfFMblb6jKgowtGJdsi7uReHUTn2cooOfQx/cVKow==
@@ -8403,7 +8402,7 @@ regl-splom@^1.0.4:
     raf "^3.4.0"
     regl-scatter2d "^3.0.6"
 
-regl@^1.3.6, regl@^1.3.7:
+regl@^1.3.11, regl@^1.3.6:
   version "1.3.11"
   resolved "https://registry.yarnpkg.com/regl/-/regl-1.3.11.tgz#515e5173ffdc0618f908dd4e338a34ae9555f745"
   integrity sha512-tmt6CRhRqbcsYDWNwv+iG7GGOXdgoOBC7lKzoPMgnzpt3WKBQ3c8i7AxgbvTRZzty29hrW92fAJeZkPFQehfWA==
@@ -9613,7 +9612,7 @@ svg-path-bounds@^1.0.1:
     normalize-svg-path "^1.0.0"
     parse-svg-path "^0.1.2"
 
-svg-path-sdf@^1.1.2:
+svg-path-sdf@^1.1.3:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/svg-path-sdf/-/svg-path-sdf-1.1.3.tgz#92957a31784c0eaf68945472c8dc6bf9e6d126fc"
   integrity sha512-vJJjVq/R5lSr2KLfVXVAStktfcfa1pNFjFOgyJnzZFXlO/fDZ5DmM8FpnSKKzLPfEYTVeXuVBTHF296TpxuJVg==
