@@ -197,6 +197,11 @@ export class Github {
       return undefined;
     }
 
+    if (response.status === 404) {
+      console.error("statso for repositroy", repository, "not found (404)");
+      return undefined;
+    }
+
     try {
       return response.json();
     } catch (error) {
