@@ -344,6 +344,20 @@ describe("Github", () => {
       expect(fetchMock).toHaveBeenCalled();
       expect(stats).toBeUndefined();
     });
+
+    it("returns undefined if status is 404 (not found)", async function() {
+      fetchMock.mockReturnValue({
+        status: 404,
+        json() {
+          return "some value that should never be read";
+        }
+      });
+
+      const stats = await github.getStats("repoName");
+
+      expect(fetchMock).toHaveBeenCalled();
+      expect(stats).toBeUndefined();
+    });
   });
 
   describe("getStatsForRepositories", function() {
