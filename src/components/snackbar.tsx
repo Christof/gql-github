@@ -1,8 +1,8 @@
 import * as React from "react";
 import { Slide, Snackbar } from "@material-ui/core";
-import { SlideProps } from "@material-ui/core/Slide";
+import { TransitionProps } from "@material-ui/core/transitions/transition";
 
-export function TransitionLeft(props: SlideProps) {
+export function TransitionLeft(props: TransitionProps) {
   return <Slide direction="left" {...props} />;
 }
 
