@@ -106,9 +106,13 @@ describe("Dropdown", function() {
         />
       );
 
-      wrapper.find(Select).prop("onChange")({
-        target: { value: "opt2" }
-      } as any);
+      const child: React.ReactNode = undefined;
+      wrapper.find(Select).prop("onChange")(
+        {
+          target: { value: "opt2" }
+        } as any,
+        child
+      );
 
       expect(selected).toEqual("opt2");
     });
