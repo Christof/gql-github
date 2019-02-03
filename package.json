@@ -21,7 +21,7 @@
       "^.+\\.(ts|tsx)$": "ts-jest"
     },
     "setupFiles": ["<rootDir>/config/shim.js", "jest-localstorage-mock"],
-    "setupTestFrameworkScriptFile": "<rootDir>/config/preprocessor_test.js",
+    "setupFilesAfterEnv": ["<rootDir>/config/preprocessor_test.js"],
     "testMatch": ["**/__tests__/**_test.(ts|tsx|js)"],
     "collectCoverageFrom": ["src/**/*.{ts,js,tsx}"],
     "testURL": "http://test.com/unknown",
