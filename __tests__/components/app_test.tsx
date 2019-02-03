@@ -211,7 +211,7 @@ describe("App", function() {
           const menuButton = appBar.find(IconButton);
           expect(menuButton).toHaveLength(1);
 
-          menuButton.prop("onClick")();
+          menuButton.simulate("click");
           await waitImmediate();
           wrapper = wrapper.update();
 
