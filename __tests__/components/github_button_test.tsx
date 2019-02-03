@@ -1,7 +1,7 @@
 import * as React from "react";
 import { GithubButton } from "../../src/components/github_button";
 import { Github } from "../../src/github";
-import { shallow } from "enzyme";
+import { shallow, ShallowWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
 import { Button } from "@material-ui/core";
 
@@ -10,6 +10,15 @@ declare const jsdom: any;
 jest.mock("../../src/github");
 
 describe("GithubButton", function() {
+  function expectButtonToContainText(
+    button: ShallowWrapper<any, any>,
+    text: string
+  ) {
+    const children = button.prop("children");
+    expect(children.length).toBeGreaterThanOrEqual(1);
+    expect((children as any)[0]).toContain(text);
+  }
+
   describe("login", function() {
     describe("on localhost", function() {
       it("changes window location to github login page", function() {
@@ -22,8 +31,9 @@ describe("GithubButton", function() {
 
         const loginButton = wrapper.find(Button);
         expect(loginButton).toHaveLength(1);
-        expect(loginButton.prop("children")[0]).toContain("Login");
+
         loginButton.prop("onClick")({} as any);
+        expectButtonToContainText(loginButton, "Login");
 
         expect(window.location.assign).toHaveBeenCalled();
         const newUrl = (window.location.assign as any).mock.calls[0][0];
@@ -54,7 +64,7 @@ describe("GithubButton", function() {
 
         const loginButton = wrapper.find(Button);
         expect(loginButton).toHaveLength(1);
-        expect(loginButton.prop("children")[0]).toContain("Login");
+        expectButtonToContainText(loginButton, "Login");
         loginButton.prop("onClick")({} as any);
 
         expect(authenticator.authenticate).toHaveBeenCalled();
@@ -68,8 +78,8 @@ describe("GithubButton", function() {
       );
 
       const loginButton = wrapper.find(Button);
-      expect(loginButton.prop("children")[0]).toContain("Login");
-      const img = shallow(loginButton.prop("children")[1]);
+      expectButtonToContainText(loginButton, "Login");
+      const img = loginButton.childAt(1);
       expect(img.prop("src")).toContain("mark");
     });
 
@@ -87,8 +97,8 @@ describe("GithubButton", function() {
       wrapper.update();
 
       const loginButton = wrapper.find(Button);
-      expect(loginButton.prop("children")[0]).toContain("Logout");
-      const img = shallow(loginButton.prop("children")[1]);
+      expectButtonToContainText(loginButton, "Logout");
+      const img = loginButton.childAt(1);
       expect(img.prop("src")).toContain(avatarUrl);
     });
   });
@@ -111,7 +121,7 @@ describe("GithubButton", function() {
 
       const logoutButton = wrapper.find(Button);
       expect(logoutButton).toHaveLength(1);
-      expect(logoutButton.prop("children")[0]).toContain("Logout");
+      expectButtonToContainText(logoutButton, "Logout");
       logoutButton.prop("onClick")({} as any);
 
       expect(window.localStorage.clear).toHaveBeenCalled();
