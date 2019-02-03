@@ -22,7 +22,7 @@
     },
     "setupFiles": ["<rootDir>/config/shim.js", "jest-localstorage-mock"],
     "setupFilesAfterEnv": ["<rootDir>/config/preprocessor_test.js"],
-    "testMatch": ["**/__tests__/**_test.(ts|tsx|js)"],
+    "testMatch": ["**/__tests__/**/*_test.(ts|tsx|js)"],
     "collectCoverageFrom": ["src/**/*.{ts,js,tsx}"],
     "testURL": "http://test.com/unknown",
     "testEnvironment": "jest-environment-jsdom-global"
