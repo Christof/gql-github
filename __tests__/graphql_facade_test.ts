@@ -2,7 +2,7 @@ import { GraphQLFacade } from "../src/graphql_facade";
 
 describe("GraphQLFacade", function() {
   let facade: GraphQLFacade;
-  const clientQueryMock = jest.fn<any>();
+  const clientQueryMock = jest.fn();
   const query = `
       query {
         viewer {
