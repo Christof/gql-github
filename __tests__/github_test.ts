@@ -1,8 +1,8 @@
 import { Github, GithubData } from "../src/github";
 
 describe("Github", () => {
-  const fetchMock = jest.fn<Promise<Request>>();
-  const clientQueryMock = jest.fn<any>();
+  const fetchMock = jest.fn();
+  const clientQueryMock = jest.fn();
   let github: Github;
 
   beforeEach(() => {
