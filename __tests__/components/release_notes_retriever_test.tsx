@@ -21,10 +21,12 @@ describe("ReleaseNotesRetriever", function() {
     const respositorySelector = wrapper.find(RepositorySelector);
     expect(respositorySelector).toHaveLength(1);
 
-    github.getReleases = jest.fn(() => [
-      { tagName: "v0.0.1", description: "description 1" },
-      { tagName: "v0.0.2", description: "description 2" }
-    ]);
+    github.getReleases = jest.fn(() =>
+      Promise.resolve([
+        { tagName: "v0.0.1", description: "description 1" },
+        { tagName: "v0.0.2", description: "description 2" }
+      ])
+    );
     (respositorySelector.prop("onRepositorySelect") as any)("myRepo" as any);
 
     await waitImmediate();

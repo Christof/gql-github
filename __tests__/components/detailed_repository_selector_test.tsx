@@ -35,13 +35,10 @@ describe("DetailedRepositorySelector", function() {
       github = new Github("token", {} as any, undefined);
       github.getOwners = jest.fn(() => Promise.resolve([owner1, owner2]));
       (github.copyFor as jest.Mock<Github>).mockReturnValue(github);
-      (github.getRepositoryNames as jest.Mock<string[]>).mockReturnValueOnce([
-        "repo1",
-        "repo2"
-      ]);
-      (github.getRepositoryNames as jest.Mock<string[]>).mockReturnValueOnce([
-        "repo3"
-      ]);
+      github.getRepositoryNames = jest
+        .fn()
+        .mockReturnValueOnce(["repo1", "repo2"])
+        .mockReturnValueOnce(["repo3"]);
 
       wrapper = shallow(
         <DetailedRepositorySelector

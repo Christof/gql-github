@@ -1,6 +1,6 @@
 import * as React from "react";
 import { GithubButton } from "../../src/components/github_button";
-import { Github } from "../../src/github";
+import { Github, GithubUser } from "../../src/github";
 import { shallow, ShallowWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
 import { Button } from "@material-ui/core";
@@ -90,7 +90,9 @@ describe("GithubButton", function() {
 
       const avatarUrl = "url-to-avatar";
       const github = new Github("token", {} as any, undefined);
-      github.getUser = jest.fn(() => Promise.resolve({ avatarUrl }));
+      github.getUser = jest.fn(() =>
+        Promise.resolve({ avatarUrl } as GithubUser)
+      );
       wrapper.setProps({ github });
 
       await waitImmediate();
@@ -107,7 +109,9 @@ describe("GithubButton", function() {
     it("clears localstorage and calls onChangeToken with undefined", function() {
       const avatarUrl = "url-to-avatar";
       const github = new Github("token", {} as any, undefined);
-      github.getUser = jest.fn(() => Promise.resolve({ avatarUrl }));
+      github.getUser = jest.fn(() =>
+        Promise.resolve({ avatarUrl } as GithubUser)
+      );
 
       let changedToken = "";
 
@@ -131,7 +135,9 @@ describe("GithubButton", function() {
     it("does not reload avatar on update if github instance is the same", async function() {
       const avatarUrl = "url-to-avatar";
       const github = new Github("token", {} as any, undefined);
-      github.getUser = jest.fn(() => Promise.resolve({ avatarUrl }));
+      github.getUser = jest.fn(() =>
+        Promise.resolve({ avatarUrl } as GithubUser)
+      );
 
       const wrapper = shallow(
         <GithubButton
