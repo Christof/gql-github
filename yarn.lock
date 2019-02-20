@@ -389,10 +389,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-8.10.40.tgz#4314888d5cd537945d73e9ce165c04cc550144a4"
   integrity sha512-RRSjdwz63kS4u7edIwJUn8NqKLLQ6LyqF/X4+4jp38MBT3Vwetewi2N4dgJEshLbDwNgOJXNYoOwzVZUSSLhkQ==
 
-"@types/plotly.js@^1.43.0":
-  version "1.43.0"
-  resolved "https://registry.yarnpkg.com/@types/plotly.js/-/plotly.js-1.43.0.tgz#5497081df6f4112e05cf709e83ddf83091575771"
-  integrity sha512-WF6tYEOCu4Gs5td5bqdKjnyM3FvEu6z6qNwB8IH0FnWWu1ZF2QcurkzYGabrYobLofta4TK5u1yz0s7fiChWhQ==
+"@types/plotly.js@^1.43.1":
+  version "1.43.1"
+  resolved "https://registry.yarnpkg.com/@types/plotly.js/-/plotly.js-1.43.1.tgz#c91e9d216b4ceb8adc7c39e1123b6e3720983d04"
+  integrity sha512-33irzgyjRq1EY4J82DGH8IEFvozlkYYfeqAJr8cS2ZYnJywlHrXcT3yThxO3CMrhgJdZfvXgZ1oZQB/PlpKX/A==
   dependencies:
     "@types/d3" "^3"
 
@@ -7584,10 +7584,10 @@ planar-graph-to-polyline@^1.0.0:
     two-product "^1.0.0"
     uniq "^1.0.0"
 
-plotly.js@^1.44.3:
-  version "1.44.3"
-  resolved "https://registry.yarnpkg.com/plotly.js/-/plotly.js-1.44.3.tgz#1c444f9ad7a571a942bbb1d92388f23aa8b4e713"
-  integrity sha512-7e9IFc0jUgTyHtLcyqxjFS+/IfGqma35rKEae/QJupFkm9Yz21gh97p29xBG9gnGjtr1jxsDMoSf3XdjawQFxg==
+plotly.js@^1.44.4:
+  version "1.44.4"
+  resolved "https://registry.yarnpkg.com/plotly.js/-/plotly.js-1.44.4.tgz#dcf6ffb27f7586e1e19f0c601fd4f4364a47aba0"
+  integrity sha512-YTSR4gZCpZw4PznaxdRQEh39SUok0lTJtRfIYG5AGoSmQ83JN6nEbHsGbaNZeB3L0M5eHRbeCEEJDSDLngKFTQ==
   dependencies:
     "3d-view" "^2.0.0"
     "@plotly/d3-sankey" "^0.5.1"
