@@ -3,13 +3,13 @@ import { PullRequestChangeCategorySelector } from "./pull_request_change_categor
 import { Section } from "./section";
 import { RepositorySelector } from "./repository_selector";
 import { Markdown } from "./markdown";
-import { Github, GithubTag } from "../github";
+import { Github } from "../github";
 import * as React from "react";
 import { DefaultGrid } from "./default_grid";
-import { TriggeredAsyncSwitchFromLoadType } from "./triggered_async_switch";
 import { TagRangeSelector } from "./tag_range_selector";
 import { ReleaseNote } from "./release_note";
 import { LinearProgress } from "@material-ui/core";
+import { unstable_createResource } from "react-cache";
 
 function PullRequests(props: {
   pullRequests: PullRequest[];
@@ -32,6 +32,11 @@ function PullRequests(props: {
   );
 }
 
+const tagsResource = unstable_createResource(
+  (input: { repository: string; github: Github }) =>
+    loadTags(input.repository, input.github)
+);
+
 interface State {
   pullRequests: PullRequest[];
   releaseTag?: string;
@@ -43,8 +48,6 @@ interface State {
 interface Props {
   github: Github;
   repo: string;
-  defaultStartTag?: string;
-  tags?: GithubTag[];
 }
 
 export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
@@ -130,12 +133,17 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
     );
   }
 
-  render() {
+  renderSections() {
+    const tagsData = tagsResource.read({
+      repository: this.props.repo,
+      github: this.props.github
+    });
+
     return (
       <>
         <TagRangeSelector
-          tags={this.props.tags}
-          defaultStartTag={this.props.defaultStartTag}
+          tags={tagsData.tags}
+          defaultStartTag={tagsData.defaultStartTag}
           onSelect={(startTag: string, releaseTag: string) =>
             this.getCommits(startTag, releaseTag)
           }
@@ -143,6 +151,20 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
         {this.renderPullRequestsSection()}
         {this.renderReleaseNoteSection()}
       </>
+    );
+  }
+
+  render() {
+    return (
+      <React.Suspense
+        fallback={
+          <Section heading="Range">
+            <LinearProgress />
+          </Section>
+        }
+      >
+        {this.renderSections()}
+      </React.Suspense>
     );
   }
 }
@@ -167,27 +189,14 @@ async function loadTags(repo: string, github: Github) {
 }
 
 export function ReleaseNotesCreator(props: { github: Github }) {
+  const [repository, setRepository] = React.useState(undefined as string);
   return (
     <DefaultGrid small>
-      <TriggeredAsyncSwitchFromLoadType<typeof loadTags>
-        renderTrigger={callback => (
-          <RepositorySelector
-            {...props}
-            onRepositorySelect={repository =>
-              callback(loadTags(repository, props.github))
-            }
-          />
-        )}
-        renderTriggered={triggeredProps =>
-          triggeredProps === undefined ? (
-            <Section heading="Range">
-              <LinearProgress />
-            </Section>
-          ) : (
-            <ReleaseNotesCreatorSections {...triggeredProps} />
-          )
-        }
-      />
+      <RepositorySelector {...props} onRepositorySelect={setRepository} />
+      <div>Repo {repository}</div>
+      {repository && (
+        <ReleaseNotesCreatorSections github={props.github} repo={repository} />
+      )}
     </DefaultGrid>
   );
 }
