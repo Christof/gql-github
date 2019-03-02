@@ -33,7 +33,7 @@
     "@types/classnames": "^2.2.7",
     "@types/enzyme": "^3.9.0",
     "@types/jest": "^24.0.9",
-    "@types/node": "^8.10.40",
+    "@types/node": "^8.10.42",
     "@types/plotly.js": "^1.43.1",
     "@types/qs": "^6.5.1",
     "@types/ramda": "^0.26.0",
