@@ -255,7 +255,10 @@ describe("ReleaseNotesCreator", function() {
       });
 
       it("only shows range section after another repository seleciton", async function() {
-        (github.getTags as jest.Mock).mockReturnValue([{ name: "v0.0.1" }]);
+        (github.getTags as jest.Mock).mockReturnValue([
+          { name: "v0.0.1" },
+          { name: "v0.0.2" }
+        ]);
         (github.getReleases as jest.Mock).mockReturnValue([]);
         (wrapper.find(RepositorySelector).prop("onRepositorySelect") as any)(
           "repo1"
@@ -267,8 +270,8 @@ describe("ReleaseNotesCreator", function() {
         const dropdowns = wrapper.find(Dropdown);
         expect(dropdowns).toHaveLength(4);
 
-        expect(dropdowns.at(2).prop("options")).toEqual(["v0.0.1"]);
-        expect(dropdowns.at(3).prop("options")).toEqual(["v0.0.1"]);
+        expect(dropdowns.at(2).prop("options")).toEqual(["v0.0.1", "v0.0.2"]);
+        expect(dropdowns.at(3).prop("options")).toEqual(["v0.0.1", "v0.0.2"]);
 
         expect(dropdowns.at(2).prop("initialSelection")).toBeUndefined();
         const sectionHeadings = wrapper.find(Section);
