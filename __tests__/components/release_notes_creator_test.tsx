@@ -2,7 +2,7 @@ import * as React from "react";
 import { ReleaseNotesCreator } from "../../src/components/release_notes_creator";
 import { mount, ReactWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
-import { Github } from "../../src/github";
+import { Github, GithubRelease } from "../../src/github";
 import { PullRequest, ChangeCategory } from "../../src/pull_request";
 import { Section } from "../../src/components/section";
 import { RepositorySelector } from "../../src/components/repository_selector";
@@ -33,6 +33,45 @@ describe("ReleaseNotesCreator", function() {
   describe("before selecting a repository", function() {
     it("shows a RepositorySelector", function() {
       expect(wrapper.find(RepositorySelector)).toHaveLength(1);
+    });
+  });
+
+  describe("after selecting a repository with one tag", function() {
+    const tags = [{ name: "v0.0.1" }];
+    const releases: GithubRelease[] = [];
+
+    beforeEach(async function() {
+      (github.getTags as jest.Mock).mockReturnValue(tags);
+      (github.getReleases as jest.Mock).mockReturnValue(releases);
+      (wrapper
+        .find(RepositorySelector)
+        .prop("onRepositorySelect") as any)("repo1");
+
+      await waitImmediate();
+      wrapper.update();
+    });
+
+    it("shows the last 100 commits before the first tag if only one exists", async function() {
+      (github.getCommits as jest.Mock).mockReturnValue([]);
+
+      expect(wrapper.find(Section)).toHaveLength(2);
+      expect(
+        wrapper
+          .find(Section)
+          .at(1)
+          .prop("heading")
+      ).toEqual("Range");
+
+      const dropdowns = wrapper.find(Dropdown);
+      expect(dropdowns).toHaveLength(2);
+
+      (github.compare as jest.Mock).mockReturnValue({ commits: [] });
+      (wrapper.find(Button).prop("onClick") as any)();
+
+      await waitImmediate();
+      wrapper.update();
+
+      expect(github.getCommits).toHaveBeenCalledWith("repo1");
     });
   });
 
