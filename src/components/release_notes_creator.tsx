@@ -140,7 +140,7 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
 
   render() {
     return (
-      <>
+      <Section heading="Range">
         {this.props.tags !== undefined && this.props.tags.length > 1 ? (
           <TagRangeSelector
             tags={this.props.tags}
@@ -151,25 +151,23 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
             }}
           />
         ) : (
-          <Section heading="Range">
-            <Button
-              variant="contained"
-              onClick={async () => {
-                const commits = await this.getCommits();
-                this.parseCommitsForPullRequests(
-                  commits,
-                  this.props.tags[0].name
-                );
-              }}
-            >
-              Get merged PRs
-            </Button>
-          </Section>
+          <Button
+            variant="contained"
+            onClick={async () => {
+              const commits = await this.getCommits();
+              this.parseCommitsForPullRequests(
+                commits,
+                this.props.tags[0].name
+              );
+            }}
+          >
+            Get merged PRs
+          </Button>
         )}
 
         {this.renderPullRequestsSection()}
         {this.renderReleaseNoteSection()}
-      </>
+      </Section>
     );
   }
 }
