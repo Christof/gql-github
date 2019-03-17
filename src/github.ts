@@ -6,7 +6,8 @@ import {
   GithubRelease,
   GithubData,
   GithubPostRelease,
-  GithubPullRequest
+  GithubPullRequest,
+  GithubCommit
 } from "./github_types";
 import { GraphQLFacade } from "./graphql_facade";
 export * from "./github_types";
@@ -140,6 +141,14 @@ export class Github {
     );
 
     return (await response.json()) as GithubCompareResult;
+  }
+
+  async getCommits(repository: string) {
+    const response = await this.getRequest(
+      `repos/${this.owner}/${repository}/commits?per_page=100`
+    );
+
+    return (await response.json()) as GithubCommit[];
   }
 
   async getTags(repository: string): Promise<GithubTag[]> {

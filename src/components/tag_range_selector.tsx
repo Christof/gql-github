@@ -1,6 +1,5 @@
 import * as React from "react";
 import { GithubTag } from "../github_types";
-import { Section } from "./section";
 import { Dropdown } from "./dropdown";
 import { Button } from "@material-ui/core";
 
@@ -27,7 +26,7 @@ export class TagRangeSelector extends React.Component<
     const disabledGetPRsButton =
       this.state.startTag === undefined || this.state.releaseTag === undefined;
     return (
-      <Section heading="Range">
+      <>
         <Dropdown
           label="Start Tag"
           options={tagNames}
@@ -48,7 +47,7 @@ export class TagRangeSelector extends React.Component<
         >
           Get merged PRs in range
         </Button>
-      </Section>
+      </>
     );
   }
 }

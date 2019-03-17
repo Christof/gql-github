@@ -3,13 +3,13 @@ import { PullRequestChangeCategorySelector } from "./pull_request_change_categor
 import { Section } from "./section";
 import { RepositorySelector } from "./repository_selector";
 import { Markdown } from "./markdown";
-import { Github, GithubTag } from "../github";
+import { Github, GithubTag, GithubCommit } from "../github";
 import * as React from "react";
 import { DefaultGrid } from "./default_grid";
 import { TriggeredAsyncSwitchFromLoadType } from "./triggered_async_switch";
 import { TagRangeSelector } from "./tag_range_selector";
 import { ReleaseNote } from "./release_note";
-import { LinearProgress } from "@material-ui/core";
+import { LinearProgress, Button, Typography, Grid } from "@material-ui/core";
 
 function PullRequests(props: {
   pullRequests: PullRequest[];
@@ -61,15 +61,23 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
     );
   }
 
-  async getCommits(startTag: string, releaseTag: string) {
+  async compare(startTag: string, releaseTag: string) {
     const result = await this.props.github.compare(
       this.props.repo,
       startTag,
       releaseTag
     );
 
+    return result.commits;
+  }
+
+  async getCommits() {
+    return await this.props.github.getCommits(this.props.repo);
+  }
+
+  parseCommitsForPullRequests(commits: GithubCommit[], releaseTag: string) {
     const pullRequestRegex = new RegExp(/Merge pull request/);
-    const pullRequestMerges = result.commits.filter(commit =>
+    const pullRequestMerges = commits.filter(commit =>
       commit.commit.message.match(pullRequestRegex)
     );
     const pullRequests = pullRequestMerges.map(commit =>
@@ -130,19 +138,67 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
     );
   }
 
+  private renderButtonForSingleTag() {
+    return (
+      <Grid container alignItems="baseline" spacing={16}>
+        <Grid item>
+          <Button
+            variant="contained"
+            onClick={async () => {
+              const commits = await this.getCommits();
+              this.parseCommitsForPullRequests(
+                commits,
+                this.props.tags[0].name
+              );
+            }}
+          >
+            Get merged PRs
+          </Button>
+        </Grid>
+        <Grid item>
+          <Typography
+            variant="body1"
+            color="textSecondary"
+            align="right"
+            inline
+          >
+            Uses only last 100 commits up to the only tag
+          </Typography>
+        </Grid>
+      </Grid>
+    );
+  }
+
+  renderNoTagsNotice() {
+    return (
+      <Typography variant="body1" color="error" align="right" inline>
+        There are no existing tags in this repository. They are required to
+        create release notes.
+      </Typography>
+    );
+  }
+
   render() {
     return (
-      <>
-        <TagRangeSelector
-          tags={this.props.tags}
-          defaultStartTag={this.props.defaultStartTag}
-          onSelect={(startTag: string, releaseTag: string) =>
-            this.getCommits(startTag, releaseTag)
-          }
-        />
+      <Section heading="Range">
+        {this.props.tags !== undefined && this.props.tags.length > 1 ? (
+          <TagRangeSelector
+            tags={this.props.tags}
+            defaultStartTag={this.props.defaultStartTag}
+            onSelect={async (startTag: string, releaseTag: string) => {
+              const commits = await this.compare(startTag, releaseTag);
+              this.parseCommitsForPullRequests(commits, releaseTag);
+            }}
+          />
+        ) : this.props.tags === undefined || this.props.tags.length === 0 ? (
+          this.renderNoTagsNotice()
+        ) : (
+          this.renderButtonForSingleTag()
+        )}
+
         {this.renderPullRequestsSection()}
         {this.renderReleaseNoteSection()}
-      </>
+      </Section>
     );
   }
 }

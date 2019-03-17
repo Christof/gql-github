@@ -229,6 +229,23 @@ describe("Github", () => {
     });
   });
 
+  describe("getCommits", function() {
+    it("returns the last 100 commits", async function() {
+      fetchMock.mockReturnValue({
+        status: 200,
+        json() {
+          return [] as any[];
+        }
+      });
+      await github.getCommits("repoName");
+
+      expect(fetchMock).toHaveBeenCalled();
+      expect(fetchMock.mock.calls[0][0]).toBe(
+        "https://api.github.com/repos/owner/repoName/commits?per_page=100"
+      );
+    });
+  });
+
   describe("getTags", function() {
     it("returns list of tags", async function() {
       const expectedTags = [{ name: "v0.0.1" }, { name: "v0.0.2" }];
