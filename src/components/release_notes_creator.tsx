@@ -9,7 +9,7 @@ import { DefaultGrid } from "./default_grid";
 import { TriggeredAsyncSwitchFromLoadType } from "./triggered_async_switch";
 import { TagRangeSelector } from "./tag_range_selector";
 import { ReleaseNote } from "./release_note";
-import { LinearProgress, Button } from "@material-ui/core";
+import { LinearProgress, Button, Typography, Grid } from "@material-ui/core";
 
 function PullRequests(props: {
   pullRequests: PullRequest[];
@@ -140,15 +140,32 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
 
   private renderButtonForSingleTag() {
     return (
-      <Button
-        variant="contained"
-        onClick={async () => {
-          const commits = await this.getCommits();
-          this.parseCommitsForPullRequests(commits, this.props.tags[0].name);
-        }}
-      >
-        Get merged PRs
-      </Button>
+      <Grid container alignItems="baseline" spacing={16}>
+        <Grid item>
+          <Button
+            variant="contained"
+            onClick={async () => {
+              const commits = await this.getCommits();
+              this.parseCommitsForPullRequests(
+                commits,
+                this.props.tags[0].name
+              );
+            }}
+          >
+            Get merged PRs
+          </Button>
+        </Grid>
+        <Grid item>
+          <Typography
+            variant="body1"
+            color="textSecondary"
+            align="right"
+            inline
+          >
+            Uses only last 100 commits up to the only tag
+          </Typography>
+        </Grid>
+      </Grid>
     );
   }
 
