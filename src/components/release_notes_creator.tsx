@@ -169,6 +169,15 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
     );
   }
 
+  renderNoTagsNotice() {
+    return (
+      <Typography variant="body1" color="error" align="right" inline>
+        There are no existing tags in this repository. They are required to
+        create release notes.
+      </Typography>
+    );
+  }
+
   render() {
     return (
       <Section heading="Range">
@@ -181,6 +190,8 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
               this.parseCommitsForPullRequests(commits, releaseTag);
             }}
           />
+        ) : this.props.tags === undefined || this.props.tags.length === 0 ? (
+          this.renderNoTagsNotice()
         ) : (
           this.renderButtonForSingleTag()
         )}
