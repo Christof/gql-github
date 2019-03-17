@@ -2,11 +2,11 @@ import * as React from "react";
 import { ReleaseNotesCreator } from "../../src/components/release_notes_creator";
 import { mount, ReactWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
-import { Github, GithubRelease } from "../../src/github";
+import { Github, GithubRelease, GithubTag } from "../../src/github";
 import { PullRequest, ChangeCategory } from "../../src/pull_request";
 import { Section } from "../../src/components/section";
 import { RepositorySelector } from "../../src/components/repository_selector";
-import { Button, Snackbar } from "@material-ui/core";
+import { Button, Snackbar, Typography } from "@material-ui/core";
 import { Dropdown } from "../../src/components/dropdown";
 import { PullRequestChangeCategorySelector } from "../../src/components/pull_request_change_category_selector";
 import { Markdown } from "../../src/components/markdown";
@@ -33,6 +33,42 @@ describe("ReleaseNotesCreator", function() {
   describe("before selecting a repository", function() {
     it("shows a RepositorySelector", function() {
       expect(wrapper.find(RepositorySelector)).toHaveLength(1);
+    });
+  });
+
+  describe("after selecting a repository with no tag", function() {
+    const tags: GithubTag[] = [];
+    const releases: GithubRelease[] = [];
+
+    beforeEach(async function() {
+      (github.getTags as jest.Mock).mockReturnValue(tags);
+      (github.getReleases as jest.Mock).mockReturnValue(releases);
+      (wrapper
+        .find(RepositorySelector)
+        .prop("onRepositorySelect") as any)("repo1");
+
+      await waitImmediate();
+      wrapper.update();
+    });
+
+    it("shows error message", async function() {
+      (github.getCommits as jest.Mock).mockReturnValue([]);
+
+      expect(wrapper.find(Section)).toHaveLength(2);
+      expect(
+        wrapper
+          .find(Section)
+          .at(1)
+          .prop("heading")
+      ).toEqual("Range");
+
+      const dropdowns = wrapper.find(Dropdown);
+      expect(dropdowns).toHaveLength(2);
+
+      expect(wrapper.find(Button)).toHaveLength(0);
+      const typogryphies = wrapper.find(Typography);
+      expect(typogryphies).toHaveLength(3);
+      expect(typogryphies.at(2).prop("children")).toMatch(/no existing tags/);
     });
   });
 
