@@ -138,6 +138,20 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
     );
   }
 
+  private renderButtonForSingleTag() {
+    return (
+      <Button
+        variant="contained"
+        onClick={async () => {
+          const commits = await this.getCommits();
+          this.parseCommitsForPullRequests(commits, this.props.tags[0].name);
+        }}
+      >
+        Get merged PRs
+      </Button>
+    );
+  }
+
   render() {
     return (
       <Section heading="Range">
@@ -151,18 +165,7 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
             }}
           />
         ) : (
-          <Button
-            variant="contained"
-            onClick={async () => {
-              const commits = await this.getCommits();
-              this.parseCommitsForPullRequests(
-                commits,
-                this.props.tags[0].name
-              );
-            }}
-          >
-            Get merged PRs
-          </Button>
+          this.renderButtonForSingleTag()
         )}
 
         {this.renderPullRequestsSection()}
