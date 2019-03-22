@@ -85,7 +85,7 @@
     "react-dom": "^16.8.4",
     "react-markdown": "^4.0.6",
     "react-plotlyjs-ts": "^2.1.0",
-    "react-router-dom": "^4.4.0-beta",
+    "react-router-dom": "^4.4.0-beta.8",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7",
     "uuid": "^3.3.2"
