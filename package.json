@@ -73,7 +73,7 @@
     "apollo-link-context": "^1.0.17",
     "apollo-link-http": "^1.5.14",
     "classnames": "^2.2.6",
-    "commander": "^2.19.0",
+    "commander": "^2.20.0",
     "express": "^4.16.4",
     "graphql": "^14.2.0",
     "graphql-tag": "^2.10.1",
