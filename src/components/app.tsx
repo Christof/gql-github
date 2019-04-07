@@ -30,14 +30,22 @@ interface State {
   open: boolean;
 }
 
-const Stats = createDynamicImport(() =>
-  import("./stats").then(module => module.Stats)
+type ComponentPromise = Promise<
+  React.FunctionComponent<React.PropsWithChildren<{ github: Github }>>
+>;
+
+const Stats = createDynamicImport(
+  () => import("./stats").then(module => module.Stats) as ComponentPromise
 );
-const PersonalStats = createDynamicImport(() =>
-  import("./personal_stats").then(module => module.PersonalStats)
+const PersonalStats = createDynamicImport(
+  () =>
+    import("./personal_stats").then(
+      module => module.PersonalStats
+    ) as ComponentPromise
 );
-const OrgStats = createDynamicImport(() =>
-  import("./org_stats").then(module => module.OrgStats)
+const OrgStats = createDynamicImport(
+  () =>
+    import("./org_stats").then(module => module.OrgStats) as ComponentPromise
 );
 
 const drawerWidth = 240;
