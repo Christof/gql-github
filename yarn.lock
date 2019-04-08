@@ -4753,17 +4753,6 @@ handle-thing@^2.0.0:
   resolved "https://registry.yarnpkg.com/handle-thing/-/handle-thing-2.0.0.tgz#0e039695ff50c93fc288557d696f3c1dc6776754"
   integrity sha512-d4sze1JNC454Wdo2fkuyzCr6aHcbL6PGGuFAz0Li/NcOm1tCHGnWDRmJP85dh9IhQErTc2svWFEX5xHIOo//kQ==
 
-handlebars@^4.0.11:
-  version "4.0.12"
-  resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.0.12.tgz#2c15c8a96d46da5e266700518ba8cb8d919d5bc5"
-  integrity sha512-RhmTekP+FZL+XNhwS1Wf+bTTZpdLougwt5pcgA1tuz6Jcx0fpH/7z0qd71RKnZHBCxIRBHfBOnio4gViPemNzA==
-  dependencies:
-    async "^2.5.0"
-    optimist "^0.6.1"
-    source-map "^0.6.1"
-  optionalDependencies:
-    uglify-js "^3.1.4"
-
 handlebars@^4.1.0:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.1.1.tgz#6e4e41c18ebe7719ae4d38e5aca3d32fa3dd23d3"
@@ -5199,10 +5188,10 @@ ini@^1.3.4, ini@~1.3.0:
   resolved "https://registry.yarnpkg.com/ini/-/ini-1.3.5.tgz#eee25f56db1c9ec6085e0c22778083f596abf927"
   integrity sha512-RZY5huIKCMRWDUqZlEi72f/lmXKMvuszcMBduliQ3nnWbx9X/ZBQO7DijMEYS9EhHBb2qacRUMtC7svLwe0lcw==
 
-inspectpack@^4.0.0:
-  version "4.1.2"
-  resolved "https://registry.yarnpkg.com/inspectpack/-/inspectpack-4.1.2.tgz#b07dd10f1131c290d2076270470787d61b47097e"
-  integrity sha512-bd0iIr5P2xRMtjQQkPnUYJSNa3mUFYER/2eQOPAoXrWBnZXMeFVAgRt/Dny8XVdSkkFoNKhumPjjV9QgTDcVxQ==
+inspectpack@^4.2.1:
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/inspectpack/-/inspectpack-4.2.1.tgz#8e1893feb5293458c9d587cb2a8ec70be2e79dd4"
+  integrity sha512-3kraYZ9tfxNYXzBsRTNvluj1oJKlJ6wkD+TZ6Vk9CNI1SZcQ5H/9yskuq1Yzha1Cn/wEX/Qw+g+tSLIP5iGXhg==
   dependencies:
     chalk "^2.4.0"
     io-ts "^1.0.5"
@@ -10963,16 +10952,16 @@ webpack-cli@^3.3.0:
     v8-compile-cache "^2.0.2"
     yargs "^12.0.5"
 
-webpack-dashboard@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/webpack-dashboard/-/webpack-dashboard-3.0.0.tgz#14b2374841efd9b28d0368f07a38bc1af43970e1"
-  integrity sha512-OtqccZJLR9CPbn86p6iwXWrseh944AkNj0AzrNvC7j4x+yHjmX1dlDpyo1f35GwY6F9eBWpMffUoGeWrFjLNUA==
+webpack-dashboard@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/webpack-dashboard/-/webpack-dashboard-3.0.2.tgz#85fc1284e60fdeab81cc15e642ea0fbf95cd6051"
+  integrity sha512-Y7EvmVmVi/XdLMXITrMaIldr8rUj2pSAWQX20yCkaX5NzomR1k+fnsUKVgexF8H9LYBfC1/L2wFzhClUbKKWow==
   dependencies:
     commander "^2.15.1"
     cross-spawn "^6.0.5"
     filesize "^3.6.1"
-    handlebars "^4.0.11"
-    inspectpack "^4.0.0"
+    handlebars "^4.1.0"
+    inspectpack "^4.2.1"
     most "^1.7.3"
     neo-blessed "^0.2.0"
     socket.io "^2.1.1"
