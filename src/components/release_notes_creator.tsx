@@ -15,13 +15,14 @@ function PullRequests(props: {
   pullRequests: PullRequest[];
   update: (pullRequests: PullRequest[]) => void;
 }) {
-  if (props.pullRequests.length === 0)
+  if (props.pullRequests.length === 0) {
     return (
       <Typography variant="body1" color="error" align="right" inline>
-        There are no merged PRS between the selected tags or the end tag is
+        There are no merged PRs between the selected tags or the release tag is
         before the start tag.
       </Typography>
     );
+  }
 
   return (
     <>
