@@ -354,5 +354,33 @@ describe("ReleaseNotesCreator", function() {
         expect(sectionHeadings.at(1).prop("heading")).toEqual("Range");
       });
     });
+
+    describe("after selecting a range which doesn't contain merge commits", function() {
+      beforeEach(async function() {
+        const dropdowns = wrapper.find(Dropdown);
+        (dropdowns.at(2).prop("onSelect") as any)("v0.0.1");
+        (dropdowns.at(3).prop("onSelect") as any)("v0.0.1");
+
+        (github.compare as jest.Mock).mockReturnValue({ commits: [] });
+
+        (wrapper.find(Button).prop("onClick") as any)();
+
+        await waitImmediate();
+        wrapper.update();
+      });
+
+      it("shows the Adjust Categories section with a warning message", function() {
+        const sections = wrapper.find(Section);
+        expect(sections).toHaveLength(3);
+        expect(sections.at(2).prop("heading")).toEqual("Adjust Categories");
+
+        const selector = wrapper.find(PullRequestChangeCategorySelector);
+        expect(selector).toHaveLength(0);
+
+        const typogryphies = wrapper.find(Typography);
+        expect(typogryphies).toHaveLength(4);
+        expect(typogryphies.at(3).prop("children")).toMatch(/no merged PRs/);
+      });
+    });
   });
 });
