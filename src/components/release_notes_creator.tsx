@@ -15,6 +15,14 @@ function PullRequests(props: {
   pullRequests: PullRequest[];
   update: (pullRequests: PullRequest[]) => void;
 }) {
+  if (props.pullRequests.length === 0)
+    return (
+      <Typography variant="body1" color="error" align="right" inline>
+        There are no merged PRS between the selected tags or the end tag is
+        before the start tag.
+      </Typography>
+    );
+
   return (
     <>
       {props.pullRequests.map((pullRequest, index) => (
@@ -51,7 +59,7 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      pullRequests: [],
+      pullRequests: undefined,
       releaseNote: "",
       releaseCreated: false
     };
@@ -110,7 +118,7 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
   }
 
   renderPullRequestsSection() {
-    if (this.state.pullRequests.length === 0) return <section />;
+    if (this.state.pullRequests === undefined) return <section />;
 
     return (
       <Section heading="Adjust Categories">
