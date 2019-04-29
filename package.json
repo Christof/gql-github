@@ -43,7 +43,7 @@
     "@types/request": "^2.48.1",
     "@types/request-promise-native": "^1.0.16",
     "@types/uuid": "^3.4.4",
-    "@types/webpack": "^4.4.27",
+    "@types/webpack": "^4.4.29",
     "awesome-typescript-loader": "^5.2.1",
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.12.1",
