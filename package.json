@@ -64,8 +64,8 @@
     "webpack-dev-server": "^3.4.1"
   },
   "dependencies": {
-    "@material-ui/core": "^3.9.3",
-    "@material-ui/icons": "^3.0.2",
+    "@material-ui/core": "^4.0.0",
+    "@material-ui/icons": "^4.0.0",
     "apollo-cache-inmemory": "^1.6.0",
     "apollo-cache-persist": "^0.1.1",
     "apollo-client": "^2.6.0",
