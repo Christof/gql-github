@@ -88,7 +88,7 @@ const styles = (theme: Theme): StyleRules => ({
   drawerHeader: {
     display: "flex",
     alignItems: "center",
-    padding: theme.spacing.unit,
+    padding: theme.spacing(1),
     ...theme.mixins.toolbar
   },
   drawerCloseIcon: {
@@ -97,12 +97,12 @@ const styles = (theme: Theme): StyleRules => ({
     justifyContent: "flex-end"
   },
   subheading: {
-    padding: theme.spacing.unit
+    padding: theme.spacing(1)
   },
   content: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
-    padding: theme.spacing.unit * 3,
+    padding: theme.spacing(3),
     marginTop: 62
   }
 });

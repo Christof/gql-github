@@ -149,7 +149,7 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
 
   private renderButtonForSingleTag() {
     return (
-      <Grid container alignItems="baseline" spacing={16}>
+      <Grid container alignItems="baseline" spacing={2}>
         <Grid item>
           <Button
             variant="contained"
