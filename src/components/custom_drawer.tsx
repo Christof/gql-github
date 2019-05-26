@@ -30,7 +30,7 @@ export class CustomDrawer extends React.Component<Props, {}> {
       <div key={group}>
         <Divider />
         <Typography
-          variant="subheading"
+          variant="subtitle1"
           color="primary"
           className={this.props.classes.subheading}
         >

@@ -17,7 +17,7 @@ function PullRequests(props: {
 }) {
   if (props.pullRequests.length === 0) {
     return (
-      <Typography variant="body1" color="error" align="right" inline>
+      <Typography variant="body1" color="error" align="right" display="inline">
         There are no merged PRs between the selected tags or the release tag is
         before the start tag.
       </Typography>
@@ -169,7 +169,7 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
             variant="body1"
             color="textSecondary"
             align="right"
-            inline
+            display="inline"
           >
             Uses only last 100 commits up to the only tag
           </Typography>
@@ -180,7 +180,7 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
 
   renderNoTagsNotice() {
     return (
-      <Typography variant="body1" color="error" align="right" inline>
+      <Typography variant="body1" color="error" align="right" display="inline">
         There are no existing tags in this repository. They are required to
         create release notes.
       </Typography>
