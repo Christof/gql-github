@@ -138,7 +138,7 @@ function calculateWeeklyCommits(data: Repo[]): number[][] {
 
 export function PersonalStats(props: { github: Github }) {
   return (
-    <Grid container spacing={24} justify="center">
+    <Grid container spacing={3} justify="center">
       <Grid item xs={12}>
         <TriggeredAsyncSwitchFromLoadType<typeof loadData>
           renderTrigger={triggerCallback => (

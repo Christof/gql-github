@@ -46,7 +46,7 @@
     "@types/webpack": "^4.4.32",
     "awesome-typescript-loader": "^5.2.1",
     "enzyme": "^3.9.0",
-    "enzyme-adapter-react-16": "^1.13.1",
+    "enzyme-adapter-react-16": "^1.13.2",
     "graphql-tools": "^4.0.4",
     "html-webpack-plugin": "^3.2.0",
     "jest": "^24.8.0",
@@ -64,8 +64,8 @@
     "webpack-dev-server": "^3.4.1"
   },
   "dependencies": {
-    "@material-ui/core": "^3.9.3",
-    "@material-ui/icons": "^3.0.2",
+    "@material-ui/core": "^4.0.1",
+    "@material-ui/icons": "^4.0.1",
     "apollo-cache-inmemory": "^1.6.0",
     "apollo-cache-persist": "^0.1.1",
     "apollo-client": "^2.6.0",

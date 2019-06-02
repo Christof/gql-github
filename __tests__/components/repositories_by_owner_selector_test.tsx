@@ -36,14 +36,10 @@ describe("RepositoriesByOwnerSelector", function() {
       const owner = "selectedOwner";
 
       wrapper.find(OwnerDropdown).prop("onSelect")(owner as any);
-      const checkboxWrapper = shallow(
-        wrapper.find(FormControlLabel).prop("control")
-      );
-      expect(checkboxWrapper.find("Checkbox")).toHaveLength(1);
-      (checkboxWrapper.find("Checkbox").prop("onChange") as any)(
-        undefined,
-        true
-      );
+      const formControlLabel = wrapper.find(FormControlLabel);
+      expect(formControlLabel).toHaveLength(1);
+      const checkboxWrapper = shallow(formControlLabel.prop("control"));
+      (checkboxWrapper.prop("onChange") as any)(undefined, true);
 
       clickLoad();
 

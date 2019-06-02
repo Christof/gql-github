@@ -65,7 +65,7 @@ export class Dropdown extends React.Component<Props, State> {
         <Select
           id={this.props.label}
           autoWidth={true}
-          onChange={event => this.onChange(event.target.value)}
+          onChange={event => this.onChange(event.target.value as string)}
           value={this.state.selected}
         >
           <MenuItem disabled value="none" key="none">
