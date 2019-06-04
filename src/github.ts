@@ -176,7 +176,7 @@ export class Github {
       `
       query getReleases($owner: String!, $repository: String!) {
         repository(owner: $owner, name: $repository) {
-          releases(first: 20, orderBy: {field: CREATED_AT, direction: DESC}) {
+          releases(first: 100, orderBy: {field: CREATED_AT, direction: DESC}) {
             nodes {
               tag {
                 name
