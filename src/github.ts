@@ -156,7 +156,7 @@ export class Github {
       `
       query getTags($owner: String!, $repository: String!) {
         repository(owner: $owner, name: $repository) {
-          refs(refPrefix: "refs/tags/", first: 20, orderBy: {field: TAG_COMMIT_DATE, direction: DESC}) {
+          refs(refPrefix: "refs/tags/", first: 100, orderBy: {field: TAG_COMMIT_DATE, direction: DESC}) {
             nodes {
               name
             }
