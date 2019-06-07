@@ -30,7 +30,7 @@
   "author": "Christof Sirk",
   "license": "MIT",
   "devDependencies": {
-    "@types/classnames": "^2.2.7",
+    "@types/classnames": "^2.2.8",
     "@types/enzyme": "^3.9.2",
     "@types/jest": "^24.0.13",
     "@types/node": "^8.10.48",
