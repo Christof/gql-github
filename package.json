@@ -75,7 +75,7 @@
     "classnames": "^2.2.6",
     "commander": "^2.20.0",
     "express": "^4.17.1",
-    "graphql": "^14.3.0",
+    "graphql": "^14.3.1",
     "graphql-tag": "^2.10.1",
     "netlify-auth-providers": "^1.0.0-alpha5",
     "plotly.js": "^1.47.4",
