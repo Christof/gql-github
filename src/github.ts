@@ -234,6 +234,7 @@ export class Github {
             nodes {
               author { login }
               createdAt
+              heardRefName
               reviews(first: 20) { nodes {author {login} createdAt}}
             }
           }
@@ -250,11 +251,35 @@ export class Github {
     return {
       author: node.author.login,
       createdAt: node.createdAt,
+      headRefName: node.headRefName,
       reviews: node.reviews.nodes.map((review: any) => ({
         author: review.author.login,
         createdAt: review.createdAt
       }))
     };
+  }
+
+  async getOpenPullRequests(repository: string): Promise<GithubPullRequest[]> {
+    const responseData = await this.client.query(
+      `
+      query getOpenPullRequests($owner: String!, $repository: String!) {
+        repository(owner: $owner, name: $repository) {
+          pullRequests(first: 100, orderBy: {field: CREATED_AT, direction: DESC}, states: [OPEN]) {
+            nodes {
+              author { login }
+              createdAt
+              headRefName
+            }
+          }
+        }
+      }`,
+      { owner: this.owner, repository }
+    );
+    return responseData.repository.pullRequests.nodes.map((node: any) => ({
+      author: node.author.login,
+      createdAt: node.createdAt,
+      headRefName: node.headRefName
+    }));
   }
 
   postRelease(repository: string, release: GithubPostRelease) {

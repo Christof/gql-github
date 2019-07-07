@@ -410,11 +410,17 @@ describe("Github", () => {
       const date1 = "2018-04-20T06:36:15Z";
       const date2 = "2018-04-20T06:36:49Z";
       const expectedPullRequests = [
-        { author: "author1", createdAt: date1, reviews: [] },
+        {
+          author: "author1",
+          createdAt: date1,
+          reviews: [],
+          headRefName: "PR1"
+        },
         {
           author: "author2",
           createdAt: date1,
-          reviews: [{ author: "author3", createdAt: date2 }]
+          reviews: [{ author: "author3", createdAt: date2 }],
+          headRefName: "PR2"
         }
       ];
       clientQueryMock.mockReturnValue({
@@ -424,20 +430,55 @@ describe("Github", () => {
               {
                 author: { login: "author1" },
                 createdAt: date1,
-                reviews: { nodes: [] }
+                reviews: { nodes: [] },
+                headRefName: "PR1"
               },
               {
                 author: { login: "author2" },
                 createdAt: date1,
                 reviews: {
                   nodes: [{ author: { login: "author3" }, createdAt: date2 }]
-                }
+                },
+                headRefName: "PR2"
               }
             ]
           }
         }
       });
       const pullRquests = await github.getPullRequestsWithReviews("repoName");
+
+      expect(clientQueryMock).toHaveBeenCalled();
+      expect(pullRquests).toEqual(expectedPullRequests);
+    });
+  });
+
+  describe("getOpenPullRequests", function() {
+    it("returns list of open pull requests", async function() {
+      const date1 = "2018-04-20T06:36:15Z";
+      const date2 = "2018-04-20T06:36:49Z";
+      const expectedPullRequests = [
+        { author: "author1", createdAt: date1, headRefName: "PR1" },
+        { author: "author2", createdAt: date2, headRefName: "PR2" }
+      ];
+      clientQueryMock.mockReturnValue({
+        repository: {
+          pullRequests: {
+            nodes: [
+              {
+                author: { login: "author1" },
+                createdAt: date1,
+                headRefName: "PR1"
+              },
+              {
+                author: { login: "author2" },
+                createdAt: date2,
+                headRefName: "PR2"
+              }
+            ]
+          }
+        }
+      });
+      const pullRquests = await github.getOpenPullRequests("repoName");
 
       expect(clientQueryMock).toHaveBeenCalled();
       expect(pullRquests).toEqual(expectedPullRequests);
