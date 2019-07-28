@@ -10,6 +10,7 @@ import {
   GithubCommit
 } from "./github_types";
 import { GraphQLFacade } from "./graphql_facade";
+import * as Octokit from "@octokit/rest";
 export * from "./github_types";
 
 export class Github {
@@ -19,11 +20,14 @@ export class Github {
   constructor(
     private token: string,
     private client: GraphQLFacade,
+    public octokit = new Octokit.default({
+      auth: token
+    }),
     private fetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>
   ) {}
 
   copyFor(owner: string) {
-    const copy = new Github(this.token, this.client, this.fetch);
+    const copy = new Github(this.token, this.client, this.octokit, this.fetch);
     copy.owner = owner;
 
     return copy;
