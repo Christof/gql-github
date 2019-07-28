@@ -7,11 +7,16 @@ import { Section } from "./section";
 import { LinearProgress, Button } from "@material-ui/core";
 import { Dropdown } from "./dropdown";
 import { useState } from "react";
+import { rebasePullRequest } from "github-rebase";
 
 export function PullRequestSelector({
-  pullRequests
+  pullRequests,
+  repo,
+  github
 }: {
   pullRequests: GithubPullRequest[];
+  repo: string;
+  github: Github;
 }) {
   const [pullRequest, setPullRequest] = useState<string>(null);
 
@@ -21,7 +26,20 @@ export function PullRequestSelector({
         options={pullRequests.map(pr => pr.headRefName)}
         onSelect={setPullRequest}
       />
-      <Button onClick={() => {}} variant="contained" disabled={!pullRequest}>
+      <Button
+        onClick={() =>
+          rebasePullRequest({
+            octokit: github.octokit,
+            owner: github.owner,
+            pullRequestNumber: pullRequests.find(
+              pr => pr.headRefName === pullRequest
+            ).number,
+            repo
+          })
+        }
+        variant="contained"
+        disabled={!pullRequest}
+      >
         Rebase
       </Button>
     </>
@@ -56,7 +74,11 @@ export function Rebaser(props: { github: Github }) {
             </Section>
           ) : (
             <Section heading="Pull Requests">
-              <PullRequestSelector pullRequests={triggeredProps.pullRequests} />
+              <PullRequestSelector
+                pullRequests={triggeredProps.pullRequests}
+                repo={triggeredProps.repo}
+                github={props.github}
+              />
             </Section>
           )
         }
