@@ -1,10 +1,32 @@
 import * as React from "react";
-import { Github } from "../github";
+import { Github, GithubPullRequest } from "../github";
 import { DefaultGrid } from "./default_grid";
 import { TriggeredAsyncSwitchFromLoadType } from "./triggered_async_switch";
 import { RepositorySelector } from "./repository_selector";
 import { Section } from "./section";
-import { LinearProgress } from "@material-ui/core";
+import { LinearProgress, Button } from "@material-ui/core";
+import { Dropdown } from "./dropdown";
+import { useState } from "react";
+
+export function PullRequestSelector({
+  pullRequests
+}: {
+  pullRequests: GithubPullRequest[];
+}) {
+  const [pullRequest, setPullRequest] = useState<string>(null);
+
+  return (
+    <>
+      <Dropdown
+        options={pullRequests.map(pr => pr.headRefName)}
+        onSelect={setPullRequest}
+      />
+      <Button onClick={() => {}} variant="contained" disabled={!pullRequest}>
+        Rebase
+      </Button>
+    </>
+  );
+}
 
 async function loadPullRequests(repo: string, github: Github) {
   const pullRequests = await github.getOpenPullRequests(repo);
@@ -14,6 +36,7 @@ async function loadPullRequests(repo: string, github: Github) {
     pullRequests
   };
 }
+
 export function Rebaser(props: { github: Github }) {
   return (
     <DefaultGrid small>
@@ -32,7 +55,9 @@ export function Rebaser(props: { github: Github }) {
               <LinearProgress />
             </Section>
           ) : (
-            <div>{JSON.stringify(triggeredProps.pullRequests)}</div>
+            <Section heading="Pull Requests">
+              <PullRequestSelector pullRequests={triggeredProps.pullRequests} />
+            </Section>
           )
         }
       />
