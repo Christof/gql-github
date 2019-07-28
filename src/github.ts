@@ -256,6 +256,7 @@ export class Github {
       author: node.author.login,
       createdAt: node.createdAt,
       headRefName: node.headRefName,
+      number: node.number,
       reviews: node.reviews.nodes.map((review: any) => ({
         author: review.author.login,
         createdAt: review.createdAt
@@ -273,6 +274,7 @@ export class Github {
               author { login }
               createdAt
               headRefName
+              number
             }
           }
         }
@@ -282,7 +284,8 @@ export class Github {
     return responseData.repository.pullRequests.nodes.map((node: any) => ({
       author: node.author.login,
       createdAt: node.createdAt,
-      headRefName: node.headRefName
+      headRefName: node.headRefName,
+      number: node.number
     }));
   }
 
