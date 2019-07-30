@@ -20,26 +20,27 @@ export function PullRequestSelector({
 }) {
   const [pullRequest, setPullRequest] = useState<string>(null);
 
+  const rebase = () => {
+    const pullRequestFoundByHeadRefName = pullRequests.find(
+      pr => pr.headRefName === pullRequest
+    );
+    const pullRequestNumber = pullRequestFoundByHeadRefName.number;
+
+    rebasePullRequest({
+      octokit: github.octokit,
+      owner: github.owner,
+      pullRequestNumber,
+      repo
+    });
+  };
+
   return (
     <>
       <Dropdown
         options={pullRequests.map(pr => pr.headRefName)}
         onSelect={setPullRequest}
       />
-      <Button
-        onClick={() =>
-          rebasePullRequest({
-            octokit: github.octokit,
-            owner: github.owner,
-            pullRequestNumber: pullRequests.find(
-              pr => pr.headRefName === pullRequest
-            ).number,
-            repo
-          })
-        }
-        variant="contained"
-        disabled={!pullRequest}
-      >
+      <Button onClick={rebase} variant="contained" disabled={!pullRequest}>
         Rebase
       </Button>
     </>
