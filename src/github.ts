@@ -20,14 +20,17 @@ export class Github {
   constructor(
     private token: string,
     private client: GraphQLFacade,
+    private fetch: (
+      input: RequestInfo,
+      init?: RequestInit
+    ) => Promise<Response>,
     public octokit = new Octokit.default({
       auth: token
-    }),
-    private fetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>
+    })
   ) {}
 
   copyFor(owner: string) {
-    const copy = new Github(this.token, this.client, this.octokit, this.fetch);
+    const copy = new Github(this.token, this.client, this.fetch, this.octokit);
     copy.owner = owner;
 
     return copy;
