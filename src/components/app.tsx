@@ -154,7 +154,7 @@ export class RawApp extends React.Component<Props, State> {
       component: ReleaseNotesCreator
     },
     {
-      path: "/reabase-release-notes",
+      path: "/rebase",
       text: "Rebase",
       group: "Pull Requests",
       component: Rebaser
