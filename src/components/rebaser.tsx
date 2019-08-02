@@ -4,7 +4,7 @@ import { DefaultGrid } from "./default_grid";
 import { TriggeredAsyncSwitchFromLoadType } from "./triggered_async_switch";
 import { RepositorySelector } from "./repository_selector";
 import { Section } from "./section";
-import { LinearProgress, Button } from "@material-ui/core";
+import { LinearProgress, Button, Typography } from "@material-ui/core";
 import { Dropdown } from "./dropdown";
 import { useState } from "react";
 import { rebasePullRequest } from "github-rebase";
@@ -43,14 +43,19 @@ export function PullRequestSelector({
         options={pullRequests.map(pr => pr.headRefName)}
         onSelect={setPullRequest}
       />
-      <Button onClick={rebase} variant="contained" disabled={!pullRequest}>
+      <Button
+        onClick={rebase}
+        variant="contained"
+        disabled={!pullRequest || rebasing}
+      >
         Rebase
       </Button>
       {rebasing ? (
-        <>
-          <div>Rebasing operation running...</div>
+        <div>
+          <br />
+          <Typography>Rebasing operation running...</Typography>
           <LinearProgress />
-        </>
+        </div>
       ) : null}
     </>
   );
