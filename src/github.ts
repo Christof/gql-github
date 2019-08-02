@@ -278,6 +278,7 @@ export class Github {
               createdAt
               headRefName
               number
+              mergeable
             }
           }
         }
@@ -288,7 +289,8 @@ export class Github {
       author: node.author.login,
       createdAt: node.createdAt,
       headRefName: node.headRefName,
-      number: node.number
+      number: node.number,
+      mergeable: node.mergeable
     }));
   }
 

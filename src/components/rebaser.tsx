@@ -90,7 +90,9 @@ export function Rebaser(props: { github: Github }) {
           ) : (
             <Section heading="Pull Requests">
               <PullRequestSelector
-                pullRequests={triggeredProps.pullRequests}
+                pullRequests={triggeredProps.pullRequests.filter(
+                  pr => pr.mergeable === "MERGEABLE"
+                )}
                 repo={triggeredProps.repo}
                 github={props.github}
               />

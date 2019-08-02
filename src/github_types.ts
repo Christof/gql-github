@@ -26,6 +26,7 @@ export interface GithubPullRequest {
   reviews: GithubReview[];
   headRefName: string;
   number: number;
+  mergeable?: string;
 }
 
 export interface GithubCommit {
