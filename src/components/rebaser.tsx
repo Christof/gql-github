@@ -19,19 +19,22 @@ export function PullRequestSelector({
   github: Github;
 }) {
   const [pullRequest, setPullRequest] = useState<string>(null);
+  const [rebasing, setRebasing] = useState(false);
 
-  const rebase = () => {
+  const rebase = async () => {
     const pullRequestFoundByHeadRefName = pullRequests.find(
       pr => pr.headRefName === pullRequest
     );
     const pullRequestNumber = pullRequestFoundByHeadRefName.number;
 
-    rebasePullRequest({
+    setRebasing(true);
+    await rebasePullRequest({
       octokit: github.octokit,
       owner: github.owner,
       pullRequestNumber,
       repo
     });
+    setRebasing(false);
   };
 
   return (
@@ -43,6 +46,12 @@ export function PullRequestSelector({
       <Button onClick={rebase} variant="contained" disabled={!pullRequest}>
         Rebase
       </Button>
+      {rebasing ? (
+        <>
+          <div>Rebasing operation running...</div>
+          <LinearProgress />
+        </>
+      ) : null}
     </>
   );
 }
