@@ -5,10 +5,12 @@ import { RepositorySelector } from "../../src/components/repository_selector";
 import { Rebaser, PullRequestSelector } from "../../src/components/rebaser";
 import { waitImmediate } from "../helper";
 import { Dropdown } from "../../src/components/dropdown";
-import { Button } from "@material-ui/core";
+import { Button, Typography, LinearProgress } from "@material-ui/core";
 import { act } from "react-dom/test-utils";
+import { rebasePullRequest } from "github-rebase";
 
 jest.mock("../../src/github");
+jest.mock("github-rebase");
 
 describe("Rebaser", function() {
   let wrapper: ReactWrapper<any, any>;
@@ -81,6 +83,56 @@ describe("Rebaser", function() {
         const button = wrapper.find(Button);
         expect(button).toHaveLength(1);
         expect(button.prop("disabled")).toBe(false);
+      });
+
+      describe("after clicking Rebase button", function() {
+        let resolveRebase: Function;
+
+        beforeEach(async function() {
+          (rebasePullRequest as jest.Mock).mockResolvedValue(
+            new Promise(resolve => {
+              resolveRebase = resolve;
+            })
+          );
+
+          const button = wrapper.find(Button);
+          act(() => {
+            button.prop("onClick")(undefined);
+          });
+
+          await waitImmediate();
+          wrapper.update();
+        });
+
+        it("disables the Rebase button", function() {
+          const button = wrapper.find(Button);
+          expect(button.prop("disabled")).toBe(true);
+        });
+
+        it("cals the rebase function", function() {
+          expect(rebasePullRequest).toHaveBeenCalled();
+        });
+
+        it("shows a text", function() {
+          const typography = wrapper.find(Typography);
+          expect(typography.last().prop("children")).toEqual(
+            "Rebasing operation running..."
+          );
+        });
+
+        it("shows a linear progress", function() {
+          expect(wrapper.find(LinearProgress)).toHaveLength(1);
+        });
+
+        describe("after Rebase has finished", function() {
+          beforeEach(function() {
+            resolveRebase();
+          });
+
+          it("doesn't show a liner progress", function() {
+            expect(wrapper.find(LinearProgress)).toHaveLength(1);
+          });
+        });
       });
     });
   });
