@@ -47,6 +47,9 @@ const OrgStats = createDynamicImport(
   () =>
     import("./org_stats").then(module => module.OrgStats) as ComponentPromise
 );
+const Rebaser = createDynamicImport(
+  () => import("./rebaser").then(module => module.Rebaser) as ComponentPromise
+);
 
 const drawerWidth = 240;
 
@@ -114,7 +117,7 @@ interface Props extends WithStyles {
 interface Page {
   path: string;
   text: string;
-  group: "Statistics" | "Release Notes";
+  group: "Statistics" | "Release Notes" | "Pull Requests";
   component: React.StatelessComponent<any> | React.ComponentClass<any>;
 }
 
@@ -149,6 +152,12 @@ export class RawApp extends React.Component<Props, State> {
       text: "Create",
       group: "Release Notes",
       component: ReleaseNotesCreator
+    },
+    {
+      path: "/rebase",
+      text: "Rebase",
+      group: "Pull Requests",
+      component: Rebaser
     }
   ];
 

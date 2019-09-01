@@ -24,6 +24,9 @@ export interface GithubPullRequest {
   author: string;
   createdAt: Date;
   reviews: GithubReview[];
+  headRefName: string;
+  number: number;
+  mergeable?: string;
 }
 
 export interface GithubCommit {

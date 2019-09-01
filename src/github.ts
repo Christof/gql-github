@@ -10,6 +10,7 @@ import {
   GithubCommit
 } from "./github_types";
 import { GraphQLFacade } from "./graphql_facade";
+import * as Octokit from "@octokit/rest";
 export * from "./github_types";
 
 export class Github {
@@ -19,11 +20,17 @@ export class Github {
   constructor(
     private token: string,
     private client: GraphQLFacade,
-    private fetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>
+    private fetch: (
+      input: RequestInfo,
+      init?: RequestInit
+    ) => Promise<Response>,
+    public octokit = new Octokit.default({
+      auth: token
+    })
   ) {}
 
   copyFor(owner: string) {
-    const copy = new Github(this.token, this.client, this.fetch);
+    const copy = new Github(this.token, this.client, this.fetch, this.octokit);
     copy.owner = owner;
 
     return copy;
@@ -234,6 +241,7 @@ export class Github {
             nodes {
               author { login }
               createdAt
+              heardRefName
               reviews(first: 20) { nodes {author {login} createdAt}}
             }
           }
@@ -250,11 +258,40 @@ export class Github {
     return {
       author: node.author.login,
       createdAt: node.createdAt,
+      headRefName: node.headRefName,
+      number: node.number,
       reviews: node.reviews.nodes.map((review: any) => ({
         author: review.author.login,
         createdAt: review.createdAt
       }))
     };
+  }
+
+  async getOpenPullRequests(repository: string): Promise<GithubPullRequest[]> {
+    const responseData = await this.client.query(
+      `
+      query getOpenPullRequests($owner: String!, $repository: String!) {
+        repository(owner: $owner, name: $repository) {
+          pullRequests(first: 100, orderBy: {field: CREATED_AT, direction: DESC}, states: [OPEN]) {
+            nodes {
+              author { login }
+              createdAt
+              headRefName
+              number
+              mergeable
+            }
+          }
+        }
+      }`,
+      { owner: this.owner, repository }
+    );
+    return responseData.repository.pullRequests.nodes.map((node: any) => ({
+      author: node.author.login,
+      createdAt: node.createdAt,
+      headRefName: node.headRefName,
+      number: node.number,
+      mergeable: node.mergeable
+    }));
   }
 
   postRelease(repository: string, release: GithubPostRelease) {
