@@ -241,7 +241,7 @@ export class Github {
             nodes {
               author { login }
               createdAt
-              heardRefName
+              headRefName
               reviews(first: 20) { nodes {author {login} createdAt}}
             }
           }
