@@ -241,7 +241,7 @@ export class Github {
             nodes {
               author { login }
               createdAt
-              heardRefName
+              headRefName
               reviews(first: 20) { nodes {author {login} createdAt}}
             }
           }
@@ -256,7 +256,7 @@ export class Github {
 
   private convertPullRequestNode(node: any): GithubPullRequest {
     return {
-      author: node.author.login,
+      author: node.author !== null ? node.author.login : "unknown",
       createdAt: node.createdAt,
       headRefName: node.headRefName,
       number: node.number,

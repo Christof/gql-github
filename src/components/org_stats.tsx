@@ -43,7 +43,7 @@ function createTraces(data: GithubAuthorData[][]) {
 }
 
 async function getPullRequests(github: Github, repositoryNames: string[]) {
-  return flatten<GithubPullRequest>(
+  return flatten(
     await Promise.all(
       repositoryNames.map(repo => github.getPullRequestsWithReviews(repo))
     )
@@ -71,7 +71,7 @@ function createPullRequestTraces(pullRequests: GithubPullRequest[]) {
 }
 
 function getReviewsByAuthorPerDay(pullRequests: GithubPullRequest[]) {
-  const reviews = flatten<GithubReview>(
+  const reviews = flatten(
     map(pullRequest => pullRequest.reviews, pullRequests)
   );
 
