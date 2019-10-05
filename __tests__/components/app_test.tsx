@@ -337,8 +337,10 @@ describe("App", function() {
     });
 
     it("renders GithubCallback for /auth-callback route", function() {
+      const route = "/auth-callback";
+      history.pushState({}, route, route);
       const wrapper = mount(
-        <MemoryRouter initialEntries={["/auth-callback"]}>
+        <MemoryRouter initialEntries={[route]} initialIndex={0}>
           <App fetch={fetch} />
         </MemoryRouter>
       );
@@ -354,14 +356,17 @@ describe("App", function() {
 
       it("calls App.onChangeToken and sets local storage", function() {
         window.localStorage.setItem("githubToken", "my-token");
+        const route = "/auth-callback";
+        history.pushState({}, route, route);
         const wrapper = mount(
-          <MemoryRouter initialEntries={["/auth-callback"]}>
+          <MemoryRouter initialEntries={[route]}>
             <App fetch={fetch} />
           </MemoryRouter>
         );
 
         const newToken: string = undefined;
         const githubCallback = wrapper.find(GithubCallback);
+        expect(githubCallback).toHaveLength(1);
         githubCallback.prop("onChangeToken")(newToken);
 
         expect(window.localStorage.getItem("githubToken")).toBeFalsy();
