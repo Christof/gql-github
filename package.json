@@ -32,7 +32,7 @@
   "devDependencies": {
     "@types/classnames": "^2.2.9",
     "@types/enzyme": "^3.10.3",
-    "@types/jest": "^24.0.20",
+    "@types/jest": "^24.0.21",
     "@types/node": "^8.10.58",
     "@types/plotly.js": "^1.44.11",
     "@types/qs": "^6.5.3",
