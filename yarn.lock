@@ -8158,10 +8158,10 @@ planar-graph-to-polyline@^1.0.0:
     two-product "^1.0.0"
     uniq "^1.0.0"
 
-plotly.js@^1.51.0:
-  version "1.51.0"
-  resolved "https://registry.yarnpkg.com/plotly.js/-/plotly.js-1.51.0.tgz#4d0b4137a935c683ccfa08352318b870f959fa31"
-  integrity sha512-+xYmbgxb9Na3UfOnXzwI2bE9NccRriOE7zzC+8br5km5ckLRe9RufeYI+YnpGgqSwdYD5bPHqw3t/afboJTxFg==
+plotly.js@^1.51.1:
+  version "1.51.1"
+  resolved "https://registry.yarnpkg.com/plotly.js/-/plotly.js-1.51.1.tgz#5824cbd638856a49966a7b759eded5ff0e16c737"
+  integrity sha512-EOAP6hne7e8RyH2fo0dyTuRKiAO04TVYECK65EMrK8jnP5AqSbHIypnroNCm/nfYj3sn5DTl+GX5XsJKpyM4Aw==
   dependencies:
     "@plotly/d3-sankey" "0.7.2"
     "@plotly/d3-sankey-circular" "0.33.1"
@@ -8207,13 +8207,13 @@ plotly.js@^1.51.0:
     ndarray "^1.0.18"
     ndarray-fill "^1.0.2"
     ndarray-homography "^1.0.0"
-    point-cluster "^3.1.4"
+    point-cluster "^3.1.8"
     polybooljs "^1.2.0"
     regl "^1.3.11"
     regl-error2d "^2.0.8"
     regl-line2d "^3.0.15"
-    regl-scatter2d "^3.1.5"
-    regl-splom "^1.0.7"
+    regl-scatter2d "^3.1.7"
+    regl-splom "^1.0.8"
     right-now "^1.0.0"
     robust-orientation "^1.1.3"
     sane-topojson "^4.0.0"
@@ -8230,7 +8230,7 @@ pn@^1.1.0:
   resolved "https://registry.yarnpkg.com/pn/-/pn-1.1.0.tgz#e2f4cef0e219f463c179ab37463e4e1ecdccbafb"
   integrity sha512-2qHaIQr2VLRFoxe2nASzsV6ef4yOOH+Fi9FBOVH6cqeSgUnoyySPZkxzLuzd+RYOQTRpROA0ztTMqxROKSb/nA==
 
-point-cluster@^3.1.4, point-cluster@^3.1.5:
+point-cluster@^3.1.4:
   version "3.1.5"
   resolved "https://registry.yarnpkg.com/point-cluster/-/point-cluster-3.1.5.tgz#03a059d4491c4e7d0228e9598fc1008bd3627f84"
   integrity sha512-KpVtB1mXDlo6yzv80MA6oUq+1519CMeeUd4PPluM4ZlAQgHi/qeBrLY2G53RLy41kas7XvKol0FM98MSrjNH7Q==
@@ -8245,6 +8245,24 @@ point-cluster@^3.1.4, point-cluster@^3.1.5:
     is-obj "^1.0.1"
     math-log2 "^1.0.1"
     parse-rect "^1.2.0"
+
+point-cluster@^3.1.8:
+  version "3.1.8"
+  resolved "https://registry.yarnpkg.com/point-cluster/-/point-cluster-3.1.8.tgz#a63625fd8964f2a5b446025a1acf8bcac42500c0"
+  integrity sha512-7klIr45dpMeZuqjIK9+qBg3m2IhyZJNJkdqjJFw0Olq75FM8ojrTMjClVUrMjNYRVqtwztxCHH71Fyjhg+YwyQ==
+  dependencies:
+    array-bounds "^1.0.1"
+    array-normalize "^1.1.4"
+    binary-search-bounds "^2.0.4"
+    bubleify "^1.1.0"
+    clamp "^1.0.1"
+    defined "^1.0.0"
+    dtype "^2.0.0"
+    flatten-vertex-data "^1.0.2"
+    is-obj "^1.0.1"
+    math-log2 "^1.0.1"
+    parse-rect "^1.2.0"
+    pick-by-alias "^1.2.0"
 
 point-in-big-polygon@^2.0.0:
   version "2.0.0"
@@ -8888,10 +8906,10 @@ regl-scatter2d@^3.1.2:
     to-float32 "^1.0.1"
     update-diff "^1.1.0"
 
-regl-scatter2d@^3.1.5:
-  version "3.1.5"
-  resolved "https://registry.yarnpkg.com/regl-scatter2d/-/regl-scatter2d-3.1.5.tgz#4d45d83ca5ab1d3d24322169a884688f21cdbb22"
-  integrity sha512-VCmASgrNIQXzDxmTLpLA4MAlbi+kdjKcVR9XugmFCTnWY7zytIhuMyIoPxinpaejGXzsC0Lq5oKvOnWFMQFGng==
+regl-scatter2d@^3.1.7:
+  version "3.1.7"
+  resolved "https://registry.yarnpkg.com/regl-scatter2d/-/regl-scatter2d-3.1.7.tgz#79020563a5a3cef7f6c76cb7a272de0979fb938c"
+  integrity sha512-FWw1hMsQrV3Y0zMU8YOytGjwSBuV3V58t8GR/mhlSL2S04jXLK1m2eAa/rDP3SpvMDkdVEr744PPDeHwsZVUhA==
   dependencies:
     array-range "^1.0.1"
     array-rearrange "^2.2.2"
@@ -8906,14 +8924,14 @@ regl-scatter2d@^3.1.5:
     object-assign "^4.1.1"
     parse-rect "^1.2.0"
     pick-by-alias "^1.2.0"
-    point-cluster "^3.1.5"
+    point-cluster "^3.1.8"
     to-float32 "^1.0.1"
     update-diff "^1.1.0"
 
-regl-splom@^1.0.7:
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/regl-splom/-/regl-splom-1.0.7.tgz#bd0e55781b244ce73bd8cb42dcd517f5e0fb918d"
-  integrity sha512-17ltp68/pCMFOU2gSIIFRTRMmsCRpDFzPUF9jkZhT8IDimI83jkU/2nP4vAHTIfd+HZ/Ip+eFrNx2aKV9FMDwQ==
+regl-splom@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/regl-splom/-/regl-splom-1.0.8.tgz#05f165a6f0b8afc6b6b97fafa775282d44387db3"
+  integrity sha512-4GQTgcArCbGLsXhgalWVBxeW7OXllnu+Gvil/4SbQQmtiqLCl+xgF79pISKY9mLXTlobxiX7cVKdjGjp25559A==
   dependencies:
     array-bounds "^1.0.1"
     array-range "^1.0.1"
@@ -8924,7 +8942,7 @@ regl-splom@^1.0.7:
     left-pad "^1.3.0"
     parse-rect "^1.2.0"
     pick-by-alias "^1.2.0"
-    point-cluster "^3.1.4"
+    point-cluster "^3.1.8"
     raf "^3.4.1"
     regl-scatter2d "^3.1.2"
 
