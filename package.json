@@ -89,7 +89,7 @@
     "react-plotlyjs-ts": "^2.1.0",
     "react-router-dom": "^5.1.2",
     "request": "^2.88.0",
-    "request-promise-native": "^1.0.7",
+    "request-promise-native": "^1.0.8",
     "uuid": "^3.3.3"
   }
 }
