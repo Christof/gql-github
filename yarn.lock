@@ -770,10 +770,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-8.10.59.tgz#9e34261f30183f9777017a13d185dfac6b899e04"
   integrity sha512-8RkBivJrDCyPpBXhVZcjh7cQxVBSmRk9QM7hOketZzp6Tg79c0N8kkpAIito9bnJ3HCVCHVYz+KHTEbfQNfeVQ==
 
-"@types/plotly.js@^1.44.17":
-  version "1.44.17"
-  resolved "https://registry.yarnpkg.com/@types/plotly.js/-/plotly.js-1.44.17.tgz#f1e65f2b30765a86dcfa272ac8307d3cae671804"
-  integrity sha512-qzHVfWhqojrGkBEV/cYvESK/f1hKS6GTGf0b4MHzi3CG/m/cF99p0PcvjRHMoWhTGnf/HiAtJgQhnTAZ9oGPmA==
+"@types/plotly.js@^1.44.22":
+  version "1.44.22"
+  resolved "https://registry.yarnpkg.com/@types/plotly.js/-/plotly.js-1.44.22.tgz#11175cdbc353497440e434a19898c0f5ea9665b6"
+  integrity sha512-qlFxqvbC4ILwtwixPC3+2/+TcpwIonc0HGKO6xCQANUFS3WhiZgXqCkR8ETb8cxAtNeqoQ70ILPnbs6frBCnSg==
   dependencies:
     "@types/d3" "^3"
 
@@ -8216,10 +8216,10 @@ planar-graph-to-polyline@^1.0.0:
     two-product "^1.0.0"
     uniq "^1.0.0"
 
-plotly.js@^1.51.2:
-  version "1.51.2"
-  resolved "https://registry.yarnpkg.com/plotly.js/-/plotly.js-1.51.2.tgz#bdf395727bb0e6b94b90f2b657c8116f9f7fced7"
-  integrity sha512-cbTOerzH8JQKgaZeEXKbMsRwH6CrxaxexUYwg1WjHTxVmMJRQveZJoutaK9SLycvL1Zbyy/W0x7kVz9CaRDSIA==
+plotly.js@^1.51.3:
+  version "1.51.3"
+  resolved "https://registry.yarnpkg.com/plotly.js/-/plotly.js-1.51.3.tgz#32862b86cf80c7e5438161fa3787de920a9a8887"
+  integrity sha512-1HsGdm+TPkJzxNvC3Whwh2U97FGrwCVDJ+W6s202qV5hJ0GQjqokPxGZalnjZDBLm0E1QAdQmiXBRVl10Pw+0A==
   dependencies:
     "@plotly/d3-sankey" "0.7.2"
     "@plotly/d3-sankey-circular" "0.33.1"
