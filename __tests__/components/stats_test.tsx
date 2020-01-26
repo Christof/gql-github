@@ -123,23 +123,28 @@ describe("Stats", function() {
         checkDataForOverTimePlot(data1);
       });
 
-      function checkDataForYearPlot(data: any) {
+      function checkDataForYearPlot(data: any[]) {
         expect(data).toHaveLength(2);
-        expect(data[0].x).toEqual([
-          "2014 (10)",
-          "2015 (50)",
-          "2016 (0)",
-          "2017 (30)"
-        ]);
-        expect(data[0].y).toEqual([0, 30, 0, 0]);
 
-        expect(data[1].x).toEqual([
+        const userData = data.find(element => element.name.startsWith("user "));
+        const user2Data = data.find(element =>
+          element.name.startsWith("user2 ")
+        );
+        expect(user2Data.x).toEqual([
           "2014 (10)",
           "2015 (50)",
           "2016 (0)",
           "2017 (30)"
         ]);
-        expect(data[1].y).toEqual([10, 20, 0, 30]);
+        expect(user2Data.y).toEqual([0, 30, 0, 0]);
+
+        expect(userData.x).toEqual([
+          "2014 (10)",
+          "2015 (50)",
+          "2016 (0)",
+          "2017 (30)"
+        ]);
+        expect(userData.y).toEqual([10, 20, 0, 30]);
       }
 
       it("shows a year graph for each repository", function() {
@@ -160,7 +165,7 @@ describe("Stats", function() {
         expect(layout0.xaxis.title.text).toEqual("time");
         expect(layout0.yaxis.title.text).toEqual("commit count");
 
-        const data1 = yearPlot.at(0).prop("data") as any;
+        const data1 = yearPlot.at(1).prop("data") as any;
         checkDataForYearPlot(data1);
         const layout1 = yearPlot.at(1).prop("layout") as any;
         expect(layout1.title).toEqual("Yearly commits in repo2 90");

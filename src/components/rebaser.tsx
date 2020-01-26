@@ -29,7 +29,7 @@ export function PullRequestSelector({
 
     setRebasing(true);
     await rebasePullRequest({
-      octokit: github.octokit,
+      octokit: github.octokit as any,
       owner: github.owner,
       pullRequestNumber,
       repo
