@@ -165,7 +165,7 @@ describe("Stats", function() {
         expect(layout0.xaxis.title.text).toEqual("time");
         expect(layout0.yaxis.title.text).toEqual("commit count");
 
-        const data1 = yearPlot.at(0).prop("data") as any;
+        const data1 = yearPlot.at(1).prop("data") as any;
         checkDataForYearPlot(data1);
         const layout1 = yearPlot.at(1).prop("layout") as any;
         expect(layout1.title).toEqual("Yearly commits in repo2 90");
