@@ -10,7 +10,7 @@ import {
   GithubCommit
 } from "./github_types";
 import { GraphQLFacade } from "./graphql_facade";
-import * as Octokit from "@octokit/rest";
+import { Octokit } from "@octokit/rest";
 export * from "./github_types";
 
 export class Github {
@@ -24,7 +24,7 @@ export class Github {
       input: RequestInfo,
       init?: RequestInit
     ) => Promise<Response>,
-    public octokit = new Octokit.default({
+    public octokit = new Octokit({
       auth: token
     })
   ) {}
