@@ -78,7 +78,7 @@
     "express": "^4.17.1",
     "github-rebase": "^1.1.0",
     "graphql": "^14.6.0",
-    "graphql-tag": "^2.10.1",
+    "graphql-tag": "^2.10.3",
     "netlify-auth-providers": "^1.0.0-alpha5",
     "plotly.js": "^1.52.0",
     "qs": "^6.9.1",
