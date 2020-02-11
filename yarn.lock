@@ -819,10 +819,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-8.10.59.tgz#9e34261f30183f9777017a13d185dfac6b899e04"
   integrity sha512-8RkBivJrDCyPpBXhVZcjh7cQxVBSmRk9QM7hOketZzp6Tg79c0N8kkpAIito9bnJ3HCVCHVYz+KHTEbfQNfeVQ==
 
-"@types/plotly.js@^1.44.24":
-  version "1.44.24"
-  resolved "https://registry.yarnpkg.com/@types/plotly.js/-/plotly.js-1.44.24.tgz#a512723547bec8bc30d28392c652a182c442c5e7"
-  integrity sha512-iCGjqojhcqww7CphZPqs96JHC0qsx8AFe9R6KUw87mK/TmaogeUfv21X7BPvZcg2bT/eDxgI0BteX4Ow1gnXsA==
+"@types/plotly.js@^1.44.28":
+  version "1.44.28"
+  resolved "https://registry.yarnpkg.com/@types/plotly.js/-/plotly.js-1.44.28.tgz#e43afd646f2e93f9080b062d3cb7b578ae926f46"
+  integrity sha512-Ajvtn6QHjLMZfRySd0L7f17ONKxiYpZSzW29sx/bU9KL/pzbu+pXdfNika9n+W0G1ScLEJEtI2yBsZXT1UXDKA==
   dependencies:
     "@types/d3" "^3"
 
@@ -3039,15 +3039,15 @@ d3-force@^1.0.6:
     d3-quadtree "1"
     d3-timer "1"
 
-d3-hierarchy@^1.1.8:
-  version "1.1.8"
-  resolved "https://registry.yarnpkg.com/d3-hierarchy/-/d3-hierarchy-1.1.8.tgz#7a6317bd3ed24e324641b6f1e76e978836b008cc"
-  integrity sha512-L+GHMSZNwTpiq4rt9GEsNcpLa4M96lXMR8M/nMG9p5hBE0jy6C+3hWtyZMenPQdwla249iJy7Nx0uKt3n+u9+w==
+d3-hierarchy@^1.1.9:
+  version "1.1.9"
+  resolved "https://registry.yarnpkg.com/d3-hierarchy/-/d3-hierarchy-1.1.9.tgz#2f6bee24caaea43f8dc37545fa01628559647a83"
+  integrity sha512-j8tPxlqh1srJHAtxfvOUwKNYJkQuBFdM1+JAUfq6xqH5eAqf93L7oG1NVqDa4CpFZNvnNKtCYEUC8KY9yEn9lQ==
 
-d3-interpolate@1:
-  version "1.3.2"
-  resolved "https://registry.yarnpkg.com/d3-interpolate/-/d3-interpolate-1.3.2.tgz#417d3ebdeb4bc4efcc8fd4361c55e4040211fd68"
-  integrity sha512-NlNKGopqaz9qM1PXh9gBF1KSCVh+jSFErrSlD/4hybwoNX/gt1d8CDbDW+3i+5UOHhjC6s6nMvRxcuoMVNgL2w==
+d3-interpolate@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/d3-interpolate/-/d3-interpolate-1.4.0.tgz#526e79e2d80daa383f9e0c1c1c7dcc0f0583e987"
+  integrity sha512-V9znK0zc3jOPV4VD2zZn0sDhZU3WAE2bmlxdIwwQPPzPjvyLkd8B3JUVdS1IDUFDkWZ72c9qnv1GK2ZagTZ8EA==
   dependencies:
     d3-color "1"
 
@@ -4577,10 +4577,10 @@ gl-matrix@^3.0.0:
   resolved "https://registry.yarnpkg.com/gl-matrix/-/gl-matrix-3.0.0.tgz#888301ac7650e148c3865370e13ec66d08a8381f"
   integrity sha512-PD4mVH/C/Zs64kOozeFnKY8ybhgwxXXQYGWdB4h68krAHknWJgk9uKOn6z8YElh5//vs++90pb6csrTIDWnexA==
 
-gl-mesh3d@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/gl-mesh3d/-/gl-mesh3d-2.2.0.tgz#3efa6f886bb22424ba03c88cb97755547542ee8d"
-  integrity sha512-wO6EKjBUo/k7ZLGsMACWGETjmjfsGwwoDWEKjDbjyjo1qPvgkTQQB9Y8p+OKGjE6GeihsfQuoqGBUTu9tiAOmg==
+gl-mesh3d@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/gl-mesh3d/-/gl-mesh3d-2.3.0.tgz#6c69a312eeed37b01716732bec0fb15300871fdb"
+  integrity sha512-iKx3v0xB/6Kej+GpMHhxzW6ziqiIjp6WOyAbuXvBRN9P5iIgzifgBYnDd1mYmCLWGmf85MCki/FvD223BOYFxg==
   dependencies:
     barycentric "^1.0.1"
     colormap "^2.3.1"
@@ -4598,23 +4598,23 @@ gl-mesh3d@^2.2.0:
     simplicial-complex-contour "^1.0.0"
     typedarray-pool "^1.1.0"
 
-gl-plot2d@^1.4.2:
-  version "1.4.2"
-  resolved "https://registry.yarnpkg.com/gl-plot2d/-/gl-plot2d-1.4.2.tgz#9da4ec97c489d6885deb835842da7888c1a2dff9"
-  integrity sha512-YLFiu/vgDCYZ/Qnz0wn0gV60IYCtImSnx0OTMsZ5fP1XZAhFztrRb2fJfnjfEVe15yZ+G+9zJ36RlWmJsNQYjQ==
+gl-plot2d@^1.4.3:
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/gl-plot2d/-/gl-plot2d-1.4.3.tgz#344354df70272fa7a6a134bca3d1fb67a5d6d418"
+  integrity sha512-Ei6WC/SzQ7/qld8MMv7sWrFSdkq8/n7Xmdvj7sbwUkgsJirfknKfeq4DCwaMn9vD2rHOLmdT0NMW+HPrLKSeWQ==
   dependencies:
     binary-search-bounds "^2.0.4"
     gl-buffer "^2.1.2"
-    gl-select-static "^2.0.4"
+    gl-select-static "^2.0.5"
     gl-shader "^4.2.1"
     glsl-inverse "^1.0.0"
     glslify "^7.0.0"
     text-cache "^4.2.1"
 
-gl-plot3d@^2.3.0:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/gl-plot3d/-/gl-plot3d-2.3.0.tgz#301e18ba11469a209229274b384823648692306f"
-  integrity sha512-qg269QiLpaw16d2D5Gz9fa8vsLcA8kbX/cv1u9S7BsH6jD9qGYxsY8iWJ8ea9/68WhPS5En2kUavkXINkmHsOQ==
+gl-plot3d@^2.4.2:
+  version "2.4.4"
+  resolved "https://registry.yarnpkg.com/gl-plot3d/-/gl-plot3d-2.4.4.tgz#5fb8f60ae36ac55036af5566efc29c9adbe06a30"
+  integrity sha512-R/V4hSrE2sFD+Xls7D6qCOlWCRmqtUff0sKbeFJdI91HfFzPJPiy9Pqa/Jh2UsvdmwkkSQPNDcBvLd6TvhRC/g==
   dependencies:
     "3d-view" "^2.0.0"
     a-big-triangle "^1.0.3"
@@ -4626,7 +4626,7 @@ gl-plot3d@^2.3.0:
     gl-spikes3d "^1.0.9"
     glslify "^7.0.0"
     has-passive-events "^1.0.0"
-    is-mobile "^2.1.0"
+    is-mobile "^2.2.0"
     mouse-change "^1.4.0"
     mouse-event-offset "^3.0.2"
     mouse-wheel "^1.2.0"
@@ -4680,6 +4680,17 @@ gl-select-static@^2.0.4:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/gl-select-static/-/gl-select-static-2.0.4.tgz#c6a12ca956f898bf2f8b9eece57c89bdc1bce6a4"
   integrity sha512-4Kqx5VjeT8nmV+j6fry3UBFNL2B7ktQU4o508QGVPKWCILlV44rTDq3mnBFThup8rMIH9kJQx6xWsg9jTmfeMw==
+  dependencies:
+    bit-twiddle "^1.0.2"
+    cwise "^1.0.3"
+    gl-fbo "^2.0.3"
+    ndarray "^1.0.15"
+    typedarray-pool "^1.1.0"
+
+gl-select-static@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/gl-select-static/-/gl-select-static-2.0.5.tgz#0a1efc1b02651fbf20852d5451d06d024efbacf1"
+  integrity sha512-8H1M9ipHNsrVh8UjUmTv1xhhYjYzMnawAnw3n715Dh4DDoW32F3oBi80ev5qbJtQlvHrNkhHKuoMCJKBjfIt4g==
   dependencies:
     bit-twiddle "^1.0.2"
     cwise "^1.0.3"
@@ -5811,6 +5822,11 @@ is-mobile@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/is-mobile/-/is-mobile-2.1.0.tgz#4c0cab72f3358dd9986007389b30729fae80da0b"
   integrity sha512-M5OhlZwh+aTlmRUvDg0Wq3uWVNa+w4DyZ2SjbrS+BhSLu9Po+JXHendC305ZEu+Hh7lywb19Zu4kYXu3L1Oo8A==
+
+is-mobile@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/is-mobile/-/is-mobile-2.2.0.tgz#72b19ab033deb0fd15a2d00a23b9b1003f8fa5d9"
+  integrity sha512-K0DmUqaZqYl6M8ej536uJYAQaBkx+qWph7xl1KRBr31UiGUT0MoFWUoqnIxzXnIeolnK8bkxtKXkZNL6HfSHhQ==
 
 is-number-object@^1.0.4:
   version "1.0.4"
@@ -8270,10 +8286,10 @@ planar-graph-to-polyline@^1.0.0:
     two-product "^1.0.0"
     uniq "^1.0.0"
 
-plotly.js@^1.52.0:
-  version "1.52.0"
-  resolved "https://registry.yarnpkg.com/plotly.js/-/plotly.js-1.52.0.tgz#eb398d9ad07c6c8704fa419b7ccf065568479b4a"
-  integrity sha512-wpADcoTt1EzSwTNiG9Z6Ku/+46ozLYnx//Suu8IR1dntO6pUanLIMToya0Bekxzkk86DFqN08Ia0kR+rjIryBg==
+plotly.js@^1.52.2:
+  version "1.52.2"
+  resolved "https://registry.yarnpkg.com/plotly.js/-/plotly.js-1.52.2.tgz#c4511caf457b95a07a6cac4b5a4d0591483a3b15"
+  integrity sha512-EZHr2ekxVNjucmNhku+JiLFoLV1wH6gW15T/6SFqtHFMvJZY4HeZogtRUPTLijXBPfusMWxxIKEDTzlMOLXajQ==
   dependencies:
     "@plotly/d3-sankey" "0.7.2"
     "@plotly/d3-sankey-circular" "0.33.1"
@@ -8288,8 +8304,8 @@ plotly.js@^1.52.0:
     country-regex "^1.1.0"
     d3 "^3.5.12"
     d3-force "^1.0.6"
-    d3-hierarchy "^1.1.8"
-    d3-interpolate "1"
+    d3-hierarchy "^1.1.9"
+    d3-interpolate "^1.4.0"
     delaunay-triangulate "^1.1.6"
     es6-promise "^3.0.2"
     fast-isnumeric "^1.1.3"
@@ -8299,9 +8315,9 @@ plotly.js@^1.52.0:
     gl-heatmap2d "^1.0.5"
     gl-line3d "^1.1.11"
     gl-mat4 "^1.2.0"
-    gl-mesh3d "^2.2.0"
-    gl-plot2d "^1.4.2"
-    gl-plot3d "^2.3.0"
+    gl-mesh3d "^2.3.0"
+    gl-plot2d "^1.4.3"
+    gl-plot3d "^2.4.2"
     gl-pointcloud2d "^1.0.2"
     gl-scatter3d "^1.2.2"
     gl-select-box "^1.0.3"
@@ -8312,6 +8328,7 @@ plotly.js@^1.52.0:
     glslify "^7.0.0"
     has-hover "^1.0.1"
     has-passive-events "^1.0.0"
+    is-mobile "^2.1.0"
     mapbox-gl "1.3.2"
     matrix-camera-controller "^2.1.3"
     mouse-change "^1.4.0"
