@@ -86,7 +86,7 @@
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-markdown": "^4.3.1",
-    "react-plotlyjs-ts": "^2.1.0",
+    "react-plotlyjs-ts": "^2.2.1",
     "react-router-dom": "^5.1.2",
     "request": "^2.88.2",
     "request-promise-native": "^1.0.8",
