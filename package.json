@@ -52,7 +52,7 @@
     "jest": "^24.9.0",
     "jest-environment-jsdom": "^24.9.0",
     "jest-environment-jsdom-global": "^1.2.1",
-    "jest-localstorage-mock": "^2.4.0",
+    "jest-localstorage-mock": "^2.4.3",
     "react-test-renderer": "^16.13.1",
     "source-map-loader": "^0.2.4",
     "ts-jest": "^24.3.0",
