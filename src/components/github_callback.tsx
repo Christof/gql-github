@@ -41,7 +41,7 @@ export class GithubCallback extends React.Component<Props, {}> {
     const state = window.localStorage.getItem("githubState");
     window.localStorage.removeItem("githubState");
 
-    this.retrieveAccessToken(queryPrams.code, state);
+    this.retrieveAccessToken(queryPrams.code as string, state);
   }
 
   render() {
