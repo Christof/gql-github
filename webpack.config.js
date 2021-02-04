@@ -31,6 +31,10 @@ module.exports = function (env = {}) {
       modules: ["node_modules"],
     },
 
+    node: {
+      fs: "empty",
+    },
+
     module: {
       rules: [
         // All files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
