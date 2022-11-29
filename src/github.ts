@@ -36,7 +36,7 @@ export class Github {
     return copy;
   }
 
-  getRequest(path: string) {
+  getGithubRequest(path: string) {
     const params: RequestInit = {
       method: "GET",
       mode: "cors",
@@ -143,7 +143,7 @@ export class Github {
   }
 
   async compare(repository: string, start: string, end: string) {
-    const response = await this.getRequest(
+    const response = await this.getGithubRequest(
       `repos/${this.owner}/${repository}/compare/${start}...${end}`
     );
 
@@ -151,7 +151,7 @@ export class Github {
   }
 
   async getCommits(repository: string) {
-    const response = await this.getRequest(
+    const response = await this.getGithubRequest(
       `repos/${this.owner}/${repository}/commits?per_page=100`
     );
 
@@ -202,11 +202,11 @@ export class Github {
 
   async getStats(repository: string): Promise<GithubData> {
     const path = `repos/${this.owner}/${repository}/stats/contributors`;
-    let response = await this.getRequest(path);
+    let response = await this.getGithubRequest(path);
 
     if (response.status === 202) {
       await delay(this.retryWaitSeconds);
-      response = await this.getRequest(path);
+      response = await this.getGithubRequest(path);
     }
 
     if (response.status === 204) {
