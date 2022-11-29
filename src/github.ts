@@ -37,13 +37,17 @@ export class Github {
   }
 
   getGithubRequest(path: string) {
+    return this.getRequest(`https://api.github.com/${path}`);
+  }
+
+  getRequest(path: string) {
     const params: RequestInit = {
       method: "GET",
       mode: "cors",
       headers: [["Authorization", `token ${this.token}`]]
     };
 
-    return this.fetch(`https://api.github.com/${path}`, params);
+    return this.fetch(path, params);
   }
 
   async getUser(): Promise<GithubUser> {
@@ -143,11 +147,23 @@ export class Github {
   }
 
   async compare(repository: string, start: string, end: string) {
-    const response = await this.getGithubRequest(
-      `repos/${this.owner}/${repository}/compare/${start}...${end}`
-    );
+    const path = `repos/${this.owner}/${repository}/compare/${start}...${end}`;
+    let response = await this.getGithubRequest(`${path}?per_page=100&page=1`);
 
-    return (await response.json()) as GithubCompareResult;
+    let commits = ((await response.json()) as GithubCompareResult).commits;
+    while (response.headers.has("link")) {
+      const headerLink = this.parseLinkHeader(response.headers.get("link"));
+      if (!headerLink.next) {
+        break;
+      }
+      console.log("has more pages", headerLink);
+      response = await this.getRequest(headerLink.next);
+      commits = commits.concat(
+        ((await response.json()) as GithubCompareResult).commits
+      );
+    }
+
+    return { commits };
   }
 
   async getCommits(repository: string) {
