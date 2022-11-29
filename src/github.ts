@@ -147,21 +147,19 @@ export class Github {
   }
 
   async compare(repository: string, start: string, end: string) {
-    const path = `repos/${this.owner}/${repository}/compare/${start}...${end}`;
-    let response = await this.getGithubRequest(`${path}?per_page=100&page=1`);
+    let path = `https://api.github.com/repos/${this.owner}/${repository}/compare/${start}...${end}?per_page=100&page=1`;
 
-    let commits = ((await response.json()) as GithubCompareResult).commits;
-    while (response.headers.has("link")) {
+    let commits: GithubCommit[] = [];
+
+    do {
+      let response = await this.getRequest(path);
+
       const headerLink = this.parseLinkHeader(response.headers.get("link"));
-      if (!headerLink.next) {
-        break;
-      }
-      console.log("has more pages", headerLink);
-      response = await this.getRequest(headerLink.next);
+      path = headerLink.next;
       commits = commits.concat(
         ((await response.json()) as GithubCompareResult).commits
       );
-    }
+    } while (path);
 
     return { commits };
   }
