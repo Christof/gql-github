@@ -32,9 +32,7 @@ export class ReleaseNote extends React.Component<Props> {
 
     if (!response.ok) {
       throw Error(
-        `Release could not be posted: status code ${
-          response.status
-        }, status text ${response.statusText}`
+        `Release could not be posted: status code ${response.status}, status text ${response.statusText}`
       );
     }
   }

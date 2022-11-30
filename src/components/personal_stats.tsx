@@ -116,7 +116,10 @@ function traceForSum(data: Repo[]) {
       mode: "lines",
       name: "Trend",
       x,
-      y: runningAverage(sortedEntries.map(entry => entry[1]), 2)
+      y: runningAverage(
+        sortedEntries.map(entry => entry[1]),
+        2
+      )
     }
   ];
 }

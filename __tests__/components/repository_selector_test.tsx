@@ -4,8 +4,8 @@ import { shallow } from "enzyme";
 import { OwnerDropdown } from "../../src/components/owner_dropdown";
 import { Dropdown } from "../../src/components/dropdown";
 
-describe("RepositorySelector", function() {
-  it("calls onRepositorySelect after owner and repo selecion", function() {
+describe("RepositorySelector", function () {
+  it("calls onRepositorySelect after owner and repo selecion", function () {
     const github = {
       owner: "defaultOwner",
       getRepositoryNames() {

@@ -142,7 +142,7 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
 
     return (
       <Section heading="Release Note">
-        <ReleaseNote {...this.props} {...this.state as any} />
+        <ReleaseNote {...this.props} {...(this.state as any)} />
       </Section>
     );
   }

@@ -18,23 +18,23 @@ export function setupMocksForCopy() {
   return { createRangeMock, getSelectionMock, execCommandMock };
 }
 
-describe("CopyToClipboard", function() {
+describe("CopyToClipboard", function () {
   let wrapper: ShallowWrapper<any, any>;
 
-  beforeEach(function() {
+  beforeEach(function () {
     wrapper = shallow(<CopyToClipboard text="text to copy" />);
   });
 
-  describe("span with content", function() {
-    it("puts text prop into the span", function() {
+  describe("span with content", function () {
+    it("puts text prop into the span", function () {
       expect(wrapper.find("span").prop("children")).toEqual("text to copy");
     });
 
-    it("has the id 'textToCopy'", function() {
+    it("has the id 'textToCopy'", function () {
       expect(wrapper.find("#textToCopy")).toHaveLength(1);
     });
 
-    it("sets style properties", function() {
+    it("sets style properties", function () {
       expect(wrapper.find("span").prop("style")).toEqual({
         userSelect: "text",
         whiteSpace: "pre",
@@ -44,14 +44,14 @@ describe("CopyToClipboard", function() {
     });
   });
 
-  describe("copy button", function() {
-    it("has text of Copy", function() {
+  describe("copy button", function () {
+    it("has text of Copy", function () {
       const button = wrapper.find(Button);
       expect(button).toHaveLength(1);
       expect(button.prop("children")).toEqual("Copy");
     });
 
-    it("can have custom text given by buttonText prop", function() {
+    it("can have custom text given by buttonText prop", function () {
       wrapper = shallow(
         <CopyToClipboard buttonText="Custom Button Text" text="text to copy" />
       );
@@ -60,7 +60,7 @@ describe("CopyToClipboard", function() {
       expect(button.prop("children")).toEqual("Custom Button Text");
     });
 
-    it("copies span content on click", function() {
+    it("copies span content on click", function () {
       const getElementByIdSpy = jest.spyOn(document, "getElementById");
       const mocks = setupMocksForCopy();
 
@@ -73,7 +73,7 @@ describe("CopyToClipboard", function() {
       expect(getElementByIdSpy).toHaveBeenCalledWith("textToCopy");
     });
 
-    it("calls onClick on button click", function() {
+    it("calls onClick on button click", function () {
       const onClick = jest.fn();
       wrapper = shallow(
         <CopyToClipboard onClick={onClick} text="text to copy" />

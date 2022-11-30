@@ -10,9 +10,9 @@ import { LinearProgress, FormControlLabel, Button } from "@material-ui/core";
 
 jest.mock("../../src/github");
 
-describe("DetailedRepositorySelector", function() {
-  describe("before data loaded", function() {
-    it("shows a progress bar", function() {
+describe("DetailedRepositorySelector", function () {
+  describe("before data loaded", function () {
+    it("shows a progress bar", function () {
       const github = new Github("token", {} as any, undefined);
       github.getOwners = jest.fn(() => new Promise(_resolve => {}));
 
@@ -24,14 +24,14 @@ describe("DetailedRepositorySelector", function() {
     });
   });
 
-  describe("after data loaded", function() {
+  describe("after data loaded", function () {
     let github: Github;
     const owner1 = "owner1";
     const owner2 = "owner2";
     let wrapper: ShallowWrapper<any, any>;
     let repositoresPerOwner: RepositoriesPerOwner;
 
-    beforeEach(async function() {
+    beforeEach(async function () {
       github = new Github("token", {} as any, undefined);
       github.getOwners = jest.fn(() => Promise.resolve([owner1, owner2]));
       (github.copyFor as jest.Mock<Github>).mockReturnValue(github);
@@ -53,10 +53,7 @@ describe("DetailedRepositorySelector", function() {
 
     function checkOwner1() {
       const owner1CheckboxWrapper = shallow(
-        wrapper
-          .find(FormControlLabel)
-          .at(0)
-          .prop("control")
+        wrapper.find(FormControlLabel).at(0).prop("control")
       );
 
       const event: any = null;
@@ -78,7 +75,7 @@ describe("DetailedRepositorySelector", function() {
       (acceptButton.prop("onClick") as any)();
     }
 
-    it("shows checkboxes for all owners ", async function() {
+    it("shows checkboxes for all owners ", async function () {
       expect(wrapper.find(LinearProgress)).toHaveLength(0);
 
       const labels = wrapper.find(FormControlLabel);
@@ -87,7 +84,7 @@ describe("DetailedRepositorySelector", function() {
       expect(labels.at(1).prop("label")).toEqual(owner2);
     });
 
-    it("shows checkboxes for all repositories if owner is checked", async function() {
+    it("shows checkboxes for all repositories if owner is checked", async function () {
       expect(wrapper.find(LinearProgress)).toHaveLength(0);
 
       checkOwner1();
@@ -99,7 +96,7 @@ describe("DetailedRepositorySelector", function() {
       expect(labels).toHaveLength(4);
     });
 
-    it("passes selected repositories per owner to callback on button click", async function() {
+    it("passes selected repositories per owner to callback on button click", async function () {
       checkOwner1();
 
       await waitImmediate();
@@ -112,7 +109,7 @@ describe("DetailedRepositorySelector", function() {
       expect(repositoresPerOwner).toEqual(expected);
     });
 
-    it("allows deselecting repositories", async function() {
+    it("allows deselecting repositories", async function () {
       checkOwner1();
 
       await waitImmediate();
@@ -128,7 +125,7 @@ describe("DetailedRepositorySelector", function() {
       expect(repositoresPerOwner).toEqual(expected);
     });
 
-    it("allows deselecting and reselecting repositories", async function() {
+    it("allows deselecting and reselecting repositories", async function () {
       checkOwner1();
 
       await waitImmediate();

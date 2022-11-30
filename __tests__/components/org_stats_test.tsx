@@ -8,11 +8,11 @@ import { OverTimePlot } from "../../src/components/over_time_plot";
 
 jest.mock("../../src/github");
 
-describe("OrgStats", function() {
+describe("OrgStats", function () {
   let github: Github;
   let wrapper: ReactWrapper<any, any>;
 
-  beforeEach(function() {
+  beforeEach(function () {
     github = new Github("token", {} as any, undefined);
     (github.getOwnersWithAvatar as jest.Mock).mockReturnValue(
       Promise.resolve([
@@ -24,11 +24,11 @@ describe("OrgStats", function() {
     wrapper = mount(<OrgStats github={github} />);
   });
 
-  it("shows a RepositoryByOwnerSelector", function() {
+  it("shows a RepositoryByOwnerSelector", function () {
     expect(wrapper.find(RepositoriesByOwnerSelector)).toHaveLength(1);
   });
 
-  describe("after owner selection", function() {
+  describe("after owner selection", function () {
     const week1 = new Date(1969, 2, 1);
     const week2 = new Date(1970, 2, 1);
     const data: GithubData = [
@@ -59,7 +59,7 @@ describe("OrgStats", function() {
       }
     ];
 
-    beforeEach(async function() {
+    beforeEach(async function () {
       (github.getRepositoryNames as jest.Mock).mockReturnValue([
         "repo1",
         "repo"
@@ -84,7 +84,7 @@ describe("OrgStats", function() {
       wrapper.update();
     });
 
-    it("shows an OverTimePlot for commits", async function() {
+    it("shows an OverTimePlot for commits", async function () {
       const plot = wrapper.find(OverTimePlot);
       expect(plot).toHaveLength(3);
       const plotData = plot.at(0).prop("data") as any;
@@ -107,7 +107,7 @@ describe("OrgStats", function() {
       expect(plotData[3].y).toEqual([30]);
     });
 
-    it("shows an OverTimePlot for PullRequests", function() {
+    it("shows an OverTimePlot for PullRequests", function () {
       const plot = wrapper.find(OverTimePlot);
       expect(plot).toHaveLength(3);
       const plotData = plot.at(1).prop("data") as any;
@@ -122,7 +122,7 @@ describe("OrgStats", function() {
       expect(plotData[1].y).toEqual([2, 2]);
     });
 
-    it("shows an OverTimePlot for Reviews", function() {
+    it("shows an OverTimePlot for Reviews", function () {
       const plot = wrapper.find(OverTimePlot);
       expect(plot).toHaveLength(3);
       const plotData = plot.at(2).prop("data") as any;

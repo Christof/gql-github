@@ -3,16 +3,15 @@ import { App, RawApp } from "../../src/components/app";
 import { shallow, mount, ReactWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
 import { MemoryRouter } from "react-router";
-import * as ReactRouterDom from "react-router-dom";
 import { GithubCallback } from "../../src/components/github_callback";
 import { AppBar, Typography, IconButton, Drawer } from "@material-ui/core";
 import { MenuButton } from "../../src/components/menu_button";
 import { GithubButton } from "../../src/components/github_button";
 
-describe("App", function() {
+describe("App", function () {
   let fetch: jest.Mock;
 
-  beforeEach(function() {
+  beforeEach(function () {
     window.localStorage.clear();
 
     fetch = jest.fn();
@@ -99,8 +98,8 @@ describe("App", function() {
     });
   });
 
-  describe("AppBar", function() {
-    it("renders the tilte and GithubButton", function() {
+  describe("AppBar", function () {
+    it("renders the tilte and GithubButton", function () {
       const wrapper = mount(<App fetch={fetch} />);
 
       const appBar = wrapper.find(AppBar);
@@ -114,21 +113,18 @@ describe("App", function() {
     });
   });
 
-  describe("Content", function() {
-    it("is an empty div if no route is selected", function() {
+  describe("Content", function () {
+    it("is an empty div if no route is selected", function () {
       const wrapper = mount(<App fetch={fetch} />);
 
       expect(wrapper.find("#content")).toHaveLength(1);
     });
   });
 
-  describe("error boundary", function() {
-    it("is implemented", function() {
+  describe("error boundary", function () {
+    it("is implemented", function () {
       const wrapper = mount(<App fetch={fetch} />);
-      const instance = wrapper
-        .find(RawApp)
-        .at(0)
-        .instance() as any;
+      const instance = wrapper.find(RawApp).at(0).instance() as any;
 
       expect(instance.componentDidCatch).toBeDefined();
 
@@ -141,8 +137,8 @@ describe("App", function() {
     });
   });
 
-  describe("GithubButton", function() {
-    it("onChangeToken sets the token and creates Github instance", function() {
+  describe("GithubButton", function () {
+    it("onChangeToken sets the token and creates Github instance", function () {
       const wrapper = shallow(<App fetch={fetch} />);
       const rawApp = wrapper.find(RawApp);
       expect(rawApp).toHaveLength(1);
@@ -158,10 +154,10 @@ describe("App", function() {
       expect(rawAppWrapper.state()).toHaveProperty("github");
     });
 
-    describe("token in localStorage", function() {
+    describe("token in localStorage", function () {
       afterEach(() => window.localStorage.clear());
 
-      it("creates a Github instance in constructor", function() {
+      it("creates a Github instance in constructor", function () {
         window.localStorage.setItem("githubToken", "token");
 
         const wrapper = shallow(<App fetch={fetch} />);
@@ -198,12 +194,12 @@ describe("App", function() {
       title: "Create Release Notes"
     }
   ].forEach(entry => {
-    describe(entry.component, function() {
-      describe("with open drawer", function() {
+    describe(entry.component, function () {
+      describe("with open drawer", function () {
         let wrapper: ReactWrapper;
         let drawer: ReactWrapper;
 
-        beforeEach(async function() {
+        beforeEach(async function () {
           wrapper = mount(<App fetch={fetch} />);
           const appBar = wrapper.find(AppBar);
           expect(appBar).toHaveLength(1);
@@ -219,7 +215,7 @@ describe("App", function() {
           expect(drawer).toHaveLength(1);
         });
 
-        it(`shows a MenuButton to route ${entry.route}`, async function() {
+        it(`shows a MenuButton to route ${entry.route}`, async function () {
           expect(drawer.prop("open")).toEqual(true);
 
           const button = drawer
@@ -228,7 +224,7 @@ describe("App", function() {
           expect(button).toHaveLength(1);
         });
 
-        it("closes the drawer after menu item click", async function() {
+        it("closes the drawer after menu item click", async function () {
           const button = drawer
             .find(MenuButton)
             .filterWhere(b => b.prop("to") === entry.route);
@@ -243,25 +239,12 @@ describe("App", function() {
         });
       });
 
-      describe("with faked BrowserRouter", function() {
-        const originalBrowserRouter = ReactRouterDom.BrowserRouter;
-        beforeAll(function() {
-          // Redefine BrowserRouter to only render its children
-          // otherwise MemoryRouter won't work
-          (ReactRouterDom.BrowserRouter as any) = (params: {
-            children: JSX.Element;
-          }) => <div>{params.children}</div>;
-        });
-
-        afterAll(function() {
-          (ReactRouterDom.BrowserRouter as any) = originalBrowserRouter;
-        });
-
-        afterEach(function() {
+      describe("with faked BrowserRouter", function () {
+        afterEach(function () {
           window.localStorage.clear();
         });
 
-        it(`shows ${entry.component} if route is active`, async function() {
+        it(`shows ${entry.component} if route is active`, async function () {
           // ensure that we are logged in
           window.localStorage.setItem("githubToken", "token");
           history.pushState({}, entry.route, entry.route);
@@ -282,7 +265,7 @@ describe("App", function() {
           expect(wrapper.find("h5").prop("children")).toEqual(entry.title);
         });
 
-        it(`shows nothing if route is active but not logged in`, async function() {
+        it(`shows nothing if route is active but not logged in`, async function () {
           const wrapper = mount(
             <MemoryRouter initialEntries={[entry.route]}>
               <App fetch={fetch} />
@@ -298,21 +281,8 @@ describe("App", function() {
     });
   });
 
-  describe("GithubCallback", function() {
-    const originalBrowserRouter = ReactRouterDom.BrowserRouter;
-    beforeAll(function() {
-      // Redefine BrowserRouter to only render its children
-      // otherwise MemoryRouter won't work
-      (ReactRouterDom.BrowserRouter as any) = (params: {
-        children: JSX.Element;
-      }) => <div>{params.children}</div>;
-    });
-
-    afterAll(function() {
-      (ReactRouterDom.BrowserRouter as any) = originalBrowserRouter;
-    });
-
-    beforeEach(function() {
+  describe("GithubCallback", function () {
+    beforeEach(function () {
       const result = {
         data: {
           viewer: {
@@ -336,7 +306,7 @@ describe("App", function() {
       );
     });
 
-    it("renders GithubCallback for /auth-callback route", function() {
+    it("renders GithubCallback for /auth-callback route", function () {
       const route = "/auth-callback";
       history.pushState({}, route, route);
       const wrapper = mount(
@@ -349,12 +319,12 @@ describe("App", function() {
       expect(githubCallback).toHaveLength(1);
     });
 
-    describe("onChangeToken", function() {
-      afterEach(function() {
+    describe("onChangeToken", function () {
+      afterEach(function () {
         window.localStorage.clear();
       });
 
-      it("calls App.onChangeToken and sets local storage", function() {
+      it("calls App.onChangeToken and sets local storage", function () {
         window.localStorage.setItem("githubToken", "my-token");
         const route = "/auth-callback";
         history.pushState({}, route, route);

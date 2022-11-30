@@ -3,10 +3,10 @@ import { GithubCallback } from "../../src/components/github_callback";
 import { shallow } from "enzyme";
 import { waitImmediate } from "../helper";
 
-describe("GithubCallback", function() {
+describe("GithubCallback", function () {
   afterEach(() => window.localStorage.clear());
-  describe("componentDidMount", function() {
-    it("throws an error if states do not match", function() {
+  describe("componentDidMount", function () {
+    it("throws an error if states do not match", function () {
       window.localStorage.setItem("githubState", "some state");
 
       const location: any = { search: "?state=other-state" };
@@ -23,7 +23,7 @@ describe("GithubCallback", function() {
       ).toThrowError(/Retrieved state is not equal to sent one./);
     });
 
-    it("calls to local authenticate route", async function() {
+    it("calls to local authenticate route", async function () {
       window.localStorage.setItem("githubState", "state");
 
       const location: any = { search: "?state=state&code=mycode" };

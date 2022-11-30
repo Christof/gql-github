@@ -1,6 +1,6 @@
 import { GraphQLFacade } from "../src/graphql_facade";
 
-describe("GraphQLFacade", function() {
+describe("GraphQLFacade", function () {
   let facade: GraphQLFacade;
   const clientQueryMock = jest.fn();
   const query = `
@@ -14,7 +14,7 @@ describe("GraphQLFacade", function() {
   const retries = 1;
   const retryWaitSeconds = 0.001;
 
-  beforeEach(function() {
+  beforeEach(function () {
     clientQueryMock.mockReset();
     facade = new GraphQLFacade({ query: clientQueryMock } as any);
   });
@@ -35,7 +35,7 @@ describe("GraphQLFacade", function() {
     expect(user).toEqual("some data");
   });
 
-  describe("retry", function() {
+  describe("retry", function () {
     it("retries once if gql query fails", async () => {
       clientQueryMock.mockReturnValueOnce({ errors: ["some error"] });
       clientQueryMock.mockReturnValueOnce({

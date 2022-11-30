@@ -23,9 +23,7 @@ export class ReleasesSelectorAndView extends React.Component<Props> {
   async selectRelease(tagName: string) {
     const release = this.props.releases.find(x => x.tagName === tagName);
 
-    const releaseDescription = `# ${release.tagName}\n\n${
-      release.description
-    }\n`;
+    const releaseDescription = `# ${release.tagName}\n\n${release.description}\n`;
     return { releaseDescription, release, Markdown: this.props.Markdown };
   }
 

@@ -4,8 +4,8 @@ import { shallow } from "enzyme";
 import { waitImmediate } from "../helper";
 import { Dropdown } from "../../src/components/dropdown";
 
-describe("OwnerSelector", function() {
-  it("calls onSelect owner selection", async function() {
+describe("OwnerSelector", function () {
+  it("calls onSelect owner selection", async function () {
     const owner = "owner2";
 
     const github = {

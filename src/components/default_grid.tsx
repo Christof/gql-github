@@ -9,7 +9,7 @@ export function DefaultGrid(props: {
 
   return (
     <Grid container spacing={3} justify="center">
-      <Grid item {...sizeProps as any}>
+      <Grid item {...(sizeProps as any)}>
         {props.children}
       </Grid>
     </Grid>

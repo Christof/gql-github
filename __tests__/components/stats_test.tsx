@@ -11,14 +11,14 @@ import PlotlyChart from "react-plotlyjs-ts";
 
 jest.mock("../../src/github");
 
-describe("Stats", function() {
+describe("Stats", function () {
   beforeAll(() => jest.setTimeout(10000));
   afterAll(() => jest.setTimeout(undefined));
 
   let github: Github;
   let wrapper: ReactWrapper<any, any>;
 
-  beforeEach(function() {
+  beforeEach(function () {
     github = new Github("token", {} as any, undefined);
     (github.getOwnersWithAvatar as jest.Mock).mockReturnValue(
       Promise.resolve([{ login: "user", avatarUrl: "user-url" }])
@@ -26,15 +26,15 @@ describe("Stats", function() {
     wrapper = mount(<Stats github={github} />);
   });
 
-  it("shows a RepositoriesByOwnerSelector", function() {
+  it("shows a RepositoriesByOwnerSelector", function () {
     expect(wrapper.find(RepositoriesByOwnerSelector)).toHaveLength(1);
   });
 
-  describe("repository selection", function() {
+  describe("repository selection", function () {
     const repositoryNames = ["repo1", "repo2"];
     let resolveForGetStats: Function;
 
-    beforeEach(async function() {
+    beforeEach(async function () {
       const repositorySelector = wrapper.find(RepositoriesByOwnerSelector);
 
       (github.getRepositoryNames as jest.Mock).mockReturnValue(
@@ -55,11 +55,11 @@ describe("Stats", function() {
       wrapper.update();
     });
 
-    it("shows a progress bar", function() {
+    it("shows a progress bar", function () {
       expect(wrapper.find(LinearProgress)).toHaveLength(1);
     });
 
-    describe("after loading data", function() {
+    describe("after loading data", function () {
       const week1 = new Date(2014, 2, 1);
       const week2 = new Date(2015, 2, 1);
       const week3 = new Date(2017, 2, 1);
@@ -80,14 +80,14 @@ describe("Stats", function() {
         }
       ];
 
-      beforeEach(async function() {
+      beforeEach(async function () {
         resolveForGetStats([data, data]);
 
         await waitImmediate();
         wrapper.update();
       });
 
-      it("shows an OverallPlot", function() {
+      it("shows an OverallPlot", function () {
         const overallPlot = wrapper.find(OverallPlot);
 
         expect(overallPlot).toHaveLength(1);
@@ -108,7 +108,7 @@ describe("Stats", function() {
         expect(data[1].y).toEqual([30]);
       }
 
-      it("shows OverTimePlots for each repository", function() {
+      it("shows OverTimePlots for each repository", function () {
         const overTimePlot = wrapper.find(OverTimePlot);
 
         expect(overTimePlot).toHaveLength(2);
@@ -147,7 +147,7 @@ describe("Stats", function() {
         expect(userData.y).toEqual([10, 20, 0, 30]);
       }
 
-      it("shows a year graph for each repository", function() {
+      it("shows a year graph for each repository", function () {
         const allPlots = wrapper.find(PlotlyChart);
         expect(allPlots).toHaveLength(5);
 

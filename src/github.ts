@@ -36,6 +36,10 @@ export class Github {
     return copy;
   }
 
+  getGithubRequest(path: string) {
+    return this.getRequest(`https://api.github.com/${path}`);
+  }
+
   getRequest(path: string) {
     const params: RequestInit = {
       method: "GET",
@@ -43,7 +47,7 @@ export class Github {
       headers: [["Authorization", `token ${this.token}`]]
     };
 
-    return this.fetch(`https://api.github.com/${path}`, params);
+    return this.fetch(path, params);
   }
 
   async getUser(): Promise<GithubUser> {
@@ -143,15 +147,25 @@ export class Github {
   }
 
   async compare(repository: string, start: string, end: string) {
-    const response = await this.getRequest(
-      `repos/${this.owner}/${repository}/compare/${start}...${end}`
-    );
+    let path = `https://api.github.com/repos/${this.owner}/${repository}/compare/${start}...${end}?per_page=100&page=1`;
 
-    return (await response.json()) as GithubCompareResult;
+    let commits: GithubCommit[] = [];
+
+    do {
+      let response = await this.getRequest(path);
+
+      const headerLink = this.parseLinkHeader(response.headers?.get("link"));
+      path = headerLink.next;
+      commits = commits.concat(
+        ((await response.json()) as GithubCompareResult).commits
+      );
+    } while (path);
+
+    return { commits };
   }
 
   async getCommits(repository: string) {
-    const response = await this.getRequest(
+    const response = await this.getGithubRequest(
       `repos/${this.owner}/${repository}/commits?per_page=100`
     );
 
@@ -202,11 +216,11 @@ export class Github {
 
   async getStats(repository: string): Promise<GithubData> {
     const path = `repos/${this.owner}/${repository}/stats/contributors`;
-    let response = await this.getRequest(path);
+    let response = await this.getGithubRequest(path);
 
     if (response.status === 202) {
       await delay(this.retryWaitSeconds);
-      response = await this.getRequest(path);
+      response = await this.getGithubRequest(path);
     }
 
     if (response.status === 204) {
@@ -306,5 +320,25 @@ export class Github {
       `https://api.github.com/repos/${this.owner}/${repository}/releases`,
       params
     );
+  }
+
+  private parseLinkHeader(header: string) {
+    if (!header || header.length === 0) {
+      return {};
+    }
+
+    // Split parts by comma and parse each part into a named link
+    return header.split(/(?!\B"[^"]*),(?![^"]*"\B)/).reduce((links, part) => {
+      const section = part.split(/(?!\B"[^"]*);(?![^"]*"\B)/);
+      if (section.length < 2) {
+        throw new Error("section could not be split on ';'");
+      }
+      const url = section[0].replace(/<(.*)>/, "$1").trim();
+      const name = section[1].replace(/rel="(.*)"/, "$1").trim();
+
+      links[name] = url;
+
+      return links;
+    }, {} as { [index: string]: string });
   }
 }

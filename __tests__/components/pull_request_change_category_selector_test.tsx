@@ -5,14 +5,14 @@ import { PullRequest, ChangeCategory } from "../../src/pull_request";
 import { Typography } from "@material-ui/core";
 import { Dropdown } from "../../src/components/dropdown";
 
-describe("PullRequestChangeCategorySelector", function() {
+describe("PullRequestChangeCategorySelector", function () {
   const pullRequest = new PullRequest(
     "PR Description",
     "123",
     ChangeCategory.Breaking
   );
 
-  it("renders PullRequest text", function() {
+  it("renders PullRequest text", function () {
     const wrapper = shallow(
       <PullRequestChangeCategorySelector
         pullRequest={pullRequest}
@@ -25,7 +25,7 @@ describe("PullRequestChangeCategorySelector", function() {
     );
   });
 
-  it("contains a Dropdown to change the ChangeCategory", function() {
+  it("contains a Dropdown to change the ChangeCategory", function () {
     let changedPullRequest: PullRequest;
 
     const wrapper = shallow(

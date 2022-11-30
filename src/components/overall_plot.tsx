@@ -44,11 +44,10 @@ export class OverallPlot extends React.Component<Props, State> {
     return { data, layout };
   }
   private getAuthors() {
-    const authorsForRepos = this.props.reposData.map(
-      repoData =>
-        repoData !== undefined
-          ? repoData.map(authorData => authorData.author.login)
-          : []
+    const authorsForRepos = this.props.reposData.map(repoData =>
+      repoData !== undefined
+        ? repoData.map(authorData => authorData.author.login)
+        : []
     );
 
     return unique(flatten(authorsForRepos));
