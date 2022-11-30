@@ -154,7 +154,7 @@ export class Github {
     do {
       let response = await this.getRequest(path);
 
-      const headerLink = this.parseLinkHeader(response.headers.get("link"));
+      const headerLink = this.parseLinkHeader(response.headers?.get("link"));
       path = headerLink.next;
       commits = commits.concat(
         ((await response.json()) as GithubCompareResult).commits
@@ -323,8 +323,8 @@ export class Github {
   }
 
   private parseLinkHeader(header: string) {
-    if (header.length === 0) {
-      throw new Error("input must not be of zero length");
+    if (!header || header.length === 0) {
+      return {};
     }
 
     // Split parts by comma and parse each part into a named link
