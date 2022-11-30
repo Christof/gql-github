@@ -3,9 +3,9 @@ import { Dropdown } from "../../src/components/dropdown";
 import { shallow } from "enzyme";
 import { InputLabel, Select, MenuItem } from "@material-ui/core";
 
-describe("Dropdown", function() {
-  describe("with label", function() {
-    it("adds an InputLabel", function() {
+describe("Dropdown", function () {
+  describe("with label", function () {
+    it("adds an InputLabel", function () {
       const wrapper = shallow(
         <Dropdown options={[]} label="label" onSelect={() => {}} />
       );
@@ -15,7 +15,7 @@ describe("Dropdown", function() {
       expect(label.prop("htmlFor")).toEqual("label");
     });
 
-    it("sets the id to the label", function() {
+    it("sets the id to the label", function () {
       const wrapper = shallow(
         <Dropdown options={[]} label="label" onSelect={() => {}} />
       );
@@ -23,7 +23,7 @@ describe("Dropdown", function() {
       expect(wrapper.find(Select).prop("id")).toEqual("label");
     });
 
-    it("renders a disabled option with value none", function() {
+    it("renders a disabled option with value none", function () {
       const wrapper = shallow(
         <Dropdown options={[]} label="label" onSelect={() => {}} />
       );
@@ -36,7 +36,7 @@ describe("Dropdown", function() {
     });
   });
 
-  it("renders a Select with given options", function() {
+  it("renders a Select with given options", function () {
     const wrapper = shallow(
       <Dropdown options={["opt1", "opt2"]} onSelect={() => {}} />
     );
@@ -47,7 +47,7 @@ describe("Dropdown", function() {
     expect(items.at(2).prop("children")).toEqual([null, "opt2"]);
   });
 
-  describe("initialSelection", function() {
+  describe("initialSelection", function () {
     const wrapper = shallow(
       <Dropdown
         options={["opt1", "opt2"]}
@@ -59,8 +59,8 @@ describe("Dropdown", function() {
     expect(wrapper.find(Select).prop("value")).toEqual("opt2");
   });
 
-  describe("componentDidUpdate", function() {
-    it("sets an initial selection if given and the options change", function() {
+  describe("componentDidUpdate", function () {
+    it("sets an initial selection if given and the options change", function () {
       const wrapper = shallow(
         <Dropdown
           options={["opt1", "opt2"]}
@@ -77,7 +77,7 @@ describe("Dropdown", function() {
       expect(wrapper.find(Select).prop("value")).toEqual("optionA");
     });
 
-    it("doesn't update the selection if the options are the same", function() {
+    it("doesn't update the selection if the options are the same", function () {
       const options = ["opt1", "opt2"];
       const wrapper = shallow(
         <Dropdown
@@ -96,8 +96,8 @@ describe("Dropdown", function() {
     });
   });
 
-  describe("onSelect", function() {
-    it("on selection calls onSelect", function() {
+  describe("onSelect", function () {
+    it("on selection calls onSelect", function () {
       let selected = "";
       const wrapper = shallow(
         <Dropdown
@@ -118,8 +118,8 @@ describe("Dropdown", function() {
     });
   });
 
-  describe("iconUrls", function() {
-    it("adds an img before each option", function() {
+  describe("iconUrls", function () {
+    it("adds an img before each option", function () {
       const wrapper = shallow(
         <Dropdown
           options={["opt1", "opt2"]}
@@ -130,18 +130,8 @@ describe("Dropdown", function() {
 
       const items = wrapper.find(MenuItem);
       expect(items).toHaveLength(3);
-      expect(
-        items
-          .at(1)
-          .find("img")
-          .prop("src")
-      ).toEqual("url1");
-      expect(
-        items
-          .at(2)
-          .find("img")
-          .prop("src")
-      ).toEqual("url2");
+      expect(items.at(1).find("img").prop("src")).toEqual("url1");
+      expect(items.at(2).find("img").prop("src")).toEqual("url2");
     });
   });
 });

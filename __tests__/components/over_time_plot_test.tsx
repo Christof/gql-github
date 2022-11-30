@@ -3,8 +3,8 @@ import { OverTimePlot } from "../../src/components/over_time_plot";
 import { shallow } from "enzyme";
 import PlotlyChart from "react-plotlyjs-ts";
 
-describe("OverTimePlot", function() {
-  it("renders plots with time as x axis", function() {
+describe("OverTimePlot", function () {
+  it("renders plots with time as x axis", function () {
     const title = "my plot";
     const data = [
       {
@@ -23,7 +23,7 @@ describe("OverTimePlot", function() {
     expect(wrapper.find(PlotlyChart).prop("data")).toEqual(data);
   });
 
-  it("renders plots with custom as y axis title", function() {
+  it("renders plots with custom as y axis title", function () {
     const title = "my plot";
     const data = [
       {

@@ -22,9 +22,7 @@ export function PersonalStatsPlots(props: Props) {
   return (
     <>
       <Typography paragraph>
-        {`${props.totalCommitCount} total commit count in ${
-          props.data.length
-        } repositories`}
+        {`${props.totalCommitCount} total commit count in ${props.data.length} repositories`}
       </Typography>
 
       <props.OverTimePlot

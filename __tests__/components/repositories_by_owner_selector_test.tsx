@@ -7,11 +7,11 @@ import { shallow, ShallowWrapper } from "enzyme";
 import { Button, FormControlLabel } from "@material-ui/core";
 import { OwnerDropdown } from "../../src/components/owner_dropdown";
 
-describe("RepositoriesByOwnerSelector", function() {
+describe("RepositoriesByOwnerSelector", function () {
   let setData: LoadData;
   let wrapper: ShallowWrapper<any, any>;
 
-  beforeEach(function() {
+  beforeEach(function () {
     const github = {} as any;
     wrapper = shallow(
       <RepositoriesByOwnerSelector
@@ -25,14 +25,14 @@ describe("RepositoriesByOwnerSelector", function() {
     wrapper.find(Button).prop("onClick")({} as any);
   }
 
-  describe("button before selection", function() {
-    it("is disabled", function() {
+  describe("button before selection", function () {
+    it("is disabled", function () {
       expect(wrapper.find(Button).prop("disabled")).toBe(true);
     });
   });
 
-  describe("click load after selecting owner and checking includeForks", function() {
-    it("calls onLoad with selected owner and includeForks true", function() {
+  describe("click load after selecting owner and checking includeForks", function () {
+    it("calls onLoad with selected owner and includeForks true", function () {
       const owner = "selectedOwner";
 
       wrapper.find(OwnerDropdown).prop("onSelect")(owner as any);

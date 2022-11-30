@@ -14,11 +14,11 @@ import { setupMocksForCopy } from "./copy_to_clipboard_test";
 
 jest.mock("../../src/github");
 
-describe("ReleaseNotesCreator", function() {
+describe("ReleaseNotesCreator", function () {
   let github: Github;
   let wrapper: ReactWrapper<any, any>;
 
-  beforeEach(function() {
+  beforeEach(function () {
     const fetch = undefined as any;
     github = new Github("token", {} as any, fetch);
     (github.getRepositoryNames as jest.Mock).mockReturnValue(
@@ -30,37 +30,32 @@ describe("ReleaseNotesCreator", function() {
     wrapper = mount(<ReleaseNotesCreator github={github} />);
   });
 
-  describe("before selecting a repository", function() {
-    it("shows a RepositorySelector", function() {
+  describe("before selecting a repository", function () {
+    it("shows a RepositorySelector", function () {
       expect(wrapper.find(RepositorySelector)).toHaveLength(1);
     });
   });
 
-  describe("after selecting a repository with no tag", function() {
+  describe("after selecting a repository with no tag", function () {
     const tags: GithubTag[] = [];
     const releases: GithubRelease[] = [];
 
-    beforeEach(async function() {
+    beforeEach(async function () {
       (github.getTags as jest.Mock).mockReturnValue(tags);
       (github.getReleases as jest.Mock).mockReturnValue(releases);
-      (wrapper
-        .find(RepositorySelector)
-        .prop("onRepositorySelect") as any)("repo1");
+      (
+        wrapper.find(RepositorySelector).prop("onRepositorySelect") as any
+      )("repo1");
 
       await waitImmediate();
       wrapper.update();
     });
 
-    it("shows error message", async function() {
+    it("shows error message", async function () {
       (github.getCommits as jest.Mock).mockReturnValue([]);
 
       expect(wrapper.find(Section)).toHaveLength(2);
-      expect(
-        wrapper
-          .find(Section)
-          .at(1)
-          .prop("heading")
-      ).toEqual("Range");
+      expect(wrapper.find(Section).at(1).prop("heading")).toEqual("Range");
 
       const dropdowns = wrapper.find(Dropdown);
       expect(dropdowns).toHaveLength(2);
@@ -72,31 +67,26 @@ describe("ReleaseNotesCreator", function() {
     });
   });
 
-  describe("after selecting a repository with one tag", function() {
+  describe("after selecting a repository with one tag", function () {
     const tags = [{ name: "v0.0.1" }];
     const releases: GithubRelease[] = [];
 
-    beforeEach(async function() {
+    beforeEach(async function () {
       (github.getTags as jest.Mock).mockReturnValue(tags);
       (github.getReleases as jest.Mock).mockReturnValue(releases);
-      (wrapper
-        .find(RepositorySelector)
-        .prop("onRepositorySelect") as any)("repo1");
+      (
+        wrapper.find(RepositorySelector).prop("onRepositorySelect") as any
+      )("repo1");
 
       await waitImmediate();
       wrapper.update();
     });
 
-    it("shows the last 100 commits before the first tag if only one exists", async function() {
+    it("shows the last 100 commits before the first tag if only one exists", async function () {
       (github.getCommits as jest.Mock).mockReturnValue([]);
 
       expect(wrapper.find(Section)).toHaveLength(2);
-      expect(
-        wrapper
-          .find(Section)
-          .at(1)
-          .prop("heading")
-      ).toEqual("Range");
+      expect(wrapper.find(Section).at(1).prop("heading")).toEqual("Range");
 
       const dropdowns = wrapper.find(Dropdown);
       expect(dropdowns).toHaveLength(2);
@@ -111,36 +101,31 @@ describe("ReleaseNotesCreator", function() {
     });
   });
 
-  describe("after selecting a repository", function() {
+  describe("after selecting a repository", function () {
     const tags = [{ name: "v0.0.1" }, { name: "v0.0.2" }, { name: "v0.0.3" }];
     const releases = [
       { tagName: "v0.0.0_test_release", description: "" },
       { tagName: "v0.0.2", description: "" }
     ];
 
-    beforeEach(async function() {
+    beforeEach(async function () {
       (github.getTags as jest.Mock).mockReturnValue(tags);
       (github.getReleases as jest.Mock).mockReturnValue(releases);
-      (wrapper
-        .find(RepositorySelector)
-        .prop("onRepositorySelect") as any)("repo1");
+      (
+        wrapper.find(RepositorySelector).prop("onRepositorySelect") as any
+      )("repo1");
 
       await waitImmediate();
       wrapper.update();
     });
 
-    it("shows disabled button as long as no tags are selected", function() {
+    it("shows disabled button as long as no tags are selected", function () {
       expect(wrapper.find(Button).prop("disabled")).toBe(true);
     });
 
-    it("shows the range section with preselected start tag", async function() {
+    it("shows the range section with preselected start tag", async function () {
       expect(wrapper.find(Section)).toHaveLength(2);
-      expect(
-        wrapper
-          .find(Section)
-          .at(1)
-          .prop("heading")
-      ).toEqual("Range");
+      expect(wrapper.find(Section).at(1).prop("heading")).toEqual("Range");
 
       const dropdowns = wrapper.find(Dropdown);
       expect(dropdowns).toHaveLength(4);
@@ -160,7 +145,7 @@ describe("ReleaseNotesCreator", function() {
       expect(github.compare).toHaveBeenCalledWith("repo1", "v0.0.2", undefined);
     });
 
-    it("doesn't preselected start tag if none can be found", async function() {
+    it("doesn't preselected start tag if none can be found", async function () {
       (github.getReleases as jest.Mock).mockReset();
       (github.getReleases as jest.Mock).mockReturnValue([]);
 
@@ -174,7 +159,7 @@ describe("ReleaseNotesCreator", function() {
       expect(dropdowns.at(2).prop("initialSelection")).toBeUndefined();
     });
 
-    describe("after selecting a range", function() {
+    describe("after selecting a range", function () {
       const commits = [
         {
           author: { login: "author1" },
@@ -191,7 +176,7 @@ describe("ReleaseNotesCreator", function() {
 
       let execCommandMock: jest.Mock;
 
-      beforeEach(async function() {
+      beforeEach(async function () {
         const dropdowns = wrapper.find(Dropdown);
         (dropdowns.at(2).prop("onSelect") as any)("v0.0.1");
         (dropdowns.at(3).prop("onSelect") as any)("v0.0.2");
@@ -206,16 +191,11 @@ describe("ReleaseNotesCreator", function() {
         wrapper.update();
       });
 
-      it("shows an enabled button", function() {
-        expect(
-          wrapper
-            .find(Button)
-            .at(0)
-            .prop("disabled")
-        ).toBe(false);
+      it("shows an enabled button", function () {
+        expect(wrapper.find(Button).at(0).prop("disabled")).toBe(false);
       });
 
-      it("calls github.compare with repository, start and end tag", function() {
+      it("calls github.compare with repository, start and end tag", function () {
         expect(github.compare).toHaveBeenCalledWith(
           "repo1",
           "v0.0.1",
@@ -223,7 +203,7 @@ describe("ReleaseNotesCreator", function() {
         );
       });
 
-      it("shows the Adjust Categories section", function() {
+      it("shows the Adjust Categories section", function () {
         const sections = wrapper.find(Section);
         expect(sections).toHaveLength(4);
         expect(sections.at(2).prop("heading")).toEqual("Adjust Categories");
@@ -232,16 +212,13 @@ describe("ReleaseNotesCreator", function() {
         expect(selector).toHaveLength(1);
       });
 
-      it("shows the release note section", function() {
-        expect(
-          wrapper
-            .find(Section)
-            .at(3)
-            .prop("heading")
-        ).toEqual("Release Note");
+      it("shows the release note section", function () {
+        expect(wrapper.find(Section).at(3).prop("heading")).toEqual(
+          "Release Note"
+        );
       });
 
-      it("shows the release note as markdown", function() {
+      it("shows the release note as markdown", function () {
         const markdown = wrapper.find(Markdown);
         expect(markdown).toHaveLength(1);
         expect(markdown.prop("source")).toEqual(
@@ -249,7 +226,7 @@ describe("ReleaseNotesCreator", function() {
         );
       });
 
-      it("adapts release notes on category changes", async function() {
+      it("adapts release notes on category changes", async function () {
         const selector = wrapper.find(PullRequestChangeCategorySelector);
         const pullRequest = selector.prop("pullRequest") as PullRequest;
         pullRequest.changeCategory = ChangeCategory.Breaking;
@@ -264,7 +241,7 @@ describe("ReleaseNotesCreator", function() {
         );
       });
 
-      it("posts the release note on github on pressing a button", function() {
+      it("posts the release note on github on pressing a button", function () {
         (github.postRelease as jest.Mock).mockReturnValue({ ok: true });
         const buttons = wrapper.find(Button);
 
@@ -283,7 +260,7 @@ describe("ReleaseNotesCreator", function() {
         });
       });
 
-      it("copies the release not to the clipboard on pressing a button", function() {
+      it("copies the release not to the clipboard on pressing a button", function () {
         (github.postRelease as jest.Mock).mockReturnValue({ ok: true });
         const buttons = wrapper.find(Button);
 
@@ -294,7 +271,7 @@ describe("ReleaseNotesCreator", function() {
         expect(execCommandMock).toHaveBeenCalledWith("Copy");
       });
 
-      it("opens a snackbar after a successful release creation", async function() {
+      it("opens a snackbar after a successful release creation", async function () {
         (github.postRelease as jest.Mock).mockReturnValue({ ok: true });
 
         const buttons = wrapper.find(Button);
@@ -315,7 +292,7 @@ describe("ReleaseNotesCreator", function() {
         expect(wrapper.find(Snackbar).prop("open")).toBe(false);
       });
 
-      it("doesn't open a snackbar after unsuccessful release creation", async function() {
+      it("doesn't open a snackbar after unsuccessful release creation", async function () {
         (github.postRelease as jest.Mock).mockReturnValue({ ok: false });
 
         const buttons = wrapper.find(Button);
@@ -329,7 +306,7 @@ describe("ReleaseNotesCreator", function() {
         expect(snackbar.prop("open")).toBe(false);
       });
 
-      it("only shows range section after another repository seleciton", async function() {
+      it("only shows range section after another repository seleciton", async function () {
         (github.getTags as jest.Mock).mockReturnValue([
           { name: "v0.0.1" },
           { name: "v0.0.2" }
@@ -355,8 +332,8 @@ describe("ReleaseNotesCreator", function() {
       });
     });
 
-    describe("after selecting a range which doesn't contain merge commits", function() {
-      beforeEach(async function() {
+    describe("after selecting a range which doesn't contain merge commits", function () {
+      beforeEach(async function () {
         const dropdowns = wrapper.find(Dropdown);
         (dropdowns.at(2).prop("onSelect") as any)("v0.0.1");
         (dropdowns.at(3).prop("onSelect") as any)("v0.0.1");
@@ -369,7 +346,7 @@ describe("ReleaseNotesCreator", function() {
         wrapper.update();
       });
 
-      it("shows the Adjust Categories section with a warning message", function() {
+      it("shows the Adjust Categories section with a warning message", function () {
         const sections = wrapper.find(Section);
         expect(sections).toHaveLength(3);
         expect(sections.at(2).prop("heading")).toEqual("Adjust Categories");

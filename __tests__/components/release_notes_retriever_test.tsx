@@ -10,8 +10,8 @@ import { CopyToClipboard } from "../../src/components/copy_to_clipboard";
 
 jest.mock("../../src/github");
 
-describe("ReleaseNotesRetriever", function() {
-  it("shows selected release note", async function() {
+describe("ReleaseNotesRetriever", function () {
+  it("shows selected release note", async function () {
     const github = new Github("token", {} as any, undefined);
     (github.getOwnersWithAvatar as jest.Mock).mockReturnValue(
       Promise.resolve([{ login: "user", avatarUrl: "avatar" }])

@@ -3,8 +3,8 @@ import { shallow } from "enzyme";
 import { TransitionLeft } from "../../src/components/snackbar";
 import { Slide } from "@material-ui/core";
 
-describe("TransitionLeft", function() {
-  it("is a Slide with direction left", function() {
+describe("TransitionLeft", function () {
+  it("is a Slide with direction left", function () {
     const props: any = {};
     const wrapper = shallow(<TransitionLeft {...props} />);
 

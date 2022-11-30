@@ -1,26 +1,26 @@
 import { PullRequest, ChangeCategory } from "../src/pull_request";
 
-describe("PullRequest", function() {
+describe("PullRequest", function () {
   const pullRequest = new PullRequest(
     "PR Description",
     "123",
     ChangeCategory.Breaking
   );
 
-  describe("toString", function() {
-    it("returns a dash, the text and issue id reference", function() {
+  describe("toString", function () {
+    it("returns a dash, the text and issue id reference", function () {
       expect(pullRequest.toString()).toEqual("- PR Description (#123)");
     });
   });
 
-  describe("toText", function() {
-    it("returns the text and issue id reference", function() {
+  describe("toText", function () {
+    it("returns the text and issue id reference", function () {
       expect(pullRequest.toText()).toEqual("PR Description (#123)");
     });
   });
 
-  describe("parseFrom", function() {
-    it("Parses fields from Commit Message", function() {
+  describe("parseFrom", function () {
+    it("Parses fields from Commit Message", function () {
       const parsed = PullRequest.parseFrom(
         "Merge pull request #123 from branch\n\nPR Description"
       );

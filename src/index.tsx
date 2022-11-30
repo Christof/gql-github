@@ -5,6 +5,6 @@ import { App } from "./components/app";
 import { windowFetch } from "./utils";
 
 ReactDOM.render(
-  <App fetch={windowFetch} /> as any,
+  (<App fetch={windowFetch} />) as any,
   document.getElementById("root")
 );

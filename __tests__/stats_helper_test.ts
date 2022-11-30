@@ -5,7 +5,7 @@ import {
 } from "../src/stats_helper";
 import { GithubData, GithubAuthorData } from "../src/github";
 
-describe("getCommitsPerAuthorInDateRange", function() {
+describe("getCommitsPerAuthorInDateRange", function () {
   const data: GithubData = [
     {
       author: { login: "author1" },
@@ -23,7 +23,7 @@ describe("getCommitsPerAuthorInDateRange", function() {
     }
   ];
 
-  it("returns commit count per author in date range", function() {
+  it("returns commit count per author in date range", function () {
     const result = getCommitsPerAuthorInDateRange(
       data,
       new Date(1969, 0, 1),
@@ -36,7 +36,7 @@ describe("getCommitsPerAuthorInDateRange", function() {
     });
   });
 
-  it("uses the current date as default end date", function() {
+  it("uses the current date as default end date", function () {
     const result = getCommitsPerAuthorInDateRange(data, new Date(1969, 0, 1));
 
     expect(result).toEqual({
@@ -46,8 +46,8 @@ describe("getCommitsPerAuthorInDateRange", function() {
   });
 });
 
-describe("calculateWeeklyCommitsForAuthor", function() {
-  it("returns the weekly commits for an author", function() {
+describe("calculateWeeklyCommitsForAuthor", function () {
+  it("returns the weekly commits for an author", function () {
     const week1 = new Date(1969, 2, 1).getTime() / 1000;
     const week2 = new Date(1970, 2, 1).getTime() / 1000;
     const data: GithubAuthorData[] = [
@@ -73,8 +73,8 @@ describe("calculateWeeklyCommitsForAuthor", function() {
   });
 });
 
-describe("calculateWeeklyCommits", function() {
-  it("returns the weekly commits per author", function() {
+describe("calculateWeeklyCommits", function () {
+  it("returns the weekly commits per author", function () {
     const week1 = new Date(1969, 2, 1).getTime() / 1000;
     const week2 = new Date(1970, 2, 1).getTime() / 1000;
     const week3 = new Date(1971, 2, 1).getTime() / 1000;
@@ -115,7 +115,11 @@ describe("calculateWeeklyCommits", function() {
     ];
 
     const expected = new Map<string, number[][]>();
-    expected.set("author1", [[week1, 10], [week2, 20], [week3, 40]]);
+    expected.set("author1", [
+      [week1, 10],
+      [week2, 20],
+      [week3, 40]
+    ]);
     expected.set("author2", [[week2, 30]]);
     expected.set("deleted", [[week2, 60]]);
 

@@ -11,11 +11,11 @@ import { OverTimePlot } from "../../src/components/over_time_plot";
 
 jest.mock("../../src/github");
 
-describe("PersonalStats", function() {
+describe("PersonalStats", function () {
   let github: Github;
   let wrapper: ReactWrapper<any, any>;
 
-  beforeEach(function() {
+  beforeEach(function () {
     github = new Github("token", {} as any, undefined);
     (github.getOwners as jest.Mock).mockReturnValue(Promise.resolve(["user"]));
     (github.copyFor as jest.Mock).mockReturnValue(github);
@@ -29,14 +29,14 @@ describe("PersonalStats", function() {
     wrapper = mount(<PersonalStats github={github} />);
   });
 
-  it("shows a DetailedRepositorySelector", async function() {
+  it("shows a DetailedRepositorySelector", async function () {
     expect(wrapper.find(DetailedRepositorySelector)).toHaveLength(1);
   });
 
-  describe("repository selection", function() {
+  describe("repository selection", function () {
     let repositoriesByOwner: Map<string, string[]>;
 
-    beforeEach(async function() {
+    beforeEach(async function () {
       const repositorySelector = wrapper.find(DetailedRepositorySelector);
 
       (github.copyFor as jest.Mock).mockReturnValue(github);
@@ -52,7 +52,7 @@ describe("PersonalStats", function() {
       wrapper.update();
     });
 
-    it("shows a heading and progress bar", async function() {
+    it("shows a heading and progress bar", async function () {
       const heading = wrapper.find(Section);
 
       expect(heading).toHaveLength(2);
@@ -62,7 +62,7 @@ describe("PersonalStats", function() {
     });
   });
 
-  describe("after loading data", function() {
+  describe("after loading data", function () {
     const week1 = new Date(1969, 2, 1);
     const week2 = new Date(1970, 2, 1);
     const week3 = new Date(1971, 2, 1);
@@ -83,7 +83,7 @@ describe("PersonalStats", function() {
       }
     ];
 
-    beforeEach(async function() {
+    beforeEach(async function () {
       const repositorySelector = wrapper.find(DetailedRepositorySelector);
 
       (github.copyFor as jest.Mock).mockReturnValue(github);
@@ -102,7 +102,7 @@ describe("PersonalStats", function() {
       wrapper.update();
     });
 
-    it("renders OverTimePlot", async function() {
+    it("renders OverTimePlot", async function () {
       const overTimePlot = wrapper.find(OverTimePlot);
 
       expect(overTimePlot).toHaveLength(1);
@@ -128,7 +128,7 @@ describe("PersonalStats", function() {
       }
     });
 
-    it("renders OverallPlot with sums", async function() {
+    it("renders OverallPlot with sums", async function () {
       const overallPlot = wrapper.find(OverallPlot);
 
       expect(overallPlot).toHaveLength(1);

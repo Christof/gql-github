@@ -6,7 +6,7 @@ import { Layout } from "plotly.js";
 import PlotlyChart from "react-plotlyjs-ts";
 import { GithubAuthorData } from "../../src/github";
 
-describe("OverallPlot", function() {
+describe("OverallPlot", function () {
   const repoNames = ["repo1", "repo2"];
   const reposData: GithubAuthorData[][] = [
     [
@@ -37,13 +37,13 @@ describe("OverallPlot", function() {
   ];
   let wrapper: ShallowWrapper<any, any>;
 
-  beforeEach(function() {
+  beforeEach(function () {
     wrapper = shallow(
       <OverallPlot reposData={reposData} repositoryNames={repoNames} />
     );
   });
 
-  it("shows a PlotlyChart", function() {
+  it("shows a PlotlyChart", function () {
     const chart = wrapper.find(PlotlyChart);
     expect(chart).toHaveLength(1);
 
@@ -52,7 +52,7 @@ describe("OverallPlot", function() {
     expect((layout as any).barmode).toEqual("stack");
   });
 
-  it("shows one trace per author with commits per repository", function() {
+  it("shows one trace per author with commits per repository", function () {
     const chart = wrapper.find(PlotlyChart);
 
     const data = chart.prop("data") as any;
@@ -71,14 +71,14 @@ describe("OverallPlot", function() {
     expect(data[2].y).toEqual(repoNames);
   });
 
-  describe("componentDidUpdate", function() {
-    it("does nothing if repository names don't change", function() {
+  describe("componentDidUpdate", function () {
+    it("does nothing if repository names don't change", function () {
       wrapper.setProps({ repositoryNames: repoNames });
 
       expect(wrapper.find(PlotlyChart)).toHaveLength(1);
     });
 
-    it("updates the plot for new data", async function() {
+    it("updates the plot for new data", async function () {
       const repositoryNames = [...repoNames, "newRepo"];
       const newData = [
         ...reposData,

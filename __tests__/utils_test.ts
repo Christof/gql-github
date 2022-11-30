@@ -1,8 +1,8 @@
 import { discardTimeFromDate } from "../src/utils";
 
-describe("utils", function() {
-  describe("discardTimeFromDate", function() {
-    it("sets time values to 0", function() {
+describe("utils", function () {
+  describe("discardTimeFromDate", function () {
+    it("sets time values to 0", function () {
       const dateTime = new Date(2018, 3, 2, 10, 59, 48, 432);
 
       const date = discardTimeFromDate(dateTime);

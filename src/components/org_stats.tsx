@@ -35,7 +35,10 @@ function createTraces(data: GithubAuthorData[][]) {
       mode: "lines" as any,
       name: `${authorData[0]} Avg`,
       x: weeks.map(week => new Date(week[0] * 1000)),
-      y: runningAverage(weeks.map(week => week[1]), 2)
+      y: runningAverage(
+        weeks.map(week => week[1]),
+        2
+      )
     });
   }
 
