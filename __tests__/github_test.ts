@@ -16,8 +16,8 @@ describe("Github", () => {
     github.owner = "owner";
   });
 
-  describe("copyFor", function() {
-    it("sets the new owner", function() {
+  describe("copyFor", function () {
+    it("sets the new owner", function () {
       const copy = github.copyFor("other-owner");
 
       expect(copy.owner).toEqual("other-owner");
@@ -28,7 +28,7 @@ describe("Github", () => {
 
       expect(copy.owner).toEqual("other-owner");
       fetchMock.mockReturnValue({});
-      await github.getRequest("specific-path");
+      await github.getGithubRequest("specific-path");
 
       expect(fetchMock).toHaveBeenCalled();
       expect(fetchMock.mock.calls[0][0]).toBe(
@@ -39,10 +39,10 @@ describe("Github", () => {
     });
   });
 
-  describe("getRequest", () => {
+  describe("getGithubRequest", () => {
     it("sends request to github api, with cors and headers", async () => {
       fetchMock.mockReturnValue({});
-      await github.getRequest("specific-path");
+      await github.getGithubRequest("specific-path");
 
       expect(fetchMock).toHaveBeenCalled();
       expect(fetchMock.mock.calls[0][0]).toBe(
@@ -88,7 +88,7 @@ describe("Github", () => {
     });
   });
 
-  describe("getOwners", function() {
+  describe("getOwners", function () {
     it("returns name of possible owners", async () => {
       clientQueryMock.mockReturnValueOnce({
         viewer: { login: "user", avatarUrl: "url" }
@@ -106,7 +106,7 @@ describe("Github", () => {
     });
   });
 
-  describe("getOwnersWithAvatar", function() {
+  describe("getOwnersWithAvatar", function () {
     it("returns name and avatarUrl of possible owners", async () => {
       const userOwner = { login: "user", avatarUrl: "url" };
       clientQueryMock.mockReturnValueOnce({
@@ -131,7 +131,7 @@ describe("Github", () => {
   });
 
   describe("getRepositoryNames", () => {
-    beforeEach(function() {
+    beforeEach(function () {
       clientQueryMock.mockReturnValueOnce({
         viewer: {
           organizations: {
@@ -175,8 +175,8 @@ describe("Github", () => {
     });
   });
 
-  describe("getOwnedRepositores with forks", function() {
-    it("calls to client.query passing null as isFork variable", function() {
+  describe("getOwnedRepositores with forks", function () {
+    it("calls to client.query passing null as isFork variable", function () {
       clientQueryMock.mockReturnValueOnce({
         viewer: {
           repositories: {
@@ -193,8 +193,8 @@ describe("Github", () => {
     });
   });
 
-  describe("getOrgRepositores with forks", function() {
-    it("calls to client.query passing null as isFork variable", function() {
+  describe("getOrgRepositores with forks", function () {
+    it("calls to client.query passing null as isFork variable", function () {
       clientQueryMock.mockReturnValueOnce({
         organization: {
           repositories: {
@@ -212,8 +212,8 @@ describe("Github", () => {
     });
   });
 
-  describe("compare", function() {
-    it("returns compare result", async function() {
+  describe("compare", function () {
+    it("returns compare result", async function () {
       fetchMock.mockReturnValue({
         status: 200,
         json() {
@@ -224,13 +224,13 @@ describe("Github", () => {
 
       expect(fetchMock).toHaveBeenCalled();
       expect(fetchMock.mock.calls[0][0]).toBe(
-        "https://api.github.com/repos/owner/repoName/compare/startTag...endTag"
+        "https://api.github.com/repos/owner/repoName/compare/startTag...endTag?per_page=100&page=1"
       );
     });
   });
 
-  describe("getCommits", function() {
-    it("returns the last 100 commits", async function() {
+  describe("getCommits", function () {
+    it("returns the last 100 commits", async function () {
       fetchMock.mockReturnValue({
         status: 200,
         json() {
@@ -246,8 +246,8 @@ describe("Github", () => {
     });
   });
 
-  describe("getTags", function() {
-    it("returns list of tags", async function() {
+  describe("getTags", function () {
+    it("returns list of tags", async function () {
       const expectedTags = [{ name: "v0.0.1" }, { name: "v0.0.2" }];
       clientQueryMock.mockReturnValue({
         repository: { refs: { nodes: expectedTags } }
@@ -259,8 +259,8 @@ describe("Github", () => {
     });
   });
 
-  describe("getReleases", function() {
-    it("returns list of releases", async function() {
+  describe("getReleases", function () {
+    it("returns list of releases", async function () {
       const expectedReleases = [
         { tagName: "v0.0.1", description: "desc1" },
         { tagName: "v0.0.2", description: "desc2" }
@@ -282,8 +282,8 @@ describe("Github", () => {
     });
   });
 
-  describe("getStats", function() {
-    it("returns contribution statistic", async function() {
+  describe("getStats", function () {
+    it("returns contribution statistic", async function () {
       const expectedStats: GithubData = [
         {
           author: { login: "author name" },
@@ -306,7 +306,7 @@ describe("Github", () => {
       expect(stats).toEqual(expectedStats);
     });
 
-    it("retries after receiving a 202 response", async function() {
+    it("retries after receiving a 202 response", async function () {
       github.retryWaitSeconds = 0.001;
       const expectedStats: GithubData = [
         {
@@ -334,7 +334,7 @@ describe("Github", () => {
       expect(stats).toEqual(expectedStats);
     });
 
-    it("returns undefined if json() throws an error", async function() {
+    it("returns undefined if json() throws an error", async function () {
       fetchMock.mockReturnValue({
         status: 200,
         json() {
@@ -348,7 +348,7 @@ describe("Github", () => {
       expect(stats).toBeUndefined();
     });
 
-    it("returns undefined if status is 204 (no content)", async function() {
+    it("returns undefined if status is 204 (no content)", async function () {
       fetchMock.mockReturnValue({
         status: 204,
         json() {
@@ -362,7 +362,7 @@ describe("Github", () => {
       expect(stats).toBeUndefined();
     });
 
-    it("returns undefined if status is 404 (not found)", async function() {
+    it("returns undefined if status is 404 (not found)", async function () {
       fetchMock.mockReturnValue({
         status: 404,
         json() {
@@ -377,8 +377,8 @@ describe("Github", () => {
     });
   });
 
-  describe("getStatsForRepositories", function() {
-    it("gets stats for multiple repositories", async function() {
+  describe("getStatsForRepositories", function () {
+    it("gets stats for multiple repositories", async function () {
       const expectedStats: GithubData = [
         {
           author: { login: "author name" },
@@ -405,8 +405,8 @@ describe("Github", () => {
     });
   });
 
-  describe("getPullRequestsWithReviews", function() {
-    it("returns list of pull requests with reviews", async function() {
+  describe("getPullRequestsWithReviews", function () {
+    it("returns list of pull requests with reviews", async function () {
       const date1 = "2018-04-20T06:36:15Z";
       const date2 = "2018-04-20T06:36:49Z";
       const expectedPullRequests = [
@@ -452,8 +452,8 @@ describe("Github", () => {
     });
   });
 
-  describe("getOpenPullRequests", function() {
-    it("returns list of open pull requests", async function() {
+  describe("getOpenPullRequests", function () {
+    it("returns list of open pull requests", async function () {
       const date1 = "2018-04-20T06:36:15Z";
       const date2 = "2018-04-20T06:36:49Z";
       const expectedPullRequests = [
@@ -485,8 +485,8 @@ describe("Github", () => {
     });
   });
 
-  describe("postRelease", function() {
-    it("sends post request", async function() {
+  describe("postRelease", function () {
+    it("sends post request", async function () {
       const release = {
         tag_name: "v0.0.1",
         target_commitish: "master",
