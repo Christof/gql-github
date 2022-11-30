@@ -70,6 +70,32 @@ describe("GithubButton", function () {
         expect(authenticator.authenticate).toHaveBeenCalled();
         expect(changedToken).toEqual(token);
       });
+
+      it("doesn't call onChangeToken on authenticate error", function () {
+        jsdom.reconfigure({ url: "http://some-server.com" });
+        const authenticator = {
+          authenticate: jest.fn((_args: any, callback: any) =>
+            callback(new Error("test error"), undefined)
+          )
+        };
+
+        let changedTokenCallback = jest.fn();
+        const wrapper = shallow(
+          <GithubButton
+            className="some-class"
+            onChangeToken={changedTokenCallback}
+            authenticator={authenticator}
+          />
+        );
+
+        const loginButton = wrapper.find(Button);
+        expect(loginButton).toHaveLength(1);
+        expectButtonToContainText(loginButton, "Login");
+        loginButton.prop("onClick")({} as any);
+
+        expect(authenticator.authenticate).toHaveBeenCalled();
+        expect(changedTokenCallback).not.toHaveBeenCalled();
+      });
     });
 
     it("shows github mark in login button", function () {
