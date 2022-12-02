@@ -322,6 +322,25 @@ export class Github {
     );
   }
 
+  async loadTags(repo: string) {
+    const tags = await this.getTags(repo);
+    const releases = await this.getReleases(repo);
+    const firstMasterRelease = releases.find(
+      release => !release.tagName.includes("_")
+    );
+
+    const lastMasterReleaseTag = firstMasterRelease
+      ? firstMasterRelease.tagName
+      : undefined;
+
+    return {
+      repo,
+      tags,
+      lastMasterReleaseTag,
+      github: this
+    };
+  }
+
   private parseLinkHeader(header: string) {
     if (!header || header.length === 0) {
       return {};

@@ -2,7 +2,7 @@ import * as React from "react";
 import { ReleaseNotesCreator } from "../../src/components/release_notes_creator";
 import { mount, ReactWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
-import { Github, GithubRelease, GithubTag } from "../../src/github";
+import { Github, GithubTag } from "../../src/github";
 import { PullRequest, ChangeCategory } from "../../src/pull_request";
 import { Section } from "../../src/components/section";
 import { RepositorySelector } from "../../src/components/repository_selector";
@@ -27,6 +27,13 @@ describe("ReleaseNotesCreator", function () {
     (github.getOwnersWithAvatar as jest.Mock).mockReturnValue(
       Promise.resolve([{ login: "user", avatarUrl: "avatarUrl" }])
     );
+    (github.loadTags as jest.Mock).mockReturnValue(
+      Promise.resolve({
+        tags: [],
+        repo: "repo1",
+        github
+      })
+    );
     wrapper = mount(<ReleaseNotesCreator github={github} />);
   });
 
@@ -38,14 +45,18 @@ describe("ReleaseNotesCreator", function () {
 
   describe("after selecting a repository with no tag", function () {
     const tags: GithubTag[] = [];
-    const releases: GithubRelease[] = [];
 
     beforeEach(async function () {
-      (github.getTags as jest.Mock).mockReturnValue(tags);
-      (github.getReleases as jest.Mock).mockReturnValue(releases);
       (
         wrapper.find(RepositorySelector).prop("onRepositorySelect") as any
       )("repo1");
+      (github.loadTags as jest.Mock).mockReturnValue(
+        Promise.resolve({
+          tags,
+          repo: "repo1",
+          github
+        })
+      );
 
       await waitImmediate();
       wrapper.update();
@@ -69,11 +80,16 @@ describe("ReleaseNotesCreator", function () {
 
   describe("after selecting a repository with one tag", function () {
     const tags = [{ name: "v0.0.1" }];
-    const releases: GithubRelease[] = [];
 
     beforeEach(async function () {
-      (github.getTags as jest.Mock).mockReturnValue(tags);
-      (github.getReleases as jest.Mock).mockReturnValue(releases);
+      (github.loadTags as jest.Mock).mockReturnValue(
+        Promise.resolve({
+          tags,
+          repo: "repo1",
+          github,
+          lastMasterReleaseTag: tags[0]
+        })
+      );
       (
         wrapper.find(RepositorySelector).prop("onRepositorySelect") as any
       )("repo1");
@@ -92,7 +108,9 @@ describe("ReleaseNotesCreator", function () {
       expect(dropdowns).toHaveLength(2);
 
       (github.compare as jest.Mock).mockReturnValue({ commits: [] });
-      (wrapper.find(Button).prop("onClick") as any)();
+      const button = wrapper.find(Button);
+      expect(button).toHaveLength(1);
+      (button.prop("onClick") as any)();
 
       await waitImmediate();
       wrapper.update();
@@ -103,14 +121,17 @@ describe("ReleaseNotesCreator", function () {
 
   describe("after selecting a repository", function () {
     const tags = [{ name: "v0.0.1" }, { name: "v0.0.2" }, { name: "v0.0.3" }];
-    const releases = [
-      { tagName: "v0.0.0_test_release", description: "" },
-      { tagName: "v0.0.2", description: "" }
-    ];
 
     beforeEach(async function () {
-      (github.getTags as jest.Mock).mockReturnValue(tags);
-      (github.getReleases as jest.Mock).mockReturnValue(releases);
+      (github.loadTags as jest.Mock).mockReturnValue(
+        Promise.resolve({
+          tags,
+          repo: "repo1",
+          lastMasterReleaseTag: "v0.0.2",
+          github
+        })
+      );
+
       (
         wrapper.find(RepositorySelector).prop("onRepositorySelect") as any
       )("repo1");
@@ -146,9 +167,14 @@ describe("ReleaseNotesCreator", function () {
     });
 
     it("doesn't preselected start tag if none can be found", async function () {
-      (github.getReleases as jest.Mock).mockReset();
-      (github.getReleases as jest.Mock).mockReturnValue([]);
-
+      (github.loadTags as jest.Mock).mockReturnValue(
+        Promise.resolve({
+          tags,
+          repo: "repo1",
+          lastMasterReleaseTag: undefined,
+          github
+        })
+      );
       (wrapper.find(RepositorySelector).prop("onRepositorySelect") as any)(
         "repo1"
       );
@@ -307,11 +333,15 @@ describe("ReleaseNotesCreator", function () {
       });
 
       it("only shows range section after another repository seleciton", async function () {
-        (github.getTags as jest.Mock).mockReturnValue([
-          { name: "v0.0.1" },
-          { name: "v0.0.2" }
-        ]);
-        (github.getReleases as jest.Mock).mockReturnValue([]);
+        const tags = [{ name: "v0.0.1" }, { name: "v0.0.2" }];
+        (github.loadTags as jest.Mock).mockReturnValue(
+          Promise.resolve({
+            tags,
+            repo: "repo1",
+            lastMasterReleaseTag: undefined,
+            github
+          })
+        );
         (wrapper.find(RepositorySelector).prop("onRepositorySelect") as any)(
           "repo1"
         );

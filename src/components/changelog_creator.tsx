@@ -52,7 +52,7 @@ interface State {
 interface Props {
   github: Github;
   repo: string;
-  defaultStartTag?: string;
+  lastMasterReleaseTag?: string;
   tags?: GithubTag[];
 }
 
@@ -183,7 +183,7 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
         {this.props.tags !== undefined && this.props.tags.length > 1 ? (
           <TagRangeSelector
             tags={this.props.tags}
-            defaultStartTag={this.props.defaultStartTag}
+            defaultStartTag={this.props.lastMasterReleaseTag}
             onSelect={async (startTag: string, releaseTag: string) => {
               const commits = await this.compare(startTag, releaseTag);
               this.parseCommitsForPullRequests(commits, releaseTag);
@@ -202,34 +202,15 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
   }
 }
 
-async function loadTags(repo: string, github: Github) {
-  const tags = await github.getTags(repo);
-  const releases = await github.getReleases(repo);
-  const firstMasterRelease = releases.find(
-    release => !release.tagName.includes("_")
-  );
-
-  const defaultStartTag = firstMasterRelease
-    ? firstMasterRelease.tagName
-    : undefined;
-
-  return {
-    repo,
-    tags,
-    defaultStartTag,
-    github
-  };
-}
-
 export function ChangelogCreator(props: { github: Github }) {
   return (
     <DefaultGrid small>
-      <TriggeredAsyncSwitchFromLoadType<typeof loadTags>
+      <TriggeredAsyncSwitchFromLoadType<typeof props.github.loadTags>
         renderTrigger={callback => (
           <RepositorySelector
             {...props}
             onRepositorySelect={repository =>
-              callback(loadTags(repository, props.github))
+              callback(props.github.loadTags(repository))
             }
           />
         )}
