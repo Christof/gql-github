@@ -24,6 +24,7 @@ import { InMemoryCache } from "apollo-cache-inmemory";
 import { persistCache } from "apollo-cache-persist";
 import { createDynamicImport } from "./dynamic_import";
 import { GraphQLFacade } from "../graphql_facade";
+import { ChangelogCreator } from "./changelog_creator";
 
 interface State {
   github?: Github;
@@ -117,7 +118,7 @@ interface Props extends WithStyles {
 interface Page {
   path: string;
   text: string;
-  group: "Statistics" | "Release Notes" | "Pull Requests";
+  group: "Statistics" | "Release Notes" | "Changelog" | "Pull Requests";
   component: React.StatelessComponent<any> | React.ComponentClass<any>;
 }
 
@@ -152,6 +153,12 @@ export class RawApp extends React.Component<Props, State> {
       text: "Create",
       group: "Release Notes",
       component: ReleaseNotesCreator
+    },
+    {
+      path: "/create-changelog",
+      text: "Create",
+      group: "Changelog",
+      component: ChangelogCreator
     },
     {
       path: "/rebase",
