@@ -4,6 +4,7 @@ import { Section } from "./section";
 import { RepositorySelector } from "./repository_selector";
 import { Markdown } from "./markdown";
 import { Github, GithubTag, GithubCommit } from "../github";
+import { filterPullRequestMergeCommits } from "../github_helper";
 import * as React from "react";
 import { DefaultGrid } from "./default_grid";
 import { TriggeredAsyncSwitchFromLoadType } from "./triggered_async_switch";
@@ -85,11 +86,7 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
   }
 
   parseCommitsForPullRequests(commits: GithubCommit[], releaseTag: string) {
-    const pullRequestRegex = new RegExp(/Merge pull request/);
-    const pullRequestMerges = commits.filter(commit =>
-      commit.commit.message.match(pullRequestRegex)
-    );
-    const pullRequests = pullRequestMerges.map(commit =>
+    const pullRequests = filterPullRequestMergeCommits(commits).map(commit =>
       PullRequest.parseFrom(commit.commit.message)
     );
 
