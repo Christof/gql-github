@@ -1,5 +1,4 @@
-import { PullRequest, ChangeCategory } from "../pull_request";
-import { PullRequestChangeCategorySelector } from "./pull_request_change_category_selector";
+import { PullRequest } from "../pull_request";
 import { Section } from "./section";
 import { RepositorySelector } from "./repository_selector";
 import { Markdown } from "./markdown";
@@ -10,8 +9,15 @@ import { DefaultGrid } from "./default_grid";
 import { TriggeredAsyncSwitchFromLoadType } from "./triggered_async_switch";
 import { TagRangeSelector } from "./tag_range_selector";
 import { ReleaseNote } from "./release_note";
-import { LinearProgress, Button, Typography, Grid } from "@material-ui/core";
+import {
+  LinearProgress,
+  Button,
+  Typography,
+  Grid,
+  Chip
+} from "@material-ui/core";
 
+/*
 function PullRequests(props: {
   pullRequests: PullRequest[];
   update: (pullRequests: PullRequest[]) => void;
@@ -41,9 +47,15 @@ function PullRequests(props: {
     </>
   );
 }
+*/
 
 interface State {
-  pullRequests: PullRequest[];
+  pullRequests: {
+    id: number;
+    title: string;
+    bodyHTML: string;
+    labels: { name: string; color: string }[];
+  }[];
   releaseTag?: string;
   releaseNote: string;
   releaseCreated: boolean;
@@ -85,15 +97,27 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
     return await this.props.github.getCommits(this.props.repo);
   }
 
-  parseCommitsForPullRequests(commits: GithubCommit[], releaseTag: string) {
+  async parseCommitsForPullRequests(
+    commits: GithubCommit[],
+    releaseTag: string
+  ) {
     const pullRequests = filterPullRequestMergeCommits(commits).map(commit =>
       PullRequest.parseFrom(commit.commit.message)
     );
+    const pullRequestsWithLabels = await Promise.all(
+      pullRequests.map(pr =>
+        this.props.github.getPullRequestWithLabels(
+          this.props.repo,
+          parseInt(pr.id)
+        )
+      )
+    );
 
-    this.setState({ pullRequests, releaseTag });
+    this.setState({ pullRequests: pullRequestsWithLabels, releaseTag });
     this.updateReleaseNote();
   }
 
+  /*
   appendChangeCategory(category: ChangeCategory, releaseNote = "") {
     const pullRequests = this.state.pullRequests.filter(
       pullRequest => pullRequest.changeCategory === category
@@ -104,28 +128,33 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
     const innerText = pullRequests.join("\n");
     return `${releaseNote}**${category} Changes:**\n\n${innerText}\n\n`;
   }
+  */
 
   updateReleaseNote() {
-    let releaseNote = this.appendChangeCategory(ChangeCategory.Breaking);
-    releaseNote = this.appendChangeCategory(ChangeCategory.Basic, releaseNote);
-    releaseNote = this.appendChangeCategory(
-      ChangeCategory.Training,
-      releaseNote
-    );
-    this.setState({ releaseNote });
+    // this.setState({ releaseNote });
   }
 
   renderPullRequestsSection() {
     if (this.state.pullRequests === undefined) return <section />;
 
     return (
-      <Section heading="Adjust Categories">
-        <PullRequests
-          pullRequests={this.state.pullRequests}
-          update={(pullRequests: PullRequest[]) =>
-            this.setState({ pullRequests }, () => this.updateReleaseNote())
-          }
-        />
+      <Section heading="Read PRs">
+        <ul>
+          {this.state.pullRequests.map(pr => (
+            <li key={pr.id}>
+              <span style={{ marginRight: "1rem" }}>{pr.title}</span>
+              {pr.labels.map(label => (
+                <Chip
+                  key={`${pr.id}-${label.name}`}
+                  size="small"
+                  style={{ color: "white", backgroundColor: `#${label.color}` }}
+                  label={label.name}
+                />
+              ))}
+              <div dangerouslySetInnerHTML={{ __html: pr.bodyHTML }} />
+            </li>
+          ))}
+        </ul>
       </Section>
     );
   }

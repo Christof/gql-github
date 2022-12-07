@@ -281,6 +281,42 @@ export class Github {
     };
   }
 
+  async getPullRequestWithLabels(repository: string, pullRequestId: number) {
+    const responseData = await this.client.query(
+      `
+      query getPullRequestLabels($owner: String!, $repository: String!, $number: Int!) {
+        repository(owner: $owner, name: $repository) {
+          pullRequest(number: $number) {
+            id
+            title
+            bodyHTML
+            labels(first: 5) {
+              edges {
+                node {
+                  name
+                  color
+                }
+              }
+            }
+          }
+        }
+      }`,
+      { owner: this.owner, repository, number: pullRequestId }
+    );
+
+    const pullRequest = responseData.repository.pullRequest;
+
+    return {
+      id: pullRequestId,
+      title: pullRequest.title,
+      bodyHTML: pullRequest.bodyHTML,
+      labels: pullRequest.labels.edges.map((node: any) => ({
+        name: node.node.name,
+        color: node.node.color
+      }))
+    };
+  }
+
   async getOpenPullRequests(repository: string): Promise<GithubPullRequest[]> {
     const responseData = await this.client.query(
       `
