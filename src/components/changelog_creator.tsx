@@ -53,6 +53,7 @@ interface State {
   pullRequests: {
     id: number;
     title: string;
+    body: string;
     bodyHTML: string;
     labels: { name: string; color: string }[];
   }[];

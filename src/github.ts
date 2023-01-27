@@ -289,6 +289,7 @@ export class Github {
           pullRequest(number: $number) {
             id
             title
+            body
             bodyHTML
             labels(first: 5) {
               edges {
@@ -310,6 +311,7 @@ export class Github {
       id: pullRequestId,
       title: pullRequest.title,
       bodyHTML: pullRequest.bodyHTML,
+      body: pullRequest.body,
       labels: pullRequest.labels.edges.map((node: any) => ({
         name: node.node.name,
         color: node.node.color
