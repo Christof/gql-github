@@ -152,12 +152,29 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
                   label={label.name}
                 />
               ))}
-              <div dangerouslySetInnerHTML={{ __html: pr.bodyHTML }} />
+              {this.createPRContent(pr.body)}
             </li>
           ))}
         </ul>
       </Section>
     );
+  }
+
+  private descriptionIdentifier = "# Description";
+  private descriptionRegex = new RegExp(
+    `${this.descriptionIdentifier}(.*?)#`,
+    "s"
+  );
+
+  createPRContent(body: string) {
+    if (!body.trim().startsWith(this.descriptionIdentifier)) {
+      console.log(body);
+      return <Markdown source={body} />;
+    }
+
+    const match = body.match(this.descriptionRegex) || ["", ""];
+
+    return <Markdown source={match[1]?.trim() || ""} />;
   }
 
   renderReleaseNoteSection() {
