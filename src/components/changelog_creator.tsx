@@ -49,14 +49,15 @@ function PullRequests(props: {
 }
 */
 
+interface PullRequestWithLabels {
+  id: number;
+  title: string;
+  body: string;
+  bodyHTML: string;
+  labels: { name: string; color: string }[];
+}
 interface State {
-  pullRequests: {
-    id: number;
-    title: string;
-    body: string;
-    bodyHTML: string;
-    labels: { name: string; color: string }[];
-  }[];
+  pullRequests: PullRequestWithLabels[];
   releaseTag?: string;
   releaseNote: string;
   releaseCreated: boolean;
@@ -105,7 +106,7 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
     const pullRequests = filterPullRequestMergeCommits(commits).map(commit =>
       PullRequest.parseFrom(commit.commit.message)
     );
-    const pullRequestsWithLabels = await Promise.all(
+    const pullRequestsWithLabels: PullRequestWithLabels[] = await Promise.all(
       pullRequests.map(pr =>
         this.props.github.getPullRequestWithLabels(
           this.props.repo,
