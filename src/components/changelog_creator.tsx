@@ -114,8 +114,11 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
         )
       )
     );
+    const filteredPullRequests = pullRequestsWithLabels.filter(
+      pr => !pr.labels.some(label => label.name === "dependencies")
+    );
 
-    this.setState({ pullRequests: pullRequestsWithLabels, releaseTag });
+    this.setState({ pullRequests: filteredPullRequests, releaseTag });
     this.updateReleaseNote();
   }
 
