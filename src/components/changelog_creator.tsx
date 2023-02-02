@@ -147,18 +147,20 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
 
     return (
       <Section heading="Read PRs">
-        <h1>New features</h1>
-        <ul>
-          {this.state.pullRequests.features.map(pr =>
-            this.renderPullRequest(pr)
-          )}
-        </ul>
-        <h1>Bugfixes</h1>
-        <ul>
-          {this.state.pullRequests.features.map(pr =>
-            this.renderPullRequest(pr)
-          )}
-        </ul>
+        <div id="section-to-print">
+          <h1>New features</h1>
+          <ul>
+            {this.state.pullRequests.features.map(pr =>
+              this.renderPullRequest(pr)
+            )}
+          </ul>
+          <h1>Bugfixes</h1>
+          <ul>
+            {this.state.pullRequests.features.map(pr =>
+              this.renderPullRequest(pr)
+            )}
+          </ul>
+        </div>
       </Section>
     );
   }

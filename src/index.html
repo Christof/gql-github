@@ -9,6 +9,26 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css?family=Roboto:300,400,500"
     />
+    <style>
+      img {
+        max-width: 90%;
+      }
+
+      @media print {
+        body * {
+          visibility: hidden;
+        }
+        #section-to-print,
+        #section-to-print * {
+          visibility: visible;
+        }
+        #section-to-print {
+          position: absolute;
+          left: 0;
+          top: 0;
+        }
+      }
+    </style>
   </head>
 
   <body>
