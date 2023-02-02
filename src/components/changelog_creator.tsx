@@ -9,13 +9,7 @@ import { DefaultGrid } from "./default_grid";
 import { TriggeredAsyncSwitchFromLoadType } from "./triggered_async_switch";
 import { TagRangeSelector } from "./tag_range_selector";
 import { ReleaseNote } from "./release_note";
-import {
-  LinearProgress,
-  Button,
-  Typography,
-  Grid,
-  Chip
-} from "@material-ui/core";
+import { LinearProgress, Button, Typography, Grid } from "@material-ui/core";
 import { groupBy, reverse } from "ramda";
 
 /*
@@ -175,14 +169,6 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
         <span style={{ marginRight: "1rem", fontWeight: "bold" }}>
           {pr.title}
         </span>
-        {pr.labels.map(label => (
-          <Chip
-            key={`${pr.id}-${label.name}`}
-            size="small"
-            style={{ color: "white", backgroundColor: `#${label.color}` }}
-            label={label.name}
-          />
-        ))}
         {this.createPRContent(pr.body)}
       </li>
     );
