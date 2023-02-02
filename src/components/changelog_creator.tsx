@@ -53,6 +53,7 @@ interface PullRequestWithLabels {
 }
 interface State {
   pullRequests: Record<"bugfixes" | "features", PullRequestWithLabels[]>;
+  startTag?: string;
   releaseTag?: string;
   releaseNote: string;
   releaseCreated: boolean;
@@ -96,6 +97,7 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
 
   async parseCommitsForPullRequests(
     commits: GithubCommit[],
+    startTag: string,
     releaseTag: string
   ) {
     const pullRequests = filterPullRequestMergeCommits(commits).map(commit =>
@@ -121,7 +123,7 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
       reverse(filteredPullRequests)
     );
 
-    this.setState({ pullRequests: groupedPullRequests, releaseTag });
+    this.setState({ pullRequests: groupedPullRequests, startTag, releaseTag });
     this.updateReleaseNote();
   }
 
@@ -209,22 +211,10 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
 
   private renderButtonForSingleTag() {
     return (
-      <Grid container alignItems="baseline" spacing={2}>
-        <Grid item>
-          <Button
-            variant="contained"
-            onClick={async () => {
-              const commits = await this.getCommits();
-              this.parseCommitsForPullRequests(
-                commits,
-                this.props.tags[0].name
-              );
-            }}
-          >
-            Get merged PRs
-          </Button>
-        </Grid>
-      </Grid>
+      <Typography variant="body1" color="error" align="right" display="inline">
+        There is only one tag in this repository. They are multiple tags
+        required to create a changelog.
+      </Typography>
     );
   }
 
@@ -246,7 +236,7 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
             defaultEndTag={this.props.lastMasterReleaseTag}
             onSelect={async (startTag: string, releaseTag: string) => {
               const commits = await this.compare(startTag, releaseTag);
-              this.parseCommitsForPullRequests(commits, releaseTag);
+              this.parseCommitsForPullRequests(commits, startTag, releaseTag);
             }}
           />
         ) : this.props.tags === undefined || this.props.tags.length === 0 ? (
