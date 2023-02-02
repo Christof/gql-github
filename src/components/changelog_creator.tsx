@@ -16,6 +16,7 @@ import {
   Grid,
   Chip
 } from "@material-ui/core";
+import { groupBy, reverse } from "ramda";
 
 /*
 function PullRequests(props: {
@@ -57,7 +58,7 @@ interface PullRequestWithLabels {
   labels: { name: string; color: string }[];
 }
 interface State {
-  pullRequests: PullRequestWithLabels[];
+  pullRequests: Record<"bugfixes" | "features", PullRequestWithLabels[]>;
   releaseTag?: string;
   releaseNote: string;
   releaseCreated: boolean;
@@ -118,7 +119,15 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
       pr => !pr.labels.some(label => label.name === "dependencies")
     );
 
-    this.setState({ pullRequests: filteredPullRequests, releaseTag });
+    const groupedPullRequests = groupBy(
+      pr =>
+        pr.labels.some(label => label.name === "bugfix" || label.name === "bug")
+          ? "bugfixes"
+          : "features",
+      reverse(filteredPullRequests)
+    );
+
+    this.setState({ pullRequests: groupedPullRequests, releaseTag });
     this.updateReleaseNote();
   }
 
@@ -144,23 +153,38 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
 
     return (
       <Section heading="Read PRs">
+        <h1>New features</h1>
         <ul>
-          {this.state.pullRequests.map(pr => (
-            <li key={pr.id}>
-              <span style={{ marginRight: "1rem" }}>{pr.title}</span>
-              {pr.labels.map(label => (
-                <Chip
-                  key={`${pr.id}-${label.name}`}
-                  size="small"
-                  style={{ color: "white", backgroundColor: `#${label.color}` }}
-                  label={label.name}
-                />
-              ))}
-              {this.createPRContent(pr.body)}
-            </li>
-          ))}
+          {this.state.pullRequests.features.map(pr =>
+            this.renderPullRequest(pr)
+          )}
+        </ul>
+        <h1>Bugfixes</h1>
+        <ul>
+          {this.state.pullRequests.features.map(pr =>
+            this.renderPullRequest(pr)
+          )}
         </ul>
       </Section>
+    );
+  }
+
+  renderPullRequest(pr: PullRequestWithLabels) {
+    return (
+      <li key={pr.id}>
+        <span style={{ marginRight: "1rem", fontWeight: "bold" }}>
+          {pr.title}
+        </span>
+        {pr.labels.map(label => (
+          <Chip
+            key={`${pr.id}-${label.name}`}
+            size="small"
+            style={{ color: "white", backgroundColor: `#${label.color}` }}
+            label={label.name}
+          />
+        ))}
+        {this.createPRContent(pr.body)}
+      </li>
     );
   }
 
