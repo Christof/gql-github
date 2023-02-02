@@ -243,7 +243,7 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
         {this.props.tags !== undefined && this.props.tags.length > 1 ? (
           <TagRangeSelector
             tags={this.props.tags}
-            defaultStartTag={this.props.lastMasterReleaseTag}
+            defaultEndTag={this.props.lastMasterReleaseTag}
             onSelect={async (startTag: string, releaseTag: string) => {
               const commits = await this.compare(startTag, releaseTag);
               this.parseCommitsForPullRequests(commits, releaseTag);
