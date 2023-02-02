@@ -167,16 +167,6 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
 
   renderPullRequest(pr: PullRequestWithLabels) {
     return `### ${pr.title}\n\n${this.createPRContent(pr.body)}`;
-    /*
-    return (
-      <li key={pr.id}>
-        <span style={{ marginRight: "1rem", fontWeight: "bold" }}>
-          {pr.title}
-        </span>
-        {this.createPRContent(pr.body)}
-      </li>
-    );
-    */
   }
 
   private descriptionIdentifier = "# Description";
@@ -189,13 +179,11 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
     if (!body.trim().startsWith(this.descriptionIdentifier)) {
       console.log(body);
       return body;
-      // return <Markdown source={body} />;
     }
 
     const match = body.match(this.descriptionRegex) || ["", ""];
 
     return match[1]?.trim() || "";
-    // return <Markdown source={match[1]?.trim() || ""} />;
   }
 
   renderReleaseNoteSection() {
