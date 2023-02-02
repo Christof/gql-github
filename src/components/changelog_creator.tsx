@@ -12,38 +12,6 @@ import { ReleaseNote } from "./release_note";
 import { LinearProgress, Typography } from "@material-ui/core";
 import { groupBy, reverse } from "ramda";
 
-/*
-function PullRequests(props: {
-  pullRequests: PullRequest[];
-  update: (pullRequests: PullRequest[]) => void;
-}) {
-  if (props.pullRequests.length === 0) {
-    return (
-      <Typography variant="body1" color="error" align="right" display="inline">
-        There are no merged PRs between the selected tags or the release tag is
-        before the start tag.
-      </Typography>
-    );
-  }
-
-  return (
-    <>
-      {props.pullRequests.map((pullRequest, index) => (
-        <PullRequestChangeCategorySelector
-          key={pullRequest.id}
-          pullRequest={pullRequest}
-          onChange={updatedPullRequest => {
-            const pullRequests = [...props.pullRequests];
-            pullRequests[index] = updatedPullRequest;
-            props.update(pullRequests);
-          }}
-        />
-      ))}
-    </>
-  );
-}
-*/
-
 interface PullRequestWithLabels {
   id: number;
   title: string;
@@ -124,24 +92,6 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
     );
 
     this.setState({ pullRequests: groupedPullRequests, startTag, releaseTag });
-    this.updateReleaseNote();
-  }
-
-  /*
-  appendChangeCategory(category: ChangeCategory, releaseNote = "") {
-    const pullRequests = this.state.pullRequests.filter(
-      pullRequest => pullRequest.changeCategory === category
-    );
-
-    if (pullRequests.length === 0) return releaseNote;
-
-    const innerText = pullRequests.join("\n");
-    return `${releaseNote}**${category} Changes:**\n\n${innerText}\n\n`;
-  }
-  */
-
-  updateReleaseNote() {
-    // this.setState({ releaseNote });
   }
 
   renderPullRequestsSection() {
