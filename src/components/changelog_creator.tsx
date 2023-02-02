@@ -9,7 +9,7 @@ import { DefaultGrid } from "./default_grid";
 import { TriggeredAsyncSwitchFromLoadType } from "./triggered_async_switch";
 import { TagRangeSelector } from "./tag_range_selector";
 import { ReleaseNote } from "./release_note";
-import { LinearProgress, Button, Typography, Grid } from "@material-ui/core";
+import { LinearProgress, Typography } from "@material-ui/core";
 import { groupBy, reverse } from "ramda";
 
 /*
@@ -147,27 +147,27 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
   renderPullRequestsSection() {
     if (this.state.pullRequests === undefined) return <section />;
 
+    const str = `# Changelog for ${
+      this.props.repo
+    }\n\n The changelog is from version ${this.state.startTag} to ${
+      this.state.releaseTag
+    }\n\n## New features\n\n${this.state.pullRequests.features
+      .map(pr => this.renderPullRequest(pr))
+      .join("\n\n")}`;
+
     return (
-      <Section heading="Read PRs">
-        <div id="section-to-print">
-          <h1>New features</h1>
-          <ul>
-            {this.state.pullRequests.features.map(pr =>
-              this.renderPullRequest(pr)
-            )}
-          </ul>
-          <h1>Bugfixes</h1>
-          <ul>
-            {this.state.pullRequests.features.map(pr =>
-              this.renderPullRequest(pr)
-            )}
-          </ul>
+      <div>
+        <textarea style={{ width: "100%" }} defaultValue={str}></textarea>
+        <div id="section-to-print" style={{ contain: "content" }}>
+          <Markdown source={str} />
         </div>
-      </Section>
+      </div>
     );
   }
 
   renderPullRequest(pr: PullRequestWithLabels) {
+    return `### ${pr.title}\n\n${this.createPRContent(pr.body)}`;
+    /*
     return (
       <li key={pr.id}>
         <span style={{ marginRight: "1rem", fontWeight: "bold" }}>
@@ -176,6 +176,7 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
         {this.createPRContent(pr.body)}
       </li>
     );
+    */
   }
 
   private descriptionIdentifier = "# Description";
@@ -187,12 +188,14 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
   createPRContent(body: string) {
     if (!body.trim().startsWith(this.descriptionIdentifier)) {
       console.log(body);
-      return <Markdown source={body} />;
+      return body;
+      // return <Markdown source={body} />;
     }
 
     const match = body.match(this.descriptionRegex) || ["", ""];
 
-    return <Markdown source={match[1]?.trim() || ""} />;
+    return match[1]?.trim() || "";
+    // return <Markdown source={match[1]?.trim() || ""} />;
   }
 
   renderReleaseNoteSection() {
@@ -229,25 +232,25 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
 
   render() {
     return (
-      <Section heading="Range">
-        {this.props.tags !== undefined && this.props.tags.length > 1 ? (
-          <TagRangeSelector
-            tags={this.props.tags}
-            defaultEndTag={this.props.lastMasterReleaseTag}
-            onSelect={async (startTag: string, releaseTag: string) => {
-              const commits = await this.compare(startTag, releaseTag);
-              this.parseCommitsForPullRequests(commits, startTag, releaseTag);
-            }}
-          />
-        ) : this.props.tags === undefined || this.props.tags.length === 0 ? (
-          this.renderNoTagsNotice()
-        ) : (
-          this.renderButtonForSingleTag()
-        )}
-
+      <>
+        <Section heading="Range">
+          {this.props.tags !== undefined && this.props.tags.length > 1 ? (
+            <TagRangeSelector
+              tags={this.props.tags}
+              defaultEndTag={this.props.lastMasterReleaseTag}
+              onSelect={async (startTag: string, releaseTag: string) => {
+                const commits = await this.compare(startTag, releaseTag);
+                this.parseCommitsForPullRequests(commits, startTag, releaseTag);
+              }}
+            />
+          ) : this.props.tags === undefined || this.props.tags.length === 0 ? (
+            this.renderNoTagsNotice()
+          ) : (
+            this.renderButtonForSingleTag()
+          )}
+        </Section>
         {this.renderPullRequestsSection()}
-        {this.renderReleaseNoteSection()}
-      </Section>
+      </>
     );
   }
 }
