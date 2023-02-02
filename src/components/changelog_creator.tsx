@@ -128,7 +128,7 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
   createPRContent(body: string) {
     if (!body.trim().startsWith(this.descriptionIdentifier)) {
       console.log(body);
-      return body;
+      return body.replace(/^- \[[xX ]\].*\n?$/gm, "");
     }
 
     const match = body.match(this.descriptionRegex) || ["", ""];
