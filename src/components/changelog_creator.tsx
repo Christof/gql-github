@@ -177,7 +177,7 @@ td {
           </Button>
         </div>
         <div id="section-to-print" style={{ contain: "content" }}>
-          <Markdown source={str} />
+          <Markdown fontFamily="gilroy-light" source={str} />
         </div>
       </div>
     );
