@@ -126,12 +126,17 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
   );
 
   createPRContent(body: string) {
-    if (!body.trim().startsWith(this.descriptionIdentifier)) {
-      console.log(body);
-      return body.replace(/^- \[[xX ]\].*\n?$/gm, "");
+    const filtered = body
+      .replace(/^- \[[xX ]\].*\n?$/gm, "")
+      .replace(
+        /(?<!\]\()https:\/\/jira.anton-paar.com\/browse\/(.*?)(\s|$)/gs,
+        "[$1](https://jira.anton-paar.com/browse/$1)"
+      );
+    if (!filtered.trim().startsWith(this.descriptionIdentifier)) {
+      return filtered;
     }
 
-    const match = body.match(this.descriptionRegex) || ["", ""];
+    const match = filtered.match(this.descriptionRegex) || ["", ""];
 
     return match[1]?.trim() || "";
   }
