@@ -9,7 +9,7 @@ import { DefaultGrid } from "./default_grid";
 import { TriggeredAsyncSwitchFromLoadType } from "./triggered_async_switch";
 import { TagRangeSelector } from "./tag_range_selector";
 import { ReleaseNote } from "./release_note";
-import { LinearProgress, Typography } from "@material-ui/core";
+import { Button, LinearProgress, Typography } from "@material-ui/core";
 import { groupBy, reverse } from "ramda";
 
 interface PullRequestWithLabels {
@@ -94,6 +94,69 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
     this.setState({ pullRequests: groupedPullRequests, startTag, releaseTag });
   }
 
+  printDiv(divName: string) {
+    const printContents = document.getElementById(divName).innerHTML;
+    const tab = window.open("about:blank", "_blank");
+    const link = tab.document.createElement("link");
+    link.rel = "stylesheet";
+    link.type = "text/css";
+    link.href = "https://fonts.cdnfonts.com/css/gilroy-bold";
+
+    const cssStyle = tab.document.createElement("style");
+    cssStyle.textContent = `
+body {
+  font-family: gilroy-light;
+  font-size: 12;
+}
+h1 {
+  font-family: supermolot;
+  font-size: 40pt;
+}
+h2 {
+  font-family: supermolot;
+  font-size: 25pt;
+  color: #8cc8b4;
+  margin-bottom: 0.5cm;
+}
+h3 {
+  font-family: gilroy-bold;
+  font-size: 16;
+  margin-bottom: 0.25cm;
+}
+h4 {
+  font-family: gilroy-bold;
+  font-size: 25pt;
+  color: #8cc8b4;
+  margin-bottom: 0.5cm;
+}
+mark.brand {
+  color: #8cc8b4;
+  background: none;
+  font-family: gilroy-bold;
+}
+mark.bold {
+  background: none;
+  font-family: gilroy-bold;
+}
+table {
+  width: 19.5cm;
+}
+td {
+  vertical-align: top;
+}
+@media print {
+  * {
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
+}
+
+    `;
+    tab.document.write(printContents);
+    tab.document.head.appendChild(link);
+    tab.document.head.appendChild(cssStyle);
+  }
+
   renderPullRequestsSection() {
     if (this.state.pullRequests === undefined) return <section />;
 
@@ -108,6 +171,11 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
     return (
       <div>
         <textarea style={{ width: "100%" }} defaultValue={str}></textarea>
+        <div>
+          <Button onClick={() => this.printDiv("section-to-print")}>
+            Print
+          </Button>
+        </div>
         <div id="section-to-print" style={{ contain: "content" }}>
           <Markdown source={str} />
         </div>
