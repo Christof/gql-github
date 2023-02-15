@@ -83,15 +83,21 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
       pr => !pr.labels.some(label => label.name === "dependencies")
     );
 
-    const groupedPullRequests = groupBy(
+    this.setState({
+      pullRequests: this.groupPullRequestsByLabels(filteredPullRequests),
+      startTag,
+      releaseTag
+    });
+  }
+
+  groupPullRequestsByLabels(pullRequests: PullRequestWithLabels[]) {
+    return groupBy(
       pr =>
         pr.labels.some(label => label.name === "bugfix" || label.name === "bug")
           ? "bugfixes"
           : "features",
-      reverse(filteredPullRequests)
+      reverse(pullRequests)
     );
-
-    this.setState({ pullRequests: groupedPullRequests, startTag, releaseTag });
   }
 
   printDiv(divName: string) {
