@@ -157,6 +157,14 @@ td {
     tab.document.head.appendChild(cssStyle);
   }
 
+  createSection(name: string, pullRequests: PullRequestWithLabels[] = []) {
+    if (pullRequests.length === 0) return "";
+
+    return `## ${name}\n\n${pullRequests
+      .map(pr => this.renderPullRequest(pr))
+      .join("\n\n")}`;
+  }
+
   renderPullRequestsSection() {
     if (this.state.pullRequests === undefined) return <section />;
 
@@ -164,9 +172,9 @@ td {
       this.props.repo
     }\n\n The changelog is from version ${this.state.startTag} to ${
       this.state.releaseTag
-    }\n\n## New features\n\n${this.state.pullRequests.features
-      .map(pr => this.renderPullRequest(pr))
-      .join("\n\n")}`;
+    }\n\n${this.createSection("New features", this.state.pullRequests.features)}
+    \n\n${this.createSection("Bugfixes", this.state.pullRequests.bugfixes)}
+    `;
 
     return (
       <div>
