@@ -3,22 +3,19 @@ import { Section } from "./section";
 import { RepositorySelector } from "./repository_selector";
 import { Markdown } from "./markdown";
 import { Github, GithubTag, GithubCommit } from "../github";
-import { filterPullRequestMergeCommits } from "../github_helper";
+import {
+  addLabelsToPullRequests,
+  filterPullRequestMergeCommits,
+  groupPullRequestsByLabels,
+  PullRequestWithLabels
+} from "../github_helper";
 import * as React from "react";
 import { DefaultGrid } from "./default_grid";
 import { TriggeredAsyncSwitchFromLoadType } from "./triggered_async_switch";
 import { TagRangeSelector } from "./tag_range_selector";
 import { ReleaseNote } from "./release_note";
 import { Button, LinearProgress, Typography } from "@material-ui/core";
-import { groupBy, reverse } from "ramda";
 
-interface PullRequestWithLabels {
-  id: number;
-  title: string;
-  body: string;
-  bodyHTML: string;
-  labels: { name: string; color: string }[];
-}
 interface State {
   pullRequests: Record<"bugfixes" | "features", PullRequestWithLabels[]>;
   startTag?: string;
@@ -71,33 +68,21 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
     const pullRequests = filterPullRequestMergeCommits(commits).map(commit =>
       PullRequest.parseFrom(commit.commit.message)
     );
-    const pullRequestsWithLabels: PullRequestWithLabels[] = await Promise.all(
-      pullRequests.map(pr =>
-        this.props.github.getPullRequestWithLabels(
-          this.props.repo,
-          parseInt(pr.id)
-        )
-      )
-    );
+    const pullRequestsWithLabels: PullRequestWithLabels[] =
+      await addLabelsToPullRequests(
+        pullRequests,
+        this.props.github,
+        this.props.repo
+      );
     const filteredPullRequests = pullRequestsWithLabels.filter(
       pr => !pr.labels.some(label => label.name === "dependencies")
     );
 
     this.setState({
-      pullRequests: this.groupPullRequestsByLabels(filteredPullRequests),
+      pullRequests: groupPullRequestsByLabels(filteredPullRequests),
       startTag,
       releaseTag
     });
-  }
-
-  groupPullRequestsByLabels(pullRequests: PullRequestWithLabels[]) {
-    return groupBy(
-      pr =>
-        pr.labels.some(label => label.name === "bugfix" || label.name === "bug")
-          ? "bugfixes"
-          : "features",
-      reverse(pullRequests)
-    );
   }
 
   printDiv(divName: string) {
