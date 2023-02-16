@@ -210,7 +210,10 @@ export class Github {
       { owner: this.owner, repository }
     );
     return responseData.repository.releases.nodes.map((node: any) => {
-      return { tagName: node.tag.name, description: node.description };
+      return {
+        tagName: node.tag?.name || "no tag",
+        description: node.description
+      };
     });
   }
 
