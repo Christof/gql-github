@@ -8,7 +8,7 @@
     "tsc-watch": "./node_modules/typescript/bin/tsc -w",
     "build-dashboard": "webpack-dashboard -- node ./node_modules/webpack/bin/webpack.js --env.build --mode=production",
     "build": "./node_modules/webpack/bin/webpack.js --env.build --mode=production",
-    "start": "webpack-dashboard -- node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js -w --host=0.0.0.0 --mode=development",
+    "start": "NODE_OPTIONS=--openssl-legacy-provider webpack-dashboard -- node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js -w --host=0.0.0.0 --mode=development",
     "start-dev-server": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js -w --host=0.0.0.0 --mode=development"
   },
   "jest": {
