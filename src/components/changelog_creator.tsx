@@ -75,7 +75,12 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
         this.props.repo
       );
     const filteredPullRequests = pullRequestsWithLabels.filter(
-      pr => !pr.labels.some(label => label.name === "dependencies")
+      pr =>
+        !pr.labels.some(
+          label =>
+            label.name === "dependencies" ||
+            label.name === "ignore-for-changelog"
+        )
     );
 
     this.setState({
