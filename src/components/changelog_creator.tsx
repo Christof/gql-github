@@ -82,9 +82,10 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
             label.name === "ignore-for-changelog"
         )
     );
+    const pullRequestsReplacedImages = filteredPullRequests.map(pr => replaceImageLinks(pr));
 
     this.setState({
-      pullRequests: groupPullRequestsByLabels(filteredPullRequests),
+      pullRequests: groupPullRequestsByLabels(pullRequestsReplacedImages),
       startTag,
       releaseTag
     });
@@ -294,4 +295,22 @@ export function ChangelogCreator(props: { github: Github }) {
       />
     </DefaultGrid>
   );
+}
+
+function replaceImageLinks(pr: PullRequestWithLabels): PullRequestWithLabels {
+  const regex = /\(https:\/\/github\.com\/.*\/assets\/(.+?)\)/gm;
+
+  // TODO remove after typescript update
+  const matches = (pr.body as any).matchAll(regex);
+  for (const match of matches) {
+    const parts = match[1].split('/');
+    const newUrlRegex = new RegExp(`href="(https://private-user-images\.githubusercontent\.com/${parts[0]}/.+?${parts[1]}.+?)"`);
+    const newUrlMatch = pr.bodyHTML.match(newUrlRegex)
+
+    if (newUrlMatch) {
+      pr.body = pr.body.replace(match[0], `(${newUrlMatch[1]})`);
+    }
+  }
+
+  return pr;
 }
