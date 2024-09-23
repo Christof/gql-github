@@ -192,9 +192,8 @@ td {
     return `### ${pr.title}\n\n${this.createPRContent(pr.body)}`;
   }
 
-  private descriptionIdentifier = "# Description";
   private descriptionRegex = new RegExp(
-    `${this.descriptionIdentifier}(.*?)#`,
+    `^#.*Description(.*?)#`,
     "s"
   );
 
@@ -205,7 +204,7 @@ td {
         /(?<!\]\()https:\/\/jira.anton-paar.com\/browse\/(.*?)(\s|$)/gs,
         "[$1](https://jira.anton-paar.com/browse/$1)"
       );
-    if (!filtered.trim().startsWith(this.descriptionIdentifier)) {
+    if (filtered.trim().match(this.descriptionRegex)[0] === null) {
       return filtered;
     }
 
