@@ -6,6 +6,7 @@
 
 Tool to generate stats about contribution data from [github](github.com).
 It is also able to generate release notes and retrieve them.
+https://angry-cray-cc5817.netlify.app/
 
 # Installation and building
 
