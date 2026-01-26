@@ -65,7 +65,8 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
     startTag: string,
     releaseTag: string
   ) {
-    const pullRequests = filterPullRequestMergeCommits(commits).map(commit =>
+    console.log(typeof filterPullRequestMergeCommits);
+    const pullRequests = commits.map(commit =>
       PullRequest.parseFrom(commit.commit.message)
     );
     const pullRequestsWithLabels: PullRequestWithLabels[] =
