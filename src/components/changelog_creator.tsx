@@ -70,7 +70,6 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
       .map(commit => PullRequest.parseFrom(commit.commit.message))
       .filter(x => x !== null);
 
-    console.log("Parsed pull requests:", pullRequests);
     const pullRequestsWithLabels: PullRequestWithLabels[] =
       await addLabelsToPullRequests(
         pullRequests,

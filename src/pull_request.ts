@@ -16,14 +16,11 @@ export class PullRequest {
       /(?:Merge pull request #(\d+).*?\n\n([\s\S]*)|([\s\S]*?)\s*\(#(\d+)\))/
     );
     const match = commitMessage.match(pullRequestPartsRegex);
-    console.log("matches", match);
-    console.log("commitMessage", commitMessage);
     if (!match) {
       return null;
     }
     const text = match[2] ?? match[3];
     const id = match[1] ?? match[4];
-    console.log("Parsed PR:", { text, id });
 
     return new PullRequest(text, id, ChangeCategory.Basic);
   }
