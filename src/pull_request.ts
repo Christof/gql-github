@@ -18,6 +18,9 @@ export class PullRequest {
     const match = commitMessage.match(pullRequestPartsRegex);
     console.log("matches", match);
     console.log("commitMessage", commitMessage);
+    if (!match) {
+      return null;
+    }
     const text = match[2] ?? match[3];
     const id = match[1] ?? match[4];
     console.log("Parsed PR:", { text, id });
