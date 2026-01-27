@@ -5,7 +5,6 @@ import { Markdown } from "./markdown";
 import { Github, GithubTag, GithubCommit } from "../github";
 import {
   addLabelsToPullRequests,
-  filterPullRequestMergeCommits,
   groupPullRequestsByLabels,
   PullRequestWithLabels
 } from "../github_helper";
@@ -65,7 +64,6 @@ export class ChangeLogCreatorSections extends React.Component<Props, State> {
     startTag: string,
     releaseTag: string
   ) {
-    console.log(typeof filterPullRequestMergeCommits);
     const pullRequests = commits
       .map(commit => PullRequest.parseFrom(commit.commit.message))
       .filter(x => x !== null);
