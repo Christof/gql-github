@@ -4,7 +4,8 @@ import { Dropdown } from "./dropdown";
 import { Button } from "@material-ui/core";
 
 interface Props {
-  defaultStartTag: string;
+  defaultStartTag?: string;
+  defaultEndTag?: string;
   tags: GithubTag[];
   onSelect: (startTag: string, endTag: string) => void;
 }
@@ -18,7 +19,7 @@ export class TagRangeSelector extends React.Component<
 
     this.state = {
       startTag: props.defaultStartTag,
-      releaseTag: undefined
+      releaseTag: props.defaultEndTag
     };
   }
   render() {
@@ -36,6 +37,7 @@ export class TagRangeSelector extends React.Component<
         <Dropdown
           label="End Tag"
           options={tagNames}
+          initialSelection={this.props.defaultEndTag}
           onSelect={tagName => this.setState({ releaseTag: tagName })}
         />
         <Button

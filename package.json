@@ -8,7 +8,7 @@
     "tsc-watch": "./node_modules/typescript/bin/tsc -w",
     "build-dashboard": "webpack-dashboard -- node ./node_modules/webpack/bin/webpack.js --env.build --mode=production",
     "build": "./node_modules/webpack/bin/webpack.js --env.build --mode=production",
-    "start": "webpack-dashboard -- node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js -w --host=0.0.0.0 --mode=development",
+    "start": "NODE_OPTIONS=--openssl-legacy-provider webpack-dashboard -- node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js -w --host=0.0.0.0 --mode=development",
     "start-dev-server": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js -w --host=0.0.0.0 --mode=development"
   },
   "jest": {
@@ -95,9 +95,10 @@
     "ramda": "^0.27.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-markdown": "^6.0.0",
+    "react-markdown": "^8.0.0",
     "react-plotlyjs-ts": "^2.2.2",
     "react-router-dom": "^5.2.0",
+    "remark-gfm": "^3.0.1",
     "request": "^2.88.2",
     "request-promise-native": "^1.0.9",
     "uuid": "^3.4.0"

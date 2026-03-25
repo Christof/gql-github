@@ -210,7 +210,10 @@ export class Github {
       { owner: this.owner, repository }
     );
     return responseData.repository.releases.nodes.map((node: any) => {
-      return { tagName: node.tag.name, description: node.description };
+      return {
+        tagName: node.tag?.name || "no tag",
+        description: node.description
+      };
     });
   }
 
@@ -281,6 +284,44 @@ export class Github {
     };
   }
 
+  async getPullRequestWithLabels(repository: string, pullRequestId: number) {
+    const responseData = await this.client.query(
+      `
+      query getPullRequestLabels($owner: String!, $repository: String!, $number: Int!) {
+        repository(owner: $owner, name: $repository) {
+          pullRequest(number: $number) {
+            id
+            title
+            body
+            bodyHTML
+            labels(first: 5) {
+              edges {
+                node {
+                  name
+                  color
+                }
+              }
+            }
+          }
+        }
+      }`,
+      { owner: this.owner, repository, number: pullRequestId }
+    );
+
+    const pullRequest = responseData.repository.pullRequest;
+
+    return {
+      id: pullRequestId,
+      title: pullRequest.title,
+      bodyHTML: pullRequest.bodyHTML,
+      body: pullRequest.body,
+      labels: pullRequest.labels.edges.map((node: any) => ({
+        name: node.node.name,
+        color: node.node.color
+      }))
+    };
+  }
+
   async getOpenPullRequests(repository: string): Promise<GithubPullRequest[]> {
     const responseData = await this.client.query(
       `
@@ -320,6 +361,25 @@ export class Github {
       `https://api.github.com/repos/${this.owner}/${repository}/releases`,
       params
     );
+  }
+
+  async loadTags(repo: string) {
+    const tags = await this.getTags(repo);
+    const releases = await this.getReleases(repo);
+    const firstMasterRelease = releases.find(
+      release => !release.tagName.includes("_")
+    );
+
+    const lastMasterReleaseTag = firstMasterRelease
+      ? firstMasterRelease.tagName
+      : undefined;
+
+    return {
+      repo,
+      tags,
+      lastMasterReleaseTag,
+      github: this
+    };
   }
 
   private parseLinkHeader(header: string) {
