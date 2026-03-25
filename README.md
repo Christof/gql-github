@@ -30,3 +30,5 @@ To access GitHub from the web app authentication requires to run a local server:
 ```
 node server.js --port=7000 --host=localhost --client-id=... --client-secret=.... --origin="http://localhost:3000"
 ```
+
+Add a new line, can be removed
