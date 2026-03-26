@@ -37,7 +37,7 @@ describe("GraphQLFacade", function () {
 
   describe("retry", function () {
     it("retries once if gql query fails", async () => {
-      clientQueryMock.mockReturnValueOnce({ errors: ["some error"] });
+      clientQueryMock.mockReturnValueOnce({ error: new Error("some error") });
       clientQueryMock.mockReturnValueOnce({
         data: "some data"
       });
@@ -54,11 +54,12 @@ describe("GraphQLFacade", function () {
     });
 
     it("fails if retry also fails", async () => {
-      clientQueryMock.mockReturnValue({ errors: ["some error"] });
+      const someError = new Error("some error");
+      clientQueryMock.mockReturnValue({ error: someError });
 
       await expect(
         facade.query(query, variables, retries, retryWaitSeconds)
-      ).rejects.toEqual(["some error"]);
+      ).rejects.toEqual(someError);
 
       expect(clientQueryMock).toHaveBeenCalledTimes(2);
     });

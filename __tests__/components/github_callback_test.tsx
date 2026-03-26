@@ -1,68 +1,86 @@
 import * as React from "react";
+import { render, waitFor } from "@testing-library/react";
+import "@testing-library/jest-dom";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { GithubCallback } from "../../src/components/github_callback";
-import { shallow } from "enzyme";
-import { waitImmediate } from "../helper";
+
+// Helper to render GithubCallback at a specific URL
+function renderCallback(
+  url: string,
+  onChangeToken: (t: string) => void,
+  fetchFn: any
+) {
+  return render(
+    <MemoryRouter initialEntries={[url]}>
+      <Routes>
+        <Route
+          path="*"
+          element={
+            <GithubCallback onChangeToken={onChangeToken} fetch={fetchFn} />
+          }
+        />
+      </Routes>
+    </MemoryRouter>
+  );
+}
 
 describe("GithubCallback", function () {
   afterEach(() => window.localStorage.clear());
-  describe("componentDidMount", function () {
+
+  describe("componentDidMount / useEffect", function () {
     it("throws an error if states do not match", function () {
       window.localStorage.setItem("githubState", "some state");
 
-      const location: any = { search: "?state=other-state" };
-      expect(() =>
-        shallow(
-          <GithubCallback
-            onChangeToken={undefined}
-            match={undefined}
-            location={location}
-            history={undefined}
-            fetch={undefined}
-          />
-        )
-      ).toThrowError(/Retrieved state is not equal to sent one./);
+      const consoleSpy = jest
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
+
+      expect(() => {
+        renderCallback(
+          "/?state=other-state",
+          () => {},
+          () => Promise.resolve({} as any)
+        );
+      }).toThrow(/Retrieved state is not equal to sent one./);
+
+      consoleSpy.mockRestore();
     });
 
     it("calls to local authenticate route", async function () {
       window.localStorage.setItem("githubState", "state");
 
-      const location: any = { search: "?state=state&code=mycode" };
       const fetch = jest.fn();
       const token = "token";
-      fetch.mockReturnValue({
-        json() {
-          return Promise.resolve({ access_token: token });
-        }
-      });
-      const history: any = {
-        push: jest.fn()
-      };
+      fetch.mockReturnValue(
+        Promise.resolve({
+          json() {
+            return Promise.resolve({ access_token: token });
+          }
+        })
+      );
 
       let newToken: string;
 
-      const wrapper = shallow(
-        <GithubCallback
-          onChangeToken={t => {
-            newToken = t;
-          }}
-          fetch={fetch}
-          match={undefined}
-          location={location}
-          history={history}
-        />
+      renderCallback(
+        "/?state=state&code=mycode",
+        t => {
+          newToken = t;
+        },
+        fetch
       );
 
-      expect(wrapper).toBeDefined();
+      await waitFor(() => {
+        expect(fetch).toHaveBeenCalled();
+      });
 
-      await waitImmediate();
-
-      expect(fetch).toHaveBeenCalled();
       expect(fetch.mock.calls[0][0]).toEqual(
         "http://test.com:7000/authenticate?code=mycode&state=state"
       );
       expect(fetch.mock.calls[0][1]).toEqual({ method: "GET" });
-      expect(newToken).toEqual(token);
-      expect(history.push).toHaveBeenCalledWith("/stats");
+
+      await waitFor(() => {
+        expect(newToken).toEqual(token);
+      });
     });
   });
 });

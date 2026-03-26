@@ -8,14 +8,14 @@ import {
   Unpromisify
 } from "./triggered_async_switch";
 import { StatsPlots } from "./stats_plots";
-import { LinearProgress } from "@material-ui/core";
+import { LinearProgress } from "@mui/material";
 
 async function loadData(
   github: Github,
   options: { owner?: string; includeForks: boolean }
 ) {
   const plots = {
-    PlotlyChart: import("react-plotlyjs-ts").then(module => module.default),
+    PlotlyChart: import("react-plotly.js").then(module => module.default),
     OverTimePlot: import("./over_time_plot").then(
       module => module.OverTimePlot
     ),

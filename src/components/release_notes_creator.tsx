@@ -10,7 +10,7 @@ import { DefaultGrid } from "./default_grid";
 import { TriggeredAsyncSwitchFromLoadType } from "./triggered_async_switch";
 import { TagRangeSelector } from "./tag_range_selector";
 import { ReleaseNote } from "./release_note";
-import { LinearProgress, Button, Typography, Grid } from "@material-ui/core";
+import { LinearProgress, Button, Typography, Grid } from "@mui/material";
 
 function PullRequests(props: {
   pullRequests: PullRequest[];
@@ -90,8 +90,7 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
       PullRequest.parseFrom(commit.commit.message)
     );
 
-    this.setState({ pullRequests, releaseTag });
-    this.updateReleaseNote();
+    this.setState({ pullRequests, releaseTag }, () => this.updateReleaseNote());
   }
 
   appendChangeCategory(category: ChangeCategory, releaseNote = "") {
@@ -147,7 +146,7 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
   private renderButtonForSingleTag() {
     return (
       <Grid container alignItems="baseline" spacing={2}>
-        <Grid item>
+        <Grid>
           <Button
             variant="contained"
             onClick={async () => {
@@ -161,7 +160,7 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
             Get merged PRs
           </Button>
         </Grid>
-        <Grid item>
+        <Grid>
           <Typography
             variant="body1"
             color="textSecondary"

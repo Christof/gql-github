@@ -1,13 +1,7 @@
 import * as React from "react";
 import { Section } from "./section";
 import { OwnerDropdown } from "./owner_dropdown";
-import {
-  FormControlLabel,
-  Checkbox,
-  Button,
-  Grid,
-  FormControl
-} from "@material-ui/core";
+import { FormControlLabel, Checkbox, Button, Grid, FormControl } from "@mui/material";
 import { Github } from "../github";
 
 interface State {

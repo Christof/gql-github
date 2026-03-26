@@ -14,7 +14,7 @@ import { discardTimeFromDate } from "../utils";
 import { OrgStatsPlots, Props } from "./org_stats_plots";
 import { TriggeredAsyncSwitch } from "./triggered_async_switch";
 import { Section } from "./section";
-import { LinearProgress } from "@material-ui/core";
+import { LinearProgress } from "@mui/material";
 
 function createTraces(data: GithubAuthorData[][]) {
   const weeklyCommitsPerAuthor = calculateWeeklyCommits(data);

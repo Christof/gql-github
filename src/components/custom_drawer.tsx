@@ -1,14 +1,33 @@
 import * as React from "react";
-import { Drawer, Typography, IconButton, Divider } from "@material-ui/core";
-import { ChevronLeft } from "@material-ui/icons";
+import { Drawer, Typography, IconButton, Divider } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import { ChevronLeft } from "@mui/icons-material";
 import { MenuButton } from "./menu_button";
 import { groupBy, mapObjIndexed } from "ramda";
+
+const DrawerHeader = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  padding: theme.spacing(1),
+  ...theme.mixins.toolbar
+}));
+
+const DrawerCloseIcon = styled("div")({
+  display: "flex",
+  width: "100%",
+  justifyContent: "flex-end"
+});
+
+const SubheadingTypography = styled(Typography)(({ theme }) => ({
+  padding: theme.spacing(1)
+}));
+
+const drawerWidth = 240;
 
 interface Props {
   open: boolean;
   disabled: boolean;
   handleDrawerClose: () => void;
-  classes: Record<string, string>;
   pages: { path: string; text: string; group: string }[];
 }
 
@@ -20,28 +39,19 @@ interface Page {
 
 export class CustomDrawer extends React.Component<Props, {}> {
   renderGroup = (pages: Page[], group: string) => {
-    const props = {
-      disabled: this.props.disabled,
-      onClick: this.props.handleDrawerClose,
-      activeClassName: this.props.classes.menuItemActive
-    };
-
     return (
       <div key={group}>
         <Divider />
-        <Typography
-          variant="subtitle1"
-          color="primary"
-          className={this.props.classes.subheading}
-        >
+        <SubheadingTypography variant="subtitle1" color="primary">
           {group}
-        </Typography>
+        </SubheadingTypography>
         {pages.map(page => (
           <MenuButton
             key={page.path}
             to={page.path}
             text={page.text}
-            {...props}
+            disabled={this.props.disabled}
+            onClick={this.props.handleDrawerClose}
           />
         ))}
       </div>
@@ -50,14 +60,14 @@ export class CustomDrawer extends React.Component<Props, {}> {
 
   renderHeader() {
     return (
-      <div className={this.props.classes.drawerHeader}>
+      <DrawerHeader>
         <Typography variant="h6">Menu</Typography>
-        <div className={this.props.classes.drawerCloseIcon}>
+        <DrawerCloseIcon>
           <IconButton onClick={this.props.handleDrawerClose}>
             <ChevronLeft />
           </IconButton>
-        </div>
-      </div>
+        </DrawerCloseIcon>
+      </DrawerHeader>
     );
   }
 
@@ -70,12 +80,9 @@ export class CustomDrawer extends React.Component<Props, {}> {
         anchor="left"
         open={this.props.open}
         onClose={this.props.handleDrawerClose}
-        classes={{
-          paper: this.props.classes.drawerPaper
-        }}
+        sx={{ "& .MuiDrawer-paper": { position: "relative", width: drawerWidth } }}
       >
         {this.renderHeader()}
-
         {Object.values(mapObjIndexed(this.renderGroup, groupedPages))}
       </Drawer>
     );

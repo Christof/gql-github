@@ -1,9 +1,26 @@
 import * as React from "react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import "@testing-library/jest-dom";
 import { PullRequestChangeCategorySelector } from "../../src/components/pull_request_change_category_selector";
-import { shallow } from "enzyme";
 import { PullRequest, ChangeCategory } from "../../src/pull_request";
-import { Typography } from "@material-ui/core";
-import { Dropdown } from "../../src/components/dropdown";
+
+// Mock Dropdown to make selection straightforward
+jest.mock("../../src/components/dropdown", () => ({
+  Dropdown: ({ options, onSelect }: any) => (
+    <select
+      data-testid="category-dropdown"
+      onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+        onSelect(e.target.value)
+      }
+    >
+      {(options || []).map((opt: string) => (
+        <option key={opt} value={opt}>
+          {opt}
+        </option>
+      ))}
+    </select>
+  )
+}));
 
 describe("PullRequestChangeCategorySelector", function () {
   const pullRequest = new PullRequest(
@@ -13,31 +30,30 @@ describe("PullRequestChangeCategorySelector", function () {
   );
 
   it("renders PullRequest text", function () {
-    const wrapper = shallow(
+    render(
       <PullRequestChangeCategorySelector
         pullRequest={pullRequest}
         onChange={() => {}}
       />
     );
-
-    expect(wrapper.find(Typography).prop("children")).toEqual(
-      pullRequest.toText()
-    );
+    expect(screen.getByText(pullRequest.toText())).toBeInTheDocument();
   });
 
-  it("contains a Dropdown to change the ChangeCategory", function () {
+  it("contains a Dropdown to change the ChangeCategory", async function () {
     let changedPullRequest: PullRequest;
 
-    const wrapper = shallow(
+    render(
       <PullRequestChangeCategorySelector
         pullRequest={pullRequest}
-        onChange={pullRequest => {
-          changedPullRequest = pullRequest;
+        onChange={pr => {
+          changedPullRequest = pr;
         }}
       />
     );
 
-    wrapper.find(Dropdown).prop("onSelect")("Training" as any);
+    fireEvent.change(screen.getByTestId("category-dropdown"), {
+      target: { value: "Training" }
+    });
 
     expect(changedPullRequest).toBeDefined();
     expect(changedPullRequest.changeCategory).toEqual(ChangeCategory.Training);

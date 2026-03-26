@@ -9,7 +9,7 @@ import { runningAverage } from "../array_helper";
 import { calculateWeeklyCommitsForAuthor } from "../stats_helper";
 import { PersonalStatsPlots } from "./personal_stats_plots";
 import { TriggeredAsyncSwitchFromLoadType } from "./triggered_async_switch";
-import { Grid, LinearProgress } from "@material-ui/core";
+import { Grid, LinearProgress } from "@mui/material";
 
 interface Repo {
   name: string;
@@ -141,8 +141,8 @@ function calculateWeeklyCommits(data: Repo[]): number[][] {
 
 export function PersonalStats(props: { github: Github }) {
   return (
-    <Grid container spacing={3} justify="center">
-      <Grid item xs={12}>
+    <Grid container spacing={3} justifyContent="center">
+      <Grid size={12}>
         <TriggeredAsyncSwitchFromLoadType<typeof loadData>
           renderTrigger={triggerCallback => (
             <DetailedRepositorySelector

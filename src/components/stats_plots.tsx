@@ -1,5 +1,4 @@
 import * as React from "react";
-import PlotlyChart from "react-plotlyjs-ts";
 import { OverTimePlot } from "./over_time_plot";
 import { GithubData, GithubAuthorData } from "../github_types";
 import { Section } from "./section";
@@ -11,7 +10,7 @@ import { findLast, reduce, min, max } from "ramda";
 
 export interface StatsPlotsProps {
   repositoryNames: string[];
-  PlotlyChart: typeof PlotlyChart;
+  PlotlyChart: React.ComponentType<{ data: any; layout?: any }>;
   OverTimePlot: typeof OverTimePlot;
   OverallPlot: typeof OverallPlot;
   data: GithubData[];
@@ -110,7 +109,7 @@ export class StatsPlots extends React.Component<StatsPlotsProps, {}> {
     const overallCommitCount = sum(data.map(authorData => authorData.total));
 
     return {
-      title: `Yearly commits in ${title} ${overallCommitCount}`,
+      title: { text: `Yearly commits in ${title} ${overallCommitCount}` },
       xaxis: {
         title: "time"
       },

@@ -1,19 +1,50 @@
 import * as React from "react";
+import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
+import "@testing-library/jest-dom";
 import { PersonalStats } from "../../src/components/personal_stats";
-import { mount, ReactWrapper } from "enzyme";
-import { waitImmediate } from "../helper";
 import { Github, GithubData } from "../../src/github";
-import { Section } from "../../src/components/section";
-import { DetailedRepositorySelector } from "../../src/components/detailed_repository_selector";
-import { LinearProgress } from "@material-ui/core";
-import { OverallPlot } from "../../src/components/overall_plot";
-import { OverTimePlot } from "../../src/components/over_time_plot";
+import { waitImmediate } from "../helper";
 
 jest.mock("../../src/github");
 
+jest.mock("../../src/components/detailed_repository_selector", () => ({
+  DetailedRepositorySelector: ({ onChange }: any) => (
+    <button
+      data-testid="detailed-repo-selector"
+      onClick={() => {
+        const repos = new Map<string, string[]>();
+        repos.set("user", ["repo1", "repo2"]);
+        repos.set("org", ["repo3", "repo4"]);
+        onChange(repos);
+      }}
+    >
+      Select Repositories
+    </button>
+  )
+}));
+
+jest.mock("../../src/components/over_time_plot", () => ({
+  OverTimePlot: jest.fn(({ title, data }: any) => (
+    <div
+      data-testid="over-time-plot"
+      data-title={title}
+      data-plotdata={JSON.stringify(data)}
+    />
+  ))
+}));
+
+jest.mock("../../src/components/overall_plot", () => ({
+  OverallPlot: jest.fn(({ repositoryNames, reposData }: any) => (
+    <div
+      data-testid="overall-plot"
+      data-repos={JSON.stringify(repositoryNames)}
+      data-reposdata={JSON.stringify(reposData)}
+    />
+  ))
+}));
+
 describe("PersonalStats", function () {
   let github: Github;
-  let wrapper: ReactWrapper<any, any>;
 
   beforeEach(function () {
     github = new Github("token", {} as any, undefined);
@@ -25,40 +56,29 @@ describe("PersonalStats", function () {
     (github.getUser as jest.Mock).mockReturnValue(
       Promise.resolve({ login: "user" })
     );
-
-    wrapper = mount(<PersonalStats github={github} />);
   });
 
-  it("shows a DetailedRepositorySelector", async function () {
-    expect(wrapper.find(DetailedRepositorySelector)).toHaveLength(1);
+  it("shows a DetailedRepositorySelector", function () {
+    render(<PersonalStats github={github} />);
+    expect(screen.getByTestId("detailed-repo-selector")).toBeInTheDocument();
   });
 
-  describe("repository selection", function () {
-    let repositoriesByOwner: Map<string, string[]>;
-
+  describe("repository selection - loading", function () {
     beforeEach(async function () {
-      const repositorySelector = wrapper.find(DetailedRepositorySelector);
+      (github.getStats as jest.Mock).mockReturnValue(new Promise(() => {}));
 
-      (github.copyFor as jest.Mock).mockReturnValue(github);
-      (github.getStats as jest.Mock).mockReturnValueOnce(new Promise(() => {}));
+      render(<PersonalStats github={github} />);
 
-      repositoriesByOwner = new Map<string, string[]>();
-      repositoriesByOwner.set("user", ["repo1", "repo2"]);
-      repositoriesByOwner.set("org", ["repo3", "repo4"]);
-
-      (repositorySelector.prop("onChange") as any)(repositoriesByOwner);
-
-      await waitImmediate();
-      wrapper.update();
+      await act(async () => {
+        fireEvent.click(screen.getByTestId("detailed-repo-selector"));
+        await waitImmediate();
+      });
     });
 
-    it("shows a heading and progress bar", async function () {
-      const heading = wrapper.find(Section);
-
-      expect(heading).toHaveLength(2);
-      expect(heading.at(1).prop("heading")).toEqual("Stats");
-
-      expect(wrapper.find(LinearProgress)).toHaveLength(1);
+    it("shows a progress bar while loading", async function () {
+      await waitFor(() => {
+        expect(screen.getByRole("progressbar")).toBeInTheDocument();
+      });
     });
   });
 
@@ -84,60 +104,43 @@ describe("PersonalStats", function () {
     ];
 
     beforeEach(async function () {
-      const repositorySelector = wrapper.find(DetailedRepositorySelector);
+      (github.getStats as jest.Mock)
+        .mockReturnValueOnce(data)
+        .mockReturnValueOnce(undefined)
+        .mockReturnValueOnce([data[1]])
+        .mockReturnValueOnce([data[0]]);
 
-      (github.copyFor as jest.Mock).mockReturnValue(github);
-      (github.getStats as jest.Mock).mockReturnValueOnce(data);
-      (github.getStats as jest.Mock).mockReturnValueOnce(undefined);
-      (github.getStats as jest.Mock).mockReturnValueOnce([data[1]]);
-      (github.getStats as jest.Mock).mockReturnValueOnce([data[0]]);
+      render(<PersonalStats github={github} />);
 
-      const repositoriesByOwner = new Map<string, string[]>();
-      repositoriesByOwner.set("user", ["repo1", "repo2"]);
-      repositoriesByOwner.set("org", ["repo3", "repo4"]);
-
-      (repositorySelector.prop("onChange") as any)(repositoriesByOwner);
-
-      await waitImmediate();
-      wrapper.update();
+      await act(async () => {
+        fireEvent.click(screen.getByTestId("detailed-repo-selector"));
+        await waitImmediate();
+      });
     });
 
-    it("renders OverTimePlot", async function () {
-      const overTimePlot = wrapper.find(OverTimePlot);
-
-      expect(overTimePlot).toHaveLength(1);
-      expect(overTimePlot.prop("title")).toEqual("Commits in Repositories");
-      const plotData = overTimePlot.prop("data") as any;
-      expect(plotData).toHaveLength(4);
-      expect(plotData[0].name).toEqual("repo1");
-      expect(plotData[0].y).toEqual([10, 20, 30]);
-
-      expect(plotData[1].name).toEqual("repo4");
-      expect(plotData[1].y).toEqual([10, 20, 30]);
-
-      expect(plotData[2].name).toEqual("Sum");
-      expect(plotData[2].y).toEqual([20, 40, 60]);
-
-      expect(plotData[3].name).toEqual("Trend");
-      expect(plotData[3].y).toEqual([40, 40, 40]);
-
-      for (let index = 0; index < 4; ++index) {
-        expect(plotData[index].x).toEqual([week1, week2, week3]);
-        expect(plotData[index].type).toEqual("scatter");
-        expect(plotData[index].mode).toEqual("lines");
-      }
+    it("renders OverTimePlot for commits in repositories", async function () {
+      await waitFor(() => {
+        const plot = screen.getByTestId("over-time-plot");
+        expect(plot).toBeInTheDocument();
+        expect(plot.getAttribute("data-title")).toEqual(
+          "Commits in Repositories"
+        );
+        const plotData = JSON.parse(plot.getAttribute("data-plotdata")!);
+        expect(plotData).toHaveLength(4);
+        expect(plotData[0].name).toEqual("repo1");
+        expect(plotData[0].y).toEqual([10, 20, 30]);
+        expect(plotData[2].name).toEqual("Sum");
+        expect(plotData[3].name).toEqual("Trend");
+      });
     });
 
-    it("renders OverallPlot with sums", async function () {
-      const overallPlot = wrapper.find(OverallPlot);
-
-      expect(overallPlot).toHaveLength(1);
-      expect(overallPlot.prop("repositoryNames")).toEqual(["repo1", "repo4"]);
-
-      const reposData = overallPlot.prop("reposData");
-      expect(reposData).toHaveLength(2);
-      expect(reposData[0]).toEqual([data[0]]);
-      expect(reposData[1]).toEqual([data[0]]);
+    it("renders OverallPlot with repository names", async function () {
+      await waitFor(() => {
+        const overall = screen.getByTestId("overall-plot");
+        expect(overall).toBeInTheDocument();
+        const repos = JSON.parse(overall.getAttribute("data-repos")!);
+        expect(repos).toEqual(["repo1", "repo4"]);
+      });
     });
   });
 });

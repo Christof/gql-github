@@ -1,31 +1,9 @@
-const enzyme = require("enzyme");
-const Adapter = require("enzyme-adapter-react-16");
+require("@testing-library/jest-dom");
 
-enzyme.configure({ adapter: new Adapter() });
+// jest-environment-jsdom-global provides `jsdom` for reconfiguring the URL in tests.
 
-// react-plotlyjs-ts@2.2.2 uses componentWillReceiveProps without the UNSAFE_ prefix.
-// There is no newer version of the library that fixes this, so we suppress the warning.
-// React passes the format string as args[0] (with %s) and the component name as args[1].
-const originalWarn = console.warn;
-beforeAll(() => {
-  console.warn = (...args) => {
-    if (
-      typeof args[0] === "string" &&
-      args[0].includes("componentWillReceiveProps") &&
-      String(args[1]).includes("PlotlyChart")
-    ) {
-      return;
-    }
-    originalWarn(...args);
-  };
-});
-afterAll(() => {
-  console.warn = originalWarn;
-});
-
-// TriggeredAsyncSwitch calls setState inside a Promise .then() callback, which
-// React 16 + enzyme cannot reliably capture inside act(). The tests pass correctly;
-// this is a known limitation of async class components with React 16's act() API.
+// Suppress act() warnings from async class components with the TriggeredAsyncSwitch
+// pattern — this is a known limitation with class-based async state updates.
 const originalError = console.error;
 beforeAll(() => {
   console.error = (...args) => {

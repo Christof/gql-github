@@ -1,31 +1,58 @@
 import * as React from "react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import "@testing-library/jest-dom";
 import { RepositorySelector } from "../../src/components/repository_selector";
-import { shallow } from "enzyme";
-import { OwnerDropdown } from "../../src/components/owner_dropdown";
-import { Dropdown } from "../../src/components/dropdown";
+
+jest.mock("../../src/components/owner_dropdown", () => ({
+  OwnerDropdown: ({ onSelect }: any) => (
+    <button
+      data-testid="owner-select"
+      onClick={() => onSelect("selectedOwner")}
+    >
+      Select Owner
+    </button>
+  )
+}));
+
+jest.mock("../../src/components/dropdown", () => ({
+  Dropdown: ({ options, onSelect }: any) => (
+    <div data-testid="repo-dropdown">
+      {(options || []).map((opt: string) => (
+        <button
+          key={opt}
+          data-testid={`repo-option-${opt}`}
+          onClick={() => onSelect(opt)}
+        >
+          {opt}
+        </button>
+      ))}
+    </div>
+  )
+}));
 
 describe("RepositorySelector", function () {
-  it("calls onRepositorySelect after owner and repo selecion", function () {
+  it("calls onRepositorySelect after owner and repo selection", async function () {
     const github = {
       owner: "defaultOwner",
-      getRepositoryNames() {
-        return ["repo1", "repo2", "repo3"];
-      }
+      getRepositoryNames: jest.fn().mockResolvedValue(["repo1", "repo2", "repo3"])
     } as any;
+
     let selectedRepository: string;
-    const wrapper = shallow(
+
+    render(
       <RepositorySelector
         github={github}
         onRepositorySelect={repo => (selectedRepository = repo)}
       />
     );
 
-    const owner = "selectedOwner";
-    wrapper.find(OwnerDropdown).prop("onSelect")(owner as any);
+    fireEvent.click(screen.getByTestId("owner-select"));
 
-    expect(github.owner).toEqual(owner);
+    expect(github.owner).toEqual("selectedOwner");
 
-    wrapper.find(Dropdown).prop("onSelect")("repo2" as any);
+    await waitFor(() => screen.getByTestId("repo-option-repo2"));
+
+    fireEvent.click(screen.getByTestId("repo-option-repo2"));
 
     expect(selectedRepository).toEqual("repo2");
   });

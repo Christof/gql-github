@@ -1,24 +1,15 @@
 import * as React from "react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import "@testing-library/jest-dom";
 import { GithubButton } from "../../src/components/github_button";
 import { Github, GithubUser } from "../../src/github";
-import { shallow, ShallowWrapper } from "enzyme";
 import { waitImmediate } from "../helper";
-import { Button } from "@material-ui/core";
 
 declare const jsdom: any;
 
 jest.mock("../../src/github");
 
 describe("GithubButton", function () {
-  function expectButtonToContainText(
-    button: ShallowWrapper<any, any>,
-    text: string
-  ) {
-    const children = button.prop("children");
-    expect(children.length).toBeGreaterThanOrEqual(1);
-    expect((children as any)[0]).toContain(text);
-  }
-
   describe("login", function () {
     describe("on localhost", function () {
       it("changes window location to github login page", function () {
@@ -31,18 +22,15 @@ describe("GithubButton", function () {
           href: "http://localhost:3000"
         };
 
-        const wrapper = shallow(
-          <GithubButton className="some-class" onChangeToken={() => {}} />
-        );
+        render(<GithubButton onChangeToken={() => {}} />);
 
-        const loginButton = wrapper.find(Button);
-        expect(loginButton).toHaveLength(1);
+        const loginButton = screen.getByRole("button", { name: /Login/i });
+        expect(loginButton).toBeInTheDocument();
 
-        loginButton.prop("onClick")({} as any);
-        expectButtonToContainText(loginButton, "Login");
+        fireEvent.click(loginButton);
 
         expect(window.location.assign).toHaveBeenCalled();
-        const newUrl = (window.location.assign as any).mock.calls[0][0];
+        const newUrl = (window.location.assign as jest.Mock).mock.calls[0][0];
         expect(newUrl).toContain("https://github.com/login/oauth");
       });
     });
@@ -58,20 +46,16 @@ describe("GithubButton", function () {
         };
 
         let changedToken = "";
-        const wrapper = shallow(
+        render(
           <GithubButton
-            className="some-class"
-            onChangeToken={token => {
-              changedToken = token;
+            onChangeToken={t => {
+              changedToken = t;
             }}
             authenticator={authenticator}
           />
         );
 
-        const loginButton = wrapper.find(Button);
-        expect(loginButton).toHaveLength(1);
-        expectButtonToContainText(loginButton, "Login");
-        loginButton.prop("onClick")({} as any);
+        fireEvent.click(screen.getByRole("button", { name: /Login/i }));
 
         expect(authenticator.authenticate).toHaveBeenCalled();
         expect(changedToken).toEqual(token);
@@ -85,19 +69,15 @@ describe("GithubButton", function () {
           )
         };
 
-        let changedTokenCallback = jest.fn();
-        const wrapper = shallow(
+        const changedTokenCallback = jest.fn();
+        render(
           <GithubButton
-            className="some-class"
             onChangeToken={changedTokenCallback}
             authenticator={authenticator}
           />
         );
 
-        const loginButton = wrapper.find(Button);
-        expect(loginButton).toHaveLength(1);
-        expectButtonToContainText(loginButton, "Login");
-        loginButton.prop("onClick")({} as any);
+        fireEvent.click(screen.getByRole("button", { name: /Login/i }));
 
         expect(authenticator.authenticate).toHaveBeenCalled();
         expect(changedTokenCallback).not.toHaveBeenCalled();
@@ -105,35 +85,28 @@ describe("GithubButton", function () {
     });
 
     it("shows github mark in login button", function () {
-      const wrapper = shallow(
-        <GithubButton className="some-class" onChangeToken={() => {}} />
-      );
-
-      const loginButton = wrapper.find(Button);
-      expectButtonToContainText(loginButton, "Login");
-      const img = loginButton.childAt(1);
-      expect(img.prop("src")).toContain("mark");
+      render(<GithubButton onChangeToken={() => {}} />);
+      const img = screen.getByRole("img") as HTMLImageElement;
+      expect(img.src).toContain("mark");
     });
 
     it("loads avatar image after logged in", async function () {
-      const wrapper = shallow(
-        <GithubButton className="some-class" onChangeToken={() => {}} />
-      );
-
       const avatarUrl = "url-to-avatar";
       const github = new Github("token", {} as any, undefined);
       github.getUser = jest.fn(() =>
         Promise.resolve({ avatarUrl } as GithubUser)
       );
-      wrapper.setProps({ github });
 
-      await waitImmediate();
-      wrapper.update();
+      const { rerender } = render(<GithubButton onChangeToken={() => {}} />);
 
-      const loginButton = wrapper.find(Button);
-      expectButtonToContainText(loginButton, "Logout");
-      const img = loginButton.childAt(1);
-      expect(img.prop("src")).toContain(avatarUrl);
+      rerender(<GithubButton github={github} onChangeToken={() => {}} />);
+
+      await waitFor(() => {
+        expect(screen.getByRole("button", { name: /Logout/i })).toBeInTheDocument();
+      });
+
+      const img = screen.getByRole("img") as HTMLImageElement;
+      expect(img.src).toContain(avatarUrl);
     });
   });
 
@@ -145,20 +118,16 @@ describe("GithubButton", function () {
         Promise.resolve({ avatarUrl } as GithubUser)
       );
 
-      let changedToken = "";
+      let changedToken: string = "initial";
 
-      const wrapper = shallow(
+      render(
         <GithubButton
-          className="some-class"
           github={github}
           onChangeToken={token => (changedToken = token)}
         />
       );
 
-      const logoutButton = wrapper.find(Button);
-      expect(logoutButton).toHaveLength(1);
-      expectButtonToContainText(logoutButton, "Logout");
-      logoutButton.prop("onClick")({} as any);
+      fireEvent.click(screen.getByRole("button", { name: /Logout/i }));
 
       expect(window.localStorage.clear).toHaveBeenCalled();
       expect(changedToken).toBeUndefined();
@@ -171,18 +140,13 @@ describe("GithubButton", function () {
         Promise.resolve({ avatarUrl } as GithubUser)
       );
 
-      const wrapper = shallow(
-        <GithubButton
-          className="some-class"
-          github={github}
-          onChangeToken={() => {}}
-        />
+      const { rerender } = render(
+        <GithubButton github={github} onChangeToken={() => {}} />
       );
 
-      wrapper.setProps({ github });
+      rerender(<GithubButton github={github} onChangeToken={() => {}} />);
 
       await waitImmediate();
-      wrapper.update();
 
       expect(github.getUser).toHaveBeenCalledTimes(1);
     });

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { GithubTag } from "../github_types";
 import { Dropdown } from "./dropdown";
-import { Button } from "@material-ui/core";
+import { Button } from "@mui/material";
 
 interface Props {
   defaultStartTag?: string;

@@ -1,19 +1,44 @@
 import * as React from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
+import "@testing-library/jest-dom";
 import { Github } from "../../src/github";
-import { RepositorySelector } from "../../src/components/repository_selector";
-import { Rebaser, PullRequestSelector } from "../../src/components/rebaser";
+import { Rebaser } from "../../src/components/rebaser";
 import { waitImmediate } from "../helper";
-import { Dropdown } from "../../src/components/dropdown";
-import { Button, Typography, LinearProgress } from "@material-ui/core";
-import { act } from "react-dom/test-utils";
 import { rebasePullRequest } from "github-rebase";
 
 jest.mock("../../src/github");
 jest.mock("github-rebase");
 
+jest.mock("../../src/components/repository_selector", () => ({
+  RepositorySelector: ({ onRepositorySelect }: any) => (
+    <button
+      data-testid="repo-selector"
+      onClick={() => onRepositorySelect("repo1")}
+    >
+      Select Repository
+    </button>
+  )
+}));
+
+jest.mock("../../src/components/dropdown", () => ({
+  Dropdown: ({ onSelect, options }: any) => (
+    <select
+      data-testid="pr-dropdown"
+      onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+        onSelect(e.target.value)
+      }
+    >
+      <option value="">-- select --</option>
+      {(options || []).map((opt: string) => (
+        <option key={opt} value={opt}>
+          {opt}
+        </option>
+      ))}
+    </select>
+  )
+}));
+
 describe("Rebaser", function () {
-  let wrapper: ReactWrapper<any, any>;
   let github: Github;
 
   beforeEach(function () {
@@ -25,12 +50,12 @@ describe("Rebaser", function () {
     (github.getOwnersWithAvatar as jest.Mock).mockReturnValue(
       Promise.resolve([{ login: "user", avatarUrl: "avatarUrl" }])
     );
-    wrapper = mount(<Rebaser github={github} />);
   });
 
   describe("before selecting a repository", function () {
     it("shows a RepositorySelector", function () {
-      expect(wrapper.find(RepositorySelector)).toHaveLength(1);
+      render(<Rebaser github={github} />);
+      expect(screen.getByTestId("repo-selector")).toBeInTheDocument();
     });
   });
 
@@ -48,86 +73,92 @@ describe("Rebaser", function () {
         ])
       );
 
-      (
-        wrapper.find(RepositorySelector).prop("onRepositorySelect") as any
-      )("repo1");
+      render(<Rebaser github={github} />);
 
-      await waitImmediate();
-      wrapper.update();
+      await act(async () => {
+        fireEvent.click(screen.getByTestId("repo-selector"));
+        await waitImmediate();
+      });
     });
 
-    it("shows a PullRequestSelector", function () {
-      expect(wrapper.find(PullRequestSelector)).toHaveLength(1);
+    it("shows the PR dropdown", async function () {
+      await waitFor(() => {
+        expect(screen.getByTestId("pr-dropdown")).toBeInTheDocument();
+      });
     });
 
-    it("shows the disabled Rebase button", function () {
-      const button = wrapper.find(Button);
-      expect(button).toHaveLength(1);
-      expect(button.prop("disabled")).toBe(true);
+    it("shows the disabled Rebase button", async function () {
+      await waitFor(() => {
+        expect(
+          screen.getByRole("button", { name: /Rebase/i })
+        ).toBeDisabled();
+      });
     });
 
     describe("after a PullRequest has been selected", function () {
       beforeEach(async function () {
-        act(() => {
-          (wrapper.find(Dropdown).last().prop("onSelect") as any)("PR Name");
-        });
+        await waitFor(() => screen.getByTestId("pr-dropdown"));
 
+        fireEvent.change(screen.getByTestId("pr-dropdown"), {
+          target: { value: "PR Name" }
+        });
         await waitImmediate();
-        wrapper.update();
       });
 
-      it("shows the Rebase button", function () {
-        const button = wrapper.find(Button);
-        expect(button).toHaveLength(1);
-        expect(button.prop("disabled")).toBe(false);
+      it("shows the enabled Rebase button", function () {
+        expect(
+          screen.getByRole("button", { name: /Rebase/i })
+        ).not.toBeDisabled();
       });
 
       describe("after clicking Rebase button", function () {
         let resolveRebase: Function;
 
         beforeEach(async function () {
-          (rebasePullRequest as jest.Mock).mockResolvedValue(
+          (rebasePullRequest as jest.Mock).mockReturnValue(
             new Promise(resolve => {
               resolveRebase = resolve;
             })
           );
 
-          const button = wrapper.find(Button);
-          act(() => {
-            button.prop("onClick")(undefined);
+          await act(async () => {
+            fireEvent.click(screen.getByRole("button", { name: /Rebase/i }));
+            await waitImmediate();
           });
-
-          await waitImmediate();
-          wrapper.update();
         });
 
         it("disables the Rebase button", function () {
-          const button = wrapper.find(Button);
-          expect(button.prop("disabled")).toBe(true);
+          expect(
+            screen.getByRole("button", { name: /Rebase/i })
+          ).toBeDisabled();
         });
 
-        it("cals the rebase function", function () {
+        it("calls the rebase function", function () {
           expect(rebasePullRequest).toHaveBeenCalled();
         });
 
-        it("shows a text", function () {
-          const typography = wrapper.find(Typography);
-          expect(typography.last().prop("children")).toEqual(
-            "Rebasing operation running..."
-          );
+        it("shows a rebasing text", function () {
+          expect(
+            screen.getByText("Rebasing operation running...")
+          ).toBeInTheDocument();
         });
 
         it("shows a linear progress", function () {
-          expect(wrapper.find(LinearProgress)).toHaveLength(1);
+          expect(screen.getByRole("progressbar")).toBeInTheDocument();
         });
 
         describe("after Rebase has finished", function () {
-          beforeEach(function () {
-            resolveRebase();
-          });
+          it("hides the linear progress", async function () {
+            await act(async () => {
+              resolveRebase();
+              await waitImmediate();
+            });
 
-          it("doesn't show a liner progress", function () {
-            expect(wrapper.find(LinearProgress)).toHaveLength(1);
+            await waitFor(() => {
+              expect(
+                screen.queryByRole("progressbar")
+              ).not.toBeInTheDocument();
+            });
           });
         });
       });

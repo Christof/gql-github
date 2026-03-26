@@ -1,11 +1,28 @@
 import * as React from "react";
-import { OwnerDropdown, State } from "../../src/components/owner_dropdown";
-import { shallow } from "enzyme";
-import { waitImmediate } from "../helper";
-import { Dropdown } from "../../src/components/dropdown";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import "@testing-library/jest-dom";
+import { OwnerDropdown } from "../../src/components/owner_dropdown";
+
+// Mock Dropdown to make selection straightforward
+jest.mock("../../src/components/dropdown", () => ({
+  Dropdown: ({ options, iconUrls, onSelect }: any) => (
+    <div data-testid="dropdown">
+      {(options || []).map((opt: string, i: number) => (
+        <button
+          key={opt}
+          data-testid={`option-${opt}`}
+          data-icon={iconUrls ? iconUrls[i] : undefined}
+          onClick={() => onSelect(opt)}
+        >
+          {opt}
+        </button>
+      ))}
+    </div>
+  )
+}));
 
 describe("OwnerSelector", function () {
-  it("calls onSelect owner selection", async function () {
+  it("calls onSelect on owner selection", async function () {
     const owner = "owner2";
 
     const github = {
@@ -19,22 +36,44 @@ describe("OwnerSelector", function () {
 
     let selectedOwner: string;
 
-    const wrapper = shallow(
+    render(
       <OwnerDropdown
         github={github}
-        onSelect={owner => (selectedOwner = owner)}
+        onSelect={o => (selectedOwner = o)}
       />
     );
 
-    const dropdown = wrapper.find(Dropdown);
-    dropdown.prop("onSelect")(owner as any);
+    await waitFor(() => screen.getByTestId("option-owner1"));
+
+    fireEvent.click(screen.getByTestId("option-owner2"));
 
     expect(selectedOwner).toEqual(owner);
+  });
 
-    await waitImmediate();
+  it("loads owners and icon urls from github", async function () {
+    const github = {
+      getOwnersWithAvatar() {
+        return Promise.resolve([
+          { login: "owner1", avatarUrl: "icon1" },
+          { login: "owner2", avatarUrl: "icon2" }
+        ]);
+      }
+    } as any;
 
-    const state = wrapper.state() as State;
-    expect(state.owners).toEqual(["owner1", owner]);
-    expect(state.iconUrls).toEqual(["icon1", "icon2"]);
+    render(<OwnerDropdown github={github} onSelect={() => {}} />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("option-owner1")).toBeInTheDocument();
+      expect(screen.getByTestId("option-owner2")).toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId("option-owner1")).toHaveAttribute(
+      "data-icon",
+      "icon1"
+    );
+    expect(screen.getByTestId("option-owner2")).toHaveAttribute(
+      "data-icon",
+      "icon2"
+    );
   });
 });

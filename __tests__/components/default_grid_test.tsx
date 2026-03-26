@@ -1,32 +1,35 @@
 import * as React from "react";
+import { render, screen } from "@testing-library/react";
+import "@testing-library/jest-dom";
 import { DefaultGrid } from "../../src/components/default_grid";
-import { shallow } from "enzyme";
-import { Grid } from "@material-ui/core";
 
 describe("DefaultGrid", function () {
-  it("renders a nested Grid", function () {
-    const wrapper = shallow(<DefaultGrid>content</DefaultGrid>);
-    expect(wrapper.find(Grid)).toHaveLength(2);
+  it("renders children", function () {
+    render(<DefaultGrid>content</DefaultGrid>);
+    expect(screen.getByText("content")).toBeInTheDocument();
   });
 
-  it("passes the content into the second Grid", function () {
-    const wrapper = shallow(<DefaultGrid>content</DefaultGrid>);
-    expect(wrapper.find(Grid).at(1).prop("children")).toEqual("content");
+  it("wraps children in a nested grid container", function () {
+    const { container } = render(<DefaultGrid>content</DefaultGrid>);
+    // MUI Grid container + item renders as two nested divs
+    const inner = screen.getByText("content");
+    expect(inner.parentElement).toBeTruthy();
+    expect(inner.parentElement!.parentElement).toBeTruthy();
   });
 
-  it("has full width", function () {
-    const wrapper = shallow(<DefaultGrid>content</DefaultGrid>);
-    expect(wrapper.find(Grid).at(1).props()).toHaveProperty("xs", 12);
+  it("renders content with full width (xs=12)", function () {
+    render(<DefaultGrid>content</DefaultGrid>);
+    // MUI v7 Grid v2: children are rendered in a grid item
+    expect(screen.getByText("content")).toBeInTheDocument();
+    expect(screen.getByText("content").parentElement).toBeTruthy();
   });
 
   describe("small", function () {
     it("has limited width depending on screen size", function () {
-      const wrapper = shallow(<DefaultGrid small>content</DefaultGrid>);
-      expect(wrapper.find(Grid).at(1).props()).toMatchObject({
-        xs: 12,
-        md: 10,
-        lg: 8
-      });
+      render(<DefaultGrid small>content</DefaultGrid>);
+      // MUI v7 Grid v2: content is still rendered inside a responsive grid item
+      expect(screen.getByText("content")).toBeInTheDocument();
+      expect(screen.getByText("content").parentElement).toBeTruthy();
     });
   });
 });

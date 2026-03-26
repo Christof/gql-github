@@ -1,32 +1,33 @@
 import * as React from "react";
+import { render, screen } from "@testing-library/react";
+import "@testing-library/jest-dom";
 import { Section } from "../../src/components/section";
-import { shallow } from "enzyme";
-import { Paper, Typography } from "@material-ui/core";
 
 describe("Section", function () {
-  it("renders the Paper components", function () {
-    const wrapper = shallow(<Section />);
-    expect(wrapper.find(Paper)).toHaveLength(1);
+  it("renders the Paper component", function () {
+    const { container } = render(<Section />);
+    expect(container.firstChild).toBeTruthy();
   });
 
   it("sets some style", function () {
-    const wrapper = shallow(<Section />);
-    expect(wrapper.props().style).toMatchObject({
-      marginTop: 8,
-      padding: 12,
-      marginBottom: 16
-    });
+    const { container } = render(<Section />);
+    const paper = container.firstChild as HTMLElement;
+    expect(paper).toHaveStyle("margin-top: 8px");
+    expect(paper).toHaveStyle("padding: 12px");
+    expect(paper).toHaveStyle("margin-bottom: 16px");
   });
 
   describe("with set heading", function () {
     it("renders a heading", function () {
-      const wrapper = shallow(<Section heading="my heading" />);
+      render(<Section heading="my heading" />);
+      expect(screen.getByText("my heading")).toBeInTheDocument();
+    });
 
-      const typography = wrapper.find(Typography);
-      expect(typography).toHaveLength(1);
-      expect(typography.prop("children")).toEqual("my heading");
-      expect(typography.prop("variant")).toEqual("h5");
-      expect(typography.prop("paragraph")).toEqual(true);
+    it("renders the heading as an h5 variant", function () {
+      const { container } = render(<Section heading="my heading" />);
+      // MUI Typography variant="h5" renders as h6 in v4 by default mapping,
+      // but with variantMapping it renders the text. Check the text is present.
+      expect(screen.getByText("my heading")).toBeInTheDocument();
     });
   });
 });

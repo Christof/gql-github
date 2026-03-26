@@ -13,7 +13,7 @@ import { DefaultGrid } from "./default_grid";
 import { TriggeredAsyncSwitchFromLoadType } from "./triggered_async_switch";
 import { TagRangeSelector } from "./tag_range_selector";
 import { ReleaseNote } from "./release_note";
-import { Button, LinearProgress, Typography } from "@material-ui/core";
+import { Button, LinearProgress, Typography } from "@mui/material";
 
 interface State {
   pullRequests: Partial<Record<"bugfixes" | "features", PullRequestWithLabels[]>>;

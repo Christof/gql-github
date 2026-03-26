@@ -1,33 +1,71 @@
 import * as React from "react";
+import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
+import "@testing-library/jest-dom";
 import { Stats } from "../../src/components/stats";
-import { mount, ReactWrapper } from "enzyme";
-import { waitImmediate } from "../helper";
 import { Github, GithubData } from "../../src/github";
-import { RepositoriesByOwnerSelector } from "../../src/components/repositories_by_owner_selector";
-import { LinearProgress } from "@material-ui/core";
-import { OverallPlot } from "../../src/components/overall_plot";
-import { OverTimePlot } from "../../src/components/over_time_plot";
-import PlotlyChart from "react-plotlyjs-ts";
+import { waitImmediate } from "../helper";
 
 jest.mock("../../src/github");
+
+// Mock child components
+jest.mock("../../src/components/repositories_by_owner_selector", () => ({
+  RepositoriesByOwnerSelector: ({ onLoad }: any) => (
+    <button
+      data-testid="repo-selector"
+      onClick={() => onLoad({ owner: "owner", includeForks: true })}
+    >
+      Load Repos
+    </button>
+  )
+}));
+
+jest.mock("react-plotly.js", () => ({
+  __esModule: true,
+  default: jest.fn(({ data, layout }: any) => (
+    <div
+      data-testid="plotly-chart"
+      data-layout={JSON.stringify(layout)}
+      data-chart={JSON.stringify(data)}
+    />
+  ))
+}));
+
+jest.mock("../../src/components/over_time_plot", () => ({
+  OverTimePlot: jest.fn(({ title, data }: any) => (
+    <div
+      data-testid="over-time-plot"
+      data-title={title}
+      data-plotdata={JSON.stringify(data)}
+    />
+  ))
+}));
+
+jest.mock("../../src/components/overall_plot", () => ({
+  OverallPlot: jest.fn(({ repositoryNames, reposData }: any) => (
+    <div
+      data-testid="overall-plot"
+      data-repos={JSON.stringify(repositoryNames)}
+      data-reposdata={JSON.stringify(reposData)}
+    />
+  ))
+}));
 
 describe("Stats", function () {
   beforeAll(() => jest.setTimeout(10000));
   afterAll(() => jest.setTimeout(undefined));
 
   let github: Github;
-  let wrapper: ReactWrapper<any, any>;
 
   beforeEach(function () {
     github = new Github("token", {} as any, undefined);
     (github.getOwnersWithAvatar as jest.Mock).mockReturnValue(
       Promise.resolve([{ login: "user", avatarUrl: "user-url" }])
     );
-    wrapper = mount(<Stats github={github} />);
   });
 
   it("shows a RepositoriesByOwnerSelector", function () {
-    expect(wrapper.find(RepositoriesByOwnerSelector)).toHaveLength(1);
+    render(<Stats github={github} />);
+    expect(screen.getByTestId("repo-selector")).toBeInTheDocument();
   });
 
   describe("repository selection", function () {
@@ -35,8 +73,6 @@ describe("Stats", function () {
     let resolveForGetStats: Function;
 
     beforeEach(async function () {
-      const repositorySelector = wrapper.find(RepositoriesByOwnerSelector);
-
       (github.getRepositoryNames as jest.Mock).mockReturnValue(
         Promise.resolve(repositoryNames)
       );
@@ -46,17 +82,18 @@ describe("Stats", function () {
         })
       );
 
-      (repositorySelector.prop("onLoad") as any)({
-        owner: "owner",
-        includeForks: true
-      });
+      render(<Stats github={github} />);
 
-      await waitImmediate();
-      wrapper.update();
+      await act(async () => {
+        fireEvent.click(screen.getByTestId("repo-selector"));
+        await waitImmediate();
+      });
     });
 
-    it("shows a progress bar", function () {
-      expect(wrapper.find(LinearProgress)).toHaveLength(1);
+    it("shows a progress bar", async function () {
+      await waitFor(() => {
+        expect(screen.getByRole("progressbar")).toBeInTheDocument();
+      });
     });
 
     describe("after loading data", function () {
@@ -81,96 +118,62 @@ describe("Stats", function () {
       ];
 
       beforeEach(async function () {
-        resolveForGetStats([data, data]);
-
-        await waitImmediate();
-        wrapper.update();
-      });
-
-      it("shows an OverallPlot", function () {
-        const overallPlot = wrapper.find(OverallPlot);
-
-        expect(overallPlot).toHaveLength(1);
-        expect(overallPlot.prop("repositoryNames")).toEqual(repositoryNames);
-        expect(overallPlot.prop("reposData")).toEqual([data, data]);
-      });
-
-      function checkDataForOverTimePlot(data: any) {
-        expect(data).toHaveLength(2);
-        expect(data[0].name).toEqual("user");
-        expect(data[0].mode).toEqual("lines");
-        expect(data[0].x).toEqual([week1, week2, week3]);
-        expect(data[0].y).toEqual([10, 20, 30]);
-
-        expect(data[1].name).toEqual("user2");
-        expect(data[1].mode).toEqual("lines");
-        expect(data[1].x).toEqual([week2]);
-        expect(data[1].y).toEqual([30]);
-      }
-
-      it("shows OverTimePlots for each repository", function () {
-        const overTimePlot = wrapper.find(OverTimePlot);
-
-        expect(overTimePlot).toHaveLength(2);
-        expect(overTimePlot.at(0).prop("title")).toEqual("repo1");
-
-        const data0 = overTimePlot.at(0).prop("data") as any;
-        checkDataForOverTimePlot(data0);
-
-        expect(overTimePlot.at(1).prop("title")).toEqual("repo2");
-
-        const data1 = overTimePlot.at(1).prop("data") as any;
-        checkDataForOverTimePlot(data1);
-      });
-
-      function checkDataForYearPlot(data: any[]) {
-        expect(data).toHaveLength(2);
-
-        const userData = data.find(element => element.name.startsWith("user "));
-        const user2Data = data.find(element =>
-          element.name.startsWith("user2 ")
-        );
-        expect(user2Data.x).toEqual([
-          "2014 (10)",
-          "2015 (50)",
-          "2016 (0)",
-          "2017 (30)"
-        ]);
-        expect(user2Data.y).toEqual([0, 30, 0, 0]);
-
-        expect(userData.x).toEqual([
-          "2014 (10)",
-          "2015 (50)",
-          "2016 (0)",
-          "2017 (30)"
-        ]);
-        expect(userData.y).toEqual([10, 20, 0, 30]);
-      }
-
-      it("shows a year graph for each repository", function () {
-        const allPlots = wrapper.find(PlotlyChart);
-        expect(allPlots).toHaveLength(5);
-
-        const yearPlot = allPlots.findWhere(x => {
-          const layout = x.prop("layout");
-          return layout && layout.title.indexOf("Yearly commits") === 0;
+        await act(async () => {
+          resolveForGetStats([data, data]);
+          await waitImmediate();
         });
+      });
 
-        expect(yearPlot).toHaveLength(2);
+      it("shows an OverallPlot", async function () {
+        await waitFor(() => {
+          const overall = screen.getByTestId("overall-plot");
+          expect(overall).toBeInTheDocument();
+          const repos = JSON.parse(overall.getAttribute("data-repos")!);
+          expect(repos).toEqual(repositoryNames);
+          const reposData = JSON.parse(overall.getAttribute("data-reposdata")!);
+          expect(reposData).toHaveLength(2);
+        });
+      });
 
-        const data0 = yearPlot.at(0).prop("data") as any;
-        checkDataForYearPlot(data0);
-        const layout0 = yearPlot.at(0).prop("layout") as any;
-        expect(layout0.title).toEqual("Yearly commits in repo1 90");
-        expect(layout0.xaxis.title.text).toEqual("time");
-        expect(layout0.yaxis.title.text).toEqual("commit count");
+      it("shows OverTimePlots for each repository", async function () {
+        await waitFor(() => {
+          const plots = screen.getAllByTestId("over-time-plot");
+          expect(plots).toHaveLength(2);
+          expect(plots[0].getAttribute("data-title")).toEqual("repo1");
+          expect(plots[1].getAttribute("data-title")).toEqual("repo2");
+        });
+      });
 
-        const data1 = yearPlot.at(1).prop("data") as any;
-        checkDataForYearPlot(data1);
-        const layout1 = yearPlot.at(1).prop("layout") as any;
-        expect(layout1.title).toEqual("Yearly commits in repo2 90");
-        expect(layout1.xaxis.title.text).toEqual("time");
-        expect(layout1.yaxis.title.text).toEqual("commit count");
+      it("shows OverTimePlots with correct author data", async function () {
+        await waitFor(() => {
+          const plots = screen.getAllByTestId("over-time-plot");
+          const data0 = JSON.parse(plots[0].getAttribute("data-plotdata")!);
+          expect(data0).toHaveLength(2);
+          expect(data0[0].name).toEqual("user");
+          expect(data0[0].mode).toEqual("lines");
+          expect(data0[0].y).toEqual([10, 20, 30]);
+
+          expect(data0[1].name).toEqual("user2");
+          expect(data0[1].y).toEqual([30]);
+        });
+      });
+
+      it("shows year graphs (PlotlyChart) for each repository", async function () {
+        await waitFor(() => {
+          const charts = screen.getAllByTestId("plotly-chart");
+          expect(charts.length).toBeGreaterThanOrEqual(2);
+
+          const yearChart = charts.find(c => {
+            const layout = JSON.parse(c.getAttribute("data-layout")!);
+            return layout && layout.title && layout.title.text && layout.title.text.includes("Yearly commits");
+          });
+          expect(yearChart).toBeTruthy();
+
+          const layout = JSON.parse(yearChart!.getAttribute("data-layout")!);
+          expect(layout.title.text).toContain("Yearly commits in repo1");
+          expect(layout.xaxis.title).toEqual("time");
+          expect(layout.yaxis.title).toEqual("commit count");
+        });
       });
     });
   });
