@@ -6,8 +6,8 @@
   "scripts": {
     "test": "jest",
     "tsc-watch": "./node_modules/typescript/bin/tsc -w",
-    "build-dashboard": "webpack-dashboard -- node ./node_modules/webpack/bin/webpack.js --env.build --mode=production",
-    "build": "./node_modules/webpack/bin/webpack.js --env.build --mode=production",
+    "build-dashboard": "NODE_OPTIONS=--openssl-legacy-provider webpack-dashboard -- node ./node_modules/webpack/bin/webpack.js --env.build --mode=production",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider node ./node_modules/webpack/bin/webpack.js --env.build --mode=production",
     "start": "NODE_OPTIONS=--openssl-legacy-provider webpack-dashboard -- node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js -w --host=0.0.0.0 --mode=development",
     "start-dev-server": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js -w --host=0.0.0.0 --mode=development"
   },
@@ -72,6 +72,7 @@
     "react-test-renderer": "^16.13.1",
     "source-map-loader": "^0.2.4",
     "ts-jest": "^29.4.0",
+    "ts-loader": "8.4.0",
     "tslint": "^5.20.1",
     "typescript": "^5.9.3",
     "webpack": "^4.43.0",
