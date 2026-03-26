@@ -1,7 +1,7 @@
-global.requestAnimationFrame = function(callback) {
+global.requestAnimationFrame = function (callback) {
   setTimeout(callback, 0);
 };
 
-window.URL.createObjectURL = function() {
+window.URL.createObjectURL = function () {
   return "objectURL";
 };
