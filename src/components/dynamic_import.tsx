@@ -8,7 +8,7 @@ class DynamicImport<Component> extends React.Component<
     component: null as any
   };
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.props.load().then(component => this.setState(() => ({ component })));
   }
 

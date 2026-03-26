@@ -33,7 +33,6 @@
     "collectCoverageFrom": [
       "src/**/*.{ts,js,tsx}"
     ],
-    "testURL": "http://test.com/unknown",
     "testEnvironment": "jest-environment-jsdom-global",
     "testEnvironmentOptions": {
       "url": "http://test.com/unknown"
