@@ -34,7 +34,11 @@
       "src/**/*.{ts,js,tsx}"
     ],
     "testURL": "http://test.com/unknown",
-    "testEnvironment": "jest-environment-jsdom-global"
+    "testEnvironment": "jest-environment-jsdom-global",
+    "moduleNameMapper": {
+      "^react-markdown$": "<rootDir>/config/mocks/react-markdown.js",
+      "^remark-gfm$": "<rootDir>/config/mocks/remark-gfm.js"
+    }
   },
   "author": "Christof Sirk",
   "license": "MIT",
