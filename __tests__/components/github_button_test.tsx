@@ -23,7 +23,13 @@ describe("GithubButton", function () {
     describe("on localhost", function () {
       it("changes window location to github login page", function () {
         jsdom.reconfigure({ url: "http://localhost:3000" });
-        window.location.assign = jest.fn();
+        delete (window as any).location;
+        (window as any).location = {
+          assign: jest.fn(),
+          host: "localhost:3000",
+          origin: "http://localhost:3000",
+          href: "http://localhost:3000"
+        };
 
         const wrapper = shallow(
           <GithubButton className="some-class" onChangeToken={() => {}} />
