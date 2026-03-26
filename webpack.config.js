@@ -1,13 +1,9 @@
 const path = require("path");
-const webpack = require("webpack");
-const DashboardPlugin = require("webpack-dashboard/plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = function (env = {}) {
   console.log({ env });
-  const isBuild = !!env.build;
   const isDev = !env.build;
-  const isSourceMap = !!env.sourceMap || isDev;
   return {
     entry: "./src/index.tsx",
     output: {
@@ -16,23 +12,30 @@ module.exports = function (env = {}) {
       path: __dirname + "/dist",
     },
     plugins: [
-      new DashboardPlugin(),
       new HtmlWebpackPlugin({ title: "Stats", template: "./src/index.html" }),
     ],
 
     optimization: { splitChunks: { chunks: "all" } },
 
     // Enable sourcemaps for debugging webpack's output.
-    devtool: "source-map",
+    devtool: isDev ? "eval-source-map" : "source-map",
 
     resolve: {
       // Add '.ts' and '.tsx' as resolvable extensions.
       extensions: [".ts", ".tsx", ".js", ".json"],
       modules: ["node_modules"],
-    },
-
-    node: {
-      fs: "empty",
+      // webpack 5 no longer polyfills node core modules by default
+      fallback: {
+        fs: false,
+        assert: require.resolve("assert/"),
+        buffer: require.resolve("buffer/"),
+        path: require.resolve("path-browserify"),
+      },
+      // graphql@14 exposes an .mjs file via the "module" field whose bare
+      // relative imports webpack 5 cannot resolve; force the CJS build instead.
+      alias: {
+        graphql$: require.resolve("graphql/index.js"),
+      },
     },
 
     module: {

@@ -16,7 +16,7 @@ import { ReleaseNote } from "./release_note";
 import { Button, LinearProgress, Typography } from "@material-ui/core";
 
 interface State {
-  pullRequests: Record<"bugfixes" | "features", PullRequestWithLabels[]>;
+  pullRequests: Partial<Record<"bugfixes" | "features", PullRequestWithLabels[]>>;
   startTag?: string;
   releaseTag?: string;
   releaseNote: string;

@@ -1,7 +1,7 @@
 const express = require("express");
 const request = require("request-promise-native");
 const qs = require("qs");
-const program = require("commander");
+const { program } = require("commander");
 program
   .version("0.0.1")
   .option("--client-id <client id>", "Client id of Github OAuth app")
@@ -20,12 +20,14 @@ program
   )
   .parse(process.argv);
 
+const opts = program.opts();
+
 if (
-  !program.clientId ||
-  !program.clientSecret ||
-  !program.port ||
-  !program.host ||
-  !program.origin
+  !opts.clientId ||
+  !opts.clientSecret ||
+  !opts.port ||
+  !opts.host ||
+  !opts.origin
 ) {
   console.log("Please provide all parameters. See help output:");
   program.outputHelp();
@@ -34,8 +36,8 @@ if (
 
 const app = express();
 
-app.all("*", function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", program.origin);
+app.all(/(.*)/, function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", opts.origin);
   res.header("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type");
   next();
@@ -51,8 +53,8 @@ app.get("/authenticate", function(req, res) {
   const githubAuthUrl =
     "https://github.com/login/oauth/access_token?" +
     qs.stringify({
-      client_id: program.clientId,
-      client_secret: program.clientSecret,
+      client_id: opts.clientId,
+      client_secret: opts.clientSecret,
       code: req.query.code,
       state: req.query.state
     });
@@ -69,8 +71,8 @@ app.get("/authenticate", function(req, res) {
     });
 });
 
-const port = program.port;
-const host = program.host;
+const port = opts.port;
+const host = opts.host;
 app.listen(port, host, () => {
   console.log(`Server running on: http://${host}:${port}`);
 });
