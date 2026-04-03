@@ -236,7 +236,8 @@ export class Github {
     }
 
     try {
-      return response.json();
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
     } catch (error) {
       console.error(`Error in Github.getStats for ${repository}: `, error);
       return undefined;

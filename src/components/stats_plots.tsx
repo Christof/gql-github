@@ -58,7 +58,7 @@ export class StatsPlots extends React.Component<StatsPlotsProps, {}> {
     return {
       type: "scatter",
       mode: "lines",
-      name: statsForAuthor.author.login,
+      name: statsForAuthor.author?.login || "unknown",
       x: statsForAuthor.weeks.map((week: any) => new Date(week.w * 1000)),
       y: statsForAuthor.weeks.map((week: any) => week.c)
     };
