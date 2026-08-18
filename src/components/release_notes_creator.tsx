@@ -4,12 +4,13 @@ import { Section } from "./section";
 import { RepositorySelector } from "./repository_selector";
 import { Markdown } from "./markdown";
 import { Github, GithubTag, GithubCommit } from "../github";
+import { filterPullRequestMergeCommits } from "../github_helper";
 import * as React from "react";
 import { DefaultGrid } from "./default_grid";
 import { TriggeredAsyncSwitchFromLoadType } from "./triggered_async_switch";
 import { TagRangeSelector } from "./tag_range_selector";
 import { ReleaseNote } from "./release_note";
-import { LinearProgress, Button, Typography, Grid } from "@material-ui/core";
+import { LinearProgress, Button, Typography, Grid } from "@mui/material";
 
 function PullRequests(props: {
   pullRequests: PullRequest[];
@@ -52,7 +53,7 @@ interface State {
 interface Props {
   github: Github;
   repo: string;
-  defaultStartTag?: string;
+  lastMasterReleaseTag?: string;
   tags?: GithubTag[];
 }
 
@@ -85,16 +86,11 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
   }
 
   parseCommitsForPullRequests(commits: GithubCommit[], releaseTag: string) {
-    const pullRequestRegex = new RegExp(/Merge pull request/);
-    const pullRequestMerges = commits.filter(commit =>
-      commit.commit.message.match(pullRequestRegex)
-    );
-    const pullRequests = pullRequestMerges.map(commit =>
+    const pullRequests = filterPullRequestMergeCommits(commits).map(commit =>
       PullRequest.parseFrom(commit.commit.message)
     );
 
-    this.setState({ pullRequests, releaseTag });
-    this.updateReleaseNote();
+    this.setState({ pullRequests, releaseTag }, () => this.updateReleaseNote());
   }
 
   appendChangeCategory(category: ChangeCategory, releaseNote = "") {
@@ -150,7 +146,7 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
   private renderButtonForSingleTag() {
     return (
       <Grid container alignItems="baseline" spacing={2}>
-        <Grid item>
+        <Grid>
           <Button
             variant="contained"
             onClick={async () => {
@@ -164,7 +160,7 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
             Get merged PRs
           </Button>
         </Grid>
-        <Grid item>
+        <Grid>
           <Typography
             variant="body1"
             color="textSecondary"
@@ -193,7 +189,7 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
         {this.props.tags !== undefined && this.props.tags.length > 1 ? (
           <TagRangeSelector
             tags={this.props.tags}
-            defaultStartTag={this.props.defaultStartTag}
+            defaultStartTag={this.props.lastMasterReleaseTag}
             onSelect={async (startTag: string, releaseTag: string) => {
               const commits = await this.compare(startTag, releaseTag);
               this.parseCommitsForPullRequests(commits, releaseTag);
@@ -212,34 +208,15 @@ export class ReleaseNotesCreatorSections extends React.Component<Props, State> {
   }
 }
 
-async function loadTags(repo: string, github: Github) {
-  const tags = await github.getTags(repo);
-  const releases = await github.getReleases(repo);
-  const firstMasterRelease = releases.find(
-    release => !release.tagName.includes("_")
-  );
-
-  const defaultStartTag = firstMasterRelease
-    ? firstMasterRelease.tagName
-    : undefined;
-
-  return {
-    repo,
-    tags,
-    defaultStartTag,
-    github
-  };
-}
-
 export function ReleaseNotesCreator(props: { github: Github }) {
   return (
     <DefaultGrid small>
-      <TriggeredAsyncSwitchFromLoadType<typeof loadTags>
+      <TriggeredAsyncSwitchFromLoadType<typeof props.github.loadTags>
         renderTrigger={callback => (
           <RepositorySelector
             {...props}
             onRepositorySelect={repository =>
-              callback(loadTags(repository, props.github))
+              callback(props.github.loadTags(repository))
             }
           />
         )}

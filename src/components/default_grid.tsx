@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Grid } from "@material-ui/core";
+import { Grid } from "@mui/material";
 
 export function DefaultGrid(props: {
   small?: boolean;
@@ -8,8 +8,8 @@ export function DefaultGrid(props: {
   const sizeProps = props.small ? { xs: 12, md: 10, lg: 8 } : { xs: 12 };
 
   return (
-    <Grid container spacing={3} justify="center">
-      <Grid item {...(sizeProps as any)}>
+    <Grid container spacing={3} justifyContent="center">
+      <Grid size={sizeProps as any}>
         {props.children}
       </Grid>
     </Grid>

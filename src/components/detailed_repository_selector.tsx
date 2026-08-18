@@ -10,7 +10,7 @@ import {
   Button,
   LinearProgress,
   FormControl
-} from "@material-ui/core";
+} from "@mui/material";
 
 export type RepositoriesPerOwner = Map<string, string[]>;
 

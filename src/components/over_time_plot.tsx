@@ -1,5 +1,5 @@
 import * as React from "react";
-import PlotlyChart from "react-plotlyjs-ts";
+import Plot from "react-plotly.js";
 import { ScatterData } from "plotly.js";
 
 interface Props {
@@ -33,7 +33,7 @@ export class OverTimePlot extends React.Component<Props, {}> {
     super(props);
 
     this.layout = {
-      title: props.title,
+      title: { text: props.title },
       xaxis: {
         title: "time",
         autorange: true,
@@ -50,6 +50,6 @@ export class OverTimePlot extends React.Component<Props, {}> {
   }
 
   render() {
-    return <PlotlyChart data={this.props.data} layout={this.layout as any} />;
+    return <Plot data={this.props.data} layout={this.layout as any} />;
   }
 }

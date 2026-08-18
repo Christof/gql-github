@@ -1,10 +1,8 @@
-import { ApolloClient } from "apollo-client";
-import { NormalizedCacheObject } from "apollo-cache-inmemory";
+import { ApolloClient, gql } from "@apollo/client";
 import { delay } from "./utils";
-import gql from "graphql-tag";
 
 export class GraphQLFacade {
-  constructor(private client: ApolloClient<NormalizedCacheObject>) {}
+  constructor(private client: ApolloClient) {}
 
   async query(
     query: string,
@@ -17,7 +15,7 @@ export class GraphQLFacade {
         query: gql(query),
         variables
       });
-      if (response.errors) throw response.errors;
+      if (response.error) throw response.error;
 
       return response.data;
     } catch (error) {

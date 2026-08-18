@@ -11,7 +11,7 @@ import {
   TriggeredAsyncSwitchFromLoadType,
   TriggeredAsyncSwitch
 } from "./triggered_async_switch";
-import { LinearProgress } from "@material-ui/core";
+import { LinearProgress } from "@mui/material";
 
 interface Props {
   github: Github;

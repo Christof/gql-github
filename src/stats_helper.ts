@@ -13,7 +13,9 @@ export function getCommitsPerAuthorInDateRange(
       week => week.w > unixStartTime && week.w <= unixEndTime
     );
     const commits = weeksInRange.reduce((sum, week) => sum + week.c, 0);
-    acc[userEntry.author.login] = commits;
+    if (userEntry.author.login) {
+      acc[userEntry.author.login] = commits;
+    }
     return acc;
   }, {} as { [author: string]: number });
 }
@@ -22,11 +24,13 @@ function accumulateWeeklyCommits(
   authorData: GithubAuthorData,
   accumulator: Map<number, number>
 ) {
-  authorData.weeks.forEach(week => {
+  for (const week of authorData.weeks || []) {
+    if (!week) continue;
+
     const commits = accumulator.get(week.w);
     const sum = week.c + (commits === undefined ? 0 : commits);
     accumulator.set(week.w, sum);
-  });
+  }
 }
 
 /**

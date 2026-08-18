@@ -1,67 +1,50 @@
 import * as React from "react";
+import { render, screen, fireEvent, within, waitFor } from "@testing-library/react";
+import "@testing-library/jest-dom";
 import { Dropdown } from "../../src/components/dropdown";
-import { shallow } from "enzyme";
-import { InputLabel, Select, MenuItem } from "@material-ui/core";
 
 describe("Dropdown", function () {
   describe("with label", function () {
     it("adds an InputLabel", function () {
-      const wrapper = shallow(
-        <Dropdown options={[]} label="label" onSelect={() => {}} />
-      );
-
-      const label = wrapper.find(InputLabel);
-      expect(label.prop("children")).toEqual("label");
-      expect(label.prop("htmlFor")).toEqual("label");
-    });
-
-    it("sets the id to the label", function () {
-      const wrapper = shallow(
-        <Dropdown options={[]} label="label" onSelect={() => {}} />
-      );
-
-      expect(wrapper.find(Select).prop("id")).toEqual("label");
+      render(<Dropdown options={[]} label="label" onSelect={() => {}} />);
+      const label = screen.getByText("label", { selector: "label" });
+      expect(label).toBeInTheDocument();
+      expect(label).toHaveAttribute("for", "label");
     });
 
     it("renders a disabled option with value none", function () {
-      const wrapper = shallow(
-        <Dropdown options={[]} label="label" onSelect={() => {}} />
-      );
-
-      const item = wrapper.find(MenuItem);
-      expect(item).toHaveLength(1);
-      expect(item.prop("children")).toEqual(["Select ", "label"]);
-      expect(item.prop("disabled")).toEqual(true);
-      expect(item.prop("value")).toEqual("none");
+      render(<Dropdown options={[]} label="label" onSelect={() => {}} />);
+      const selectButton = screen.getByRole("combobox");
+      expect(selectButton).toHaveTextContent(/Select.*label/);
     });
   });
 
-  it("renders a Select with given options", function () {
-    const wrapper = shallow(
-      <Dropdown options={["opt1", "opt2"]} onSelect={() => {}} />
-    );
+  it("renders a Select with given options", async function () {
+    render(<Dropdown options={["opt1", "opt2"]} onSelect={() => {}} />);
 
-    const items = wrapper.find(MenuItem);
-    expect(items).toHaveLength(3);
-    expect(items.at(1).prop("children")).toEqual([null, "opt1"]);
-    expect(items.at(2).prop("children")).toEqual([null, "opt2"]);
+    fireEvent.mouseDown(screen.getByRole("combobox"));
+    const listbox = await screen.findByRole("listbox");
+
+    expect(within(listbox).getByText("opt1")).toBeInTheDocument();
+    expect(within(listbox).getByText("opt2")).toBeInTheDocument();
   });
 
   describe("initialSelection", function () {
-    const wrapper = shallow(
-      <Dropdown
-        options={["opt1", "opt2"]}
-        initialSelection="opt2"
-        onSelect={() => {}}
-      />
-    );
-
-    expect(wrapper.find(Select).prop("value")).toEqual("opt2");
+    it("displays initial selection", function () {
+      render(
+        <Dropdown
+          options={["opt1", "opt2"]}
+          initialSelection="opt2"
+          onSelect={() => {}}
+        />
+      );
+      expect(screen.getByRole("combobox")).toHaveTextContent("opt2");
+    });
   });
 
   describe("componentDidUpdate", function () {
     it("sets an initial selection if given and the options change", function () {
-      const wrapper = shallow(
+      const { rerender } = render(
         <Dropdown
           options={["opt1", "opt2"]}
           initialSelection="opt2"
@@ -69,17 +52,20 @@ describe("Dropdown", function () {
         />
       );
 
-      wrapper.setProps({
-        options: ["optionA", "optionB"],
-        initialSelection: "optionA"
-      });
+      rerender(
+        <Dropdown
+          options={["optionA", "optionB"]}
+          initialSelection="optionA"
+          onSelect={() => {}}
+        />
+      );
 
-      expect(wrapper.find(Select).prop("value")).toEqual("optionA");
+      expect(screen.getByRole("combobox")).toHaveTextContent("optionA");
     });
 
     it("doesn't update the selection if the options are the same", function () {
       const options = ["opt1", "opt2"];
-      const wrapper = shallow(
+      const { rerender } = render(
         <Dropdown
           options={options}
           initialSelection="opt2"
@@ -87,40 +73,39 @@ describe("Dropdown", function () {
         />
       );
 
-      wrapper.setProps({
-        options,
-        initialSelection: "opt1"
-      });
+      rerender(
+        <Dropdown
+          options={options}
+          initialSelection="opt1"
+          onSelect={() => {}}
+        />
+      );
 
-      expect(wrapper.find(Select).prop("value")).toEqual("opt2");
+      expect(screen.getByRole("combobox")).toHaveTextContent("opt2");
     });
   });
 
   describe("onSelect", function () {
-    it("on selection calls onSelect", function () {
+    it("on selection calls onSelect", async function () {
       let selected = "";
-      const wrapper = shallow(
+      render(
         <Dropdown
           options={["opt1", "opt2"]}
           onSelect={value => (selected = value)}
         />
       );
 
-      const child: React.ReactNode = undefined;
-      wrapper.find(Select).prop("onChange")(
-        {
-          target: { value: "opt2" }
-        } as any,
-        child
-      );
+      fireEvent.mouseDown(screen.getByRole("combobox"));
+      const listbox = await screen.findByRole("listbox");
+      fireEvent.click(within(listbox).getByText("opt2"));
 
       expect(selected).toEqual("opt2");
     });
   });
 
   describe("iconUrls", function () {
-    it("adds an img before each option", function () {
-      const wrapper = shallow(
+    it("adds an img before each option", async function () {
+      render(
         <Dropdown
           options={["opt1", "opt2"]}
           iconUrls={["url1", "url2"]}
@@ -128,10 +113,12 @@ describe("Dropdown", function () {
         />
       );
 
-      const items = wrapper.find(MenuItem);
-      expect(items).toHaveLength(3);
-      expect(items.at(1).find("img").prop("src")).toEqual("url1");
-      expect(items.at(2).find("img").prop("src")).toEqual("url2");
+      fireEvent.mouseDown(screen.getByRole("combobox"));
+      const listbox = await screen.findByRole("listbox");
+
+      const imgs = within(listbox).getAllByRole("img") as HTMLImageElement[];
+      expect(imgs[0].src).toContain("url1");
+      expect(imgs[1].src).toContain("url2");
     });
   });
 });

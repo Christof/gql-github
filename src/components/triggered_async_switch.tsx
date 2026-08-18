@@ -4,8 +4,8 @@ import { zipObj } from "ramda";
 interface Props<TriggeredProps> {
   renderTrigger(
     triggerCallback: (loadPromise: Promise<TriggeredProps>) => void
-  ): JSX.Element;
-  renderTriggered(props: TriggeredProps): JSX.Element;
+  ): React.ReactElement;
+  renderTriggered(props: TriggeredProps): React.ReactElement;
 }
 interface State<TriggeredProps> {
   triggered: boolean;

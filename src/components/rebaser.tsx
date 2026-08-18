@@ -4,7 +4,7 @@ import { DefaultGrid } from "./default_grid";
 import { TriggeredAsyncSwitchFromLoadType } from "./triggered_async_switch";
 import { RepositorySelector } from "./repository_selector";
 import { Section } from "./section";
-import { LinearProgress, Button, Typography } from "@material-ui/core";
+import { LinearProgress, Button, Typography } from "@mui/material";
 import { Dropdown } from "./dropdown";
 import { useState } from "react";
 import { rebasePullRequest } from "github-rebase";

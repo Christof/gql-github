@@ -1,7 +1,7 @@
 import * as React from "react";
+import { render, screen, waitFor } from "@testing-library/react";
+import "@testing-library/jest-dom";
 import { createDynamicImport } from "../../src/components/dynamic_import";
-import { mount } from "enzyme";
-import { waitImmediate } from "../helper";
 
 class TestComponent extends React.Component<{ n: number }> {
   render() {
@@ -16,10 +16,11 @@ describe("createDynamicImport", function () {
         () => new Promise<typeof TestComponent>(() => {})
       );
 
-      const wrapper = mount(<Component n={1} />);
+      render(<Component n={1} />);
 
-      expect(wrapper.find("h1")).toHaveLength(1);
-      expect(wrapper.find("h1").text()).toEqual("Loading!");
+      expect(
+        screen.getByRole("heading", { level: 1, name: "Loading!" })
+      ).toBeInTheDocument();
     });
   });
 
@@ -32,13 +33,11 @@ describe("createDynamicImport", function () {
           })
       );
 
-      const wrapper = mount(<Component n={1} />);
+      render(<Component n={1} />);
 
-      await waitImmediate();
-      wrapper.update();
-
-      expect(wrapper.find("div")).toHaveLength(1);
-      expect(wrapper.find("div").text()).toEqual("Number: 1");
+      await waitFor(() => {
+        expect(screen.getByText("Number: 1")).toBeInTheDocument();
+      });
     });
   });
 });

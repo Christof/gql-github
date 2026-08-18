@@ -1,6 +1,6 @@
 import * as React from "react";
 import { GithubData } from "../github";
-import PlotlyChart from "react-plotlyjs-ts";
+import Plot from "react-plotly.js";
 import { ScatterData, Layout, Annotations } from "plotly.js";
 import { unique, flatten, sum } from "../array_helper";
 
@@ -25,7 +25,7 @@ export class OverallPlot extends React.Component<Props, State> {
     const data = this.getAuthors().map(author => this.getAuthorTrace(author));
 
     const layout: Partial<Layout> & { barmode: string } = {
-      title: "Overall",
+      title: { text: "Overall" },
       barmode: "stack" as any,
       annotations: this.getTotalCommitCountAnnotations(),
       xaxis: {
@@ -109,7 +109,7 @@ export class OverallPlot extends React.Component<Props, State> {
 
   render() {
     return (
-      <PlotlyChart data={this.state.data} layout={this.state.layout as any} />
+      <Plot data={this.state.data} layout={this.state.layout as any} />
     );
   }
 }

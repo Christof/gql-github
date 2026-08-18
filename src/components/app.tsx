@@ -1,6 +1,6 @@
 import * as React from "react";
-import classNames from "classnames";
-import { BrowserRouter, Route } from "react-router-dom";
+import { useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { GithubButton } from "./github_button";
 import { GithubCallback } from "./github_callback";
 import { ReleaseNotesRetriever } from "./release_notes_retriever";
@@ -12,27 +12,55 @@ import {
   Toolbar,
   CssBaseline,
   IconButton
-} from "@material-ui/core";
-import { withStyles, Theme, StyleRules } from "@material-ui/core/styles";
-import { WithStyles } from "@material-ui/core/styles/withStyles";
-import { Menu as MenuIcon } from "@material-ui/icons";
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
+import { Menu as MenuIcon } from "@mui/icons-material";
 import { Github } from "../github";
-import { createHttpLink } from "apollo-link-http";
-import { setContext } from "apollo-link-context";
-import { ApolloClient } from "apollo-client";
-import { InMemoryCache } from "apollo-cache-inmemory";
-import { persistCache } from "apollo-cache-persist";
+import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
+import { persistCache, LocalStorageWrapper } from "apollo3-cache-persist";
 import { createDynamicImport } from "./dynamic_import";
 import { GraphQLFacade } from "../graphql_facade";
+import { ChangelogCreator } from "./changelog_creator";
 
-interface State {
-  github?: Github;
-  open: boolean;
-}
+const drawerWidth = 240;
 
-type ComponentPromise = Promise<
-  React.FunctionComponent<React.PropsWithChildren<{ github: Github }>>
->;
+const RootDiv = styled("div")({
+  width: "100%",
+  flexGrow: 1
+});
+
+const AppFrameDiv = styled("div")({
+  zIndex: 1,
+  overflow: "hidden",
+  position: "relative",
+  display: "flex",
+  width: "100%"
+});
+
+const StyledAppBar = styled(AppBar, {
+  shouldForwardProp: prop => prop !== "drawerOpen"
+})<{ drawerOpen?: boolean }>(({ theme, drawerOpen }) => ({
+  position: "absolute",
+  transition: theme.transitions.create(["margin", "width"], {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen
+  }),
+  ...(drawerOpen && { width: `calc(100% - ${drawerWidth}px)` })
+}));
+
+const FlexTypography = styled(Typography)({
+  flex: 1
+});
+
+const ContentArea = styled("main")(({ theme }) => ({
+  flexGrow: 1,
+  backgroundColor: theme.palette.background.default,
+  padding: theme.spacing(3),
+  marginTop: 62
+}));
+
+type ComponentPromise = Promise<React.FC<{ github: Github }>>;
 
 const Stats = createDynamicImport(
   () => import("./stats").then(module => module.Stats) as ComponentPromise
@@ -51,277 +79,133 @@ const Rebaser = createDynamicImport(
   () => import("./rebaser").then(module => module.Rebaser) as ComponentPromise
 );
 
-const drawerWidth = 240;
-
-const styles = (theme: Theme): StyleRules => ({
-  root: {
-    width: "100%",
-    flexGrow: 1
-  },
-  flex: {
-    flex: 1
-  },
-  appFrame: {
-    zIndex: 1,
-    overflow: "hidden",
-    position: "relative",
-    display: "flex",
-    width: "100%"
-  },
-  appBar: {
-    position: "absolute",
-    transition: theme.transitions.create(["margin", "width"], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen
-    })
-  },
-  appBarOpenDrawer: {
-    width: `calc(100% - ${drawerWidth}px)`
-  },
-  menuItemActive: {
-    backgroundColor: theme.palette.action.selected
-  },
-  hide: {
-    display: "none"
-  },
-  drawerPaper: {
-    position: "relative",
-    width: drawerWidth
-  },
-  drawerHeader: {
-    display: "flex",
-    alignItems: "center",
-    padding: theme.spacing(1),
-    ...theme.mixins.toolbar
-  },
-  drawerCloseIcon: {
-    display: "flex",
-    width: "100%",
-    justifyContent: "flex-end"
-  },
-  subheading: {
-    padding: theme.spacing(1)
-  },
-  content: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
-    padding: theme.spacing(3),
-    marginTop: 62
-  }
-});
-
-interface Props extends WithStyles {
-  fetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>;
-}
-
 interface Page {
   path: string;
   text: string;
-  group: "Statistics" | "Release Notes" | "Pull Requests";
-  component: React.StatelessComponent<any> | React.ComponentClass<any>;
+  group: "Statistics" | "Release Notes" | "Changelog" | "Pull Requests";
+  component: React.FC<{ github: Github }>;
 }
 
-export class RawApp extends React.Component<Props, State> {
-  private pages: Page[] = [
-    {
-      path: "/stats",
-      text: "Repositories",
-      group: "Statistics",
-      component: Stats
-    },
-    {
-      path: "/personal-stats",
-      text: "Personal",
-      group: "Statistics",
-      component: PersonalStats
-    },
-    {
-      path: "/org-stats",
-      text: "Organization",
-      group: "Statistics",
-      component: OrgStats
-    },
-    {
-      path: "/retrieve-release-notes",
-      text: "Retrieve",
-      group: "Release Notes",
-      component: ReleaseNotesRetriever
-    },
-    {
-      path: "/create-release-notes",
-      text: "Create",
-      group: "Release Notes",
-      component: ReleaseNotesCreator
-    },
-    {
-      path: "/rebase",
-      text: "Rebase",
-      group: "Pull Requests",
-      component: Rebaser
-    }
-  ];
+const pages: Page[] = [
+  { path: "/stats", text: "Repositories", group: "Statistics", component: Stats },
+  { path: "/personal-stats", text: "Personal", group: "Statistics", component: PersonalStats },
+  { path: "/org-stats", text: "Organization", group: "Statistics", component: OrgStats },
+  { path: "/retrieve-release-notes", text: "Retrieve", group: "Release Notes", component: ReleaseNotesRetriever },
+  { path: "/create-release-notes", text: "Create", group: "Release Notes", component: ReleaseNotesCreator },
+  { path: "/create-changelog", text: "Create", group: "Changelog", component: ChangelogCreator },
+  { path: "/rebase", text: "Rebase", group: "Pull Requests", component: Rebaser }
+];
 
-  constructor(props: Props & WithStyles) {
-    super(props);
+function createGithub(
+  token: string,
+  fetchFn: (input: RequestInfo, init?: RequestInit) => Promise<Response>
+): Github {
+  const authLink = setContext((_, { headers }) => ({
+    headers: { ...headers, authorization: `Bearer ${token}` }
+  }));
 
+  const httpLink = createHttpLink({
+    uri: "https://api.github.com/graphql",
+    fetch: fetchFn as any
+  });
+
+  const cache = new InMemoryCache();
+  persistCache({
+    cache,
+    storage: new LocalStorageWrapper(window.localStorage)
+  });
+
+  const client = new ApolloClient({ link: authLink.concat(httpLink), cache });
+  return new Github(token, new GraphQLFacade(client), fetchFn);
+}
+
+interface Props {
+  fetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>;
+}
+
+export function RawApp({ fetch }: Props) {
+  const [github, setGithub] = useState<Github | undefined>(() => {
     const token = window.localStorage.getItem("githubToken");
-    this.state = {
-      github: token ? this.createGithub(token) : undefined,
-      open: false
-    };
-  }
+    return token ? createGithub(token, fetch) : undefined;
+  });
+  const [open, setOpen] = useState(false);
 
-  componentDidCatch(error: any, info: any) {
-    console.error(error, info);
-  }
-
-  createGithub(token: string) {
-    const authLink = setContext((_, { headers }) => {
-      return {
-        headers: {
-          ...headers,
-          authorization: `Bearer ${token}`
-        }
-      };
-    });
-
-    const httpLink = createHttpLink({
-      uri: "https://api.github.com/graphql",
-      fetch: this.props.fetch
-    });
-
-    const cache = new InMemoryCache();
-    persistCache({
-      cache,
-      storage: window.localStorage as any
-    }).then(() => cache.reset());
-
-    const client = new ApolloClient({
-      link: authLink.concat(httpLink),
-      cache
-    });
-
-    return new Github(token, new GraphQLFacade(client), this.props.fetch);
-  }
-
-  handleDrawerOpen = () => {
-    this.setState({ open: true });
-  };
-
-  handleDrawerClose = () => {
-    this.setState({ open: false });
-  };
-
-  renderAppBar() {
-    const activePage = this.pages.find(
-      page => page.path === window.location.pathname
-    );
-    const title = activePage
-      ? `${activePage.text} ${activePage.group}`
-      : "Github Stats & Releases";
-    return (
-      <>
-        <AppBar
-          position="absolute"
-          className={classNames(
-            this.props.classes.appBar,
-            this.state.open && this.props.classes.appBarOpenDrawer
-          )}
-        >
-          <Toolbar>
-            <IconButton
-              color="inherit"
-              aria-label="Open drawer"
-              onClick={this.handleDrawerOpen}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography
-              variant="h5"
-              color="inherit"
-              className={this.props.classes.flex}
-            >
-              {title}
-            </Typography>
-            <GithubButton
-              github={this.state.github}
-              onChangeToken={token => this.onChangeToken(token)}
-            />
-          </Toolbar>
-        </AppBar>
-        <CustomDrawer
-          open={this.state.open}
-          disabled={this.state.github === undefined}
-          handleDrawerClose={this.handleDrawerClose}
-          classes={this.props.classes}
-          pages={this.pages}
-        />
-      </>
-    );
-  }
-
-  renderOnlyIfLoggedIn(createInner: () => JSX.Element) {
-    return this.state.github ? createInner() : <div />;
-  }
-
-  onChangeToken(token: string) {
+  const onChangeToken = (token: string) => {
     window.localStorage.setItem("githubToken", token);
+    setGithub(token ? createGithub(token, fetch) : undefined);
+  };
 
-    this.setState({ github: token ? this.createGithub(token) : undefined });
-  }
+  const activePage = pages.find(
+    page => page.path === window.location.pathname
+  );
+  const title = activePage
+    ? `${activePage.text} ${activePage.group}`
+    : "Github Stats & Releases";
 
-  renderRoute({ path, component }: Page) {
-    return (
-      <Route
-        key={path}
-        path={path}
-        render={props =>
-          this.renderOnlyIfLoggedIn(() =>
-            React.createElement(component, {
-              ...props,
-              github: this.state.github
-            })
-          )
-        }
-      />
-    );
-  }
-
-  renderContent() {
-    return (
-      <main className={classNames(this.props.classes.content)}>
-        <div id="content">
-          <Route
-            path="/auth-callback"
-            render={props => (
-              <GithubCallback
-                {...props}
-                onChangeToken={token => this.onChangeToken(token)}
-                fetch={this.props.fetch}
-              />
-            )}
-          />
-          {this.pages.map(page => this.renderRoute(page))}
-        </div>
-      </main>
-    );
-  }
-
-  render() {
-    return (
-      <>
-        <CssBaseline />
-        <BrowserRouter>
-          <div className={this.props.classes.root}>
-            <div className={this.props.classes.appFrame}>
-              {this.renderAppBar()}
-              {this.renderContent()}
-            </div>
-          </div>
-        </BrowserRouter>
-      </>
-    );
-  }
+  return (
+    <>
+      <CssBaseline />
+      <BrowserRouter>
+        <RootDiv>
+          <AppFrameDiv>
+            <StyledAppBar drawerOpen={open}>
+              <Toolbar>
+                <IconButton
+                  color="inherit"
+                  aria-label="Open drawer"
+                  onClick={() => setOpen(true)}
+                >
+                  <MenuIcon />
+                </IconButton>
+                <FlexTypography variant="h5" color="inherit">
+                  {title}
+                </FlexTypography>
+                <GithubButton
+                  github={github}
+                  onChangeToken={token => onChangeToken(token)}
+                />
+              </Toolbar>
+            </StyledAppBar>
+            <CustomDrawer
+              open={open}
+              disabled={github === undefined}
+              handleDrawerClose={() => setOpen(false)}
+              pages={pages}
+            />
+            <ContentArea>
+              <div id="content">
+                <Routes>
+                  <Route
+                    path="/auth-callback"
+                    element={
+                      <GithubCallback
+                        onChangeToken={token => onChangeToken(token)}
+                        fetch={fetch}
+                      />
+                    }
+                  />
+                  {pages.map(page => (
+                    <Route
+                      key={page.path}
+                      path={page.path}
+                      element={
+                        github ? (
+                          <page.component github={github} />
+                        ) : (
+                          <div />
+                        )
+                      }
+                    />
+                  ))}
+                </Routes>
+              </div>
+            </ContentArea>
+          </AppFrameDiv>
+        </RootDiv>
+      </BrowserRouter>
+    </>
+  );
 }
 
-export const App = withStyles(styles)(RawApp);
+export const App = RawApp;
+

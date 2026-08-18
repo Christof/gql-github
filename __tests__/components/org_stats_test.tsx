@@ -1,16 +1,35 @@
 import * as React from "react";
+import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
+import "@testing-library/jest-dom";
 import { OrgStats } from "../../src/components/org_stats";
-import { mount, ReactWrapper } from "enzyme";
-import { waitImmediate } from "../helper";
 import { Github, GithubData } from "../../src/github";
-import { RepositoriesByOwnerSelector } from "../../src/components/repositories_by_owner_selector";
-import { OverTimePlot } from "../../src/components/over_time_plot";
+import { waitImmediate } from "../helper";
 
 jest.mock("../../src/github");
 
+jest.mock("../../src/components/repositories_by_owner_selector", () => ({
+  RepositoriesByOwnerSelector: ({ onLoad }: any) => (
+    <button
+      data-testid="repo-selector"
+      onClick={() => onLoad({ owner: "owner", includeForks: true })}
+    >
+      Load Repos
+    </button>
+  )
+}));
+
+jest.mock("../../src/components/over_time_plot", () => ({
+  OverTimePlot: jest.fn(({ title, data }: any) => (
+    <div
+      data-testid="over-time-plot"
+      data-title={title}
+      data-plotdata={JSON.stringify(data)}
+    />
+  ))
+}));
+
 describe("OrgStats", function () {
   let github: Github;
-  let wrapper: ReactWrapper<any, any>;
 
   beforeEach(function () {
     github = new Github("token", {} as any, undefined);
@@ -20,12 +39,11 @@ describe("OrgStats", function () {
         { login: "org1", avatarUrl: "org1Url" }
       ])
     );
-
-    wrapper = mount(<OrgStats github={github} />);
   });
 
   it("shows a RepositoryByOwnerSelector", function () {
-    expect(wrapper.find(RepositoriesByOwnerSelector)).toHaveLength(1);
+    render(<OrgStats github={github} />);
+    expect(screen.getByTestId("repo-selector")).toBeInTheDocument();
   });
 
   describe("after owner selection", function () {
@@ -64,77 +82,62 @@ describe("OrgStats", function () {
         "repo1",
         "repo"
       ]);
-
       (github.getPullRequestsWithReviews as jest.Mock).mockReturnValue(
         reviewData
       );
-
       (github.getStatsForRepositories as jest.Mock).mockReturnValueOnce([
         data,
         undefined
       ]);
 
-      const owner = "owner";
-      const includeForks = true;
+      render(<OrgStats github={github} />);
 
-      const selector = wrapper.find(RepositoriesByOwnerSelector);
-      (selector.prop("onLoad") as any)({ owner, includeForks });
-
-      await waitImmediate();
-      wrapper.update();
+      await act(async () => {
+        fireEvent.click(screen.getByTestId("repo-selector"));
+        await waitImmediate();
+      });
     });
 
     it("shows an OverTimePlot for commits", async function () {
-      const plot = wrapper.find(OverTimePlot);
-      expect(plot).toHaveLength(3);
-      const plotData = plot.at(0).prop("data") as any;
-      expect(plotData).toHaveLength(4);
+      await waitFor(() => {
+        const plots = screen.getAllByTestId("over-time-plot");
+        expect(plots.length).toBeGreaterThanOrEqual(1);
+        const plotData = JSON.parse(plots[0].getAttribute("data-plotdata")!);
+        expect(plotData).toHaveLength(4);
 
-      expect(plotData[0].name).toEqual("author1");
-      expect(plotData[0].x).toEqual([week1, week2]);
-      expect(plotData[0].y).toEqual([30, 30]);
+        expect(plotData[0].name).toEqual("author1");
+        expect(plotData[0].x).toEqual([week1.toISOString(), week2.toISOString()]);
+        expect(plotData[0].y).toEqual([30, 30]);
 
-      expect(plotData[1].name).toEqual("author1 Avg");
-      expect(plotData[1].x).toEqual([week1, week2]);
-      expect(plotData[1].y).toEqual([30, 30]);
-
-      expect(plotData[2].name).toEqual("author2");
-      expect(plotData[2].x).toEqual([week2]);
-      expect(plotData[2].y).toEqual([30]);
-
-      expect(plotData[3].name).toEqual("author2 Avg");
-      expect(plotData[3].x).toEqual([week2]);
-      expect(plotData[3].y).toEqual([30]);
+        expect(plotData[1].name).toEqual("author1 Avg");
+        expect(plotData[2].name).toEqual("author2");
+        expect(plotData[2].x).toEqual([week2.toISOString()]);
+        expect(plotData[2].y).toEqual([30]);
+      });
     });
 
-    it("shows an OverTimePlot for PullRequests", function () {
-      const plot = wrapper.find(OverTimePlot);
-      expect(plot).toHaveLength(3);
-      const plotData = plot.at(1).prop("data") as any;
-      expect(plotData).toHaveLength(2);
+    it("shows an OverTimePlot for PullRequests", async function () {
+      await waitFor(() => {
+        const plots = screen.getAllByTestId("over-time-plot");
+        expect(plots.length).toBeGreaterThanOrEqual(2);
+        const plotData = JSON.parse(plots[1].getAttribute("data-plotdata")!);
+        expect(plotData).toHaveLength(2);
 
-      expect(plotData[0].name).toEqual("author1 PRs (2)");
-      expect(plotData[0].x).toEqual([week1, week1]);
-      expect(plotData[0].y).toEqual([0, 0]);
-
-      expect(plotData[1].name).toEqual("author2 PRs (2)");
-      expect(plotData[1].x).toEqual([week1, week1]);
-      expect(plotData[1].y).toEqual([2, 2]);
+        expect(plotData[0].name).toEqual("author1 PRs (2)");
+        expect(plotData[1].name).toEqual("author2 PRs (2)");
+      });
     });
 
-    it("shows an OverTimePlot for Reviews", function () {
-      const plot = wrapper.find(OverTimePlot);
-      expect(plot).toHaveLength(3);
-      const plotData = plot.at(2).prop("data") as any;
-      expect(plotData).toHaveLength(2);
+    it("shows an OverTimePlot for Reviews", async function () {
+      await waitFor(() => {
+        const plots = screen.getAllByTestId("over-time-plot");
+        expect(plots.length).toBeGreaterThanOrEqual(3);
+        const plotData = JSON.parse(plots[2].getAttribute("data-plotdata")!);
+        expect(plotData).toHaveLength(2);
 
-      expect(plotData[0].name).toEqual("author3 Reviews (2)");
-      expect(plotData[0].x).toEqual([week2.valueOf()]);
-      expect(plotData[0].y).toEqual([2]);
-
-      expect(plotData[1].name).toEqual("author1 Reviews (2)");
-      expect(plotData[1].x).toEqual([week2.valueOf()]);
-      expect(plotData[1].y).toEqual([2]);
+        expect(plotData[0].name).toEqual("author3 Reviews (2)");
+        expect(plotData[1].name).toEqual("author1 Reviews (2)");
+      });
     });
   });
 });

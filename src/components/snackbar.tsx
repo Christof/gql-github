@@ -1,8 +1,8 @@
 import * as React from "react";
-import { Slide, Snackbar } from "@material-ui/core";
-import { TransitionProps } from "@material-ui/core/transitions/transition";
+import { Slide, Snackbar } from "@mui/material";
+import { SlideProps } from "@mui/material/Slide";
 
-export function TransitionLeft(props: TransitionProps) {
+export function TransitionLeft(props: SlideProps) {
   return <Slide direction="left" {...props} />;
 }
 
@@ -10,7 +10,7 @@ export function withSnackbar<P extends Object>(
   Component: React.ComponentType<P>,
   asyncTrigger: keyof P
 ) {
-  type Props = P & { snackbarMessage: JSX.Element };
+  type Props = P & { snackbarMessage: React.ReactElement };
   return class ComponentWithSnackbar extends React.Component<
     Props,
     { showSnackbar: boolean }

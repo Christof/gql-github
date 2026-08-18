@@ -1,12 +1,11 @@
 import * as React from "react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import "@testing-library/jest-dom";
 import {
   DetailedRepositorySelector,
   RepositoriesPerOwner
 } from "../../src/components/detailed_repository_selector";
-import { shallow, ShallowWrapper } from "enzyme";
-import { waitImmediate } from "../helper";
 import { Github } from "../../src/github";
-import { LinearProgress, FormControlLabel, Button } from "@material-ui/core";
 
 jest.mock("../../src/github");
 
@@ -16,11 +15,9 @@ describe("DetailedRepositorySelector", function () {
       const github = new Github("token", {} as any, undefined);
       github.getOwners = jest.fn(() => new Promise(_resolve => {}));
 
-      const wrapper = shallow(
-        <DetailedRepositorySelector github={github} onChange={() => {}} />
-      );
+      render(<DetailedRepositorySelector github={github} onChange={() => {}} />);
 
-      expect(wrapper.find(LinearProgress)).toHaveLength(1);
+      expect(screen.getByRole("progressbar")).toBeInTheDocument();
     });
   });
 
@@ -28,8 +25,7 @@ describe("DetailedRepositorySelector", function () {
     let github: Github;
     const owner1 = "owner1";
     const owner2 = "owner2";
-    let wrapper: ShallowWrapper<any, any>;
-    let repositoresPerOwner: RepositoriesPerOwner;
+    let repositoriesPerOwner: RepositoriesPerOwner;
 
     beforeEach(async function () {
       github = new Github("token", {} as any, undefined);
@@ -40,112 +36,85 @@ describe("DetailedRepositorySelector", function () {
         .mockReturnValueOnce(["repo1", "repo2"])
         .mockReturnValueOnce(["repo3"]);
 
-      wrapper = shallow(
+      render(
         <DetailedRepositorySelector
           github={github}
-          onChange={data => (repositoresPerOwner = data)}
+          onChange={data => (repositoriesPerOwner = data)}
         />
       );
 
-      await waitImmediate();
-      wrapper.update();
+      await waitFor(() => screen.getByText(owner1));
     });
 
-    function checkOwner1() {
-      const owner1CheckboxWrapper = shallow(
-        wrapper.find(FormControlLabel).at(0).prop("control")
-      );
+    it("hides the progress bar after loading", function () {
+      expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
+    });
 
-      const event: any = null;
-      const checked = true;
-      (owner1CheckboxWrapper.prop("onChange") as any)(event, checked);
-    }
-
-    function getCheckboxForRepository(repoName: string) {
-      const repo1FormControlLabel = wrapper
-        .find(FormControlLabel)
-        .findWhere(f => f.prop("label") === repoName);
-      expect(repo1FormControlLabel).toHaveLength(1);
-      return shallow(repo1FormControlLabel.prop("control"));
-    }
-
-    function clickAcceptButton() {
-      const acceptButton = wrapper.find(Button);
-      expect(acceptButton).toHaveLength(1);
-      (acceptButton.prop("onClick") as any)();
-    }
-
-    it("shows checkboxes for all owners ", async function () {
-      expect(wrapper.find(LinearProgress)).toHaveLength(0);
-
-      const labels = wrapper.find(FormControlLabel);
-      expect(labels).toHaveLength(2);
-      expect(labels.at(0).prop("label")).toEqual(owner1);
-      expect(labels.at(1).prop("label")).toEqual(owner2);
+    it("shows checkboxes for all owners", function () {
+      expect(
+        screen.getByRole("checkbox", { name: owner1 })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("checkbox", { name: owner2 })
+      ).toBeInTheDocument();
     });
 
     it("shows checkboxes for all repositories if owner is checked", async function () {
-      expect(wrapper.find(LinearProgress)).toHaveLength(0);
+      fireEvent.click(screen.getByRole("checkbox", { name: owner1 }));
 
-      checkOwner1();
-
-      await waitImmediate();
-      wrapper.update();
-
-      const labels = wrapper.find(FormControlLabel);
-      expect(labels).toHaveLength(4);
+      await waitFor(() => {
+        expect(
+          screen.getByRole("checkbox", { name: "repo1" })
+        ).toBeInTheDocument();
+        expect(
+          screen.getByRole("checkbox", { name: "repo2" })
+        ).toBeInTheDocument();
+      });
     });
 
-    it("passes selected repositories per owner to callback on button click", async function () {
-      checkOwner1();
+    it("passes selected repositories per owner to callback on Accept click", async function () {
+      fireEvent.click(screen.getByRole("checkbox", { name: owner1 }));
 
-      await waitImmediate();
-      wrapper.update();
+      await waitFor(() => screen.getByRole("checkbox", { name: "repo1" }));
 
-      clickAcceptButton();
+      fireEvent.click(screen.getByRole("button", { name: /Accept/i }));
 
       const expected = new Map<string, string[]>();
       expected.set(owner1, ["repo1", "repo2"]);
-      expect(repositoresPerOwner).toEqual(expected);
+      expect(repositoriesPerOwner).toEqual(expected);
     });
 
     it("allows deselecting repositories", async function () {
-      checkOwner1();
+      fireEvent.click(screen.getByRole("checkbox", { name: owner1 }));
 
-      await waitImmediate();
-      wrapper.update();
+      await waitFor(() => screen.getByRole("checkbox", { name: "repo1" }));
 
-      const checkbox = getCheckboxForRepository("repo1");
-      (checkbox.prop("onChange") as any)(null, false);
+      fireEvent.click(screen.getByRole("checkbox", { name: "repo1" }));
 
-      clickAcceptButton();
+      fireEvent.click(screen.getByRole("button", { name: /Accept/i }));
 
       const expected = new Map<string, string[]>();
       expected.set(owner1, ["repo2"]);
-      expect(repositoresPerOwner).toEqual(expected);
+      expect(repositoriesPerOwner).toEqual(expected);
     });
 
     it("allows deselecting and reselecting repositories", async function () {
-      checkOwner1();
+      fireEvent.click(screen.getByRole("checkbox", { name: owner1 }));
 
-      await waitImmediate();
-      wrapper.update();
+      await waitFor(() => screen.getByRole("checkbox", { name: "repo2" }));
 
-      let checkbox = getCheckboxForRepository("repo2");
-      (checkbox.prop("onChange") as any)(null, false);
+      const repo2Checkbox = screen.getByRole("checkbox", { name: "repo2" });
+      fireEvent.click(repo2Checkbox); // deselect
 
-      wrapper.update();
+      expect(repo2Checkbox).not.toBeChecked();
 
-      checkbox = getCheckboxForRepository("repo2");
-      expect(checkbox.prop("checked")).toBe(false);
+      fireEvent.click(repo2Checkbox); // reselect
 
-      (checkbox.prop("onChange") as any)(null, true);
-
-      clickAcceptButton();
+      fireEvent.click(screen.getByRole("button", { name: /Accept/i }));
 
       const expected = new Map<string, string[]>();
       expected.set(owner1, ["repo1", "repo2"]);
-      expect(repositoresPerOwner).toEqual(expected);
+      expect(repositoriesPerOwner).toEqual(expected);
     });
   });
 });

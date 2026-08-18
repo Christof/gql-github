@@ -1,14 +1,14 @@
 import * as React from "react";
 
 class DynamicImport<Component> extends React.Component<
-  { load: () => Promise<Component> },
+  { load: () => Promise<Component>; children: (c: any) => React.ReactElement | null },
   { component: Component }
 > {
   state = {
     component: null as any
   };
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.props.load().then(component => this.setState(() => ({ component })));
   }
 
@@ -19,7 +19,7 @@ class DynamicImport<Component> extends React.Component<
 
 export function createDynamicImport<P>(
   load: () => Promise<React.ComponentType<P>>
-): React.StatelessComponent<P> {
+): React.FC<P> {
   return (props: P) => (
     <DynamicImport load={load}>
       {(Component: typeof React.Component) =>
