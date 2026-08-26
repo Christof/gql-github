@@ -100,6 +100,6 @@
     "react-router-dom": "^5.2.0",
     "request": "^2.88.2",
     "request-promise-native": "^1.0.9",
-    "uuid": "^3.4.0"
+    "uuid": "^11.0.0"
   }
 }
